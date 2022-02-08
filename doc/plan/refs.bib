@@ -1,0 +1,114 @@
+ @book{sutton2018,
+  place        = {Cambridge, Massachusetts},
+  edition      = {Second edition},
+  series       = {Adaptive computation and machine learning series},
+  title        = {Reinforcement learning: an introduction},
+  isbn         = {978-0-262-03924-6},
+  abstractnote = {“Reinforcement learning, one of the most active research areas in artificial intelligence, is a computational approach to learning whereby an agent tries to maximize the total amount of reward it receives while interacting with a complex, uncertain environment. In Reinforcement Learning, Richard Sutton and Andrew Barto provide a clear and simple account of the field’s key ideas and algorithms.”--},
+  publisher    = {The MIT Press},
+  author       = {Sutton, Richard S. and Barto, Andrew G.},
+  year         = {2018},
+  collection   = {Adaptive computation and machine learning series}
+}
+
+@inproceedings{minut2001,
+  place     = {Montreal, Quebec, Canada},
+  title     = {A reinforcement learning model of selective visual attention},
+  isbn      = {978-1-58113-326-4},
+  url       = {http://portal.acm.org/citation.cfm?doid=375735.376414},
+  doi       = {10/dbwckq},
+  booktitle = {Proceedings of the fifth international conference on Autonomous agents  - AGENTS ’01},
+  publisher = {ACM Press},
+  author    = {Minut, Silviu and Mahadevan, Sridhar},
+  year      = {2001},
+  pages     = {457–464}
+}
+
+ @article{chen2011,
+  title        = {Active vision in robotic systems: A survey of recent developments},
+  volume       = {30},
+  issn         = {0278-3649, 1741-3176},
+  doi          = {10.1177/0278364911410755},
+  abstractnote = {In this paper we provide a broad survey of developments in active vision in robotic applications over the last 15 years. With increasing demand for robotic automation, research in this area has received much attention. Among the many factors that can be attributed to a high-performance robotic system, the planned sensing or acquisition of perceptions on the operating environment is a crucial component. The aim of sensor planning is to determine the pose and settings of vision sensors for undertaking a vision-based task that usually requires obtaining multiple views of the object to be manipulated. Planning for robot vision is a complex problem for an active system due to its sensing uncertainty and environmental uncertainty. This paper describes such problems arising from many applications, e.g. object recognition and modeling, site reconstruction and inspection, surveillance, tracking and search, as well as robotic manipulation and assembly, localization and mapping, navigation and exploration. A bundle of solutions and methods have been proposed to solve these problems in the past. They are summarized in this review while enabling readers to easily refer solution methods for practical applications. Representative contributions, their evaluations, analyses, and future research trends are also addressed in an abstract level.},
+  number       = {11},
+  journal      = {The International Journal of Robotics Research},
+  author       = {Chen, Shengyong and Li, Youfu and Kwok, Ngai Ming},
+  year         = {2011},
+  month        = {Sep},
+  pages        = {1343–1377}
+}
+
+
+ @inbook{ghesu2016,
+  place        = {Cham},
+  series       = {Lecture Notes in Computer Science},
+  title        = {An Artificial Agent for Anatomical Landmark Detection in Medical Images},
+  volume       = {9902},
+  isbn         = {978-3-319-46725-2},
+  url          = {https://link.springer.com/10.1007/978-3-319-46726-9_27},
+  doi          = {10.1007/978-3-319-46726-9_27},
+  abstractnote = {Fast and robust detection of anatomical structures or pathologies represents a fundamental task in medical image analysis. Most of the current solutions are however suboptimal and unconstrained by learning an appearance model and exhaustively scanning the space of parameters to detect a speciﬁc anatomical structure. In addition, typical feature computation or estimation of meta-parameters related to the appearance model or the search strategy, is based on local criteria or predeﬁned approximation schemes. We propose a new learning method following a fundamentally diﬀerent paradigm by simultaneously modeling both the object appearance and the parameter search strategy as a uniﬁed behavioral task for an artiﬁcial agent. The method combines the advantages of behavior learning achieved through reinforcement learning with eﬀective hierarchical feature extraction achieved through deep learning. We show that given only a sequence of annotated images, the agent can automatically and strategically learn optimal paths that converge to the sought anatomical landmark location as opposed to exhaustively scanning the entire solution space. The method signiﬁcantly outperforms state-ofthe-art machine learning and deep learning approaches both in terms of accuracy and speed on 2D magnetic resonance images, 2D ultrasound and 3D CT images, achieving average detection errors of 1-2 pixels, while also recognizing the absence of an object from the image.},
+  booktitle    = {Medical Image Computing and Computer-Assisted Intervention - MICCAI 2016},
+  publisher    = {Springer International Publishing},
+  author       = {Ghesu, Florin C. and Georgescu, Bogdan and Mansi, Tommaso and Neumann, Dominik and Hornegger, Joachim and Comaniciu, Dorin},
+  editor       = {Ourselin, Sebastien and Joskowicz, Leo and Sabuncu, Mert R. and Unal, Gozde and Wells, William},
+  year         = {2016},
+  pages        = {229–237},
+  collection   = {Lecture Notes in Computer Science}
+}
+
+@article{ghesu2019,
+  title        = {Multi-Scale Deep Reinforcement Learning for Real-Time 3D-Landmark Detection in CT Scans},
+  volume       = {41},
+  issn         = {0162-8828, 2160-9292, 1939-3539},
+  doi          = {10.1109/TPAMI.2017.2782687},
+  abstractnote = {Robust and fast detection of anatomical structures is a prerequisite for both diagnostic and interventional medical image analysis. Current solutions for anatomy detection are typically based on machine learning techniques that exploit large annotated image databases in order to learn the appearance of the captured anatomy. These solutions are subject to several limitations, including the use of suboptimal feature engineering techniques and most importantly the use of computationally suboptimal search-schemes for anatomy detection. To address these issues, we propose a method that follows a new paradigm by reformulating the detection problem as a behavior learning task for an artiﬁcial agent. We couple the modeling of the anatomy appearance and the object search in a uniﬁed behavioral framework, using the capabilities of deep reinforcement learning and multi-scale image analysis. In other words, an artiﬁcial agent is trained not only to distinguish the target anatomical object from the rest of the body but also how to ﬁnd the object by learning and following an optimal navigation path to the target object in the imaged volumetric space. We evaluate our approach on 1487 3D-CT volumes from 532 patients, totaling over 500,000 image slices and show that we signiﬁcantly outperform state-of-the-art solutions on detecting several anatomical structures with no failed cases from a clinical acceptance perspective, while also improving the detection accuracy by 20-30%. Most importantly, we improve the detection-speed of the reference methods by 2-3 orders of magnitude, achieving unmatched real-time performance on large 3D-CT scans.},
+  number       = {1},
+  journal      = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  author       = {Ghesu, Florin-Cristian and Georgescu, Bogdan and Zheng, Yefeng and Grbic, Sasa and Maier, Andreas and Hornegger, Joachim and Comaniciu, Dorin},
+  year         = {2019},
+  month        = {Jan},
+  pages        = {176–189}
+}
+
+@article{galceran2013,
+  title        = {A survey on coverage path planning for robotics},
+  volume       = {61},
+  issn         = {09218890},
+  doi          = {10/f5j2n5},
+  abstractnote = {Coverage Path Planning (CPP) is the task of determining a path that passes over all points of an area or volume of interest while avoiding obstacles. This task is integral to many robotic applications, such as vacuum cleaning robots, painter robots, autonomous underwater vehicles creating image mosaics, demining robots, lawn mowers, automated harvesters, window cleaners and inspection of complex structures, just to name a few. A considerable body of research has addressed the CPP problem. However, no updated surveys on CPP reflecting recent advances in the field have been presented in the past ten years. In this paper, we present a review of the most successful CPP methods, focusing on the achievements made in the past decade. Furthermore, we discuss reported field applications of the described CPP methods. This work aims to become a starting point for researchers who are initiating their endeavors in CPP. Likewise, this work aims to present a comprehensive review of the recent breakthroughs in the field, providing links to the most interesting and successful works.},
+  number       = {12},
+  journal      = {Robotics and Autonomous Systems},
+  author       = {Galceran, Enric and Carreras, Marc},
+  year         = {2013},
+  month        = {Dec},
+  pages        = {1258–1276}
+}
+
+@article{caicedo2015,
+  title        = {Active Object Localization with Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1511.06015},
+  abstractnote = {We present an active detection model for localizing objects in scenes. The model is class-speciﬁc and allows an agent to focus attention on candidate regions for identifying the correct location of a target object. This agent learns to deform a bounding box using simple transformation actions, with the goal of determining the most speciﬁc location of target objects following top-down reasoning. The proposed localization agent is trained using deep reinforcement learning, and evaluated on the Pascal VOC 2007 dataset. We show that agents guided by the proposed model are able to localize a single instance of an object after analyzing only between 11 and 25 regions in an image, and obtain the best detection results among systems that do not use object proposals for object localization.},
+  note         = {arXiv: 1511.06015},
+  journal      = {arXiv:1511.06015 [cs]},
+  author       = {Caicedo, Juan C. and Lazebnik, Svetlana},
+  year         = {2015},
+  month        = {Nov}
+}
+
+@article{jie2017,
+  title        = {Tree-Structured Reinforcement Learning for Sequential Object Localization},
+  url          = {http://arxiv.org/abs/1703.02710},
+  abstractnote = {Existing object proposal algorithms usually search for possible object regions over multiple locations and scales separately, which ignore the interdependency among different objects and deviate from the human perception procedure. To incorporate global interdependency between objects into object localization, we propose an effective Tree-structured Reinforcement Learning (Tree-RL) approach to sequentially search for objects by fully exploiting both the current observation and historical search paths. The Tree-RL approach learns multiple searching policies through maximizing the long-term reward that reﬂects localization accuracies over all the objects. Starting with taking the entire image as a proposal, the Tree-RL approach allows the agent to sequentially discover multiple objects via a tree-structured traversing scheme. Allowing multiple near-optimal policies, Tree-RL offers more diversity in search paths and is able to ﬁnd multiple objects with a single feedforward pass. Therefore, Tree-RL can better cover different objects with various scales which is quite appealing in the context of object proposal. Experiments on PASCAL VOC 2007 and 2012 validate the effectiveness of the Tree-RL, which can achieve comparable recalls with current object proposal algorithms via much fewer candidate windows.},
+  note         = {arXiv: 1703.02710},
+  journal      = {arXiv:1703.02710 [cs]},
+  author       = {Jie, Zequn and Liang, Xiaodan and Feng, Jiashi and Jin, Xiaojie and Lu, Wen Feng and Yan, Shuicheng},
+  year         = {2017},
+  month        = {Mar}
+}
+
+@inproceedings{wu2020, place={Seattle WA USA}, title={Active Object Search}, ISBN={978-1-4503-7988-5}, url={https://dl.acm.org/doi/10.1145/3394171.3413571}, DOI={10.1145/3394171.3413571}, booktitle={Proceedings of the 28th ACM International Conference on Multimedia}, publisher={ACM}, author={Wu, Jie and Chen, Tianshui and Huang, Lishan and Wu, Hefeng and Li, Guanbin and Tian, Ling and Lin, Liang}, year={2020}, month={Oct}, pages={973–981} }
+
+@inproceedings{schmid2019, title={Explore, Approach, and Terminate: Evaluating Subtasks in Active Visual Object Search Based on Deep Reinforcement Learning}, ISSN={2153-0866}, DOI={10.1109/IROS40897.2019.8967805}, abstractNote={Searching for objects and distinguishing task-relevant objects from others is a key requirement for service robots. We propose a reinforcement learning solution to the active visual object search problem. Our method successfully learns to explore the environment, to approach the target object, and to decide when to terminate the search as the target object has been found. We demonstrate the efficiency of our solution on a dataset of real-world images collected by a robot. Our approach outperforms state-space planning or other baseline search strategies, reaching a higher success rate in a shorter time. We also study individual subtasks of active visual object search. Although strong baselines exist for the subtasks, our RL solution outperforms them in the overall search task.}, booktitle={2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}, author={Schmid, Jan Fabian and Lauri, Mikko and Frintrop, Simone}, year={2019}, month={Nov}, pages={5008–5013} }
+
+ @article{druon2020, title={Visual Object Search by Learning Spatial Context}, volume={5}, ISSN={2377-3766, 2377-3774}, DOI={10.1109/LRA.2020.2967677}, number={2}, journal={IEEE Robotics and Automation Letters}, author={Druon, Raphael and Yoshiyasu, Yusuke and Kanezaki, Asako and Watt, Alassane}, year={2020}, month={Apr}, pages={1279–1286} }

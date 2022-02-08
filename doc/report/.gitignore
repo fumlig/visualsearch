@@ -8,6 +8,7 @@
 *.out
 *.toc
 *.cb
+*.cb2
 *.rel
 
 # Emacs aux files

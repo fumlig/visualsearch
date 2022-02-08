@@ -5,4 +5,4 @@ from gym.utils.play import play
 
 import envs
 
-play(gym.make("Coverage-v0", width=25, height=10), zoom=32)
+play(gym.make("Coverage-v0", width=100, height=100), zoom=8)

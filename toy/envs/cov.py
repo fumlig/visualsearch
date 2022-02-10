@@ -24,13 +24,16 @@ class CovEnv(gym.Env):
         ord("d"),
     ]
 
-    def __init__(self, width=400, height=400, radius=20, seed=1337):
+    def __init__(self, width=50, height=50, radius=20, seed=0):
         self.shape = (height, width)
         self.radius = radius
         self.player = None
         self.tiles = None
 
         self.seed(seed)
+
+        noise = perlin_noise_2d(self.shape, (height//5, width//5), random=self.random)
+        self.map = np.clip(noise - 0.5, -1.0, 1.0)
 
         self.reward_range = (-1.0, 1.0)
         self.action_space = gym.spaces.Discrete(len(self.ACTIONS))
@@ -48,13 +51,13 @@ class CovEnv(gym.Env):
 
         self.player = (y, x)
 
-        obs = self.observe()
-        rew = self.tiles[self.player]
-        done = np.sum(self.tiles > 0) == 0
-
+        tile = self.tiles[self.player]
+        r = 1 if tile > 0 else -1
         self.tiles[self.player] = 0
 
-        return obs, rew, done, {"shape": self.shape, "player": self.player}
+        done = np.sum(self.tiles > 0) == 0
+
+        return self.observe(), r, done, {"shape": self.shape, "player": self.player}
 
     def reset(self):
         h, w = self.shape
@@ -62,7 +65,11 @@ class CovEnv(gym.Env):
         self.player = (h//2, w//2)
         #self.tiles = self.random.uniform(0, 1, size=self.shape)
         #self.tiles = np.ones(self.shape)
-        self.tiles = perlin_noise_2d(self.shape, (h//5, w//5), random=self.random)
+
+        #noise = perlin_noise_2d(self.shape, (h//5, w//5), random=self.random)
+        #self.tiles = np.clip(noise - 0.5, -1.0, 1.0)
+
+        self.tiles = self.map.copy()
 
         return self.observe()
 
@@ -82,7 +89,6 @@ class CovEnv(gym.Env):
         if mode == "rgb_array":
             return img
         else:
-            #img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
             fix = img.copy()
             fix[:,:,0] = img[:,:,2]
             fix[:,:,2] = img[:,:,0]

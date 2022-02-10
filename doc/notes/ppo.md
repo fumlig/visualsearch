@@ -18,3 +18,6 @@ Behaviour:
 - Higher means more exploration
 - Too high can cause agent to forget?
 - With good observations, actions and rewards should work
+
+
+- Deals with vector environments: i.e. is build for usage with vector environments.

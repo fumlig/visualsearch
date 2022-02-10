@@ -1,6 +1,14 @@
 import numpy as np
 import numpy.random
 
+def softmax(a):
+    return np.exp(a)/np.sum(np.exp(a))
+
+
+def clamp(x, lo, hi):
+    return max(min(x, hi), lo)
+
+
 def perlin_noise_2d(shape, res, random=None):
     # https://pvigier.github.io/2018/06/13/perlin-noise-numpy.html
 

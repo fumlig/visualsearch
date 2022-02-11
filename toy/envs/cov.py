@@ -29,15 +29,16 @@ class CovEnv(gym.Env):
         self.radius = radius
         self.player = None
         self.tiles = None
+        self.limit = None
 
         self.seed(seed)
 
-        noise = perlin_noise_2d(self.shape, (height//5, width//5), random=self.random)
-        self.map = np.clip(noise - 0.5, -1.0, 1.0)
-
         self.reward_range = (-1.0, 1.0)
         self.action_space = gym.spaces.Discrete(len(self.ACTIONS))
-        self.observation_space = gym.spaces.Box(0, 255, (radius*2+1, radius*2+1, 3), dtype=np.uint8)
+        self.observation_space = gym.spaces.Dict({
+            "img": gym.spaces.Box(0, 255, (radius*2+1, radius*2+1, 3), dtype=np.uint8),
+            "pos": gym.spaces.Discrete(width*height),
+        })
 
     def step(self, action):
         a = self.ACTIONS[action]
@@ -55,7 +56,7 @@ class CovEnv(gym.Env):
         r = 1 if tile > 0 else -1
         self.tiles[self.player] = 0
 
-        done = np.sum(self.tiles > 0) == 0
+        done = np.sum(self.tiles > 0) < self.limit/2
 
         return self.observe(), r, done, {"shape": self.shape, "player": self.player}
 
@@ -66,10 +67,9 @@ class CovEnv(gym.Env):
         #self.tiles = self.random.uniform(0, 1, size=self.shape)
         #self.tiles = np.ones(self.shape)
 
-        #noise = perlin_noise_2d(self.shape, (h//5, w//5), random=self.random)
-        #self.tiles = np.clip(noise - 0.5, -1.0, 1.0)
-
-        self.tiles = self.map.copy()
+        noise = perlin_noise_2d(self.shape, (h//5, w//5), random=self.random)
+        self.tiles = np.clip(noise - 0.5, -1.0, 1.0)
+        self.limit = np.sum(self.tiles > 0)
 
         return self.observe()
 
@@ -92,7 +92,7 @@ class CovEnv(gym.Env):
             fix = img.copy()
             fix[:,:,0] = img[:,:,2]
             fix[:,:,2] = img[:,:,0]
-            fix = cv.resize(fix, (h*2, w*2), interpolation=cv.INTER_NEAREST)
+            fix = cv.resize(fix, (h*8, w*8), interpolation=cv.INTER_NEAREST)
             cv.imshow("coverage", fix)
             cv.waitKey(1)
 
@@ -107,11 +107,17 @@ class CovEnv(gym.Env):
     def observe(self):
         r = self.radius
         y, x = self.player
+        h, w = self.shape
 
         view = self.view()
-        obs = view[y:y+r*2+1,x:x+r*2+1]
+        
+        img = view[y:y+r*2+1,x:x+r*2+1]
+        pos = y*w+x
 
-        return obs
+        return {
+            "img": img,
+            "pos": pos
+        }
 
     def view(self):
         h, w = self.shape

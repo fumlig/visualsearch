@@ -1,0 +1,6 @@
+- implement toy environment
+- write on thesis report
+- work through course
+- play with realistic simulator
+- decide on environment
+- formalize task

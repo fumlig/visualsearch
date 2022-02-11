@@ -1,0 +1,2 @@
+- https://spinningup.openai.com/en/latest/_images/rl_algorithms_9_15.svg
+- https://spinningup.openai.com/en/latest/index.html

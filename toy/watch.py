@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import gym
-
+import argparse
 import torch as th
 import torch.nn as nn
 
@@ -11,8 +11,12 @@ from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
 import envs
 
 
-env = DummyVecEnv([lambda: gym.make("Coverage-v0", width=400, height=400, radius=20)])
-model = PPO.load("ppo", env=env)
+parser = argparse.ArgumentParser()
+parser.add_argument("model", type=str)
+args = parser.parse_args()
+
+env = DummyVecEnv([lambda: gym.make("Coverage-v0")])
+model = PPO.load(args.model, env=env)
 
 obs = env.reset()
 while True:

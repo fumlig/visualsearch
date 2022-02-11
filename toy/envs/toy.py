@@ -9,6 +9,9 @@ Triggering all of the time should not be allowed: give penalty
 Targets should be found quickly: give time penalty
 Targets should be found accurately: give reward based on overlap
 Random number of targets? How can it know how many there are? - It does not need to, the episode ends when it is done. It should just keep looking
+
+How can the problem be made harder?
+How should zoom be handled? One way: objects are approximated by their center pixel far away    
 """
 
 import gym
@@ -17,50 +20,60 @@ from gym.utils import seeding
 from utils import *
 
 
-def place(map, n):
-    pass
+KEYS = [
+    ord(" "),
+    ord("d"),
+    ord("a"),
+    ord("s"),
+    ord("w"),
+    ord("e"),
+    ord("q"),
+]
+
+ACTIONS = [
+    ( 0, 0, 0),
+    ( 1, 0, 0),
+    (-1, 0, 0),
+    ( 0, 1, 0),
+    ( 0,-1, 0),
+    ( 0, 0, 1),
+    ( 0, 0,-1), 
+]
 
 
 class Toy(gym.Env):
 
     metadata = {'render.modes': ['human', 'rgb_array']}
 
-    NUM_TARGETS = 3
-
-    def __init__(self, size):
+    def __init__(self, radius):
         self.seed(0)
-        self.size = size
+        self.radius = radius
+
 
         self.reward_range = (-1, 1)
         self.action_space = gym.spaces.Discrete()
-        self.observation_space = gym.spaces.Box(0, 255, (size, size, 3), dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(0, 255, (*shape, 3), dtype=np.uint8)
 
 
     def step(self, action):
-        
 
-        py0 = clamp(py-pr, pr, h-pr-1)
-        py1 = clamp(py+pr, pr, h-pr-1)
-        px0 = clamp(px-pr, pr, w-pr-1)
-        px1 = clamp(px+pr, pr, w-pr-1)
+        a = np.array(ACTIONS[action])
+
+        self.player += a
+
+        py, px, pr = self.player
+
+        edge = 
+
+        py = clamp(py, pr, h-pr-1)
+        px = clamp(py, pr, h-pr-1)
+        
 
         return [], 0, False, {}
 
     def reset(self):
-        """
-        initialize some map of weights
-        use this map of weights to randomize
-        - environment
-        - targets
-        - distractors
 
-        how the fuck is this supposed to be generalizable?
-        it is not. but properties of each separate environment can
-        be understood. the map represents the properties of the environment
-
-        example: map represents probability of enemies
-        colors is set depending on probability
-        """
+        self.position = (0, 0)
 
         h, w = self.shape
         fn=lambda x, y: 0.0
@@ -71,8 +84,8 @@ class Toy(gym.Env):
 
         i = np.array([(y, x, 0) for y, x in np.index(self.map.shape)])
         w = np.array([p for p in np.flatiter(self.map)])
-    
-        self.targets = self.random.choice(i, self.NUM_TARGETS, replace=False, p=softmax(w))
+
+        self.targets = self.random.choice(i, 3, replace=False, p=softmax(w))
 
         return self.observe()
 
@@ -117,3 +130,5 @@ class Toy(gym.Env):
 
         return img
     
+    def get_keys_to_action(self):
+        return {(key, ): a for a, key in enumerate(KEYS)}

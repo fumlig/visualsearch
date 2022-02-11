@@ -11,7 +11,6 @@ The loss over the policy parameters is defined as the empirical expectation over
 - Sort of a mix between on- and off-policy, since it uses old samples?
 
 
-
 Behaviour:
 
 - Entropy coefficient seems to matter
@@ -21,3 +20,7 @@ Behaviour:
 
 
 - Deals with vector environments: i.e. is build for usage with vector environments.
+
+Interesting thought regarding unlearning/instability:
+
+- https://www.reddit.com/r/reinforcementlearning/comments/d3wym2/catastrophic_unlearning_in_ppo_a_plausible_cause/

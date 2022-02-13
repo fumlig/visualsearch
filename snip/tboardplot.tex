@@ -1,0 +1,30 @@
+% https://github.com/tensorflow/tensorflow/issues/9024#issuecomment-293182723
+
+\documentclass{article}
+\usepackage[active,tightpage]{preview}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\PreviewEnvironment{tikzpicture} 
+
+\definecolor{tb_color_1}{RGB}{245,124,0}
+\definecolor{tb_color_2}{RGB}{0,167,247}
+
+\pgfplotscreateplotcyclelist{tb}{
+semithick,tb_color_1\\%
+semithick,tb_color_2\\%
+}
+
+\begin{document}
+  \begin{tikzpicture}
+    \begin{axis}[cycle list name=tb, 
+                 grid=both,
+                 grid style={solid,gray!30!white},
+                 axis lines=middle,
+                 xlabel={step},
+                 ylabel={value},
+                 x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                 y label style={at={(axis description cs:-0.1,.5)},rotate=90,anchor=south},]
+      \addplot table [x=Step, y=Value, col sep=comma] {data.csv};
+    \end{axis}
+  \end{tikzpicture}
+\end{document}

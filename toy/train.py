@@ -7,16 +7,17 @@ import torch.nn as nn
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 import envs
 
-# probably easier for it to learn if it only sees tiles around itself
-# more fixed mapping
 
-env = make_vec_env("Coverage-v0", n_envs=4, env_kwargs={"width": 400, "height": 400, "radius": 20})
-model = PPO("CnnPolicy", env, verbose=1, tensorboard_log="logs", ent_coef=0.01)
+env = make_vec_env("Coverage-v0", n_envs=8)
+model = PPO("MultiInputPolicy", env, verbose=1, tensorboard_log="logs", ent_coef=0.01)
 
-model.learn(total_timesteps=1000000, tb_log_name="ppo")
+checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='logs', name_prefix='ckpt')
+
+model.learn(total_timesteps=int(25e6), tb_log_name="ppo", callback=checkpoint_callback)
 
 model.save("ppo")
 

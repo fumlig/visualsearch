@@ -12,5 +12,5 @@ gym.register(
 gym.register(
     id="Coverage-v0",
     entry_point=cov.CovEnv,
-    max_episode_steps=8000,
+    max_episode_steps=5000,
 )

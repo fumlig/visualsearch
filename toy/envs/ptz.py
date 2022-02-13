@@ -18,16 +18,6 @@ class PTZEnv(Env):
         ( 0, 0,-1),
     ]
 
-    NAMES = [
-        "nop",
-        "pan cw",
-        "pan ccw",
-        "tilt down",
-        "tilt up",
-        "zoom in",
-        "zoom out",
-    ]
-
     KEYS = [
         ord(" "),
         ord("d"),
@@ -36,10 +26,6 @@ class PTZEnv(Env):
         ord("w"),
         ord("e"),
         ord("q"),
-    ]
-
-    COLORS = [
-
     ]
 
     def __init__(self, width=10, height=10):

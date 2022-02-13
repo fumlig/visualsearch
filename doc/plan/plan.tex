@@ -5,7 +5,7 @@
 \usepackage{booktabs}
 
 % todo
-\title{Planning Report \\ \large Reinforcement Learning for an Object Search Task\footnote{Preliminary title.}}
+\title{Planning Report \\ \large Reinforcement Learning for a Visual Search Task\footnote{Preliminary title.}}
 \author{Oskar Lundin\\<osklu414@student.liu.se>\\070-756 80 58}
 \date{\today}
 
@@ -15,36 +15,28 @@
 
 \section{Description}
 
-Object search is a perceptual task in which an environment is searched for a particular target object. In this project, an instance of this task will be considered where a fixed pan-tilt-zoom camera is to locate one or more target objects  in its surroundings.
+Visual search is a perceptual task in which an environment is searched for a particular target object. In this project, an instance of this task will be considered where a fixed pan-tilt-zoom camera is to locate one or more target objects in its surroundings. As the task involves learning a correlation between observations of the environment and actions that control the camera, (deep) reinforcement learning (RL)~\cite{sutton2018} will be used as the learning paradigm.
 
-As the task involves learning a correlation between observations of the environment and actions that control the camera, (deep) reinforcement learning (RL)~\cite{sutton2018} will be used as the learning paradigm.
-
-There are several aspects to the problem. There might be distractors in the environment that are not targets and have to be ignored. These should be visually distinct from the target objects. The target objects might also be partially hidden behind distractors. Furthermore, as the entire environment will not be visible at once, the agent should employ an effective scanning pattern. For this it has to learn where the probability of finding target objects is high. If there are multiple targets in the scene, the agent will need to indicate that it thinks a target has been found and then move on to the next object. Environments might be vary slightly in appearance and target objects are placed at random locations.
+There are several aspects to the problem. There might be distractors in the environment that are not targets and have to be ignored. These should be visually distinct from the target objects. The target objects might also be partially hidden behind distractors. Furthermore, as the entire environment will not be visible at once, the agent should employ an effective scanning pattern. For this it has to learn where the probability of finding target objects is high. If there are multiple targets in the scene, the agent will need to indicate that it thinks a target has been found and then move on to the next object.
 
 \noindent
 The following research questions will be answered in this thesis project:
 
 \begin{enumerate}
-    \item What behaviours are desirable during object search, and how can they be tested?
-    \item How can object search be solved under an RL framework? Getting an agent to exhibit desirable searching behavior is not expected to be trivial. For example, certain aspects of the task might put requirements on the algorithm used. 
-    \item How do different methods compare in terms of search time and localization accuracy? Things that can be compared include RL algorithm, observation space, action space, reward signal, etc.
+    \item How can this instance of the visual search problem be solved with RL? The focus here will be on observation space, action space and reward signal.
+    \item How do different RL algorithms compare for the problem? Focus on classes of algorithm, feature extraction architectures, etc. 
+    \item How does an RL method compare to some baseline method? Here the method will be compared to one or more non-RL agents (rule-based, human controlled, random actions, etc.).
 \end{enumerate}
-
-These questions can likely be split into parts, but exactly how depends on the evolution of the project.
 
 \section{Approach}
 
-The plan is to first do a thorough study of available literature and plan out the approach. This includes finding and experimenting with available RL algorithms, planning the task setup and determining what tools and frameworks to use, etc.
+The thesis project will be split into three phases. In the first phase, the problem will be formulated and properly restricted. A simple environment that tests the desired agent characteristics will be implemented and used for rapid experimentation and an initial comparison of methodologies. These tests can also help identify what kinds of results are reasonable. The plan is to do the main experiments in a simulator developed by FOI that simulates realistic outdoor environments. However, initial tests with the realistic environment show that training an agent for a sufficient number of time steps can take multiple days. For this reason, the simpler environment will be used to test ideas and understand the problem. If it is not too cumbersome, the realistic environment will then be used for the remaining phases. A backup solution is to flesh out the simpler environment and use that for the remainder of the thesis. At the end of this phase, the problem to be solved should be completely specified, some initial methods should have been found, and the simulator should be decided. The time allocated for this is approximately 5 weeks.
 
-If the task is immediately tackled in its entirety, there is some risk that issues will be difficult to isolate. For example, there might be some error in the implementation, the problem setup might be too difficult for an agent to learn to solve, some hyperparameter might be crucial, etc. For this reason, the task will be approached in an incremental manner. First, a grid world-like environment will be implemented where aspects of the object search problem will be added incrementally. The hope is that this will lead to an increased practical understanding of what is required to solve the problem.
-
-Once the problem has been solved and understood in the grid world environment, there are a couple of options. If the results are promising, the task could be tried in more visually-rich environment. FOI has an in-house simulator for outdoor 3D environments. The goal is to use this for the object search task, but it is quite resource demanding and a training run can take multiple days. 
-
-Another option is to ignore high-dimensional inputs entirely, and focus on the behavior of the agent. The final vision is to have an agent that is capable of surveilling an area and keep track of multiple targets. For this, some kind of memory mechanism is required. What happens if the targets start moving?
+In the second phase, the methodology will be developed (first and second research question). This will be the bulk of the work, approximately 10 weeks. Various algorithms from relevant literature will be implemented and compared. Some of this literature is covered in the next section. After this phase, the method should be decided and an agent should be trained (possibly some variations). Finally, in the third phase, the best RL agent will be evaluated in depth and compared to some baseline methods (second research question). The current idea is to implement a rule-based agent using domain knowledge. The allocated time for this phase is approximately 5 weeks.
 
 \section{Literature}
 
-The object search is sometimes also referred to as visual search and is considered to be part of active vision. Some recent developments of this are surveyed in~\cite{chen2011}.
+The considered instance of the object search problem is sometimes also referred to as object search and is considered to be part of active vision. Some recent developments of this are surveyed in~\cite{chen2011}.
 
 Minut and Mahadevan (2001) make an early attempt to imitate gaze patterns in humans with RL and a pan-tilt-zoom camera~\cite{minut2001}. In a more recent work by Wu et al. (2020), an agent is trained to both move and look around in a scene to find a target described by a word~\cite{wu2020} in a simulated in-door environment. Schmid et al. (2019) train an RL agent to approach target objects in and report when they have been found using real-world images collected by a robot. Druon et al. (2020) transform visual information into an intermediate representation in the form of a grid with high-level semantic information, and use this for object search~\cite{druon2020}. This intermediate representation is almost analogous to a grid world, and the method is one possible way to move from a grid world to a more visually rich task environment. 
 
@@ -54,7 +46,7 @@ Many aspects of the object search problem can be found in other research areas. 
 
 \section{Time Plan}
 
-The time plan is presented in Table~\ref{tab:timeplan}. This is slightly shifted, so that week 1 starts at 2022-01-31.
+The time plan is presented in Table~\ref{tab:timeplan}. Week 1 starts at 2022-01-31, and week 20 ends at 2022-06-19.
 
 \begin{table}
     \caption{Planned activities and milestones of the work with the resolution of a week.}
@@ -65,53 +57,69 @@ The time plan is presented in Table~\ref{tab:timeplan}. This is slightly shifted
         Week & Activity \\
         \midrule
         1 &
-        Write planning report. Discuss ideas.
+        Discuss project and expectations. Write planning report. Collect relevant literature.
         \\
-        2 & Get set up in office. Research and evaluate ideas, familiarize with hardware and software.
+        2 & Get set up in office. Research and evaluate ideas, familiarize with hardware and software. Start working on simple environment.
         \\
         3 &
-        Implement grid world environment and RL algorithms. Run simple experiments to verify that algorithms work.
+        Experiment in simple environment. Test various aspects of problem. Train agents that solve simplified instances of problem.
+        Write part of introduction chapter of thesis report.
         \\
         4 &
-        Change distribution of environment \\
-        5 &
-        
+        Continue experiments. Do some tests with realistic simulator.
+        Write part of theory chapter of thesis report.
         \\
-        6 & \textbf{Milestone: Agent trained.} Should now have some idea of what is doable in the time available. Additional investigations determined.
+        5 &
+        Consider what results and task complexity seems reasonable. Discuss with supervisors. Decide environment and finish task implementation.
+        \\
+        6 & \textbf{Milestone: Phase 1.}
+        Task well-defined. Environment for task decided and ready for use. Update report accordingly. Start looking for suitable opponent.
         \\
         7 &
-        
+        Go back to collected literature. Check which methods and approaches are promising for the now fully specified task. Look for more literature.
         \\
         8 &
+        Implement most promising methods. Experiment with them. Relate back to tests in simpler environment.
          \\
         9 &
-        
+        Same as last week. Hopefully some method shows promise. Set up a good way to track experiments and configurations.
         \\
         10 &
-        Spend some time on report. Make sure everything done so far is written down clearly.
+        Spend some time on report. Make sure everything done so far is written down clearly. Schedule meeting with examiner.
         \\
         11 & \textbf{Milestone: Mid-thesis review.}
-        Grid world phase complete. Introduction, Theory and Method chapters written. \\
-        12-15 &
-        Buffer time. Unlikely that everything went smoothly, work on things that need more time. Otherwise, perform additional investigations.
+        Grid world phase complete. Introduction, Theory and Method chapters written.
         \\
-        16 & \textbf{Milestone: Results collected.}
-        Results chapter written.
+        12 &
+        Spend some time on figuring out how the results should be presented. Focus on replication, illustrating performance.
+        \\
+        13 &
+        Hyperparameter tuning can be important for some algorithms. Spend some time on this for most promising algorithms.
+        \\
+        14 & \textbf{Milestone: Phase 2.} 
+        One or multiple RL methodologies determined. Results for these are collected, and can be replicated.
+        \\
+        15 & 
+        Describe method in report. Plan baseline approaches.
+        \\
+        16 & 
+        Implement baselines and collect results for them.
         \\
         17 &
-        Evaluate and interpret results. Collect thoughts. Make sure that research questions have been addressed.
+        Finish results chapter of report. See over report so far. Make sure research questions have been addressed. Think about discussion and conclusions.
         \\
         18 &
-        Write discussion and conclusion.
+        Draft discussion and conclusion chapters.
         \\
         19 &
-        Fix typographical errors in report, verify that requirements are satisfied. Submit draft report.
+        Fix typographical errors in report, verify that requirements are met. Submit draft report.
         \\
         20 &
-        Prepare presentation. Polish report according to feedback.
+        Prepare presentation. Polish report according to feedback. Schedule final presentation.
         \\
         21 & \textbf{Milestone: Final submission}.
-        Submit report. Final presentation scheduling and preparation.\\
+        Submit report. Finish presentation.
+        \\
         \bottomrule
     \end{tabular}
 \end{table}

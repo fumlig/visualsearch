@@ -5,6 +5,6 @@ from gym.utils.play import play
 
 import envs
 
-env = gym.make("Coverage-v0")
+env = gym.make("Toy-v0")
 
 play(env, zoom=8)

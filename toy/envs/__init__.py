@@ -1,6 +1,7 @@
 import gym
+from importlib_metadata import entry_points
 
-from envs import ptz, cov
+from envs import ptz, cov, toy
 
 
 gym.register(
@@ -13,4 +14,9 @@ gym.register(
     id="Coverage-v0",
     entry_point=cov.CovEnv,
     max_episode_steps=5000,
+)
+
+gym.register(
+    id="Toy-v0",
+    entry_point=toy.ToyEnv,
 )

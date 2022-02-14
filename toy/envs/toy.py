@@ -1,22 +1,29 @@
 """
-Tiles with different integers
-Laid out in some pattern
-Targets laid out with probability related to pattern
-Distractors placed randomly
-Different shape from target
+Map is high resolution
+Camera is low resolution
 
-Triggering all of the time should not be allowed: give penalty
-Targets should be found quickly: give time penalty
-Targets should be found accurately: give reward based on overlap
-Random number of targets? How can it know how many there are? - It does not need to, the episode ends when it is done. It should just keep looking
+Camera has a position in map
+It undersamples when zoomed out but oversamples when zoomed in
+The observation space determine by camera resolution
 
-How can the problem be made harder?
-How should zoom be handled? One way: objects are approximated by their center pixel far away    
+At what steps can you zoom?
+Maybe oversampling should not be a thing,
+but then how can you zoom in too far
+
+Objects are usually far away
+
+
+
+Do distractors really need to be similar at a distance?
+
 """
 
 import gym
+import enum
 import numpy as np
+import cv2 as cv
 from gym.utils import seeding
+from collections import defaultdict
 from utils import *
 
 
@@ -28,6 +35,7 @@ KEYS = [
     ord("w"),
     ord("e"),
     ord("q"),
+    ord("\n")
 ]
 
 ACTIONS = [
@@ -41,94 +49,106 @@ ACTIONS = [
 ]
 
 
-class Toy(gym.Env):
+class Action(enum.IntEnum):
+    NONE = 0
+    UP = 1
+    DOWN = 2
+    LEFT = 3
+    RIGHT = 4
+    IN = 5
+    OUT = 6    
+    TRIGGER = 7
+
+    def key(self):
+        return ord([" ", "w", "s", "a", "d", "e", "q", "\n"][self.value])
+
+    def delta(self):
+        return [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1), (0, 0), (0, 0), (0, 0)][self.value]
+
+    def scale(self):
+        return [0, 0, 0, 0, 0, 1, -1, 0][self.value]
+
+
+class ToyEnv(gym.Env):
 
     metadata = {'render.modes': ['human', 'rgb_array']}
 
-    def __init__(self, radius):
+    def __init__(self, shape=(256, 256), view=(32, 32)):
         self.seed(0)
-        self.radius = radius
-
+        self.shape = shape
+        self.view = view
 
         self.reward_range = (-1, 1)
-        self.action_space = gym.spaces.Discrete()
-        self.observation_space = gym.spaces.Box(0, 255, (*shape, 3), dtype=np.uint8)
-
-
-    def step(self, action):
-
-        a = np.array(ACTIONS[action])
-
-        self.player += a
-
-        py, px, pr = self.player
-
-        edge = 
-
-        py = clamp(py, pr, h-pr-1)
-        px = clamp(py, pr, h-pr-1)
-        
-
-        return [], 0, False, {}
+        self.action_space = gym.spaces.Discrete(len(Action))
+        self.observation_space = gym.spaces.Box(0, 255, (*view, 3), dtype=np.uint8)
 
     def reset(self):
+        f = lambda x, y: self.random.rand()
+        g = np.vectorize(f)
 
+        self.tiles = np.fromfunction(g, self.shape)
         self.position = (0, 0)
+        self.scale = 1
 
-        h, w = self.shape
-        fn=lambda x, y: 0.0
-        
-        self.map = np.fromfunction(fn, self.shape)
-
-        self.player = np.array((h//2, w//2, 0))
-
+        """
         i = np.array([(y, x, 0) for y, x in np.index(self.map.shape)])
         w = np.array([p for p in np.flatiter(self.map)])
 
         self.targets = self.random.choice(i, 3, replace=False, p=softmax(w))
+        """
 
         return self.observe()
 
+
+    def step(self, action):
+        a = Action(action)
+
+        wh, ww = self.shape
+        vh, vw = self.view
+
+        py, px = self.position
+        dy, dx = a.delta()
+
+        py = clamp(py+dy, 0, wh-1)
+        px = clamp(px+dx, 0, ww-1)
+
+        s = clamp(self.scale + a.scale(), 1, 100)
+        
+        print(s)
+
+        self.position = (py, px)
+        self.scale = s
+
+        return self.observe(), 0, False, {}
+
     def render(self, mode="human"):
-        pass
+        img = self.observe()
+        
+        if mode == "rgb_array":
+            return img
+        else:
+            cv.imshow("toy", img)
+            cv.waitKey(0)
 
     def close(self):
-        pass
+        cv.destroyAllWindows()
 
     def seed(self, seed=None):
         self.random, _ = seeding.np_random(seed)
         return [seed]
 
     def observe(self):
-        img = self.image()
-        h, w = self.shape
+        vh, vw = self.view
+        y0, x0 = self.position
+        y1, x1 = y0+vh, x0+vw
 
-        py, px, pr = self.player
-        py0 = py-pr
-        py1 = py+pr
-        px0 = px-pr
-        px1 = px+pr
+        obs = np.zeros((*self.view, 3), dtype=np.uint8)
+        obs[:,:,0] = self.tiles[y0:y1,x0:x1]*255
 
-        obs = img[py0:py1,px0:px1]
+        obs = cv.resize(obs, (vw*self.scale, vh*self.scale), interpolation=cv.INTER_NEAREST)
+        obs = obs[:vh,:vw]
 
-        return obs
-
-
-    def image(self):
-        h, w = self.shape
-        img = np.zeros((*self.shape, 3), dtype=np.uint8)
-
-        img[:,:,2] = self.map*255
-
-        for ty, tx, tr in self.targets:
-            ty0 = clamp(ty-tr, 0, h-1)
-            ty1 = clamp(ty+tr, 0, h-1)
-            tx0 = clamp(tx-tr, 0, w-1)
-            tx1 = clamp(tx+tr, 0, w-1)
-            
-            img[ty0:ty1,tx0:tx1] = (255, 0, 0)
-
-        return img
+        return obs        
     
     def get_keys_to_action(self):
-        return {(key, ): a for a, key in enumerate(KEYS)}
+        return {(a.key(), ): a for a in Action}

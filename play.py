@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+
 import argparse
-import signal
 import cv2 as cv
 import gym
 import gym_ptz
@@ -15,7 +15,7 @@ WINDOW_SIZE = (640, 640)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str)
-parser.add_argument("-d", "--delay", type=int, default=0)
+parser.add_argument("-d", "--delay", type=int, default=1)
 parser.add_argument("-o", "--observe", action="store_true")
 args = parser.parse_args()
 
@@ -42,8 +42,6 @@ while cv.getWindowProperty(WINDOW_NAME, cv.WND_PROP_VISIBLE) > 0:
     }.get(key, env.Action.NONE)
     
     obs, reward, done, _info = env.step(action)
-
-    print(reward)
 
     if done or key == KEY_RET:
         obs = env.reset()

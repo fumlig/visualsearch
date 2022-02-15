@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import argparse
+import datetime
+
 import gym
 import gym_ptz
 
@@ -8,14 +11,20 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import CheckpointCallback
 
 
-env = make_vec_env("Toy-v0", n_envs=8)
-model = PPO("MultiInputPolicy", env, verbose=1, tensorboard_log="logs", ent_coef=0.01)
+parser = argparse.ArgumentParser()
+parser.add_argument("env", type=str)
+parser.add_argument("-p", "--policy", type=str, choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MlpPolicy")
+parser.add_argument("-l", "--logs", type=str, default="logs")
 
-checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='logs', name_prefix='ckpt')
+args = parser.parse_args()
+env = make_vec_env(args.env, n_envs=8)
+model = PPO(args.policy, env, verbose=1, tensorboard_log=args.logs, ent_coef=0.01)
+name = f"ppo-{args.policy.lower()}-{datetime.datetime.now().isoformat()}"
 
-model.learn(total_timesteps=int(25e6), tb_log_name="ppo", callback=checkpoint_callback)
+checkpoint_callback = CheckpointCallback(save_freq=10000, save_path=args.logs, name_prefix='ckpt')
 
-model.save("ppo")
+model.learn(total_timesteps=int(10e6), tb_log_name=name, callback=checkpoint_callback)
+model.save(name)
 
 obs = env.reset()
 while True:

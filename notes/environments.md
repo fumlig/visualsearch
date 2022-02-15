@@ -18,3 +18,12 @@ Experiment på ProcGen (https://arxiv.org/abs/1912.01588)
 
 - Fix a set of training environment instances and test environment instances (by setting initial seed)
 - Baselines can use training data as well (for example some nearest neighbor setup)
+
+
+
+
+- Best options so far:
+
+- Gridworld
+- UnrealCV
+- ViZDoom (zoom is available, might not be exactly what we are looking for)

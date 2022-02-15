@@ -1,7 +1,6 @@
 import gym
-from importlib_metadata import entry_points
 
-from envs import ptz, cov, toy
+from gym_ptz.envs import ptz, cov, toy
 
 
 gym.register(

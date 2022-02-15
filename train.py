@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 
 import gym
-
-import torch as th
-import torch.nn as nn
+import gym_ptz
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import CheckpointCallback
 
-import envs
 
-
-env = make_vec_env("Coverage-v0", n_envs=8)
+env = make_vec_env("Toy-v0", n_envs=8)
 model = PPO("MultiInputPolicy", env, verbose=1, tensorboard_log="logs", ent_coef=0.01)
 
 checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='logs', name_prefix='ckpt')

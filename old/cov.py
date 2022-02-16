@@ -3,7 +3,7 @@ import numpy as np
 import cv2 as cv
 
 from gym.utils import seeding
-from gym_ptz.utils import perlin
+from gym_search.utils import perlin
 
 class CovEnv(gym.Env):
     metadata = {"render.modes": ["human", "rgb_array"]}

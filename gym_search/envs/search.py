@@ -2,13 +2,19 @@ import gym
 import enum
 import numpy as np
 import cv2 as cv
+
 from gym.utils import seeding
-from gym_ptz.utils import clamp, softmax, perlin, gaussian_kernel
+from gym_search.utils import clamp
+from gym_search.terrain import uniform_terrain
+
+"""
+Add new targets according to Poisson distribution.
+"""
 
 
-class PTZEnv(gym.Env):
+class SearchEnv(gym.Env):
 
-    metadata = {'render.modes': ['rgb_array']}
+    metadata = {'render.modes': ['human', 'rgb_array'], }
 
     class Action(enum.IntEnum):
         NONE = 0
@@ -18,45 +24,38 @@ class PTZEnv(gym.Env):
         SOUTH = 4
         WEST = 5
 
-    def __init__(self, world_shape=(32, 32), view_shape=(4, 4), step_size=1, num_targets=3):
-        self.seed(0)
+    def __init__(
+        self, 
+        world_shape=(40, 40), 
+        view_shape=(5, 5), 
+        step_size=1, 
+        num_targets=3,
+        terrain_func=uniform_terrain,
+        seed=0
+    ):
+        self.seed(seed)
         self.world_shape = world_shape
         self.view_shape = view_shape
         self.step_size = step_size
         self.num_targets = num_targets
+        self.terrain_func = terrain_func
 
         self.reward_range = (-1, 1)
         self.action_space = gym.spaces.Discrete(len(self.Action))
-        self.observation_space = gym.spaces.Box(0, 255, (*self.view_shape, 3), dtype=np.uint8)
+        self.observation_space = gym.spaces.Dict(dict(
+            img=gym.spaces.Box(0, 255, (*self.view_shape, 3), dtype=np.uint8),
+            pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
+        ))
 
     def reset(self):
-        #f = lambda x, y: self.random.rand()
-        #g = np.vectorize(f)
-
-        #g = lambda x, y: (1 + perlin(x*0.25, y*0.25, random=self.random))/2
-        #self.terrain = np.fromfunction(g, self.world_shape)
-
-        #radius = min(self.world_shape//3)
-        
-        #hills = self.random.choice(self.terrain.size, 3)
-
         wh, ww = self.world_shape
         vh, vw = self.view_shape
-        sz = max(wh, ww)*2+1
-
-        gaussian = gaussian_kernel(sz, sigma=sz//8)
-        gx, gy = np.random.randint(0, sz-wh), np.random.randint(0, sz-ww)
-
-        self.terrain = np.zeros(self.world_shape)
-        self.terrain = gaussian[gy:gy+wh,gx:gx+ww]
-        self.terrain *= 1.0/self.terrain.max()
-
-        self.position = (np.random.randint(0, wh-vh), np.random.randint(0, ww-vw)) 
+        
+        self.terrain = self.terrain_func(self.world_shape, self.random)
+        self.position = (self.random.randint(0, wh-vh+1), self.random.randint(0, ww-vw+1)) 
 
         p = self.terrain.flatten()/np.sum(self.terrain)
         t = self.random.choice(self.terrain.size, self.num_targets, replace=False, p=p)
-
-        print(p.min(), p.max())
 
         self.targets = [(i//ww, i%ww, False) for i in t]
 
@@ -92,13 +91,13 @@ class PTZEnv(gym.Env):
                     continue
                 
                 if px <= tx and tx < px + vw and py <= ty and ty < py + vh:
-                    r += 10
+                    r += 100
                     self.targets[i] = (ty, tx, True)
 
         d = all(hit for _, _, hit in self.targets)
 
         if d:
-            r += 100
+            r += 500
 
         r -= 1
 
@@ -112,22 +111,29 @@ class PTZEnv(gym.Env):
             y0, x0 = self.position
             y1, x1 = y0+vh, x0+vw
 
-            img = self.image(hidden=True)
+            img = 1.0 - self.image(hidden=True)
             img[y0:y1,x0:x1] = 1.0 - img[y0:y1,x0:x1]
             img = img*255
             img = img.astype(dtype=np.uint8)
 
-        return img
+        if mode == "human":
+            cv.imshow("search", img)
+            cv.waitKey(1)
+        else:
+            return img
 
 
     def close(self):
-        cv.destroyAllWindows()
+        #cv.destroyWindow("search")
+        #cv.destroyAllWindows()
+        pass
 
     def seed(self, seed=None):
         self.random, _ = seeding.np_random(seed)
         return [seed]
 
     def observe(self):
+        wh, ww = self.world_shape
         vh, vw = self.view_shape
         y0, x0 = self.position
         y1, x1 = y0+vh, x0+vw
@@ -138,7 +144,10 @@ class PTZEnv(gym.Env):
         obs = obs*255
         obs = obs.astype(dtype=np.uint8)
 
-        return obs
+        return dict(
+            img=obs,
+            pos=y0*ww+x0
+        )
 
     def image(self, hidden=False):
         img = np.zeros((*self.world_shape, 3))

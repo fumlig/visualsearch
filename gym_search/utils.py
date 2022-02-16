@@ -1,9 +1,11 @@
 import numpy as np
-import scipy
-import math
 
-def grididx(i, w):
+
+def to_point(i, w):
     return (i//w, i%w)
+
+def to_index(x, y, w):
+    return y*w + x
 
 def softmax(a):
     return np.exp(a)/np.sum(np.exp(a))

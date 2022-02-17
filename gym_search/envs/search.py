@@ -47,6 +47,7 @@ class SearchEnv(gym.Env):
             pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
         ))
 
+
     def reset(self):
         wh, ww = self.world_shape
         vh, vw = self.view_shape
@@ -160,4 +161,7 @@ class SearchEnv(gym.Env):
                 img[ty,tx] = (0,0,1)
 
         return img
+    
+    def get_action_meanings(self):
+        return [a.name for a in self.Action]
 

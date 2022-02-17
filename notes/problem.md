@@ -1,0 +1,6 @@
+- Visual search for multiple targets
+- Environment appearance correlated with probability of target
+- Actions translate the agent horizontally or vertically: camera movements are relative, never absolute, and correspond to some cost (time, effort, etc.)
+- Instance of [TSP](tsp.md).
+- I want to go towards the theoretical direction. How much connection to retain to the original visual search problem?
+- Define the problem mathematically? Could be fun. Would likely need some help... And more decisions.

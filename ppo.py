@@ -15,6 +15,12 @@ from torch.utils.tensorboard import SummaryWriter
 
 import gym_search
 
+"""
+todo: 
+- clean up
+"""
+
+
 def parse_args():
     # fmt: off
     parser = argparse.ArgumentParser()
@@ -67,16 +73,13 @@ def parse_args():
     parser.add_argument("--target-kl", type=float, default=None,
         help="the target KL divergence threshold")
     args = parser.parse_args()
+
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
 
 
     print("minibatch_size:", args.minibatch_size)
 
-    # sb3: minibatch_size = 64
-    # 64 = 8*2048 // x <-> x = 8*2048/64
-
-    # fmt: on
     return args
 
 
@@ -108,7 +111,7 @@ class Agent(nn.Module):
 
         num_features = gym.spaces.flatdim(envs.single_observation_space)
 
-        self.shared = nn.Sequential(
+        self.network = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 64))
@@ -129,27 +132,41 @@ class Agent(nn.Module):
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
         )
 
+    def forward(self, x, a=None):
+        y = self.network(x)
+        v = self.value(y)
+        pi = self.policy(y)
+        
+        if a is None:
+            a = pi.sample()
+        
+        return a, pi.log_prob(a), pi.entropy(), v
+
+    def policy(self, y):
+        logits = self.actor(y)
+        pi = Categorical(logits=logits)
+        return pi
+
+    def value(self, y):
+        v = self.critic(y)
+        return v
+
+"""
     def get_value(self, x):
-        return self.critic(self.shared(x))
+        return self.critic(self.network(x))
 
     def get_action_and_value(self, x, action=None):
-        x = self.shared(x)
+        x = self.network(x)
         logits = self.actor(x)
         probs = Categorical(logits=logits)
         if action is None:
             action = probs.sample()
         return action, probs.log_prob(action), probs.entropy(), self.critic(x)
-
+"""
 
 if __name__ == "__main__":
     args = parse_args()
     run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
-
-    writer = SummaryWriter(f"runs/{run_name}")
-    writer.add_text(
-        "hyperparameters",
-        "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])),
-    )
 
     # TRY NOT TO MODIFY: seeding
     random.seed(args.seed)
@@ -168,6 +185,17 @@ if __name__ == "__main__":
     agent = Agent(envs).to(device)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
+    writer = SummaryWriter(f"logs/{run_name}")
+    writer.add_text(
+        "hyperparameters",
+        "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])),
+    )
+
+    writer.add_graph(
+        agent,
+        torch.Tensor(envs.observation_space.sample()).to(device).float(),
+    )
+
     # ALGO Logic: Storage setup
     obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
     actions = torch.zeros((args.num_steps, args.num_envs) + envs.single_action_space.shape).to(device)
@@ -183,15 +211,17 @@ if __name__ == "__main__":
     next_done = torch.zeros(args.num_envs).to(device)
     num_updates = args.total_timesteps // args.batch_size
 
-    episode_info = deque(maxlen=100) # todo: parametrize?
+    episode_info = deque(maxlen=args.num_envs) # todo: parametrize?
+
 
     for update in range(1, num_updates + 1):
-        # Annealing the rate if instructed to do so.
+        # lr annealing (todo: use pytorch builtins?)
         if args.anneal_lr:
             frac = 1.0 - (update - 1.0) / num_updates
             lrnow = frac * args.learning_rate
             optimizer.param_groups[0]["lr"] = lrnow
 
+        # rollout
         for step in range(0, args.num_steps):
             global_step += 1 * args.num_envs
             obs[step] = next_obs
@@ -199,7 +229,7 @@ if __name__ == "__main__":
 
             # ALGO LOGIC: action logic
             with torch.no_grad():
-                action, logprob, _, value = agent.get_action_and_value(next_obs)
+                action, logprob, _, value = agent(next_obs)
                 values[step] = value.flatten()
             actions[step] = action
             logprobs[step] = logprob
@@ -209,22 +239,20 @@ if __name__ == "__main__":
             rewards[step] = torch.tensor(reward).to(device).view(-1)
             next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(done).to(device)
 
-            # sb3 has an info buffer with a maximum length
-
             for i in info:
                 if "episode" in i:
                     episode_r = i["episode"]["r"]
                     episode_l = i["episode"]["l"]
 
-                    writer.add_scalar("charts/episodic_return", episode_r, global_step)
-                    writer.add_scalar("charts/episodic_length", episode_l, global_step)
+                    writer.add_scalar("charts/ep_rew", episode_r, global_step)
+                    writer.add_scalar("charts/ep_len", episode_l, global_step)
 
                     episode_info.append(i["episode"])
                     break
 
         # bootstrap value if not done
         with torch.no_grad():
-            next_value = agent.get_value(next_obs).reshape(1, -1)
+            next_value = agent(next_obs)[3].reshape(1, -1)
             if args.gae:
                 advantages = torch.zeros_like(rewards).to(device)
                 lastgaelam = 0
@@ -267,7 +295,7 @@ if __name__ == "__main__":
                 end = start + args.minibatch_size
                 mb_inds = b_inds[start:end]
 
-                _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
+                _, newlogprob, entropy, newvalue = agent(b_obs[mb_inds], b_actions.long()[mb_inds])
                 logratio = newlogprob - b_logprobs[mb_inds]
                 ratio = logratio.exp()
 
@@ -317,8 +345,16 @@ if __name__ == "__main__":
         var_y = np.var(y_true)
         explained_var = np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
 
-        # TRY NOT TO MODIFY: record rewards for plotting purposes
+
+        # record statistics
+        mean_r = np.mean(np.array([e["r"] for e in episode_info]))
+        mean_l = np.mean(np.array([e["l"] for e in episode_info]))
+
         writer.add_scalar("charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
+        writer.add_scalar("charts/step_rate", int(global_step / (time.time() - start_time)), global_step)
+        writer.add_scalar("charts/ep_rew_mean", mean_r, global_step)
+        writer.add_scalar("charts/ep_len_mean", mean_l, global_step)
+
         writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
@@ -326,11 +362,6 @@ if __name__ == "__main__":
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
-        print("SPS:", int(global_step / (time.time() - start_time)))
-        writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
-
-        mean_r = np.mean(np.array([e["r"] for e in episode_info]))
-        mean_l = np.mean(np.array([e["l"] for e in episode_info]))
 
         print(f"num_timesteps={global_step}, ep_rew_mean={mean_r}, ep_len_mean={mean_l}")
 

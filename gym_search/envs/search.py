@@ -43,7 +43,7 @@ class SearchEnv(gym.Env):
         self.reward_range = (-1, 1)
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
-            img=gym.spaces.Box(0, 255, (*self.view_shape, 3), dtype=np.uint8),
+            img=gym.spaces.Box(0, 1, (*self.view_shape, 3)),
             pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
         ))
 
@@ -140,10 +140,7 @@ class SearchEnv(gym.Env):
         y1, x1 = y0+vh, x0+vw
 
         img = self.image(hidden=True)
-
         obs = img[y0:y1,x0:x1,:]
-        obs = obs*255
-        obs = obs.astype(dtype=np.uint8)
 
         return dict(
             img=obs,

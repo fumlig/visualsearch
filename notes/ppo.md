@@ -24,3 +24,9 @@ Behaviour:
 Interesting thought regarding unlearning/instability:
 
 - https://www.reddit.com/r/reinforcementlearning/comments/d3wym2/catastrophic_unlearning_in_ppo_a_plausible_cause/
+
+
+- How to give more weight to replay buffer as time goes on?
+  https://arxiv.org/pdf/2112.03798.pdf
+
+- Decide on one or two algorithms is probably best.

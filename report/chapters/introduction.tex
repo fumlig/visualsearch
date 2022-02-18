@@ -1,10 +1,17 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-The introduction shall be divided into these sections:
+In this thesis project, the problem of searching for targets in unknown environments is addressed. This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
 
 \section{Motivation}
 \label{sec:motivation}
+
+Searching for targets (objects of interest, goals) in unknown environments is a well-studied problem that appears in many areas from robotics~\cite{}, computer vision~\cite{}. Applications 
+
+In this project, an instance of this problem is considered where a pan-tilt-zoom camera is fixed in place, and used to scan an environment for target objects. Automating this task is of interest for multiple reasons
+
+
+While 
 
 This is where the studied problem is described from a general
 point of view and put in a context which makes it clear that
@@ -15,61 +22,20 @@ continue reading.
 \section{Aim}
 \label{sec:aim}
 
-
-What is the underlying purpose of the thesis project?
+The aim of this thesis is to implement an autonomous agent that intelligently searches its environment for targets. Ideally, the agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively.
 
 \section{Research questions}
 \label{sec:research-questions}
 
-
-This is where the research questions are described.
-Formulate these as explicit questions, terminated with a
-question mark. A report will usually contain several different
-research questions that are somehow thematically connected.
-There are usually 2-4 questions in total.
-
-Examples of common types of research questions (simplified
-and generalized):
+This thesis will address the following questions:
 
 \begin{enumerate}
-\item How does technique X affect the possibility of achieving the
-  effect Y?
-
-\item How can a system (or a solution) for X be realized so
-  that the effect Y is achieved?
-
-\item What are the alternatives to
-  achieving X, and which alternative gives the best effect considering
-  Y and Z? (This research question is normally broken down in to 2
-  separate questions.)
-
+  \item How can the visual search problem be solved by a learning agent?
+  \item How can a simulator that tests the ability of an agent to solve  the presented problem be implemented?
+  \item How does the learning agent compare to common non-learning methods?
 \end{enumerate}
-
-
-Observe that a very specific research question almost always
-leads to a better thesis report than a general research question
-(it is simply much more difficult to make something good
-from a general research question.)
-
-The best way to achieve a really good and specific research
-question is to conduct a thorough literature review and get
-familiarized with related research and practice. This leads to
-ideas and terminology which allows one to express oneself
-with precision and also have something valuable to say in the
-discussion chapter. And once a detailed research question
-has been specified, it is much easier to establish a suitable
-method and thus carry out the actual thesis work much faster
-than when starting with a fairly general research question. In
-the end, it usually pays off to spend some extra time in the
-beginning working on the literature review. The thesis
-supervisor can be of assistance in deciding when the research
-question is sufficiently specific and well-grounded in related
-research.
 
 \section{Delimitations}
 \label{sec:delimitations}
 
-This is where the main delimitations are described. For
-example, this could be that one has focused the study on a
-specific application domain or target user group. In the
-normal case, the delimitations need not be justified.
+This thesis will be focused on the behavioural aspects of the presented problem. To train and test agents, a simplified environment will be used. This will test the desired characteristics of the agent as presented above, but will not simulate realistic environments.

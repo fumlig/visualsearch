@@ -18,6 +18,11 @@ import gym_search
 """
 todo: 
 - clean up
+- make some good structure for CNNs, LSTMs, etc...
+- for example, one network class, one actor class, one critic class?
+- or just have duplicated code...
+- move arguments to function arguments, parse args as dictionary
+- can store hyperparams by calling locals()
 """
 
 
@@ -113,22 +118,19 @@ class Agent(nn.Module):
 
         self.network = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 64))
+            nn.ReLU(),
+            layer_init(nn.Linear(64, 64)),
+            nn.ReLU()
         )
 
         self.critic = nn.Sequential(
-            #layer_init(nn.Linear(num_features, 64)),
-            #nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(64, 1), std=1.0),
         )
         self.actor = nn.Sequential(
-            #layer_init(nn.Linear(num_features, 64)),
-            #nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
         )
 
@@ -151,18 +153,7 @@ class Agent(nn.Module):
         v = self.critic(y)
         return v
 
-"""
-    def get_value(self, x):
-        return self.critic(self.network(x))
 
-    def get_action_and_value(self, x, action=None):
-        x = self.network(x)
-        logits = self.actor(x)
-        probs = Categorical(logits=logits)
-        if action is None:
-            action = probs.sample()
-        return action, probs.log_prob(action), probs.entropy(), self.critic(x)
-"""
 
 if __name__ == "__main__":
     args = parse_args()

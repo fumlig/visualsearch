@@ -92,13 +92,13 @@ class SearchEnv(gym.Env):
                     continue
                 
                 if px <= tx and tx < px + vw and py <= ty and ty < py + vh:
-                    r += 100
+                    r += 10
                     self.targets[i] = (ty, tx, True)
 
         d = all(hit for _, _, hit in self.targets)
 
         if d:
-            r += 500
+            r += 100
 
         r -= 1
 

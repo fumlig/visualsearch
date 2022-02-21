@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
+
 import argparse
 import os
 import random
-from re import A
 import time
 from distutils.util import strtobool
 from collections import deque
@@ -36,6 +37,7 @@ def make_env(gym_id, seed, idx, capture_video, run_name):
         env = gym.make(gym_id)
         env = gym.wrappers.FlattenObservation(env)
         env = gym.wrappers.RecordEpisodeStatistics(env)
+        gym.wrappers.Monitor
         if capture_video:
             if idx == 0:
                 env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
@@ -59,35 +61,20 @@ class Agent(nn.Module):
 
         num_features = gym.spaces.flatdim(envs.single_observation_space)
 
-        """
-        self.network = nn.Sequential(
-            layer_init(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh()
-        )
-
-        # todo: LSTM here
-
-        self.critic = nn.Sequential(
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 1), std=1.0),
-        )
-        self.actor = nn.Sequential(
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
-        )
-        """
         self.network = nn.Identity()
+
         self.critic = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
             nn.Tanh(),
+            layer_init(nn.Linear(64, 64)),
+            nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0),
         )
+
         self.actor = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
+            nn.Tanh(),
+            layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
         )
@@ -151,7 +138,7 @@ if __name__ == "__main__":
         help="the surrogate clipping range")
     parser.add_argument("--clip-vloss", type=lambda x: bool(strtobool(x)), default=False, nargs="?", const=True,
         help="Toggles whether or not to use a clipped loss for the value function, as per the paper.")
-    parser.add_argument("--ent-coef", type=float, default=0.1,
+    parser.add_argument("--ent-coef", type=float, default=0.01,
         help="coefficient of the entropy")
     parser.add_argument("--vf-coef", type=float, default=0.5,
         help="coefficient of the value function")
@@ -184,6 +171,7 @@ if __name__ == "__main__":
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     writer = SummaryWriter(f"logs/{run_name}")
+
     writer.add_text(
         "hyperparameters",
         "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])),
@@ -193,6 +181,14 @@ if __name__ == "__main__":
     #    agent,
     #    torch.Tensor(envs.observation_space.sample()).to(device).float(),
     #)
+
+    #writer.add_video(
+    #    "videos/test",
+    #    torch.rand((1, 16, 3, 10, 10)),
+    #    global_step=0,
+    #    fps=4
+    #)
+
 
     # buffer
     buf_shape = (args.num_steps, args.num_envs)

@@ -11,39 +11,46 @@ An \textit{active vision} system is a system that can manipulate the viewpoint o
 
 \section{Reinforcement Learning}
 
-Reinforcement learning (RL) is a subfield of machine learning concerned intelligent agents that learn to achieve some goal through interaction with their environment. An agent is conditioned to improve its behaviour through reward and punishment. In this section, some key concepts will be introduced.
+Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal. An \textit{agent} and its \textit{environment} interact continually over discrete time steps. At each time step the agent selects some \textit{action} that updates the state of the environment, and gives it a \textit{reward}. The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.
 
 \subsection{Markov Decision Process}
 
-The problem of learning from interaction to achieve a goal is usually framed as a (finite) Markov Decision Process (MDP). An \textit{agent} learns by interacting with an \textit{environment}. At each discrete time step \(t = 0, 1, 2, \dots\), the agent perceives some representation of the \textit{state} \(S_t\) of its environment. The agent selects some \textit{action} \(A_t\) to execute, and one timestep later receives a reward \(R_{t+1}\) as well as a representation of the new environment state \(S_{t+1}\). This continues until the final time step \(T\) which is the end of the \textit{episode}. The goal of the agent is to maximize the \textit{discounted return}, defined as \(G_t \doteq \sum_{k=t+1}^T \gamma^{k-t-1} R_{k}\) for some \(\gamma \in [0, 1]\) that reflects the uncertainty of the environment.   
+The RL setup is usually formalized as a (finite) Markov decision process (MDP).
 
-In some cases the agent can not perceive the underlying state of the environment. Instead, at each time step \(t\) the agent perceives a partial \textit{observation} \(O_t\). The environment is assumed to have some well defined underlying \textit{latent state} that that is not available to the agent. Assuming that the underlying process dynamics are still determined by an MDP this is referred to as a partially observable Markov decision process (POMDP). A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{R}, \mathcal{T}, \Omega, \gamma \rangle\), where
+The problem of learning from interaction to achieve a goal is usually framed as a (finite) Markov Decision Process (MDP). For regular MDPs it is assumed that the learning agent has access to some representation of the underlying \textit{state} of the environment which it uses to select \textit{actions}. For many problems this is not true. A partially observable Markov decision process (POMDP) is a generalization of an MDP in which it is assumed that the environment has some well defined underlying latent state, but the agent only perceives a partial \textit{observation} of it from the environment. 
+
+A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{R}, \mathcal{T}, \Omega, \gamma \rangle\), where
 
 \begin{itemize}
-    \item \(\mathcal{S} = \{ s_1, s_2, \dots, s_n \}\) is a set of states,
-    \item \(\mathcal{A} = \{ a_1, a_2, \dots, a_m \}\) is a set of actions,
-    \item \(\mathcal{O}\) is a set of conditional observation probabilities \(\mathcal{O}(o | s^\prime, a)\),
+    \item \(\mathcal{S}\) is a finite set of states,
+    \item \(\mathcal{A}\) is a finite set of actions,
+    \item \(\mathcal{T}\) is a set of conditional state transition probabilities,
     \item \(\mathcal{R} : S \times A \rightarrow \mathbb{R}\) is a reward function,
-    \item \(\mathcal{T}\) is a set of conditional state transition probabilities \(\mathcal{T}(s^\prime | s, a)\),
-    \item \(\Omega = \{ o_1, o_2, \dots, o_k \}\) is a set of observations, and
+    \item \(\Omega\) is a finite set of observations,
+    \item \(\mathcal{O}\) is a set of conditional observation probabilities, and
     \item \(\gamma \in [0, 1]\) is a discount factor.
 \end{itemize}
 
-%An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
-
 \begin{figure}
     \centering
-    \begin{tikzpicture}[node distance=2cm]
-        \tikzstyle{block} = [rectangle,minimum width=3cm,minimum height=1cm,text centered,draw=black,fill=white]
-        \node (agent)[block]{Agent};
-        \node (environment)[block,below of=agent]{Environment};
-        \draw [->] (agent.east) -- ++(1cm,0) -- node [anchor=west]{action \(A_t\)} ++(0,-2cm) -- (environment.east);
-        \draw [->] (environment.north) -- node [anchor=west]{reward \(R_t\)} (agent.south);
-        \draw [->] (environment.west) -- ++(-1cm,0) -- node [anchor=east]{observation \(O_t\)} ++(0,+2cm) -- (agent.west);
-    \end{tikzpicture}
+    \input{figures/pomdp}
     \label{fig:pomdp}
     \caption{Partially observable Markov decision process.}
 \end{figure}
+
+The agent interacts with the environment at discrete time steps \(t = 0, 1, 2, \dots T\). At each time step \(t\), the agent receives an observation of the environment's state \(O_t \in \Omega\) and selects some action \(A_t \in \mathcal{A}\). In the next time step the agent receives a reward
+
+
+
+action \(a \in \mathcal{A}\) which causes the environment to transition to state \(s^\prime\) with probability \(\mathcal{T}(s^\prime | s, a)\).
+It receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(o | s^\prime, a)\), as well as a reward \(r\) given by \(\mathcal{R}(s, a)\).
+
+This interaction is repeated until the end of the episode at time step \(T\). The goal of the agent is to maximize the \textit{discounted return}, defined as the discounted sum of future rewards \(G_t \doteq \sum_{k=t+1}^T \gamma^{k-t-1} R_{k}\) where \(\gamma\) reflects the uncertainty of the environment.
+
+
+%An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
+
+
 
 \subsection{Policies and Value Functions}
 

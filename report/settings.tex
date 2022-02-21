@@ -5,11 +5,12 @@
 %\setmainfont [Scale=1]{Georgia}
 \fi
 
-%%%%%%%%%%%%
-%% The VZ43 chapter style, from Memoir contributed chapter styles: ftp://ftp.tex.ac.uk/ctan%3A/info/MemoirChapStyles/MemoirChapStyles.pdf
-%%%%%%%%%%%
-
 \usepackage{calc,color}
+
+\usepackage{tikz}
+
+\setcounter{secnumdepth}{3}
+
 \newif\ifNoChapNumber
 \newcommand\Vlines{%
 \def\VL{\rule[-2cm]{1pt}{5cm}\hspace{1mm}\relax}
@@ -38,13 +39,6 @@
 }
 \makeatother
 
-
-%% To set bibliography options, refer to the biblatex manual and use
-%% the ExecuteBibliographyOptions command below to set your options
-
 \ExecuteBibliographyOptions{maxnames=99}
-
-
-%% Change this to your appropriate BibTeX reference file (.bib)
 
 \addbibresource{references.bib}

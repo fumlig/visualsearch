@@ -16,6 +16,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 import gym_search
 
+# sb3 uses [dict(pi=[64, 64], vf=[64, 64])]
+# and Tanh activation function
+# Tanh seems to work better?
+
 """
 todo: 
 - clean up
@@ -55,29 +59,44 @@ class Agent(nn.Module):
 
         num_features = gym.spaces.flatdim(envs.single_observation_space)
 
+        """
         self.network = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
-            nn.ReLU(),
+            nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
-            nn.ReLU()
+            nn.Tanh()
         )
+
+        # todo: LSTM here
 
         self.critic = nn.Sequential(
             layer_init(nn.Linear(64, 64)),
-            nn.ReLU(),
+            nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0),
         )
         self.actor = nn.Sequential(
             layer_init(nn.Linear(64, 64)),
-            nn.ReLU(),
+            nn.Tanh(),
+            layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
+        )
+        """
+        self.network = nn.Identity()
+        self.critic = nn.Sequential(
+            layer_init(nn.Linear(num_features, 64)),
+            nn.Tanh(),
+            layer_init(nn.Linear(64, 1), std=1.0),
+        )
+        self.actor = nn.Sequential(
+            layer_init(nn.Linear(num_features, 64)),
+            nn.Tanh(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
         )
 
     def forward(self, x):
         y = self.network(x)
         pi = self.policy(y)
-        v = self.value(y)
-        return pi, v
+        vf = self.value(y)
+        return pi, vf
 
     def policy(self, y):
         logits = self.actor(y)
@@ -85,15 +104,8 @@ class Agent(nn.Module):
         return pi
 
     def value(self, y):
-        v = self.critic(y)
-        return v
-
-
-def learn(
-    envs,
-    total_timesteps: int = 2000000,
-):
-    pass
+        vf = self.critic(y)
+        return vf
 
 
 if __name__ == "__main__":
@@ -183,12 +195,14 @@ if __name__ == "__main__":
     #)
 
     # buffer
-    obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
-    actions = torch.zeros((args.num_steps, args.num_envs) + envs.single_action_space.shape).to(device)
-    logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
-    rewards = torch.zeros((args.num_steps, args.num_envs)).to(device)
-    dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
-    values = torch.zeros((args.num_steps, args.num_envs)).to(device)
+    buf_shape = (args.num_steps, args.num_envs)
+
+    obs = torch.zeros(buf_shape + envs.single_observation_space.shape).to(device)
+    actions = torch.zeros(buf_shape + envs.single_action_space.shape).to(device)
+    logprobs = torch.zeros(buf_shape).to(device)
+    rewards = torch.zeros(buf_shape).to(device)
+    dones = torch.zeros(buf_shape).to(device)
+    values = torch.zeros(buf_shape).to(device)
 
     # initialize
     global_step = 0

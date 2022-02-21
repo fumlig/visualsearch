@@ -6,23 +6,20 @@ In this thesis project, the problem of searching for targets in unknown environm
 \section{Motivation}
 \label{sec:motivation}
 
-Searching for targets (objects of interest, goals) in unknown environments is a well-studied problem that appears in many areas from robotics~\cite{}, computer vision~\cite{}. Applications 
+Searching for targets (objects of interest, goals) in unknown environments is a well-studied problem that appears in many areas ranging from robotics~\cite{} to computer vision~\cite{}. Applications include search and rescue, ... The problem shares many characteristics with the well-studied traveling salesperson problem with the difference that the locations of waypoints are not initially known. These have to be discovered through interaction with the environment.  
 
-In this project, an instance of this problem is considered where a pan-tilt-zoom camera is fixed in place, and used to scan an environment for target objects. Automating this task is of interest for multiple reasons
+This is similar to the exploration problem, where a robot is tasked with maximizing the knowledge of a certain area.
 
+% also similar to search and rescue
 
-While 
+If the environment is known, this problem becomes drastically easier.
 
-This is where the studied problem is described from a general
-point of view and put in a context which makes it clear that
-it is interesting and well worth studying. The aim is to make
-the reader interested in the work and create an urge to
-continue reading.
+In this project, an instance of the target search problem is considered where the environment is searched by a pan-tilt camera fixed in place. The camera has a limited view of the environent. Automating this task is of interest for multiple reasons. Manually controlling a camera may be costly, and the performance of a human operator may be suboptimal. Crucial to the problem is generalization.
 
 \section{Aim}
 \label{sec:aim}
 
-The aim of this thesis is to implement an autonomous agent that intelligently searches its environment for targets. Ideally, the agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively.
+The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively. 
 
 \section{Research questions}
 \label{sec:research-questions}
@@ -31,7 +28,7 @@ This thesis will address the following questions:
 
 \begin{enumerate}
   \item How can the visual search problem be solved by a learning agent?
-  \item How can a simulator that tests the ability of an agent to solve  the presented problem be implemented?
+  \item How can a simulator that tests the ability of an agent to solve the presented problem be implemented?
   \item How does the learning agent compare to common non-learning methods?
 \end{enumerate}
 

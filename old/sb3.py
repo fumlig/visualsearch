@@ -55,12 +55,12 @@ class CombinedExtractor(BaseFeaturesExtractor):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str)
-parser.add_argument("-p", "--policy", type=str, choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MultiInputPolicy")
+parser.add_argument("-p", "--policy", type=str, choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MlpPolicy")
 parser.add_argument("-l", "--logs", type=str, default="logs")
 
 args = parser.parse_args()
-env = make_vec_env(args.env, n_envs=8)#, wrapper_class=gym.wrappers.FlattenObservation)
-name = f"ppo-{args.policy.lower()}-{datetime.datetime.now().isoformat()}"
+env = make_vec_env(args.env, n_envs=8, wrapper_class=gym.wrappers.FlattenObservation)
+name = f"sb3-flattened-mlp-{datetime.datetime.now().isoformat()}"
 
 checkpoint_callback = CheckpointCallback(save_freq=100000, save_path=args.logs, name_prefix='ckpt')
 
@@ -69,7 +69,7 @@ policy_kwargs = dict(
     features_extractor_kwargs=dict()
 )
 
-model = PPO(args.policy, env, verbose=1, tensorboard_log=args.logs, ent_coef=0.01, policy_kwargs=policy_kwargs)
+model = PPO(args.policy, env, verbose=1, tensorboard_log=args.logs, ent_coef=0.01)#, policy_kwargs=policy_kwargs)
 model.learn(total_timesteps=int(50e6), tb_log_name=name, callback=checkpoint_callback)
 model.save(name)
 """

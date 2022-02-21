@@ -1,0 +1,7 @@
+- Is there some faulty reasoning present?
+- If we have a simulator, we have access to an environment distribution.
+- Can we simply use this to make an agent?
+- We can for example pick levels from the training set and move to the locations where targets were found in them.
+- This does not work in general as there might be unseen environments where targets are far away.
+- We can use the generator rules to determine areas but this is intractable in many cases.
+- Furthermore, environments might not be generated from some known rule but collected from real-world.

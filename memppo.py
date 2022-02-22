@@ -20,27 +20,6 @@ from tqdm import tqdm
 import gym
 import gym_search
 
-# sb3 uses [dict(pi=[64, 64], vf=[64, 64])]
-# and Tanh activation function
-# Tanh seems to work better?
-
-# try async
-# clean up
-# make different agents
-# shared network
-# no shared network
-# shared network with LSTM
-# CNN with richer image?
-
-"""
-todo: 
-- clean up
-- make some good structure for CNNs, LSTMs, etc...
-- for example, one network class, one actor class, one critic class?
-- or just have duplicated code...
-- move arguments to function arguments, parse args as dictionary
-- can store hyperparams by calling locals()
-"""
 
 def make_env(id, seed, idx):
     def thunk():
@@ -62,13 +41,11 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
     return layer
 
 
-class ActorCritic(nn.Module):
+class Agent(nn.Module):
     def __init__(self, envs):
-        super(ActorCritic, self).__init__()
+        super(Agent, self).__init__()
 
         num_features = gym.spaces.flatdim(envs.single_observation_space)
-
-        #self.network = nn.Identity()
 
         self.network = nn.Sequential(
             layer_init(nn.Linear(num_features, 64)),
@@ -77,23 +54,44 @@ class ActorCritic(nn.Module):
             nn.Tanh(),
         )
 
+        self.memory = nn.LSTM(64, 64)
+
+        for name, param in self.memory.named_parameters():
+            if "bias" in name:
+                nn.init.constant_(param, 0)
+            elif "weight" in name:
+                nn.init.orthogonal_(param, 1.0)
         self.critic = nn.Sequential(
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0)
         )
 
         self.actor = nn.Sequential(
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01)
         )
 
-    def forward(self, x):
+    def forward(self, x, hidden, done):
         y = self.network(x)
-        pi = self.policy(y)
-        vf = self.value(y)
-        return pi, vf
+
+        # LSTM logic
+        batch_size = hidden[0].shape[1]
+        y = y.reshape((-1, batch_size, self.memory.input_size))
+        done = done.reshape((-1, batch_size))
+        new_out = []
+        for out, d in zip(y, done):
+            out, hidden = self.memory(
+                out.unsqueeze(0),
+                (
+                    (1.0 - d).view(1, -1, 1) * hidden[0],
+                    (1.0 - d).view(1, -1, 1) * hidden[1],
+                ),
+            )
+            new_out += [out]
+        
+        z = torch.flatten(torch.cat(new_out), 0, 1)
+
+        pi = self.policy(z)
+        vf = self.value(z)
+        return pi, vf, hidden
 
     def policy(self, y):
         logits = self.actor(y)
@@ -155,7 +153,7 @@ if __name__ == "__main__":
     #envs = gym.wrappers.NormalizeReward(envs) # todo: not sure where this should be
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
-    agent = ActorCritic(envs).to(device)
+    agent = Agent(envs).to(device)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     writer = SummaryWriter(f"logs/{name}")
@@ -194,6 +192,13 @@ if __name__ == "__main__":
     start_time = time.time()
     next_obs = torch.Tensor(envs.reset()).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
+    
+    hidden_shape = (agent.memory.num_layers, args.num_envs, agent.memory.hidden_size)
+    next_hidden = (
+        torch.zeros(hidden_shape).to(device),
+        torch.zeros(hidden_shape).to(device),
+    )
+
     num_updates = args.num_timesteps // args.batch_size
 
     episode_info = deque(maxlen=args.num_envs*10) # todo: parametrize/make higher?
@@ -201,6 +206,8 @@ if __name__ == "__main__":
     pbar = tqdm(total=args.num_timesteps)
 
     for update in range(1, num_updates + 1):
+        initial_hidden = (next_hidden[0].clone(), next_hidden[1].clone())
+
         # lr annealing (todo: use pytorch builtins?)
         if args.anneal_lr:
             frac = 1.0 - (update - 1.0) / num_updates
@@ -209,16 +216,17 @@ if __name__ == "__main__":
 
         # rollout
         for step in range(0, args.num_steps):
-            global_step += 1 * args.num_envs
+            global_step += args.num_envs
 
             obs[step] = next_obs
             dones[step] = next_done
 
             # query agent
             with torch.no_grad():
-                pi, value = agent(next_obs)
-                action = pi.sample()
-                logprob = pi.log_prob(action)
+                pi, value, next_hidden = agent(next_obs, next_hidden, next_done)
+                
+            action = pi.sample()
+            logprob = pi.log_prob(action)
             
             values[step] = value.flatten()
             actions[step] = action
@@ -243,7 +251,7 @@ if __name__ == "__main__":
 
         # bootstrap value if not done
         with torch.no_grad():
-            _, next_value = agent(next_obs)
+            _, next_value, _ = agent(next_obs, next_hidden, next_done)
             next_value = next_value.reshape(1, -1)
             if args.gae:
                 advantages = torch.zeros_like(rewards).to(device)
@@ -276,27 +284,34 @@ if __name__ == "__main__":
         b_obs = obs.reshape((-1,) + envs.single_observation_space.shape)
         b_logprobs = logprobs.reshape(-1)
         b_actions = actions.reshape((-1,) + envs.single_action_space.shape)
+        b_dones = dones.reshape(-1)
         b_advantages = advantages.reshape(-1)
         b_returns = returns.reshape(-1)
         b_values = values.reshape(-1)
 
         # update policy on batch
-        b_inds = np.arange(args.batch_size)
+        assert args.num_envs % args.num_minibatches == 0
+
+        envs_per_batch = args.num_envs // args.num_minibatches
+        env_inds = np.arange(args.num_envs)
+        flat_inds = np.arange(args.batch_size).reshape(args.num_steps, args.num_envs)
         clipfracs = []
+
         for epoch in range(args.update_epochs):
             # random batch order
-            np.random.shuffle(b_inds)
+            np.random.shuffle(env_inds)
 
             # do it in minibatches
-            for start in range(0, args.batch_size, args.minibatch_size):
-                end = start + args.minibatch_size
-                mb_inds = b_inds[start:end]
+            for start in range(0, args.num_envs, envs_per_batch):
+                
+                end = start + envs_per_batch
+                mb_env_inds = env_inds[start:end]
+                mb_inds = flat_inds[:, mb_env_inds].ravel()  # be really careful about the index
 
-                pi, newvalue = agent(b_obs[mb_inds])
+                pi, newvalue, _ = agent(b_obs[mb_inds], (initial_hidden[0][:, mb_env_inds], initial_hidden[1][:, mb_env_inds]), b_dones[mb_inds])
                 action = b_actions.long()[mb_inds]
                 newlogprob = pi.log_prob(action)
                 entropy = pi.entropy()
-
                 
                 logratio = newlogprob - b_logprobs[mb_inds]
                 ratio = logratio.exp()

@@ -5,8 +5,7 @@ import argparse
 import torch as th
 import torch.nn as nn
 
-from stable_baselines3 import PPO, A2C, DQN
-from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
+from ppo import Agent
 
 import gym_search
 
@@ -14,20 +13,22 @@ import gym_search
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str)
 parser.add_argument("model", type=str)
-parser.add_argument("-r", "--record", action="store_true")
-parser.add_argument("-v", "--videos", type=str, default="videos")
+parser.add_argument("--num-envs", type=int, default=8)
 args = parser.parse_args()
 
-env = DummyVecEnv([lambda: gym.make(args.env)])
 
-if args.record:
-    env = VecVideoRecorder(env, args.videos, record_video_trigger=lambda s: s == 0) 
-
-model = PPO.load(args.model, env=env)
-
+#envs = gym.vector.make(args.env, args.num_envs, asynchronous=False, wrappers=[gym.wrappers.FlattenObservation])
+env = gym.wrappers.FlattenObservation(gym.make(args.env))
+device = th.device("cuda" if th.cuda.is_available() else "cpu")
+agent = th.load(args.model).to(device)
 obs = env.reset()
 
+agent.eval()
+
 while True:
-    action, _states = model.predict(obs)
-    obs, rewards, dones, info = env.step(action)
+    with th.no_grad():
+        pi, vf = agent(th.Tensor(obs).to(device))
+        act = pi.sample().item()
+    
+    obs, rew, done, info = env.step(act)
     env.render()

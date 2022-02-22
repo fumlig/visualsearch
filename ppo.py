@@ -170,6 +170,8 @@ if __name__ == "__main__":
     agent = Agent(envs).to(device)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
+    torch.save(agent, "initial.pt")
+
     writer = SummaryWriter(f"logs/{run_name}")
 
     writer.add_text(
@@ -377,3 +379,5 @@ if __name__ == "__main__":
 
     envs.close()
     writer.close()
+
+    torch.save(agent, "final.pt")

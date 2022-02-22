@@ -69,7 +69,7 @@ policy_kwargs = dict(
     features_extractor_kwargs=dict()
 )
 
-model = PPO(args.policy, env, verbose=1, tensorboard_log=args.logs, ent_coef=0.01)#, policy_kwargs=policy_kwargs)
+model = PPO(args.policy, env, verbose=1, tensorboard_log=args.logs, ent_coef=0.1)#, policy_kwargs=policy_kwargs)
 model.learn(total_timesteps=int(50e6), tb_log_name=name, callback=checkpoint_callback)
 model.save(name)
 """

@@ -26,9 +26,13 @@ obs = env.reset()
 agent.eval()
 
 while True:
+    env.render()
+
     with th.no_grad():
         pi, vf = agent(th.Tensor(obs).to(device))
         act = pi.sample().item()
-    
+
     obs, rew, done, info = env.step(act)
-    env.render()
+
+    if done:
+        obs = env.reset()

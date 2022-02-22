@@ -5,12 +5,11 @@ import cv2 as cv
 
 from gym.utils import seeding
 from gym_search.utils import clamp
-from gym_search.terrain import uniform_terrain
+from gym_search.terrain import default_terrain
 
 """
-Add new targets according to Poisson distribution.
+Add new targets according to Poisson distribution?
 """
-
 
 class SearchEnv(gym.Env):
 
@@ -30,7 +29,8 @@ class SearchEnv(gym.Env):
         view_shape=(5, 5), 
         step_size=1, 
         num_targets=3,
-        terrain_func=uniform_terrain,
+        terrain_func=default_terrain,
+        rew_exploration=True,
         seed=0
     ):
         self.seed(seed)
@@ -39,8 +39,9 @@ class SearchEnv(gym.Env):
         self.step_size = step_size
         self.num_targets = num_targets
         self.terrain_func = terrain_func
+        self.rew_exploration = rew_exploration
 
-        self.reward_range = (-1, 1)
+        self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
             img=gym.spaces.Box(0, 1, (*self.view_shape, 3)),
@@ -54,6 +55,7 @@ class SearchEnv(gym.Env):
         
         self.terrain = self.terrain_func(self.world_shape, self.random)
         self.position = (self.random.randint(0, wh-vh+1), self.random.randint(0, ww-vw+1)) 
+        self.visited = np.full(self.world_shape, False)
 
         p = self.terrain.flatten()/np.sum(self.terrain)
         t = self.random.choice(self.terrain.size, self.num_targets, replace=False, p=p)
@@ -81,8 +83,12 @@ class SearchEnv(gym.Env):
 
         r = 0
 
-        if action == self.Action.TRIGGER:
+        if self.rew_exploration and not self.visited[self.position]:
+            r += 1
+        
+        self.visited[self.position] = True
 
+        if action == self.Action.TRIGGER:
             r -= 5
 
             for i, t in enumerate(self.targets):
@@ -106,7 +112,7 @@ class SearchEnv(gym.Env):
 
     def render(self, mode="rgb_array", observe=False):
         if observe:
-            img = self.observe()
+            img = self.observe()["img"]
         else:
             vh, vw = self.view_shape
             y0, x0 = self.position
@@ -161,4 +167,13 @@ class SearchEnv(gym.Env):
     
     def get_action_meanings(self):
         return [a.name for a in self.Action]
+    
+    def get_keys_to_action(self):
+        return {
+            (ord(" "),): self.Action.TRIGGER,
+            (ord("w"),): self.Action.NORTH,
+            (ord("d"),): self.Action.EAST,
+            (ord("s"),): self.Action.SOUTH,
+            (ord("a"),): self.Action.WEST,
+        }
 

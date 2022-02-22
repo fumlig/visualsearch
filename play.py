@@ -3,6 +3,7 @@
 
 import argparse
 import cv2 as cv
+import numpy as np
 import gym
 import gym_search
 
@@ -28,7 +29,10 @@ cv.namedWindow(args.env, cv.WINDOW_AUTOSIZE)
 
 while cv.getWindowProperty(args.env, cv.WND_PROP_VISIBLE) > 0:
     img = env.render(mode="rgb_array", observe=args.observe)
-    
+
+    if args.observe:
+        img = (img*255).astype(dtype=np.uint8)
+
     img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 

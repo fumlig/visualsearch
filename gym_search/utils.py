@@ -1,5 +1,5 @@
 import numpy as np
-
+import gym
 
 def to_point(i, w):
     return (i//w, i%w)
@@ -53,3 +53,4 @@ def gaussian_kernel(size, sigma=1):
     gauss = np.exp(-0.5 * np.square(ax) / np.square(sigma))
     kernel = np.outer(gauss, gauss)
     return kernel / np.sum(kernel)
+    

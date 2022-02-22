@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv
-from gym_search.utils import gaussian_kernel
+from gym_search.utils import gaussian_kernel, softmax
 
 
 def uniform_terrain(shape, random, c=1.0):
@@ -28,3 +28,10 @@ def check_terrain(terrain):
 
 def normalize_terrain(terrain):
     return terrain * 1.0/terrain.max()
+
+def default_terrain(shape, random):
+    terrain = gaussian_terrain(shape, random, 40, sigma=5, n=10)
+    noise = np.random.uniform(0.0, 0.2, shape)
+    terrain += noise
+    terrain = normalize_terrain(terrain)
+    return terrain

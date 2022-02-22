@@ -5,9 +5,11 @@ This chapter introduces relevant theory and related work
 
 \section{Active Vision and Visual Search}
 
-An \textit{active vision} system is a system that can manipulate the viewpoint of the camera in order to investigate the environment and get better information from it.
+Much of current research in computer vision studies problems with passive observers where images are passively sampled. The problem considered in this project contains an \textit{active vision}~\cite{aloimonos_active_1988} system. The observer (agent) can manipulate the viewpoint of the camera in order to investigate the environment and get better information from it. This closer to human perceptual activity which is exploring and searching. A study of basic problems of vision shows that active vision systems have several computational advantages over passive ones for common perceptual tasks~\cite{aloimonos_active_1988}. % relevant?
 
-Studies in humans have shown that
+Visual search is a perceptual task which involves seeking out targets among distractors. Search efficiency is measured by the rate at which targets are found.
+
+Interestingly, studies in humans have shown
 
 \begin{itemize}
     \item We do not use memory during visual search
@@ -73,6 +75,10 @@ This work will focus on policy optimization algorithms.
     \item Model-free vs. model-based
     \item 
 \end{itemize}
+
+\subsection{Exploration and Exploitation}
+
+% Go into motivation if we use this
 
 \subsection{Generalization}
 

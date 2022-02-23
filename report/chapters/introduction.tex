@@ -8,26 +8,34 @@ In this thesis project, the problem of searching for targets in unknown but fami
 \section{Motivation}
 \label{sec:motivation}
 
-Searching for targets (objects of interest, goals) in unknown environments is a well-studied problem that appears in many areas ranging from robotics~\cite{} to computer vision~\cite{} and neuroscience~\cite{}. Applications include search and rescue, 
+% general problem
+Efficiently search for targets (objects of interest, goals) is an essential skill for interacting with the world. Humans and animals look for things.
 
-In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
+% neuroscience
+The problem has been studied continually under the name \textit{visual search} in neuroscience and neurobiology since YYYY. 
+% no automation
 
-% familiarity effect? Target familiarity and visual working memory do not influence familiarity effect in visual search
+% computer vision
+In computer vision, a similar problem is studied under the name \textit{object localization}
+% randomly sampled, no active aspect
 
-This is similar to the exploration problem, where a robot is tasked with maximizing the knowledge of a certain area.
+% details our setup
+In many real-world scenarios, the characteristics of the searched environment can be used to find targets quicker. For example, if one is to find an apple in a kitchen it makes sense to search the countertops for a fruit bowl. Similarly, ....
 
-% difference to eyes: camera can not move instantly (we only have head movements)
+The exact characteristics of the environment need not be constant - for every kitchen is some prior knowledge we can use to find targets in it quicker. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
 
-% also similar to search and rescue
+% why automate
+It is of great interest to learn how to automate visual search. Applications range from search and rescue to ...
 
-If the environment is known, this problem becomes drastically easier.
-
-In this project, an instance of the target search problem is considered where the environment is searched by a pan-tilt camera fixed in place. The camera has a limited view of the environent. Automating this task is of interest for multiple reasons. Manually controlling a camera may be costly, and the performance of a human operator may be suboptimal. Crucial to the problem is generalization.
 
 \section{Aim}
 \label{sec:aim}
 
-The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively. 
+% what will be done
+The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively.
+
+% how it will be done
+A specific instance of the visual search problem is considered, where the environment is searched by a pan-tilt camera fixed in place. The camera has a limited view of the environent. Automating this task is of interest for multiple reasons. Manually controlling a camera may be costly, and the performance of a human operator may be suboptimal. Crucial to the problem is generalization.
 
 \section{Research questions}
 \label{sec:research-questions}
@@ -37,10 +45,23 @@ This thesis will address the following questions:
 \begin{enumerate}
   \item How can the visual search problem be solved by a learning agent?
   \item How can a simulator that tests the ability of an agent to solve the presented problem be implemented?
+  \item How can a learning agent generalize to unseen but familiar environments?
   \item How does the learning agent compare to common non-learning methods?
 \end{enumerate}
+
+% think about measurements
+% maybe don't have one for environment
+% is a non-learning method feasible (which algorithms to use? depends on environment)
+% i.e. what happens if target appearance is drawn from a distribution? can a rule based agent solve the problem?
 
 \section{Delimitations}
 \label{sec:delimitations}
 
 This thesis will be focused on the behavioural aspects of the presented problem. To train and test agents, a simplified environment will be used. This will test the desired characteristics of the agent as presented above, but will not simulate realistic environments.
+
+Object detection is not the primary focus of the project, ie. problems related to variability in target appearance are not considered (lightning, differing viewpoints, presence of obscuring objects, sensor noise, etc.).
+
+% Do we assume that we know when we are looking at a target?
+% Oddity search...
+
+% Having a variable number of targets becomes problematic: an exhaustive search of the environment is necessary for the agent to know for certain if it is done.

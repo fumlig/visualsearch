@@ -3,11 +3,33 @@
 
 This chapter introduces relevant theory and related work 
 
-\section{Active Vision and Visual Search}
+\section{Visual Search}
 
-Much of current research in computer vision studies problems with passive observers where images are passively sampled. The problem considered in this project contains an \textit{active vision}~\cite{aloimonos_active_1988} system. The observer (agent) can manipulate the viewpoint of the camera in order to investigate the environment and get better information from it. This closer to human perceptual activity which is exploring and searching. A study of basic problems of vision shows that active vision systems have several computational advantages over passive ones for common perceptual tasks~\cite{aloimonos_active_1988}. % relevant?
+% describe how animal vision translates to camera vision?
 
-Visual search is a perceptual task which involves seeking out targets among distractors. Search efficiency is measured by the rate at which targets are found.
+Visual search is a perceptual task which involves seeking out targets among distractors. Eckstein (2011)~\cite{eckstein_visual_2011} identifies four factors that limit performance of visual search in animals:
+
+\begin{itemize}
+    \item Foveated vision.
+    \item Variability in visual environment and uncertainty about target parameters.
+    \item Stochasticity of neural processing.
+    \item Limitations of covert attention and memory.
+\end{itemize}
+
+The brain utilizes a set of strategies to optimize visual search performance:
+
+\begin{itemize}
+    \item Calculation of the visibility of different regions (saliency).
+    \item Knowledge about the visual properties of the environment, including targets, distractors and noise.
+\end{itemize}
+
+There are a set of statistical regularities that reduce uncertainty of the target location:
+
+\begin{itemize}
+    \item Target probabilities varying across locations and predictive cues.
+    \item Contextual cuing
+\end{itemize}
+
 
 Interestingly, studies in humans have shown
 
@@ -17,6 +39,10 @@ Interestingly, studies in humans have shown
 \end{itemize}
 
 % https://www.nature.com/articles/s41598-021-86669-2
+
+\subsection{Active Vision}
+
+Much of current research in computer vision studies problems with passive observers where images are passively sampled. The problem considered in this project contains an \textit{active vision}~\cite{aloimonos_active_1988} system. The observer (agent) can manipulate the viewpoint of the camera in order to investigate the environment and get better information from it. This closer to human perceptual activity which is both exploring and searching. A study of basic problems of vision shows that active vision systems have several computational advantages over passive ones for common perceptual tasks~\cite{aloimonos_active_1988}. % relevant?
 
 \section{Reinforcement Learning}
 
@@ -59,7 +85,7 @@ This interaction is repeated until the end of the episode at time step \(T\). Th
 
 %An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
 
-
+Planning in a POMDP is undecidable, and solving them is often computationally intractable. Approximate solutions are more common.
 
 \subsection{Policies and Value Functions}
 
@@ -80,6 +106,9 @@ This work will focus on policy optimization algorithms.
 
 % Go into motivation if we use this
 
+% Custom rewards are often needed
+% intrinsic?
+
 \subsection{Generalization}
 
 % reality is dynamic
@@ -89,3 +118,7 @@ This work will focus on policy optimization algorithms.
 
 % refer to survey
 % specifically IID (train_dist = test_dist) and OOD environments (train_dist != test_dist)
+
+% how do they handle training and test set?
+
+Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 

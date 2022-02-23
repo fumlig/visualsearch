@@ -6,7 +6,6 @@ import random
 import time
 import datetime
 from distutils.util import strtobool
-from collections import deque
 
 import numpy as np
 import torch
@@ -61,6 +60,7 @@ class Agent(nn.Module):
                 nn.init.constant_(param, 0)
             elif "weight" in name:
                 nn.init.orthogonal_(param, 1.0)
+        
         self.critic = nn.Sequential(
             layer_init(nn.Linear(64, 1), std=1.0)
         )
@@ -126,7 +126,9 @@ if __name__ == "__main__":
     parser.add_argument("--update-epochs", type=int, default=3, help="the K epochs to update the policy")
     parser.add_argument("--norm-adv", type=lambda x: bool(strtobool(x)), default=True, help="Toggles advantages normalization")
     parser.add_argument("--clip-range", type=float, default=0.2, help="the surrogate clipping range")
-    parser.add_argument("--clip-vloss", type=lambda x: bool(strtobool(x)), default=False, help="Toggles whether or not to use a clipped loss for the value function, as per the paper.")
+    parser.add_argument("--clip-vloss", type=lambda x: bool(strtobool(x)), default=True, help="Toggles whether or not to use a clipped loss for the value function, as per the paper.") 
+    # note! clip vloss should probably be set when networks are shared
+    # stated in paper https://arxiv.org/pdf/1707.06347.pdf, eq. (9)
     parser.add_argument("--ent-coef", type=float, default=0.01, help="coefficient of the entropy")
     parser.add_argument("--vf-coef", type=float, default=0.5, help="coefficient of the value function")
     parser.add_argument("--max-grad-norm", type=float, default=0.5, help="the maximum norm for the gradient clipping")
@@ -201,8 +203,6 @@ if __name__ == "__main__":
 
     num_updates = args.num_timesteps // args.batch_size
 
-    episode_info = deque(maxlen=args.num_envs*10) # todo: parametrize/make higher?
-
     pbar = tqdm(total=args.num_timesteps)
 
     for update in range(1, num_updates + 1):
@@ -245,8 +245,6 @@ if __name__ == "__main__":
 
                     writer.add_scalar("charts/ep_rew", episode_r, global_step)
                     writer.add_scalar("charts/ep_len", episode_l, global_step)
-
-                    episode_info.append(i["episode"])
                     break
 
         # bootstrap value if not done
@@ -375,18 +373,6 @@ if __name__ == "__main__":
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
-
-        if episode_info:
-            mean_r = np.mean(np.array([e["r"] for e in episode_info]))
-            mean_l = np.mean(np.array([e["l"] for e in episode_info]))
-
-            writer.add_scalar("charts/ep_rew_mean", mean_r, global_step)
-            writer.add_scalar("charts/ep_len_mean", mean_l, global_step)
-
-            pbar.set_postfix({
-                "ep_rew_mean": mean_r,
-                "ep_len_mean": mean_l
-            })
 
         pbar.update(global_step - pbar.n)
 

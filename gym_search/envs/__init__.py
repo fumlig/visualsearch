@@ -38,3 +38,12 @@ gym.register(
         terrain_func=lambda s, r: gaussian_terrain(s, r, 40, sigma=5, n=10),
     )
 )
+
+gym.register(
+    id="SearchSparseUnlimited-v0",
+    entry_point=SearchEnv,
+    kwargs=dict(
+        num_targets=3,
+        terrain_func=lambda s, r: gaussian_terrain(s, r, 40, sigma=5, n=10),
+    )
+)

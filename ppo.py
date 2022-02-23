@@ -6,7 +6,6 @@ import random
 import time
 import datetime
 from distutils.util import strtobool
-from collections import deque
 
 import numpy as np
 import torch
@@ -20,27 +19,6 @@ from tqdm import tqdm
 import gym
 import gym_search
 
-# sb3 uses [dict(pi=[64, 64], vf=[64, 64])]
-# and Tanh activation function
-# Tanh seems to work better?
-
-# try async
-# clean up
-# make different agents
-# shared network
-# no shared network
-# shared network with LSTM
-# CNN with richer image?
-
-"""
-todo: 
-- clean up
-- make some good structure for CNNs, LSTMs, etc...
-- for example, one network class, one actor class, one critic class?
-- or just have duplicated code...
-- move arguments to function arguments, parse args as dictionary
-- can store hyperparams by calling locals()
-"""
 
 def make_env(id, seed, idx):
     def thunk():
@@ -62,28 +40,32 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
     return layer
 
 
-class ActorCritic(nn.Module):
+class Agent(nn.Module):
     def __init__(self, envs):
-        super(ActorCritic, self).__init__()
+        super(Agent, self).__init__()
 
         num_features = gym.spaces.flatdim(envs.single_observation_space)
 
-        #self.network = nn.Identity()
+        self.network = nn.Identity()
 
-        self.network = nn.Sequential(
-            layer_init(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
-        )
+        #self.network = nn.Sequential(
+        #    layer_init(nn.Linear(num_features, 256)),
+        #    nn.Tanh(),
+        #    layer_init(nn.Linear(256, 64)),
+        #    nn.Tanh(),
+        #)
 
         self.critic = nn.Sequential(
+            layer_init(nn.Linear(num_features, 64)),
+            nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0)
         )
 
         self.actor = nn.Sequential(
+            layer_init(nn.Linear(num_features, 64)),
+            nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01)
@@ -113,14 +95,12 @@ if __name__ == "__main__":
 
     parser.add_argument("--learning-rate", type=float, default=5e-4, help="the learning rate of the optimizer")
     parser.add_argument("--seed", type=int, default=0, help="seed of the experiment")
-    parser.add_argument("--num-timesteps", type=int, default=int(10e6), help="total timesteps of the experiments")
-    parser.add_argument("--torch-deterministic", type=lambda x: bool(strtobool(x)), default=True, help="if toggled, `torch.backends.cudnn.deterministic=False`")
-    parser.add_argument("--cuda", type=lambda x: bool(strtobool(x)), default=True, help="if toggled, cuda will be enabled by default")
-    parser.add_argument("--capture-video", type=lambda x: bool(strtobool(x)), default=False, help="weather to capture videos of the agent performances (check out `videos` folder)")
+    parser.add_argument("--num-timesteps", type=int, default=int(10e6), help="total number of timesteps")
+    parser.add_argument("--deterministic", action="store_true", help="make torch deterministic")
 
-    parser.add_argument("--num-envs", type=int, default=64, help="the number of parallel game environments")
-    parser.add_argument("--num-steps", type=int, default=256, help="the number of steps to run in each environment per policy rollout")
-    parser.add_argument("--anneal-lr", type=lambda x: bool(strtobool(x)), default=False, help="Toggle learning rate annealing for policy and value networks")
+    parser.add_argument("--num-envs", type=int, default=64, help="number of parallel game environments")
+    parser.add_argument("--num-steps", type=int, default=64, help="number of steps to run in each environment per policy rollout") # per the PPO paper it is possible that this should be "much smaller than episode length"
+    parser.add_argument("--anneal-lr", type=lambda x: bool(strtobool(x)), default=False, help="toggle learning rate annealing for policy and value networks")
     parser.add_argument("--gae", type=lambda x: bool(strtobool(x)), default=True, help="Use GAE for advantage computation")
     parser.add_argument("--gamma", type=float, default=0.999, help="the discount factor gamma")
     parser.add_argument("--gae-lambda", type=float, default=0.95, help="the lambda for the general advantage estimation")
@@ -128,8 +108,8 @@ if __name__ == "__main__":
     parser.add_argument("--update-epochs", type=int, default=3, help="the K epochs to update the policy")
     parser.add_argument("--norm-adv", type=lambda x: bool(strtobool(x)), default=True, help="Toggles advantages normalization")
     parser.add_argument("--clip-range", type=float, default=0.2, help="the surrogate clipping range")
-    parser.add_argument("--clip-vloss", type=lambda x: bool(strtobool(x)), default=False, help="Toggles whether or not to use a clipped loss for the value function, as per the paper.")
-    parser.add_argument("--ent-coef", type=float, default=0.01, help="coefficient of the entropy")
+    parser.add_argument("--clip-vloss", type=lambda x: bool(strtobool(x)), default=False, help="Toggles whether or not to use a clipped loss for the value function, as per the paper.") # todo: only for shared
+    parser.add_argument("--ent-coef", type=float, default=0.01, help="coefficient of the entropy") # when is an entropy coefficient of zero good?
     parser.add_argument("--vf-coef", type=float, default=0.5, help="coefficient of the value function")
     parser.add_argument("--max-grad-norm", type=float, default=0.5, help="the maximum norm for the gradient clipping")
     parser.add_argument("--target-kl", type=float, default=None, help="the target KL divergence threshold")
@@ -144,9 +124,9 @@ if __name__ == "__main__":
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
-    torch.backends.cudnn.deterministic = args.torch_deterministic
+    torch.backends.cudnn.deterministic = args.deterministic
 
-    device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # env setup
     envs = gym.vector.SyncVectorEnv(
@@ -155,7 +135,7 @@ if __name__ == "__main__":
     #envs = gym.wrappers.NormalizeReward(envs) # todo: not sure where this should be
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
-    agent = ActorCritic(envs).to(device)
+    agent = Agent(envs).to(device)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     writer = SummaryWriter(f"logs/{name}")
@@ -196,8 +176,6 @@ if __name__ == "__main__":
     next_done = torch.zeros(args.num_envs).to(device)
     num_updates = args.num_timesteps // args.batch_size
 
-    episode_info = deque(maxlen=args.num_envs*10) # todo: parametrize/make higher?
-
     pbar = tqdm(total=args.num_timesteps)
 
     for update in range(1, num_updates + 1):
@@ -237,8 +215,6 @@ if __name__ == "__main__":
 
                     writer.add_scalar("charts/ep_rew", episode_r, global_step)
                     writer.add_scalar("charts/ep_len", episode_l, global_step)
-
-                    episode_info.append(i["episode"])
                     break
 
         # bootstrap value if not done
@@ -271,11 +247,11 @@ if __name__ == "__main__":
                 advantages = returns - values
 
         # todo: make rollouts cleaner
-        
+
         # flatten the batch
         b_obs = obs.reshape((-1,) + envs.single_observation_space.shape)
-        b_logprobs = logprobs.reshape(-1)
         b_actions = actions.reshape((-1,) + envs.single_action_space.shape)
+        b_logprobs = logprobs.reshape(-1)
         b_advantages = advantages.reshape(-1)
         b_returns = returns.reshape(-1)
         b_values = values.reshape(-1)
@@ -360,18 +336,6 @@ if __name__ == "__main__":
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
-
-        if episode_info:
-            mean_r = np.mean(np.array([e["r"] for e in episode_info]))
-            mean_l = np.mean(np.array([e["l"] for e in episode_info]))
-
-            writer.add_scalar("charts/ep_rew_mean", mean_r, global_step)
-            writer.add_scalar("charts/ep_len_mean", mean_l, global_step)
-
-            pbar.set_postfix({
-                "ep_rew_mean": mean_r,
-                "ep_len_mean": mean_l
-            })
 
         pbar.update(global_step - pbar.n)
 

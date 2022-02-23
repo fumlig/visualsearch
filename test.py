@@ -1,14 +1,10 @@
-import torch
-from torch.utils.tensorboard import SummaryWriter
+import torch as th
+
+import gym
+import gym_search
+
+env = gym.make("SearchSparse-v0")
+env = gym.wrappers.FlattenObservation(env)
 
 
-writer = SummaryWriter(f"logs/test")
-
-print("adding video")
-writer.add_video(
-    "videos/test",
-    torch.rand((1, 16, 3, 10, 10)),
-    global_step=0,
-    fps=4
-)
-print("adding video")
+print(env.observation_space)

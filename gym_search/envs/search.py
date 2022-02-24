@@ -23,7 +23,7 @@ class SearchEnv(gym.Env):
         self, 
         world_shape=(256, 256), 
         view_shape=(32, 32), 
-        step_size=1, 
+        step_size=32, 
         num_targets=3,
         terrain_func=uniform_terrain,
         rew_exploration=True,
@@ -55,7 +55,7 @@ class SearchEnv(gym.Env):
         vh, vw = self.view_shape
         
         self.terrain = self.terrain_func(self.world_shape, self.random)
-        self.position = (self.random.randint(0, wh-vh+1), self.random.randint(0, ww-vw+1)) 
+        self.position = (self.random.randint(0, (wh-vh+1)//self.step_size)*self.step_size, self.random.randint(0, (ww-vw+1)//self.step_size)*self.step_size) 
         self.visited = np.full(self.world_shape, False)
 
         p = self.terrain.flatten()/np.sum(self.terrain)

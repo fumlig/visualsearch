@@ -11,6 +11,10 @@ In this thesis project, the problem of searching for targets in unknown but fami
 % general problem
 Efficiently search for targets (objects of interest, goals) is an essential skill for interacting with the world. Humans and animals look for things.
 
+% https://link.springer.com/content/pdf/10.3758/s13423-020-01859-9.pdf has some good examples
+
+% time critical in some scenarious (conflict, driving a car, detecting predator)
+
 % neuroscience
 The problem has been studied continually under the name \textit{visual search} in neuroscience and neurobiology since YYYY. 
 % no automation
@@ -24,8 +28,13 @@ In many real-world scenarios, the characteristics of the searched environment ca
 
 The exact characteristics of the environment need not be constant - for every kitchen is some prior knowledge we can use to find targets in it quicker. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
 
+% should decide ratio between field of view and scene
+% small ratio: corresponds to looking at larger sceneries with a zoomed in camera (probably this)
+% high ratio: more similar to human search, a lot is seen at once but expensive to process, requires attention, foveated vision etc.
+
 % why automate
 It is of great interest to learn how to automate visual search. Applications range from search and rescue to ...
+
 
 
 \section{Aim}
@@ -43,7 +52,7 @@ A specific instance of the visual search problem is considered, where the enviro
 This thesis will address the following questions:
 
 \begin{enumerate}
-  \item How can the visual search problem be solved by a learning agent?
+  \item How can a learning agent that does efficient visual search in familiar environments be implemented?
   \item How can a simulator that tests the ability of an agent to solve the presented problem be implemented?
   \item How can a learning agent generalize to unseen but familiar environments?
   \item How does the learning agent compare to common non-learning methods?
@@ -65,3 +74,6 @@ Object detection is not the primary focus of the project, ie. problems related t
 % Oddity search...
 
 % Having a variable number of targets becomes problematic: an exhaustive search of the environment is necessary for the agent to know for certain if it is done.
+
+% Maybe we assume that we have semantic meaning sorted out
+% Can be motivated by referring to computer vision literature.

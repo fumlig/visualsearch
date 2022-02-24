@@ -6,6 +6,10 @@ This chapter introduces relevant theory and related work
 \section{Visual Search}
 
 % describe how animal vision translates to camera vision?
+% animals have a large field of view, but also require foveated vision: processing is expensive.
+% computers do not naturally have this constraint and most CV algorithms do not use foveated vision
+% (although visual attention models exist)
+
 
 Visual search is a perceptual task which involves seeking out targets among distractors. Eckstein (2011)~\cite{eckstein_visual_2011} identifies four factors that limit performance of visual search in animals:
 
@@ -39,6 +43,20 @@ Interestingly, studies in humans have shown
 \end{itemize}
 
 % https://www.nature.com/articles/s41598-021-86669-2
+
+
+% Bayesian observer: https://www.nature.com/articles/nature03390.pdf
+
+An alternative model of visual search is \textit{guided search} by Wolfe (2021). 
+% Guidance summary section
+% Scene guidance section
+% Meaning map (Henderson and Hayes, 2017): representation akin to salience map that reflects bottom-up guidance of attention.
+% To create a meaning map, scenes are divided into many small regions. Observers were asked to rate meaningfulness of each patch (an eye might be meaningful while a wall is not).
+% This forms a heatmap of meaningfulness. These have turned out to predict eye movements better than salience maps calculated for the same images  (Pedziwiatr, Wallis, Kümmerer, & Teufel, 2019).
+% Syntactic (physics of objects in the scene, toasters don't float) vs. semantic guidance (meaning of objects in the scene, toasters don't belong in the bathroom).
+
+Wolfe also presents a simulation of the model. Simulates some mechanics of the search
+
 
 \subsection{Active Vision}
 
@@ -95,12 +113,7 @@ Most RL algoerithms estimate both a \textit{value function} that tells the agent
 
 This work will focus on policy optimization algorithms.
 
-\subsection{Taxonomy of Algorithms}
-
-\begin{itemize}
-    \item Model-free vs. model-based
-    \item 
-\end{itemize}
+\subsection{Actor Critic Models}
 
 \subsection{Exploration and Exploitation}
 
@@ -122,3 +135,10 @@ This work will focus on policy optimization algorithms.
 % how do they handle training and test set?
 
 Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
+
+
+\section{Automating Visual Search}
+
+% CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
+
+% CV material: different in that the object is assumed to be visible

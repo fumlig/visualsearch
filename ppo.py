@@ -51,7 +51,7 @@ class Agent(nn.Module):
         #self.network = nn.Sequential(
         #    layer_init(nn.Linear(num_features, 256)),
         #    nn.Tanh(),
-        #    layer_init(nn.Linear(256, 64)),
+        #    layer_init(nn.Linear(256, 256)),
         #    nn.Tanh(),
         #)
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", action="store_true", help="make torch deterministic")
 
     parser.add_argument("--num-envs", type=int, default=64, help="number of parallel game environments")
-    parser.add_argument("--num-steps", type=int, default=64, help="number of steps to run in each environment per policy rollout") # per the PPO paper it is possible that this should be "much smaller than episode length"
+    parser.add_argument("--num-steps", type=int, default=256, help="number of steps to run in each environment per policy rollout") # per the PPO paper it is possible that this should be "much smaller than episode length"
     parser.add_argument("--anneal-lr", type=lambda x: bool(strtobool(x)), default=False, help="toggle learning rate annealing for policy and value networks")
     parser.add_argument("--gae", type=lambda x: bool(strtobool(x)), default=True, help="Use GAE for advantage computation")
     parser.add_argument("--gamma", type=float, default=0.999, help="the discount factor gamma")

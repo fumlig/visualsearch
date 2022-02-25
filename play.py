@@ -25,54 +25,61 @@ parser.add_argument("--agent", type=str)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--observe", action="store_true")
 parser.add_argument("--verbose", action="store_true")
+parser.add_argument("--episodes", type=int, default=100)
 
 args = parser.parse_args()
 
 env = gym.wrappers.FlattenObservation(gym.make(args.env))
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
 obs = env.reset()
-stats = defaultdict(int)
+stats = [defaultdict(int) for _ in range(args.episodes)]
 
 if args.agent is None:
     agent = None
 elif args.agent == "random":
     agent = RandomAgent(env)
 else:
-    agent = th.load(args.model).to(device)
+    agent = th.load(args.agent).to(device)
     agent.eval()
 
 cv.namedWindow(args.env, cv.WINDOW_AUTOSIZE)
 
-while cv.getWindowProperty(args.env, cv.WND_PROP_VISIBLE) > 0:
-    img = env.render(mode="rgb_array", observe=args.observe)
-
-    if args.observe:
-        img = (img*255).astype(dtype=np.uint8)
-
-    img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-
-    cv.imshow(args.env, img)
-
-    key = cv.waitKey(args.delay)
-
-    if agent is None:
-        act = env.get_keys_to_action().get((key,), 0)
-    else:
-        act = agent.predict(obs)
+for ep in range(args.episodes):
     
-    obs, rew, done, info = env.step(act)
+    done = False
 
-    stats["return"] += rew
-    stats["triggers"] += act == env.Action.TRIGGER
+    while not done:
+        img = env.render(mode="rgb_array", observe=args.observe)
+        img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
+        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        cv.imshow(args.env, img)
 
-    if args.verbose:
-        print("reward:", rew, "action:", env.get_action_meanings()[act])
+        key = cv.waitKey(args.delay)
 
-    if key == KEY_ESC:
-        break
+        if agent is None:
+            act = env.get_keys_to_action().get((key,), 0)
+        else:
+            with th.no_grad():
+                act = agent.predict(th.tensor(obs, dtype=th.float).to(device))
+        
+        obs, rew, done, info = env.step(act)
 
-    if done or key == KEY_RET:
-        print(", ".join([f"{key}: {value}" for key, value in stats.items()]))
-        obs = env.reset()
-        stats.clear()
+        if key == KEY_RET:
+            done = True
+
+        stats[ep]["steps"] += 1
+        stats[ep]["return"] += rew
+        stats[ep]["triggers"] += act == env.Action.TRIGGER
+
+        if args.verbose:
+            print("action:", env.get_action_meanings()[act], "reward:", rew)
+
+        if done:
+            print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
+            obs = env.reset()
+
+print(
+    "average return:", sum([ep["return"] for ep in stats])/len(stats),
+    "average length:", sum([ep["steps"] for ep in stats])/len(stats),
+    "average triggers:", sum([ep["triggers"] for ep in stats])/len(stats),
+)

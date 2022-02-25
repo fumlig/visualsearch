@@ -42,7 +42,7 @@ class SearchEnv(gym.Env):
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
-            t=gym.spaces.Discrete(max_steps),
+            #t=gym.spaces.Discrete(max_steps),
             img=gym.spaces.Box(0, 1, (*self.view_shape, 3)),
             pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
             #pos=gym.spaces.Box(0, 1, (2,)),
@@ -84,7 +84,7 @@ class SearchEnv(gym.Env):
 
         self.position = (py, px)
 
-        rew = 0
+        rew = -1
 
         if self.rew_exploration and not self.visited[self.position]:
             rew += 1
@@ -109,8 +109,6 @@ class SearchEnv(gym.Env):
         if done:
             rew += 100
 
-        rew -= 1
-
         obs = self.observe()
 
         self.num_steps += 1
@@ -128,12 +126,11 @@ class SearchEnv(gym.Env):
             y0, x0 = self.position
             y1, x1 = y0+vh, x0+vw
 
-            img = self.image(hidden=True)*0.5
+            img = np.ones((*self.world_shape, 3))#self.image(hidden=True)*0.5
             img[y0:y1,x0:x1] = self.image(hidden=True)[y0:y1,x0:x1]
 
-            img = img*255
-            img = img.astype(dtype=np.uint8)
-
+        img = img*255
+        img = img.astype(dtype=np.uint8)
         return img
 
 
@@ -154,7 +151,7 @@ class SearchEnv(gym.Env):
         obs = img[y0:y1,x0:x1,:]
 
         return dict(
-            t=self.num_steps,
+            #t=self.num_steps,
             img=obs,
             pos=y0*ww+x0
             #pos=np.array([y0/wh, x0/ww]),

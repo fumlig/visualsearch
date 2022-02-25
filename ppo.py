@@ -77,6 +77,13 @@ class Agent(nn.Module):
         vf = self.value(y)
         return pi, vf
 
+    def predict(self, x):
+        with torch.no_grad():
+            y = self.network(x)
+            pi = self.policy(y)
+        act = pi.sample().item()
+        return act
+
     def policy(self, y):
         logits = self.actor(y)
         pi = Categorical(logits=logits)
@@ -129,10 +136,18 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # env setup
-    envs = gym.vector.SyncVectorEnv(
-        [make_env(args.env, args.seed + i, i) for i in range(args.num_envs)]
+    #envs = gym.vector.SyncVectorEnv(
+    #    [make_env(args.env, args.seed, i) for i in range(args.num_envs)]
+    #)
+    envs = gym.vector.make(
+        args.env,
+        args.num_envs,
+        asynchronous=False,
+        wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics]
     )
-    #envs = gym.wrappers.NormalizeReward(envs) # todo: not sure where this should be
+    envs = gym.wrappers.NormalizeReward(envs)
+    envs.seed(args.seed)
+
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     agent = Agent(envs).to(device)

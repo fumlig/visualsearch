@@ -46,7 +46,6 @@ def learn(
         "\n".join([f"|{param}|{value}|" for param, value in hparams.items()]) 
     )
 
-
     obss = th.zeros((num_steps, num_envs) + envs.single_observation_space.shape).to(device)
     rews = th.zeros((num_steps, num_envs)).to(device)
     dones = th.zeros((num_steps, num_envs)).to(device)
@@ -61,7 +60,7 @@ def learn(
 
     for timestep in range(0, tot_timesteps, batch_size):
         
-        # rollout
+        # rollout steps
         for step in range(num_steps):
             
             with th.no_grad():
@@ -92,7 +91,7 @@ def learn(
                     writer.add_scalar("charts/episode_reward", episode_r, timestep)
                     writer.add_scalar("charts/episode_length", episode_l, timestep)
         
-        # bootstrap
+        # bootstrap value
         with th.no_grad():
             _, next_val = agent(obs)
             advs = th.zeros_like(rews)
@@ -112,11 +111,9 @@ def learn(
 
             rets = advs + vals
         
-        # train
+        # train policy
         batch_idx = np.arange(batch_size)
         batch_obss = obss.reshape((-1,) + envs.single_observation_space.shape)
-        batch_rews = rews.reshape((-1,))
-        batch_dones = dones.reshape((-1,))
         batch_acts = acts.reshape((-1,) + envs.single_action_space.shape)
         batch_logprobs = logprobs.reshape((-1,))
         batch_vals = vals.reshape((-1,))
@@ -151,8 +148,6 @@ def learn(
                     approx_kl = ((ratio - 1) - logratio).mean()
                     clip_fracs.append(((ratio - 1.0).abs() > clip_range).float().mean().item())
 
-
-            
                 if norm_adv:
                     minibatch_advs = (minibatch_advs - minibatch_advs.mean()) / (minibatch_advs.std() + 1e-8)
                 

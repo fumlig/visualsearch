@@ -6,7 +6,6 @@ import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
 from tqdm import tqdm
-from ac import ActorCritic
 
 
 def learn(
@@ -16,7 +15,7 @@ def learn(
     writer=None,
     # hyperparameters
     learning_rate=5e-4,
-    tot_timesteps=10e6,
+    tot_timesteps=int(10e6),
     num_steps=256,
     num_minibatches=8,
     num_epochs=3,
@@ -37,9 +36,7 @@ def learn(
 
     hparams = locals()
 
-
     envs.seed(seed)
-
 
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
 
@@ -60,7 +57,9 @@ def learn(
     obs = th.tensor(envs.reset(), dtype=th.float).to(device)
     done = th.zeros(envs.num_envs).to(device)
 
-    for timestep in tqdm(range(0, tot_timesteps, batch_size)):
+    pbar = tqdm(total=tot_timesteps)
+
+    for timestep in range(0, tot_timesteps, batch_size):
         
         # rollout
         for step in range(num_steps):
@@ -95,14 +94,14 @@ def learn(
         
         # bootstrap
         with th.no_grad():
-            _, next_val = agent(next_obs)
+            _, next_val = agent(obs)
             advs = th.zeros_like(rews)
             last_gae_lambda = 0
 
             for t in reversed(range(num_steps)):
                 if t == num_steps - 1:
                     next_val = next_val.reshape(1, -1)
-                    next_nonterminal = 1.0 - next_done
+                    next_nonterminal = 1.0 - done
                 else:
                     next_val = vals[t+1]
                     next_nonterminal = 1.0 - dones[t+1]
@@ -114,23 +113,23 @@ def learn(
             rets = advs + vals
         
         # train
-        batch_obss = obss.reshape((-1) + envs.single_observation_space.shape)
-        batch_rews = rews.reshape((-1))
-        batch_dones = dones.reshape((-1))
+        batch_idx = np.arange(batch_size)
+        batch_obss = obss.reshape((-1,) + envs.single_observation_space.shape)
+        batch_rews = rews.reshape((-1,))
+        batch_dones = dones.reshape((-1,))
         batch_acts = acts.reshape((-1,) + envs.single_action_space.shape)
-        batch_logprobs = logprobs.reshape((-1))
-        batch_vals = vals.reshape((-1))
-        batch_advs = advs.reshape((-1))
-        batch_rets = rets.reshape((-1))
+        batch_logprobs = logprobs.reshape((-1,))
+        batch_vals = vals.reshape((-1,))
+        batch_advs = advs.reshape((-1,))
+        batch_rets = rets.reshape((-1,))
 
         clip_fracs = []
 
         for epoch in range(num_epochs):
-            batch_idx = np.random.shuffle(np.arange(batch_size))
-            
+            np.random.shuffle(np.arange(batch_size))
+
             for minibatch in range(num_minibatches):
                 minibatch_idx = batch_idx[minibatch*minibatch_size:(minibatch+1)*minibatch_size]
-
                 minibatch_obss = batch_obss[minibatch_idx]
                 minibatch_acts = batch_acts[minibatch_idx]
                 minibatch_logprobs = batch_logprobs[minibatch_idx]
@@ -184,31 +183,11 @@ def learn(
                 break
 
         # write summary
-        pred_vals = batch_vals.cpu().numpy()
-        true_vals = batch_rets.cpu().numpy()
+        #pred_vals = batch_vals.cpu().numpy()
+        #true_vals = batch_rets.cpu().numpy()
         
         writer.add_scalar("losses/value_loss", val_loss.item(), timestep)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), timestep)
         writer.add_scalar("losses/entropy_loss", ent_loss.item(), timestep)
 
-        explained_variance = np.var()
-
-if __name__ == "__main__":
-
-    import gym_search
-
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
-    envs = gym.vector.make(
-        "SearchSparse-v0",
-        64,
-        asynchronous=True,
-        wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics, gym.wrappers.NormalizeReward]
-    )
-    agent = ActorCritic(envs)
-
-    writer = SummaryWriter("test/test")
-
-    learn(envs, agent, device, writer)
-
-    envs.close()
-    writer.close()
+        pbar.update(timestep - pbar.n)

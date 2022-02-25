@@ -1,47 +1,26 @@
-#!/usr/bin/env python3
-
-import re
-import argparse
-import datetime
-import yaml
-
 import torch as th
-import torch.nn as nn
 import gym
 import gym_search
 
-parser = argparse.ArgumentParser()
-parser.add_argument("env", type=str)
-parser.add_argument("algo", type=str, default="ppo")
-parser.add_argument("--hparams", type=str, nargs="*")
-parser.add_argument("--logs", type=str, default="logs")
+from torch.utils.tensorboard import SummaryWriter
+from agents.ac import ActorCritic
+from agents.ppo import learn
 
-def parse_hparams(hparams_arg):
-    if hparams_arg is None:
-        return {}
-    
-    hparams = {}
-    
-    for hparam in hparams_arg:
-        key, type, value = re.split(":|=", hparam)
-        hparams[key] = pydoc.locate(type)(value)
+if __name__ == "__main__":
+    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    envs = gym.vector.make(
+        "SearchSparse-v0",
+        64,
+        asynchronous=True,
+        wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics]
+    )
+    envs = gym.wrappers.NormalizeReward(envs)
 
-    return hparams
+    agent = ActorCritic(envs).to(device)
 
-args = parser.parse_args()
-env = gym.vector.make(args.env, num_envs=8, wrappers=[gym.wrappers.FlattenObservation], asynchronous=False)
+    writer = SummaryWriter("logs/test")
 
-name = f"{args.env.lower()}-{args.algo.lower()}-{datetime.datetime.now().isoformat()}"
+    learn(envs, agent, device, writer, tot_timesteps=int(100e6))
 
-hparams = parse_hparams(args.hparams)
-
-print(name)
-print(hparams)
-
-"""
-obs = env.reset()
-while True:
-    action, _states = model.predict(obs)
-    obs, rewards, dones, info = env.step(action)
-    env.render()
-"""
+    envs.close()
+    writer.close()

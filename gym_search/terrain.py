@@ -51,10 +51,8 @@ def realistic_terrain(shape, random):
     # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
 
 
-    rng1 = np.random.default_rng(12345)
-    rng2 = np.random.default_rng(54321)
-    gen1 = OpenSimplex(rng1.integers(10))
-    gen2 = OpenSimplex(rng2.integers(10))
+    gen1 = OpenSimplex(random.randint(99999))
+    gen2 = OpenSimplex(random.randint(99999))
 
     exp = 6.97
     e_oct = [1.00, 0.50, 0.25, 0.13, 0.06, 0.03]
@@ -68,28 +66,18 @@ def realistic_terrain(shape, random):
     m = np.zeros(shape)
 
     for i, e_i in enumerate(e_oct):
-        e += e_i*gen1.noise2array(ny*(2**i), nx*(2**i))
+        e += e_i*gen1.noise2array(ny*(2**i), nx*(2**i))/2+0.5
     
     for i, m_i in enumerate(m_oct):
-        m += m_i*gen2.noise2array(ny*(2**i), nx*(2**i))
+        m += m_i*gen2.noise2array(ny*(2**i), nx*(2**i))/2+0.5
 
     e /= np.sum(e_oct)
     m /= np.sum(m_oct)
 
     e = np.sign(e)*(np.abs(e))**exp
 
-    terrain = np.empty((*shape, 3), dtype=np.uint8)
-
-    arid = (240, 219, 204)
-    humid = (158, 227, 171)
-
-    e = (e+1)/3
-    m = (m+1)/3
-
-    print(e.max(), e.min())
-
-    terrain[:,:,0] = e*arid[0] + m*humid[0]    
-    terrain[:,:,1] = e*arid[1] + m*humid[1]    
-    terrain[:,:,2] = e*arid[2] + m*humid[2]    
+    terrain = np.ones((*shape, 3), dtype=np.uint8)
+    terrain[:,:,1] = e*255
+    terrain[:,:,2] = m*255
 
     return terrain

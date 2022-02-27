@@ -28,78 +28,68 @@ def normalize_terrain(terrain):
 
 
 class Biome(enum.Enum):
-    OCEAN = enum.auto()
-    BEACH = enum.auto()
-    SCORCHED = enum.auto()
-    BARE = enum.auto()
-    TUNDRA = enum.auto()
-    TEMPERATE_DESERT = enum.auto()
-    SRUBLAND = enum.auto()
-    GRASSLAND = enum.auto()
-    TEMPERATE_DECIDUOUS_FOREST = enum.auto()
-    TEMPERATE_RAIN_FOREST = enum.auto()
-    SUBTROPICAL_DESERT = enum.auto()
-    TROPICAL_SEASONAL_FOREST = enum.auto()
-    TROPICAL_RAIN_FOREST = enum.auto()
+    OCEAN = (1.0, 0.0, 0.0)
+    BEACH = (255, 255, 102)
+    SCORCHED = (255, 204, 102)
+    BARE = (102, 153, 0)
+    TUNDRA = (255, 204, 153)
+    SNOW = (255, 255, 255)
+    TEMPERATE_DESERT = (204, 102, 0)
+    SHRUBLAND = (102, 153, 0)
+    TAIGA = (153, 51, 51)
+    GRASSLAND = (51, 153, 51)
+    TEMPERATE_DECIDUOUS_FOREST = (0, 204, 102)
+    TEMPERATE_RAIN_FOREST = (51, 102, 0)
+    SUBTROPICAL_DESERT = (255, 255, 153)
+    TROPICAL_SEASONAL_FOREST = (51, 153, 102)
+    TROPICAL_RAIN_FOREST = (102, 102, 51)
 
-def pick_biome(elevation, moisture):
-    e = elevation
-    m = moisture
-
-    if e < 0.10: return Biome.OCEAN
-    if e < 0.12: return Biome.BEACH
-
-    if e > 0.8:
-        if m < 0.1: return Biome.SCORCHED
-        if m < 0.2: return Biome.BARE
-        if m < 0.5: return Biome.TUNDRA
-        return Biome.SNOW
-     
-    if e > 0.5:
-        if m < 0.33: return Biome.TEMPERATE_DESERT
-        if m < 0.66: return Biome.SRUBLAND
-        return Biome.TAIGA
-
-    if e > 0.3:
-        if m < 0.16: return Biome.TEMPERATE_DESERT
-        if m < 0.50: return Biome.GRASSLAND
-        if m < 0.83: return Biome.TEMPERATE_DECIDUOUS_FOREST
-        return Biome.TEMPERATE_RAIN_FOREST
-
-    if m < 0.25: return Biome.SUBTROPICAL_DESERT
-    if m < 0.33: return Biome.GRASSLAND
-    if m < 0.66: return Biome.TROPICAL_SEASONAL_FOREST
-    return Biome.TROPICAL_RAIN_FOREST
 
 def realistic_terrain(shape, random):
     # https://www.redblobgames.com/maps/terrain-from-noise/
     # http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
-
     # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
+
 
     rng1 = np.random.default_rng(12345)
     rng2 = np.random.default_rng(54321)
-    gen1 = OpenSimplex(rng1.integers(99999))
-    gen2 = OpenSimplex(rng2.integers(99999))
+    gen1 = OpenSimplex(rng1.integers(10))
+    gen2 = OpenSimplex(rng2.integers(10))
 
     exp = 6.97
-    elevation_oct = [1.00, 0.50, 0.25, 0.13, 0.06, 0.03]
-    moisture_oct = [1.00, 0.75, 0.33, 0.33, 0.33, 0.50]    
+    e_oct = [1.00, 0.50, 0.25, 0.13, 0.06, 0.03]
+    m_oct = [1.00, 0.75, 0.33, 0.33, 0.33, 0.50]    
 
     h, w = shape
+    y, x = np.arange(h), np.arange(w)
+    ny, nx = y/h - 0.5, x/w - 0.5 
 
-    terrain = np.zeros(shape)
+    e = np.zeros(shape)
+    m = np.zeros(shape)
 
-    for y in range(h):
-        for x in range(w):
-            nx, ny = x/w - 0.5, y/h - 0.5
-            
-            e = sum([e_i*gen1.noise2(nx*2**i, ny*2**i) for i, e_i in enumerate(elevation_oct)])
-            e /= sum(elevation_oct)
-            e = e**exp
+    for i, e_i in enumerate(e_oct):
+        e += e_i*gen1.noise2array(ny*(2**i), nx*(2**i))
+    
+    for i, m_i in enumerate(m_oct):
+        m += m_i*gen2.noise2array(ny*(2**i), nx*(2**i))
 
-            m = sum([m_i*gen1.noise2(nx*2**i, ny*2**i) for i, m_i in enumerate(moisture_oct)])
-            m /= sum(moisture_oct)
+    e /= np.sum(e_oct)
+    m /= np.sum(m_oct)
 
-            b = pick_biome(e, m)
+    e = np.sign(e)*(np.abs(e))**exp
 
+    terrain = np.empty((*shape, 3), dtype=np.uint8)
+
+    arid = (240, 219, 204)
+    humid = (158, 227, 171)
+
+    e = (e+1)/3
+    m = (m+1)/3
+
+    print(e.max(), e.min())
+
+    terrain[:,:,0] = e*arid[0] + m*humid[0]    
+    terrain[:,:,1] = e*arid[1] + m*humid[1]    
+    terrain[:,:,2] = e*arid[2] + m*humid[2]    
+
+    return terrain

@@ -6,7 +6,7 @@ from gym_search.terrain import gaussian_terrain, uniform_terrain
 
 gym.register(
     id="Search-v0",
-    entry_point=PrettySearchEnv,
+    entry_point=SearchEnv,
 )
 
 gym.register(

@@ -6,6 +6,7 @@
 - A fixed number of environments could be collected feasibly without having the distribution being known.
 - At test time, zero-shot generalization is averaged
 
+- one bird's eye view
+- one classic visual search
+- one horizon
 
-- fixed seed pool for training
-- think about max timesteps - could it be lowered (for example to the number of tiles)?

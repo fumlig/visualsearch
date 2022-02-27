@@ -12,7 +12,7 @@ import gym_search
 
 from ppo import Agent
 
-from agents import RandomAgent
+from agents.random import RandomAgent
 
 KEY_ESC = 27
 KEY_RET = 13

@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import enum
 
-from gym_search.utils import gaussian_kernel, softmax
+from gym_search.utils import gaussian_kernel, softmax, lerp
 from opensimplex import OpenSimplex
 
 
@@ -28,33 +28,29 @@ def normalize_terrain(terrain):
 
 
 class Biome(enum.Enum):
-    OCEAN = (1.0, 0.0, 0.0)
-    BEACH = (255, 255, 102)
-    SCORCHED = (255, 204, 102)
-    BARE = (102, 153, 0)
-    TUNDRA = (255, 204, 153)
-    SNOW = (255, 255, 255)
-    TEMPERATE_DESERT = (204, 102, 0)
-    SHRUBLAND = (102, 153, 0)
-    TAIGA = (153, 51, 51)
-    GRASSLAND = (51, 153, 51)
-    TEMPERATE_DECIDUOUS_FOREST = (0, 204, 102)
-    TEMPERATE_RAIN_FOREST = (51, 102, 0)
-    SUBTROPICAL_DESERT = (255, 255, 153)
-    TROPICAL_SEASONAL_FOREST = (51, 153, 102)
-    TROPICAL_RAIN_FOREST = (102, 102, 51)
+    DESERT = (0, 255, 255)
+    PLAINS = (0, 255 , 0)
+    TUNDRA = (127, 127, 127)
+    SAVANNA = (255, 127, 127)
+    SHRUBLAND = (0, 127, 0)
+    TAIGA = (127, 127, 0)
+    FOREST = (127, 255, 127)
+    SWAMP = (0, 127, 127)
+    SEASONAL_FOREST = (127, 255, 127)
+    RAIN_FOREST = (10, 255, 10)
 
 
 def realistic_terrain(shape, random):
+    # https://jackmckew.dev/3d-terrain-in-python.html
+
     # https://www.redblobgames.com/maps/terrain-from-noise/
     # http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
     # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
 
-
     gen1 = OpenSimplex(random.randint(99999))
     gen2 = OpenSimplex(random.randint(99999))
 
-    exp = 6.97
+    exp = 5
     e_oct = [1.00, 0.50, 0.25, 0.13, 0.06, 0.03]
     m_oct = [1.00, 0.75, 0.33, 0.33, 0.33, 0.50]    
 
@@ -73,11 +69,9 @@ def realistic_terrain(shape, random):
 
     e /= np.sum(e_oct)
     m /= np.sum(m_oct)
-
     e = np.sign(e)*(np.abs(e))**exp
 
-    terrain = np.ones((*shape, 3), dtype=np.uint8)
-    terrain[:,:,1] = e*255
-    terrain[:,:,2] = m*255
+    e /= e.max()
+    m /= m.max()
 
-    return terrain
+    return e

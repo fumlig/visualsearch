@@ -10,3 +10,10 @@
 - one classic visual search
 - one horizon
 
+- bring back zoom?
+- zoom simply oversamples pixels
+- moving camera when zoomed in moves it less (= one view width)
+- costly to move when zoomed in
+
+- could mineRL be an alternative environment?
+- if it is fast enough

@@ -5,6 +5,7 @@ import numpy as np
 from gym.utils import seeding
 from gym_search.utils import clamp
 from gym_search.terrain import basic_terrain
+from gym_search.shape import Rect
 
 
 class SearchEnv(gym.Env):
@@ -18,6 +19,7 @@ class SearchEnv(gym.Env):
         EAST = 3
         SOUTH = 4
         WEST = 5
+        # todo: done action?
 
     def __init__(
         self, 
@@ -30,8 +32,8 @@ class SearchEnv(gym.Env):
         seed=0
     ):
         self.seed(seed)
-        self.world_shape = world_shape
-        self.view_shape = view_shape
+        self.shape = world_shape
+        self.view = Rect(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
         self.terrain_func = terrain_func
         self.rew_exploration = rew_exploration
@@ -41,29 +43,27 @@ class SearchEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
             #t=gym.spaces.Discrete(max_steps),
-            img=gym.spaces.Box(0, 255, (*self.view_shape, 3), np.uint8),
-            pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
+            img=gym.spaces.Box(0, 255, (*self.view.shape, 3), np.uint8),
+            pos=gym.spaces.Discrete(self.shape[0]*self.shape[1])
         ))
         # this observation space makes some sense, position = pan tilt percentage (the world is only what can possibly be seen by the sensor)
 
 
     def reset(self):
-        wh, ww = self.world_shape
-        vh, vw = self.view_shape
-    
-        self.terrain, targets = self.terrain_func(self.world_shape, self.random)
-        self.targets = [(y, x, False) for y, x in targets]
-        self.position = (self.random.randint(0, (wh-vh+1)//self.step_size)*self.step_size, self.random.randint(0, (ww-vw+1)//self.step_size)*self.step_size) 
-        self.visited = np.full(self.world_shape, False)
+        h, w = self.shape
+        y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
+
+        self.view.poisition = (y, x)
+        self.terrain, self.targets = self.terrain_func(self.shape, self.random)
+        self.hits = [False for _ in range(len(self.targets))]
+        self.visited = np.full(self.shape, False)
         self.num_steps = 0
 
         return self.observe()
 
 
     def step(self, action):
-        wh, ww = self.world_shape
-        vh, vw = self.view_shape
-        py, px = self.position
+        h, w = self.shape
         dy, dx = {
             self.Action.NORTH:   (-1, 0),
             self.Action.EAST:    ( 0, 1),
@@ -71,32 +71,30 @@ class SearchEnv(gym.Env):
             self.Action.WEST:    ( 0,-1)
         }.get(action, (0, 0))
 
-        py = clamp(py+dy*self.step_size, 0, wh-vh)
-        px = clamp(px+dx*self.step_size, 0, ww-vw)
+        y = clamp(self.view.y+dy*self.step_size, 0, h-self.view.h)
+        x = clamp(self.view.x+dx*self.step_size, 0, w-self.view.w)
 
-        self.position = (py, px)
+        self.view.pos = (y, x)
 
         rew = -1
 
-        if self.rew_exploration and not self.visited[self.position]:
+        if self.rew_exploration and not self.visited[self.view.pos]:
             rew += 1
         
-        self.visited[self.position] = True
+        self.visited[self.view.pos] = True
 
         if action == self.Action.TRIGGER:
             rew -= 5
 
-            for i, t in enumerate(self.targets):
-                ty, tx, hit = t
-
-                if hit:
+            for i in range(len(self.targets)):                
+                if self.hits[i]:
                     continue
                 
-                if px <= tx and tx < px + vw and py <= ty and ty < py + vh:
+                if self.view.overlap(self.targets[i]) > 0:
                     rew += 10
-                    self.targets[i] = (ty, tx, True)
+                    self.hits[i] = True
 
-        done = all(hit for _, _, hit in self.targets)
+        done = all(self.hits)
 
         if done:
             rew += 100
@@ -114,16 +112,15 @@ class SearchEnv(gym.Env):
         if observe:
             img = self.observe()["img"]
         else:
-            vh, vw = self.view_shape
-            y0, x0 = self.position
-            y1, x1 = y0+vh, x0+vw
+            y0, x0, y1, x1 = self.view.corners()
             img = self.terrain*0.5
             img[y0:y1,x0:x1] = self.terrain[y0:y1,x0:x1]
             img = img.astype(np.uint8)
 
-            for y, x, hit in self.targets:
-                if hit:
-                    img[y, x] = np.array((255, 255, 255)) - img[y, x]
+            for i in range(len(self.targets)):
+                if self.hits[i]:
+                    ty0, tx0, ty1, tx1 = self.targets[i].corners()
+                    img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
 
         return img
 
@@ -135,18 +132,15 @@ class SearchEnv(gym.Env):
         return [seed]
 
     def observe(self):
-        wh, ww = self.world_shape
-        vh, vw = self.view_shape
-        y0, x0 = self.position
-        y1, x1 = y0+vh, x0+vw
-
+        y0, x0, y1, x1 = self.view.corners()
+        h, w = self.shape
         img = self.terrain
         obs = img[y0:y1,x0:x1,:]
 
         return dict(
             #t=self.num_steps,
             img=obs,
-            pos=y0*ww+x0
+            pos=y0*w+x0
         )
     
     def get_action_meanings(self):

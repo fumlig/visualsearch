@@ -11,7 +11,7 @@ class Rect:
         return self.y, self.x
 
     def set_pos(self, p):
-        self.x, self.y = p
+        self.y, self.x = p
 
     def get_shape(self):
         return self.h, self.w
@@ -19,14 +19,14 @@ class Rect:
     def set_shape(self, s):
         self.h, self.w = s
 
-    position = property(get_pos, set_pos)
+    pos = property(get_pos, set_pos)
     shape = property(get_shape, set_shape)
 
     def area(self):
         return self.h*self.w
 
     def corners(self):
-        return self.y, self.x, self.y + self.h, self.x, self.w
+        return self.y, self.x, self.y + self.h, self.x + self.w
 
     def contains(self, p):
         y0, x0, y1, x1 = self.corners()

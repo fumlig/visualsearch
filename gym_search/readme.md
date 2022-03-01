@@ -20,10 +20,16 @@
 
 - have one realistic dataset?
 - https://www.nuscenes.org/nuimages
-
+- https://www.cityscapes-dataset.com/
+  - available via torchvision
+- https://cocodataset.org/#captions-2015
+- https://www.yf.io/p/lsun
+- http://places2.csail.mit.edu/index.html
 
 - add bounding box class
 - create dataset from object detection dataset
+- fun extra: search for words in text?
+
 
 1. basic search
 2. terrain search

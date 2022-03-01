@@ -18,6 +18,13 @@
 
 - what if we don't indicate that a target has been found? actually makes more sense
 
+- have one realistic dataset?
+- https://www.nuscenes.org/nuimages
+
+
+- add bounding box class
+- create dataset from object detection dataset
+
 1. basic search
 2. terrain search
 3. complex search

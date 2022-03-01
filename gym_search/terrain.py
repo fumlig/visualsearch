@@ -62,9 +62,7 @@ def realistic_terrain(shape, random, exp=2):
 
     target_prob = tree_prob
     target_count = random.randint(0, 10)
-    targets = sample_coords(shape, target_count, target_prob, random=random)
-
-    print(len(targets))
+    target_pos = sample_coords(shape, target_count, target_prob, random=random)
 
     for y, x in targets:
         r = random.randint(2, 4)

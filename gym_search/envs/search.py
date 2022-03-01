@@ -4,7 +4,7 @@ import numpy as np
 
 from gym.utils import seeding
 from gym_search.utils import clamp
-from gym_search.terrain import uniform_terrain
+from gym_search.terrain import basic_terrain
 
 
 class SearchEnv(gym.Env):
@@ -24,8 +24,7 @@ class SearchEnv(gym.Env):
         world_shape=(256, 256), 
         view_shape=(32, 32), 
         step_size=32, 
-        num_targets=3,
-        terrain_func=uniform_terrain,
+        terrain_func=basic_terrain,
         rew_exploration=True,
         max_steps=1000,
         seed=0
@@ -34,7 +33,6 @@ class SearchEnv(gym.Env):
         self.world_shape = world_shape
         self.view_shape = view_shape
         self.step_size = step_size
-        self.num_targets = num_targets
         self.terrain_func = terrain_func
         self.rew_exploration = rew_exploration
         self.max_steps = max_steps
@@ -43,9 +41,8 @@ class SearchEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
             #t=gym.spaces.Discrete(max_steps),
-            img=gym.spaces.Box(0, 1, (*self.view_shape, 3)),
+            img=gym.spaces.Box(0, 255, (*self.view_shape, 3), np.uint8),
             pos=gym.spaces.Discrete(self.world_shape[0]*self.world_shape[1])
-            #pos=gym.spaces.Box(0, 1, (2,)),
         ))
         # this observation space makes some sense, position = pan tilt percentage (the world is only what can possibly be seen by the sensor)
 
@@ -53,16 +50,11 @@ class SearchEnv(gym.Env):
     def reset(self):
         wh, ww = self.world_shape
         vh, vw = self.view_shape
-        
-        self.terrain = self.terrain_func(self.world_shape, self.random)
+    
+        self.terrain, targets = self.terrain_func(self.world_shape, self.random)
+        self.targets = [(y, x, False) for y, x in targets]
         self.position = (self.random.randint(0, (wh-vh+1)//self.step_size)*self.step_size, self.random.randint(0, (ww-vw+1)//self.step_size)*self.step_size) 
         self.visited = np.full(self.world_shape, False)
-
-        p = self.terrain.flatten()/np.sum(self.terrain)
-        t = self.random.choice(self.terrain.size, self.num_targets, replace=False, p=p)
-
-        self.targets = [(i//ww, i%ww, False) for i in t]
-
         self.num_steps = 0
 
         return self.observe()
@@ -125,14 +117,15 @@ class SearchEnv(gym.Env):
             vh, vw = self.view_shape
             y0, x0 = self.position
             y1, x1 = y0+vh, x0+vw
+            img = self.terrain*0.5
+            img[y0:y1,x0:x1] = self.terrain[y0:y1,x0:x1]
+            img = img.astype(np.uint8)
 
-            img = np.ones((*self.world_shape, 3))#self.image(hidden=True)*0.5
-            img[y0:y1,x0:x1] = self.image(hidden=True)[y0:y1,x0:x1]
+            for y, x, hit in self.targets:
+                if hit:
+                    img[y, x] = np.array((255, 255, 255)) - img[y, x]
 
-        img = img*255
-        img = img.astype(dtype=np.uint8)
         return img
-
 
     def close(self):
         pass
@@ -147,27 +140,14 @@ class SearchEnv(gym.Env):
         y0, x0 = self.position
         y1, x1 = y0+vh, x0+vw
 
-        img = self.image(hidden=True)
+        img = self.terrain
         obs = img[y0:y1,x0:x1,:]
 
         return dict(
             #t=self.num_steps,
             img=obs,
             pos=y0*ww+x0
-            #pos=np.array([y0/wh, x0/ww]),
         )
-
-    def image(self, hidden=False):
-        img = np.zeros((*self.world_shape, 3))
-        img[:,:,0] = self.terrain
-
-        for ty, tx, hit in self.targets:
-            if hit:
-                img[ty,tx] = (0,1,0)
-            elif hidden:
-                img[ty,tx] = (0,0,1)
-
-        return img
     
     def get_action_meanings(self):
         return [a.name for a in self.Action]
@@ -180,31 +160,3 @@ class SearchEnv(gym.Env):
             (ord("s"),): self.Action.SOUTH,
             (ord("a"),): self.Action.WEST,
         }
-
-class PrettySearchEnv(SearchEnv):    
-
-    GRASS   = (0.0, 1.0, 0.0)
-    WATER   = (0.0, 0.0, 1.0)
-    SAND    = (0.0, 1.0, 1.0)
-    ROCK    = (0.5, 0.5, 0.5)
-
-    def __init__(self, *args, **kwargs):
-        super(PrettySearchEnv, self).__init__(*args, **kwargs)
-    
-    def image(self, hidden=False):
-        img = np.zeros((*self.world_shape, 3))
-        img[self.terrain <= 1.0] = self.ROCK
-        img[self.terrain <= 0.75] = self.GRASS
-        img[self.terrain <= 0.50] = self.SAND
-        img[self.terrain <= 0.25] = self.WATER
-        img[:,:,0] *= self.terrain
-        img[:,:,1] *= self.terrain
-        img[:,:,2] *= self.terrain
-
-        for ty, tx, hit in self.targets:
-            if hit:
-                img[ty,tx] = (1,1,0)
-            elif hidden:
-                img[ty,tx] = (1,0,0)
-
-        return img

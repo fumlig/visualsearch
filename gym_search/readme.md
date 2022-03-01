@@ -16,6 +16,8 @@
 - costly to move when zoomed in
 
 
+- what if we don't indicate that a target has been found? actually makes more sense
+
 1. basic search
 2. terrain search
 3. complex search

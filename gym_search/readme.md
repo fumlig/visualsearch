@@ -15,5 +15,11 @@
 - moving camera when zoomed in moves it less (= one view width)
 - costly to move when zoomed in
 
-- could mineRL be an alternative environment?
-- if it is fast enough
+
+1. basic search
+2. terrain search
+3. complex search
+  - try to make attention crucial
+  - some procedurally generated texture?
+  - we can
+  - something with roads?

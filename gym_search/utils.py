@@ -10,6 +10,11 @@ def to_index(x, y, w):
 def softmax(a):
     return np.exp(a)/np.sum(np.exp(a))
 
+def normalize(a):
+    a -= a.min()
+    a /= a.max()
+    return a
+
 def clamp(x, lo, hi):
     return max(min(x, hi), lo)
 
@@ -53,4 +58,3 @@ def gaussian_kernel(size, sigma=1):
     gauss = np.exp(-0.5 * np.square(ax) / np.square(sigma))
     kernel = np.outer(gauss, gauss)
     return kernel / np.sum(kernel)
-    

@@ -53,7 +53,7 @@ class SearchEnv(gym.Env):
         h, w = self.shape
         y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
 
-        self.view.poisition = (y, x)
+        self.view.pos = (y, x)
         self.terrain, self.targets = self.terrain_func(self.shape, self.random)
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)

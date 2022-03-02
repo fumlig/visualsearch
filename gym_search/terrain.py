@@ -30,11 +30,12 @@ def basic_terrain(shape, random, size, sigma=1, num_targets=3, num_kernels=1):
     terrain = normalize(plane[size:size+h,size:size+w])
     prob = terrain/terrain.sum()
     targets = sample_coords(shape, num_targets, prob, random=random)
-    img = np.zeros((*shape, 3), dtype=np.uint8)
-    img[:,:,0] = terrain*255
+    img = np.full((*shape, 3), 255, dtype=np.uint8)
+    img[:,:,1] = img[:,:,1] - terrain*255
+    img[:,:,2] = img[:,:,2] - terrain*255
 
     for y, x in targets:
-        img[y,x] = (255, 255, 0)
+        img[y,x] = (0, 255, 255)
 
     return img, [Rect(*t, 1, 1) for t in targets]
 
@@ -69,7 +70,7 @@ def realistic_terrain(shape, random, exp=2):
 
     for y, x in target_pos:
         r = random.randint(2, 4)
-        rect = Rect(clamp(y, 0, height-2*r+1), clamp(x, 0, width-2*r+1), r*2+1, r*2+1)
+        rect = Rect(clamp(y, 0, height-(2*r+1)), clamp(x, 0, width-(2*r+1)), r*2+1, r*2+1)
         rr, cc = skimage.draw.disk((rect.y+r, rect.x+r), r)
         img[rr, cc] = (255, 0, 0)
         targets.append(rect)

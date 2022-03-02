@@ -3,12 +3,12 @@
 
 This chapter introduces relevant theory and related work 
 
-\section{Visual Search}
-
 % describe how animal vision translates to camera vision?
 % animals have a large field of view, but also require foveated vision: processing is expensive.
 % computers do not naturally have this constraint and most CV algorithms do not use foveated vision
 % (although visual attention models exist)
+
+\section{Visual Search}
 
 
 Visual search is a perceptual task which involves seeking out targets among distractors. Eckstein (2011)~\cite{eckstein_visual_2011} identifies four factors that limit performance of visual search in animals:
@@ -62,6 +62,8 @@ Wolfe also presents a simulation of the model. Simulates some mechanics of the s
 
 Much of current research in computer vision studies problems with passive observers where images are passively sampled. The problem considered in this project contains an \textit{active vision}~\cite{aloimonos_active_1988} system. The observer (agent) can manipulate the viewpoint of the camera in order to investigate the environment and get better information from it. This closer to human perceptual activity which is both exploring and searching. A study of basic problems of vision shows that active vision systems have several computational advantages over passive ones for common perceptual tasks~\cite{aloimonos_active_1988}. % relevant?
 
+% active object detection
+
 \section{Reinforcement Learning}
 
 Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal. An \textit{agent} and its \textit{environment} interact continually over discrete time steps. At each time step the agent selects some \textit{action} that updates the state of the environment, and gives it a \textit{reward}. The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.
@@ -93,13 +95,10 @@ A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \ma
 
 The agent interacts with the environment at discrete time steps \(t = 0, 1, 2, \dots T\). At each time step \(t\), the agent receives an observation of the environment's state \(O_t \in \Omega\) and selects some action \(A_t \in \mathcal{A}\). In the next time step the agent receives a reward
 
-
-
 action \(a \in \mathcal{A}\) which causes the environment to transition to state \(s^\prime\) with probability \(\mathcal{T}(s^\prime | s, a)\).
 It receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(o | s^\prime, a)\), as well as a reward \(r\) given by \(\mathcal{R}(s, a)\).
 
 This interaction is repeated until the end of the episode at time step \(T\). The goal of the agent is to maximize the \textit{discounted return}, defined as the discounted sum of future rewards \(G_t \doteq \sum_{k=t+1}^T \gamma^{k-t-1} R_{k}\) where \(\gamma\) reflects the uncertainty of the environment.
-
 
 %An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
 
@@ -107,7 +106,7 @@ Planning in a POMDP is undecidable, and solving them is often computationally in
 
 \subsection{Policies and Value Functions}
 
-Most RL algoerithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state, and a 
+Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state, and a 
 
 \subsection{Policy Optimization}
 
@@ -142,3 +141,7 @@ Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchma
 % CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
 
 % CV material: different in that the object is assumed to be visible
+
+\section{Deep Reinforcement Learning}
+
+Ghesu et al. ()~\cite{ghesu_multi-scale_2019} use XXX

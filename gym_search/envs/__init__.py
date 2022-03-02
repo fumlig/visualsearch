@@ -8,7 +8,7 @@ gym.register(
     id="Search-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        world_shape=(512, 512),
+        world_shape=(1024, 1024),
         view_shape=(64, 64),
         step_size=64,
         terrain_func=realistic_terrain

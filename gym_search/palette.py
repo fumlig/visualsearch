@@ -250,4 +250,4 @@ EARTH_PALETTE = [
     (255, 255, 255),
 ]
 
-EARTH_FEW = [EARTH_PALETTE[i] for i in range(0, len(EARTH_PALETTE), 8)]
+EARTH_FEW = [EARTH_PALETTE[i] for i in range(0, len(EARTH_PALETTE), 20)]

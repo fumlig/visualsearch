@@ -40,20 +40,21 @@ def basic_terrain(shape, random, size, sigma=1, num_targets=3, num_kernels=1):
     return img, [Rect(*t, 1, 1) for t in targets]
 
 
-def realistic_terrain(shape, random, exp=2):
+def realistic_terrain(shape, random):
     # https://jackmckew.dev/3d-terrain-in-python.html
     # https://www.redblobgames.com/maps/terrain-from-noise/
     # http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
     # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
     
+    exp = random.uniform(0.1, 10.0)
     height, width = shape
     noise = fractal_noise_2d(shape, periods=(4, 4), octaves=4, seed=random.randint(9999))
-    terrain = normalize(noise**exp)
+    terrain = normalize(noise)**exp
     img = pick_color(terrain, EARTH_FEW)
 
     tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
     tree_prob = tree_line.astype(float)/tree_line.sum()
-    tree_count = random.randint(50, 250)
+    tree_count = random.randint(100, 500)
     trees = sample_coords(shape, tree_count, tree_prob, random=random)
 
     for y, x in trees:
@@ -64,7 +65,7 @@ def realistic_terrain(shape, random, exp=2):
         img[rr, cc] = (0, 63, 0)
 
     target_prob = tree_prob
-    target_count = random.randint(1, 10)
+    target_count = random.randint(5, 25)
     target_pos = sample_coords(shape, target_count, target_prob, random=random)
     targets = []
 

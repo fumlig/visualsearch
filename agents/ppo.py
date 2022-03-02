@@ -13,38 +13,27 @@ def learn(
     agent,
     device,
     writer=None,
-    # hyperparameters
-    learning_rate=5e-4,
-    tot_timesteps=int(10e6),
-    num_steps=256,
-    num_minibatches=8,
-    num_epochs=3,
-    gamma=0.999,
+    tot_timesteps=25000,
+    learning_rate=2.5e-4,
+    num_steps=128,
+    gamma=0.99,
     gae_lambda=0.95,
+    num_minibatches=4,
+    num_epochs=4,
     norm_adv=True,
     clip_range=0.2,
-    clip_vloss=False,
+    clip_vloss=True,
     ent_coef=0.01,
     vf_coef=0.5,
     max_grad_norm=0.5,
-    target_kl=None,
-    seed=0
+    target_kl=None
 ):
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
     minibatch_size = batch_size // num_minibatches
-
-    hparams = locals()
-
-    envs.seed(seed)
+    num_batches = tot_timesteps // batch_size
 
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
-
-    writer.add_text(
-        "hyperparameters",
-        "|param|value|\n|-|-|" +
-        "\n".join([f"|{param}|{value}|" for param, value in hparams.items()]) 
-    )
 
     obss = th.zeros((num_steps, num_envs) + envs.single_observation_space.shape).to(device)
     rews = th.zeros((num_steps, num_envs)).to(device)
@@ -58,17 +47,18 @@ def learn(
 
     pbar = tqdm(total=tot_timesteps)
 
-    for timestep in range(0, tot_timesteps, batch_size):
-        
+    timestep = 0
+
+    for _batch in range(num_batches):
         # rollout steps
         for step in range(num_steps):
-            
+            timestep += num_envs
+
             with th.no_grad():
                 pi, v = agent(obs)
-            
-            val = v.flatten()
-            act = pi.sample()
-            logprob = pi.log_prob(act)
+                val = v.flatten()
+                act = pi.sample()
+                logprob = pi.log_prob(act)
             
             next_obs, rew, next_done, info = envs.step(act.cpu().numpy())
             rew = th.tensor(rew).to(device).view(-1)
@@ -88,13 +78,14 @@ def learn(
                     episode_r = env_info["episode"]["r"]
                     episode_l = env_info["episode"]["l"]
 
-                    writer.add_scalar("charts/episode_reward", episode_r, timestep)
+                    writer.add_scalar("charts/episode_return", episode_r, timestep)
                     writer.add_scalar("charts/episode_length", episode_l, timestep)
-        
+
+
         # bootstrap value
         with th.no_grad():
             _, next_val = agent(obs)
-            advs = th.zeros_like(rews)
+            advs = th.zeros_like(rews).to(device)
             last_gae_lambda = 0
 
             for t in reversed(range(num_steps)):
@@ -110,7 +101,8 @@ def learn(
                 advs[t] = last_gae_lambda
 
             rets = advs + vals
-        
+
+
         # train policy
         batch_idx = np.arange(batch_size)
         batch_obss = obss.reshape((-1,) + envs.single_observation_space.shape)
@@ -122,8 +114,8 @@ def learn(
 
         clip_fracs = []
 
-        for epoch in range(num_epochs):
-            np.random.shuffle(np.arange(batch_size))
+        for _epoch in range(num_epochs):
+            np.random.shuffle(batch_idx)
 
             for minibatch in range(num_minibatches):
                 minibatch_idx = batch_idx[minibatch*minibatch_size:(minibatch+1)*minibatch_size]
@@ -138,23 +130,23 @@ def learn(
                 new_val = v.view(-1)
                 act = minibatch_acts.long()
                 new_logprob = pi.log_prob(act)
-                
                 entropy = pi.entropy()
                 logratio = new_logprob - minibatch_logprobs
                 ratio = logratio.exp()
 
                 with th.no_grad():
-                    old_approx_kl = (-logratio).mean()
-                    approx_kl = ((ratio - 1) - logratio).mean()
+                    approx_kl = ((ratio - 1.0) - logratio).mean()
                     clip_fracs.append(((ratio - 1.0).abs() > clip_range).float().mean().item())
 
                 if norm_adv:
                     minibatch_advs = (minibatch_advs - minibatch_advs.mean()) / (minibatch_advs.std() + 1e-8)
                 
-                pg_loss1 = -minibatch_advs*ratio
+                # policy loss
+                pg_loss1 = -minibatch_advs * ratio
                 pg_loss2 = -minibatch_advs * th.clamp(ratio, 1-clip_range, 1+clip_range)
                 pg_loss = th.max(pg_loss1, pg_loss2).mean()
 
+                # value loss
                 if clip_vloss:
                     val_loss_unclipped = (new_val - minibatch_rets)**2
                     val_clipped = minibatch_vals + th.clamp(new_val-minibatch_vals, -clip_range, clip_range) # todo: this clipping is different (not added with 1)

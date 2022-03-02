@@ -29,7 +29,9 @@
 - add bounding box class
 - create dataset from object detection dataset
 - fun extra: search for words in text?
+- give low-res glimpse of the environment beforehand, where targets are not visible?
 
+- oddity search
 
 1. basic search
 2. terrain search

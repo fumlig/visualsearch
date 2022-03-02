@@ -6,10 +6,15 @@ import torch.nn as nn
 from torch.distributions import Categorical
 
 
-def init_weights(module, gain=1.0):
-    if isinstance(module, nn.Linear):
-        nn.init.orthogonal_(module.weight, gain)
-        nn.init.constant_(module.bias, 0.0)
+#def init_weights(module, gain=1.0):
+#    if isinstance(module, nn.Linear):
+#        nn.init.orthogonal_(module.weight, gain)
+#        nn.init.constant_(module.bias, 0.0)
+
+def init_weights(layer, gain=np.sqrt(2)):
+    nn.init.orthogonal_(layer.weight, gain)
+    nn.init.constant_(layer.bias, 0.0)
+    return layer
 
 
 class ActorCritic(nn.Module):
@@ -22,24 +27,24 @@ class ActorCritic(nn.Module):
         self.network = nn.Identity()
     
         self.actor = nn.Sequential(
-            nn.Linear(num_features, 64),
+            init_weights(nn.Linear(num_features, 64)),
             nn.Tanh(),
-            nn.Linear(64, 64),
+            init_weights(nn.Linear(64, 64)),
             nn.Tanh(),
-            nn.Linear(64, num_actions)
+            init_weights(nn.Linear(64, num_actions), gain=1.0)
         )
 
         self.critic = nn.Sequential(
-            nn.Linear(num_features, 64),
+            init_weights(nn.Linear(num_features, 64)),
             nn.Tanh(),
-            nn.Linear(64, 64),
+            init_weights(nn.Linear(64, 64)),
             nn.Tanh(),
-            nn.Linear(64, 1)
+            init_weights(nn.Linear(64, 1), gain=0.01)
         )
 
-        self.network.apply(lambda m: init_weights(m, np.sqrt(2)))
-        self.actor.apply(lambda m: init_weights(m, 1.0))
-        self.critic.apply(lambda m: init_weights(m, 0.01))
+        #self.network.apply(lambda m: init_weights(m, np.sqrt(2)))
+        #self.actor.apply(lambda m: init_weights(m, 1.0))
+        #self.critic.apply(lambda m: init_weights(m, 0.01))
 
     def forward(self, obs):
         hid = self.network(obs)

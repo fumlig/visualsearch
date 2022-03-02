@@ -1,51 +1,35 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-% unknown but familiar
-
 In this thesis project, the problem of searching for targets in unknown but familiar environments is addressed. This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
 
 \section{Motivation}
 \label{sec:motivation}
 
-% general problem
-Efficiently search for targets (objects of interest, goals) is an essential skill for interacting with the world. Humans and animals look for things.
+The ability to visually search for targets in an environment is crucial to many parts of our daily lives. We are constantly looking for things, be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest. In many cases, it is important that this search is efficient and fast. Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
-% https://link.springer.com/content/pdf/10.3758/s13423-020-01859-9.pdf has some good examples
+While searching for targets is often seemingly effortless to humans, it is a complex process. How humans and animals search for things has been extensively studied in neuroscience and neurobiology~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}. In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}. It is of great interest to automate visual search. Applications range from search and rescue to ...
 
-% time critical in some scenarious (conflict, driving a car, detecting predator)
+Problematically, it is difficult to manually create search algorithms. The appearance and distribution of targets in an environment varies greatly, and may be subtle. If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
-% neuroscience
-The problem has been studied continually under the name \textit{visual search} in neuroscience and neurobiology since YYYY. 
-% no automation
+In many real-world visual search scenarios the field-of-view is limited. This means that the search process is split into two steps: directing the field of view, and locating targets within the view. Much work has been focused on latter, locating targets within the field of view~\cite{}. Often, only a fraction of the environment is visible. In these cases where to move the field of view becomes an important decision.
 
-% computer vision
-In computer vision, a similar problem is studied under the name \textit{object localization}
-% randomly sampled, no active aspect
+The characteristics of the searched environment can often be used to find targets quicker. For example, if one is foraging for blueberries it makes sense to search the ground rather than the trees. Similarly, if one is searching a satellite image for boats it is reasonable to focus on ocean shores.
 
-% details our setup
-In many real-world scenarios, the characteristics of the searched environment can be used to find targets quicker. For example, if one is to find an apple in a kitchen it makes sense to search the countertops for a fruit bowl. Similarly, ....
-
-The exact characteristics of the environment need not be constant - for every kitchen is some prior knowledge we can use to find targets in it quicker. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
-
-% should decide ratio between field of view and scene
-% small ratio: corresponds to looking at larger sceneries with a zoomed in camera (probably this)
-% high ratio: more similar to human search, a lot is seen at once but expensive to process, requires attention, foveated vision etc.
-
-% why automate
-It is of great interest to learn how to automate visual search. Applications range from search and rescue to ...
-
-% Search in current sensory input is well studied, changing sensory input not so much.
-
+The exact characteristics of the environment need not be constant - forests with blueberries can vary greatly in appearance and boats can be found in all of the seven seas. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments. Humans are able to generalize in such cases.
 
 % Humans are able to generalize to unseen environments, which is important
 % Underlying probability may be subtle, difficult to learn and utilize.
+
+% should this be moved?
+This tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment. This is a problem that has been less studied in the literature than visual search in smaller environments. There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
+
 
 \section{Aim}
 \label{sec:aim}
 
 % what will be done
-The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively.
+The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively. Furthermore, the agent should be able to 
 
 % how it will be done
 A specific instance of the visual search problem is considered, where the environment is searched by a pan-tilt camera fixed in place. The camera has a limited view of the environent. Automating this task is of interest for multiple reasons. Manually controlling a camera may be costly, and the performance of a human operator may be suboptimal. Crucial to the problem is generalization.
@@ -61,6 +45,7 @@ This thesis will address the following questions:
   \item How can a learning agent generalize to unseen but familiar environments?
   \item How does memory affect the agent's ability to search an environment?
   \item How does the learning agent compare to common non-learning methods?
+  \item How does the learning agent compare to an exhaustive search of the environment, and a human searcher?
 \end{enumerate}
 
 % think about measurements
@@ -71,9 +56,9 @@ This thesis will address the following questions:
 \section{Delimitations}
 \label{sec:delimitations}
 
-This thesis will be focused on the behavioural aspects of the presented problem. To train and test agents, a simplified environment will be used. This will test the desired characteristics of the agent as presented above, but will not simulate realistic environments.
+This thesis will be focused on the behavioral aspects of the presented problem. To train and test agents, a simplified environment will be used. This will test the desired characteristics of the agent as presented above, but will not simulate realistic environments.
 
-Object detection is not the primary focus of the project, ie. problems related to variability in target appearance are not considered (lightning, differing viewpoints, presence of obscuring objects, sensor noise, etc.).
+%Object detection is not the primary focus of the project, ie. problems related to variability in target appearance are not considered (lightning, differing viewpoints, presence of obscuring objects, sensor noise, etc.).
 
 % Do we assume that we know when we are looking at a target?
 % Oddity search...

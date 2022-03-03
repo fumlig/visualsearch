@@ -8,6 +8,19 @@ def pick_color(c, palette):
     return p[i]
 
 
+def add_with_alpha(bg, fg, alpha):
+    bg = np.array(bg, dtype=np.uint8)
+    fg = np.array(fg, dtype=np.uint8)
+
+    return (1-alpha)*bg + alpha*fg
+
+    #return (
+    #    (1 - alpha)*bg[0] + alpha*fg[0],
+    #    (1 - alpha)*bg[1] + alpha*fg[1],
+    #    (1 - alpha)*bg[2] + alpha*fg[2],
+    #)
+
+
 BLUE_MARBLE = [
     (0, 0, 0),
     (0, 0, 46),

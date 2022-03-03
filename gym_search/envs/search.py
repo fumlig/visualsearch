@@ -6,7 +6,8 @@ from gym.utils import seeding
 from gym_search.utils import clamp
 from gym_search.terrain import gaussian_terrain
 from gym_search.shape import Rect
-
+from gym_search.palette import add_with_alpha
+from skimage import draw
 
 class SearchEnv(gym.Env):
 
@@ -58,6 +59,7 @@ class SearchEnv(gym.Env):
         self.terrain, self.targets = self.terrain_func(self.shape, self.random)
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)
+        self.triggered = np.full(self.shape, False)
         self.path = [self.view.pos]
         self.num_steps = 0
 
@@ -97,6 +99,7 @@ class SearchEnv(gym.Env):
                 rew += 1
 
         self.visited[self.view.pos] = True
+        self.triggered[self.view.pos] = True
         self.path.append(self.view.pos)
 
         done = all(self.hits)
@@ -153,9 +156,9 @@ class SearchEnv(gym.Env):
                     img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
 
         if show_path:
-            for y, x in self.path:
-                print(y, x)
-                img[y,x] = (0, 0, 0)
+            for i, (y, x) in enumerate(self.path):
+                rr, cc = draw.disk((y+self.view.h//2-1, x+self.view.w//2-1), min(self.view.shape)//4)
+                img[rr, cc] = add_with_alpha(img[rr, cc], (0, 0, 0), 0.25+0.5*i/len(self.path))
 
         return img
 

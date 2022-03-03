@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 import random
 import json
 import os
+import datetime as dt
 import numpy as np
 import torch as th
 import gym
@@ -56,6 +59,7 @@ def env_default(key, default=None):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("env_id", type=str, **env_default("ENV_ID"))
+    parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
@@ -86,7 +90,7 @@ if __name__ == "__main__":
 
     agent = ActorCritic(envs)
 
-    writer = SummaryWriter("logs/my")
+    writer = SummaryWriter(f"logs/{args.name}")
     writer.add_text(
         "hyperparameters",
         "|param|value|\n|-|-|\n" +

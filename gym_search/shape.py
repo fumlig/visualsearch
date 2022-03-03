@@ -2,10 +2,8 @@ import numpy as np
 
 class Rect:
     def __init__(self, y, x, h, w):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
+        self.y, self.x = y, x
+        self.h, self.w = h, w
 
     def get_pos(self):
         return self.y, self.x

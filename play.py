@@ -20,6 +20,7 @@ WINDOW_SIZE = (640, 640)
 
 parser = ArgumentParser()
 parser.add_argument("env", type=str)
+parser.add_argument("--seed", type=int, default=None)
 parser.add_argument("--agent", type=str)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--observe", action="store_true")
@@ -31,6 +32,9 @@ args = parser.parse_args()
 env = gym.wrappers.FlattenObservation(gym.make(args.env))
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
 stats = [defaultdict(int) for _ in range(args.episodes)]
+
+if args.seed is not None:
+    env.seed(args.seed)
 
 if args.agent is None:
     agent = None
@@ -51,7 +55,7 @@ for ep in range(args.episodes):
         img = env.render(mode="rgb_array", observe=args.observe)
         img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-        cv.imshow(args.env, img)
+        cv.imshow(args.env, img)	
 
         key = cv.waitKey(args.delay)
 
@@ -78,6 +82,7 @@ for ep in range(args.episodes):
 
     if done:
         print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
+        cv.imwrite("search.jpg", env.image(show_path=True))
 
 
 print(

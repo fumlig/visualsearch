@@ -1,7 +1,7 @@
 import gym
 
 from gym_search.envs.search import SearchEnv
-from gym_search.terrain import basic_terrain, realistic_terrain
+from gym_search.terrain import gaussian_terrain, realistic_terrain
 
 
 gym.register(
@@ -22,7 +22,7 @@ gym.register(
         world_shape=(32, 32), 
         view_shape=(8, 8), 
         step_size=1,
-        terrain_func=lambda shape, random: basic_terrain(shape, random, 32, sigma=4, num_kernels=8, num_targets=8),
+        terrain_func=lambda shape, random: gaussian_terrain(shape, random, 32, sigma=4, num_kernels=8, num_targets=8),
     )
 )
 
@@ -33,6 +33,6 @@ gym.register(
         world_shape=(32, 32), 
         view_shape=(8, 8), 
         step_size=1,
-        terrain_func=lambda shape, random: basic_terrain(shape, random, 128, sigma=16, num_kernels=1, num_targets=1),
+        terrain_func=lambda shape, random: gaussian_terrain(shape, random, 128, sigma=16, num_kernels=1, num_targets=1),
     )
 )

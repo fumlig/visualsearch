@@ -4,7 +4,7 @@ import numpy as np
 
 from gym.utils import seeding
 from gym_search.utils import clamp
-from gym_search.terrain import basic_terrain
+from gym_search.terrain import gaussian_terrain
 from gym_search.shape import Rect
 
 
@@ -26,12 +26,10 @@ class SearchEnv(gym.Env):
         world_shape=(256, 256), 
         view_shape=(32, 32), 
         step_size=32, 
-        terrain_func=basic_terrain,
+        terrain_func=gaussian_terrain,
         rew_exploration=True,
-        max_steps=1000,
-        seed=0
+        max_steps=1000
     ):
-        self.seed(seed)
         self.shape = world_shape
         self.view = Rect(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
@@ -43,10 +41,13 @@ class SearchEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
             #t=gym.spaces.Discrete(max_steps),
-            img=gym.spaces.Box(0, 255, (*self.view.shape, 3), np.uint8),
+            img=gym.spaces.Box(0, 1, (*self.view.shape, 3)),
+            #img=gym.spaces.Box(0, 255, (*self.view.shape, 3), np.uint8),
             pos=gym.spaces.Discrete(self.shape[0]*self.shape[1])
         ))
         # this observation space makes some sense, position = pan tilt percentage (the world is only what can possibly be seen by the sensor)
+
+        self.seed()
 
 
     def reset(self):
@@ -57,6 +58,7 @@ class SearchEnv(gym.Env):
         self.terrain, self.targets = self.terrain_func(self.shape, self.random)
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)
+        self.path = [self.view.pos]
         self.num_steps = 0
 
         return self.observe()
@@ -76,9 +78,6 @@ class SearchEnv(gym.Env):
 
         self.view.pos = (y, x)
 
-        
-        self.visited[self.view.pos] = True
-
         rew = 0
 
         if action == self.Action.TRIGGER:
@@ -96,6 +95,9 @@ class SearchEnv(gym.Env):
 
             if self.rew_exploration and not self.visited[self.view.pos]:
                 rew += 1
+
+        self.visited[self.view.pos] = True
+        self.path.append(self.view.pos)
 
         done = all(self.hits)
 
@@ -133,7 +135,7 @@ class SearchEnv(gym.Env):
         y0, x0, y1, x1 = self.view.corners()
         h, w = self.shape
         img = self.image()
-        obs = img[y0:y1,x0:x1,:]
+        obs = (img[y0:y1,x0:x1,:]/255.0).astype(float)
 
         return dict(
             #t=self.num_steps,
@@ -141,14 +143,20 @@ class SearchEnv(gym.Env):
             pos=y0*w+x0
         )
 
-    def image(self, indicate_hit=True):
+    def image(self, show_hit=True, show_path=False):
         img = self.terrain.copy()
 
-        for i in range(len(self.targets)):
-            if self.hits[i]:
-                ty0, tx0, ty1, tx1 = self.targets[i].corners()
-                img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
-        
+        if show_hit:
+            for i in range(len(self.targets)):
+                if self.hits[i]:
+                    ty0, tx0, ty1, tx1 = self.targets[i].corners()
+                    img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
+
+        if show_path:
+            for y, x in self.path:
+                print(y, x)
+                img[y,x] = (0, 0, 0)
+
         return img
 
     def get_action_meanings(self):

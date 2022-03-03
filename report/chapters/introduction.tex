@@ -26,6 +26,15 @@ The exact characteristics of the environment need not be constant - forests with
 % should this be moved?
 This work tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment. This is a problem that has been less studied in the literature than visual search in smaller environments. There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
 
+% we want a system that can
+% - work in familiar environments
+% - learns effective scanning patterns
+% - in the best case better than exhaustive
+% - integrates history (features, location, etc)
+
+% premise:
+% - train: show the agent some samples of previous objects and their locations
+% - test: the agent finds them in a short time
 
 \section{Aim}
 \label{sec:aim}
@@ -47,7 +56,7 @@ This thesis will address the following questions:
   \item How can a learning agent generalize to unseen but familiar environments?
   \item How does memory affect the agent's ability to search an environment?
   \item How does the learning agent compare to common non-learning methods?
-  \item How does the learning agent compare to an exhaustive search of the environment, and a human searcher?
+  \item How does the learning agent compare to an exhaustive search of the environment, frontier-based algorithm, and a human searcher?
 \end{enumerate}
 
 % think about measurements

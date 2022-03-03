@@ -9,11 +9,11 @@ from tqdm import tqdm
 
 
 def learn(
+    tot_timesteps,
     envs,
     agent,
     device,
     writer=None,
-    tot_timesteps=25000,
     learning_rate=2.5e-4,
     num_steps=128,
     gamma=0.99,
@@ -33,6 +33,7 @@ def learn(
     minibatch_size = batch_size // num_minibatches
     num_batches = tot_timesteps // batch_size
 
+    agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
 
     obss = th.zeros((num_steps, num_envs) + envs.single_observation_space.shape).to(device)

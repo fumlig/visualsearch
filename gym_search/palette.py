@@ -7,7 +7,8 @@ def pick_color(c, palette):
     p = np.array(palette, dtype=np.uint8)
     return p[i]
 
-EARTH_PALETTE = [
+
+BLUE_MARBLE = [
     (0, 0, 0),
     (0, 0, 46),
     (0, 0, 58),
@@ -250,4 +251,4 @@ EARTH_PALETTE = [
     (255, 255, 255),
 ]
 
-EARTH_FEW = [EARTH_PALETTE[i] for i in range(0, len(EARTH_PALETTE), 20)]
+EARTH_TOON = [BLUE_MARBLE[i] for i in range(25, len(BLUE_MARBLE), 25)]

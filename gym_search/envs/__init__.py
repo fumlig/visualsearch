@@ -19,10 +19,10 @@ gym.register(
     id="SearchDense-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        world_shape=(64, 64), 
-        view_shape=(4, 4), 
+        world_shape=(32, 32), 
+        view_shape=(8, 8), 
         step_size=1,
-        terrain_func=lambda shape, random: basic_terrain(shape, random, 40, sigma=5, num_kernels=25, num_targets=10),
+        terrain_func=lambda shape, random: basic_terrain(shape, random, 32, sigma=4, num_kernels=8, num_targets=8),
     )
 )
 
@@ -30,9 +30,9 @@ gym.register(
     id="SearchSparse-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        world_shape=(64, 64), 
-        view_shape=(4, 4), 
+        world_shape=(32, 32), 
+        view_shape=(8, 8), 
         step_size=1,
-        terrain_func=lambda shape, random: basic_terrain(shape, random, 40, sigma=5, num_kernels=10, num_targets=3),
+        terrain_func=lambda shape, random: basic_terrain(shape, random, 128, sigma=16, num_kernels=1, num_targets=1),
     )
 )

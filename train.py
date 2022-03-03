@@ -5,16 +5,21 @@ import gym
 import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
+from argparse import ArgumentParser
+
 from agents.ac import ActorCritic
 from agents.ppo import learn
 
 
-SEED = 1 # 0
-ENV_ID = "Acrobot-v1" # "SearchSparse-v0"
-NUM_ENVS = 4 # 64
+# todo: policy loss looks weird as hell
+
+
+SEED =  0
+ENV_ID = "SearchDense-v0"
+NUM_ENVS = 64 # also a hyperparameter...
 HPARAMS = dict(
     learning_rate=5e-4,
-    tot_timesteps=int(10e6),
+    tot_timesteps=int(100e6),
     num_steps=256,
     num_minibatches=8,
     num_epochs=3,
@@ -31,6 +36,8 @@ HPARAMS = dict(
 
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+
     random.seed(SEED)
     np.random.seed(SEED)
     th.manual_seed(SEED)
@@ -42,10 +49,9 @@ if __name__ == "__main__":
         ENV_ID,
         NUM_ENVS,
         asynchronous=False,
-        #wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics]
-        wrappers=[gym.wrappers.RecordEpisodeStatistics]
+        wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics]
     )
-    #envs = gym.wrappers.NormalizeReward(envs)
+    envs = gym.wrappers.NormalizeReward(envs)
 
     envs.seed(SEED)
 
@@ -55,7 +61,7 @@ if __name__ == "__main__":
 
     agent = ActorCritic(envs).to(device)
 
-    writer = SummaryWriter("logs/test")
+    writer = SummaryWriter("logs/my")
 
     writer.add_text(
         "hyperparameters",

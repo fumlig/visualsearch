@@ -76,12 +76,10 @@ class SearchEnv(gym.Env):
 
         self.view.pos = (y, x)
 
-        rew = -1
-
-        if self.rew_exploration and not self.visited[self.view.pos]:
-            rew += 1
         
         self.visited[self.view.pos] = True
+
+        rew = 0
 
         if action == self.Action.TRIGGER:
             rew -= 5
@@ -93,6 +91,11 @@ class SearchEnv(gym.Env):
                 if self.view.overlap(self.targets[i]) > 0:
                     rew += 10
                     self.hits[i] = True
+        else:
+            rew -= 1
+
+            if self.rew_exploration and not self.visited[self.view.pos]:
+                rew += 1
 
         done = all(self.hits)
 
@@ -113,14 +116,9 @@ class SearchEnv(gym.Env):
             img = self.observe()["img"]
         else:
             y0, x0, y1, x1 = self.view.corners()
-            img = self.terrain*0.5
-            img[y0:y1,x0:x1] = self.terrain[y0:y1,x0:x1]
+            img = self.image()*0.5
+            img[y0:y1,x0:x1] = self.image()[y0:y1,x0:x1]
             img = img.astype(np.uint8)
-
-            for i in range(len(self.targets)):
-                if self.hits[i]:
-                    ty0, tx0, ty1, tx1 = self.targets[i].corners()
-                    img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
 
         return img
 
@@ -134,7 +132,7 @@ class SearchEnv(gym.Env):
     def observe(self):
         y0, x0, y1, x1 = self.view.corners()
         h, w = self.shape
-        img = self.terrain
+        img = self.image()
         obs = img[y0:y1,x0:x1,:]
 
         return dict(
@@ -142,7 +140,17 @@ class SearchEnv(gym.Env):
             img=obs,
             pos=y0*w+x0
         )
-    
+
+    def image(self, indicate_hit=True):
+        img = self.terrain.copy()
+
+        for i in range(len(self.targets)):
+            if self.hits[i]:
+                ty0, tx0, ty1, tx1 = self.targets[i].corners()
+                img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
+        
+        return img
+
     def get_action_meanings(self):
         return [a.name for a in self.Action]
     
@@ -154,3 +162,4 @@ class SearchEnv(gym.Env):
             (ord("s"),): self.Action.SOUTH,
             (ord("a"),): self.Action.WEST,
         }
+

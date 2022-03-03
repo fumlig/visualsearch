@@ -10,7 +10,7 @@ import torch as th
 import gym
 import gym_search
 
-from ppo import Agent
+from agents.ac import ActorCritic
 from agents.random import RandomAgent
 
 KEY_ESC = 27

@@ -31,7 +31,7 @@ class ActorCritic(nn.Module):
             nn.Tanh(),
             init_weights(nn.Linear(64, 64)),
             nn.Tanh(),
-            init_weights(nn.Linear(64, num_actions), gain=1.0)
+            init_weights(nn.Linear(64, num_actions), gain=0.01)
         )
 
         self.critic = nn.Sequential(
@@ -39,12 +39,12 @@ class ActorCritic(nn.Module):
             nn.Tanh(),
             init_weights(nn.Linear(64, 64)),
             nn.Tanh(),
-            init_weights(nn.Linear(64, 1), gain=0.01)
+            init_weights(nn.Linear(64, 1), gain=1.0)
         )
 
         #self.network.apply(lambda m: init_weights(m, np.sqrt(2)))
-        #self.actor.apply(lambda m: init_weights(m, 1.0))
-        #self.critic.apply(lambda m: init_weights(m, 0.01))
+        #self.actor.apply(lambda m: init_weights(m, 0.01))
+        #self.critic.apply(lambda m: init_weights(m, 1.0))
 
     def forward(self, obs):
         hid = self.network(obs)

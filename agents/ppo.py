@@ -4,7 +4,6 @@ import torch as th
 import torch.nn as nn
 
 from torch.utils.tensorboard import SummaryWriter
-from torch.distributions import Categorical
 from tqdm import tqdm
 
 
@@ -35,6 +34,9 @@ def learn(
 
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
+
+    # todo: make larger buffer?
+    # why should the buffer length be smaller than the total number of steps in an episode?
 
     obss = th.zeros((num_steps, num_envs) + envs.single_observation_space.shape).to(device)
     rews = th.zeros((num_steps, num_envs)).to(device)
@@ -74,13 +76,14 @@ def learn(
             obs = th.tensor(next_obs, dtype=th.float).to(device)
             done = th.tensor(next_done, dtype=th.float).to(device)
 
-            for env_info in info:
-                if "episode" in env_info:
-                    episode_r = env_info["episode"]["r"]
-                    episode_l = env_info["episode"]["l"]
+            for i in info:
+                if "episode" in i:
+                    ep_r = i["episode"]["r"]
+                    ep_l = i["episode"]["l"]
+                    _ep_t = i["episode"]["t"]
 
-                    writer.add_scalar("charts/episode_return", episode_r, timestep)
-                    writer.add_scalar("charts/episode_length", episode_l, timestep)
+                    writer.add_scalar("charts/episode_return", ep_r, timestep)
+                    writer.add_scalar("charts/episode_length", ep_l, timestep)
 
 
         # bootstrap value

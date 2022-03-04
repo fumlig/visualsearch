@@ -81,7 +81,7 @@ for ep in range(args.episodes):
 
     if done:
         print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
-        cv.imwrite("search.jpg", env.image(show_path=True))
+        #cv.imwrite("search.jpg", env._image(show_path=True))
 
 
 print(

@@ -28,6 +28,7 @@ class SearchEnv(gym.Env):
         view_shape=(32, 32), 
         step_size=32, 
         terrain_func=gaussian_terrain,
+        random_pos=True,
         rew_exploration=True,
         max_steps=1000
     ):
@@ -35,16 +36,19 @@ class SearchEnv(gym.Env):
         self.view = Rect(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
         self.terrain_func = terrain_func
+        self.random_pos = random_pos
         self.rew_exploration = rew_exploration
         self.max_steps = max_steps
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
-            #t=gym.spaces.Discrete(max_steps),
-            img=gym.spaces.Box(0, 1, (*self.view.shape, 3)),
+            time=gym.spaces.Discrete(max_steps),
+            image=gym.spaces.Box(0, 1, (*self.view.shape, 3)),
             #img=gym.spaces.Box(0, 255, (*self.view.shape, 3), np.uint8),
-            pos=gym.spaces.Discrete(self.shape[0]*self.shape[1])
+            position=gym.spaces.Discrete(self.shape[0]*self.shape[1]),
+            visited=gym.spaces.Box(0, 1, self.shape),
+            #triggered=gym.spaces.Box(0, 1, self.shape),
         ))
         # this observation space makes some sense, position = pan tilt percentage (the world is only what can possibly be seen by the sensor)
 
@@ -53,7 +57,11 @@ class SearchEnv(gym.Env):
 
     def reset(self):
         h, w = self.shape
-        y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
+        
+        if self.random_pos:
+            y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
+        else:
+            y, x = 0, 0
 
         self.view.pos = (y, x)
         self.terrain, self.targets = self.terrain_func(self.shape, self.random)
@@ -63,7 +71,7 @@ class SearchEnv(gym.Env):
         self.path = [self.view.pos]
         self.num_steps = 0
 
-        return self.observe()
+        return self._observe()
 
 
     def step(self, action):
@@ -80,10 +88,10 @@ class SearchEnv(gym.Env):
 
         self.view.pos = (y, x)
 
-        rew = 0
+        rew = -2
 
         if action == self.Action.TRIGGER:
-            rew -= 5
+            rew -= 3
 
             for i in range(len(self.targets)):                
                 if self.hits[i]:
@@ -93,8 +101,6 @@ class SearchEnv(gym.Env):
                     rew += 10
                     self.hits[i] = True
         else:
-            rew -= 1
-
             if self.rew_exploration and not self.visited[self.view.pos]:
                 rew += 1
 
@@ -105,9 +111,9 @@ class SearchEnv(gym.Env):
         done = all(self.hits)
 
         if done:
-            rew += 100
+            rew = 100
 
-        obs = self.observe()
+        obs = self._observe()
 
         self.num_steps += 1
 
@@ -118,11 +124,11 @@ class SearchEnv(gym.Env):
 
     def render(self, mode="rgb_array", observe=False):
         if observe:
-            img = self.observe()["img"]
+            img = self._observe()["img"]
         else:
-            y0, x0, y1, x1 = self.view.corners()
-            img = self.image()*0.5
-            img[y0:y1,x0:x1] = self.image()[y0:y1,x0:x1]
+            img = self._image(show_path=True)
+            rect_coords = draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape)
+            img[rect_coords] = add_with_alpha(img[rect_coords], (0, 0, 0), 0.25)
             img = img.astype(np.uint8)
 
         return img
@@ -134,19 +140,23 @@ class SearchEnv(gym.Env):
         self.random, _ = seeding.np_random(seed)
         return [seed]
 
-    def observe(self):
+    def _observe(self):
         y0, x0, y1, x1 = self.view.corners()
         h, w = self.shape
-        img = self.image()
-        obs = (img[y0:y1,x0:x1,:]/255.0).astype(float)
+        img = self._image()
+        obs = img[y0:y1,x0:x1]
 
         return dict(
-            #t=self.num_steps,
-            img=obs,
-            pos=y0*w+x0
+            time=self.num_steps,
+            image=(obs/255).astype(dtype=float),
+            #img=obs,
+            position=y0*w+x0,
+            visited=self.visited.astype(dtype=float),
+            #triggered=self.triggered
         )
 
-    def image(self, show_hit=True, show_path=False):
+
+    def _image(self, show_hit=True, show_path=False):
         img = self.terrain.copy()
 
         if show_hit:

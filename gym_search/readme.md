@@ -32,6 +32,8 @@
 - https://www.yf.io/p/lsun
 - http://places2.csail.mit.edu/index.html
 
+- https://arxiv.org/pdf/2107.12469.pdf
+
 - add bounding box class
 - create dataset from object detection dataset
 - fun extra: search for words in text?

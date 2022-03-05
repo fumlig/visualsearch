@@ -29,6 +29,7 @@ class SearchEnv(gym.Env):
         step_size=32, 
         terrain_func=gaussian_terrain,
         rew_exploration=True,
+        max_levels=32,
         max_steps=1000
     ):
         self.shape = world_shape
@@ -36,6 +37,7 @@ class SearchEnv(gym.Env):
         self.step_size = step_size
         self.terrain_func = terrain_func
         self.rew_exploration = rew_exploration
+        self.max_levels = max_levels
         self.max_steps = max_steps
 
         self.reward_range = (-np.inf, np.inf)
@@ -53,10 +55,10 @@ class SearchEnv(gym.Env):
 
     def reset(self):
         h, w = self.shape
-        y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
+        y, x = self.random.integers(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.integers(0, (w-self.view.w+1)//self.step_size)*self.step_size
 
         self.view.pos = (y, x)
-        self.terrain, self.targets = self.terrain_func(self.shape, self.random)
+        self.terrain, self.targets = self.terrain_func(self.shape, self.random.integers(0, self.max_levels))
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)
         self.triggered = np.full(self.shape, False)
@@ -131,7 +133,7 @@ class SearchEnv(gym.Env):
         pass
 
     def seed(self, seed=None):
-        self.random, _ = seeding.np_random(seed)
+        self.random = np.random.default_rng(seed)
         return [seed]
 
     def observe(self):

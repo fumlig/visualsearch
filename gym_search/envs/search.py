@@ -125,7 +125,7 @@ class SearchEnv(gym.Env):
             img = self._observe()["img"]
         else:
             img = self._image(show_targets=True)
-            rect_coords = draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape)
+            rect_coords = tuple(draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape))
             img[rect_coords] = add_with_alpha(img[rect_coords], (0, 0, 0), 0.25)
             img = img.astype(np.uint8)
 
@@ -160,7 +160,7 @@ class SearchEnv(gym.Env):
 
         if show_targets or show_hits:
             for i in range(len(self.targets)):
-                coords  = draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape)
+                coords = tuple(draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape))
 
                 if show_hits and self.hits[i]:
                     img[coords] = add_with_alpha(img[coords], (0, 255, 0), 0.5)

@@ -1,5 +1,6 @@
 import numpy as np
 from skimage import draw
+from functools import lru_cache
 
 from gym_search.utils import gaussian_kernel, normalize, clamp, sample_coords
 from gym_search.palette import pick_color, EARTH_TOON
@@ -58,12 +59,9 @@ class TerrainGenerator(Generator):
         # http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
         # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
         
-        seed = self.random.integers(self.max_terrains)
-
-        exp = self.random.uniform(0.1, 10.0)
         height, width = self.shape
-        noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
-        terrain = normalize(noise)**exp
+        seed = self.random.integers(self.max_terrains)
+        terrain = self.terrain(seed)
         img = pick_color(terrain, EARTH_TOON)
 
         tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
@@ -87,10 +85,17 @@ class TerrainGenerator(Generator):
             size = self.random.integers(2, 4)
             rect = Rect(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
-            coords = draw.rectangle(rect.pos, extent=rect.shape)
+            coords = tuple(draw.rectangle(rect.pos, extent=rect.shape))
             img[coords] = (255, 0, 0)
 
         return img, targets
+
+    @lru_cache(maxsize=1024)
+    def terrain(self, seed):
+        exp = self.random.uniform(0.1, 10.0)
+        noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
+        terrain = normalize(noise)**exp
+        return terrain
 
 
 class DatasetGenerator(Generator):

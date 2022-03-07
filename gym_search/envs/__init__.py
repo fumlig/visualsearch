@@ -11,7 +11,8 @@ gym.register(
         world_shape=(1024, 1024),
         view_shape=(64, 64),
         step_size=64,
-        terrain_func=realistic_terrain
+        terrain_func=realistic_terrain,
+        max_levels=1024
     )
 )
 

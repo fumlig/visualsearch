@@ -14,12 +14,6 @@ def add_with_alpha(bg, fg, alpha):
 
     return (1-alpha)*bg + alpha*fg
 
-    #return (
-    #    (1 - alpha)*bg[0] + alpha*fg[0],
-    #    (1 - alpha)*bg[1] + alpha*fg[1],
-    #    (1 - alpha)*bg[2] + alpha*fg[2],
-    #)
-
 
 BLUE_MARBLE = [
     (0, 0, 0),

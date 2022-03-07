@@ -31,6 +31,8 @@
 - https://cocodataset.org/#captions-2015
 - https://www.yf.io/p/lsun
 - http://places2.csail.mit.edu/index.html
+- map data? 
+
 
 - add bounding box class
 - create dataset from object detection dataset

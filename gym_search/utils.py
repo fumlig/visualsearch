@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 
 
 def to_point(i, w):
@@ -62,3 +63,26 @@ def gaussian_kernel(size, sigma=1):
 def sample_coords(shape, n, p, random=np.random):
     choice = random.choice(np.prod(shape), n, p=p.flatten(), replace=False)
     return [to_point(i, shape[1]) for i in choice]
+
+def manhattan_dist(p1, p2):
+    p12 = np.array(p2) - np.array(p1)
+    return np.sum(np.abs(p12))
+
+def travel_dist(points, dist_func=manhattan_dist):
+    # naïve TSP, maybe make something better if it feels necessary
+    min_dist = np.inf
+
+    for perm in itertools.permutations(points):
+        dist = 0.0
+        
+        for i in range(len(perm)-1):
+            p1 = np.array(perm[i])
+            p2 = np.array(perm[i+1])
+            dist += dist_func(p1, p2)
+
+            if dist > min_dist:
+                break
+        
+        min_dist = min(dist, min_dist)
+
+    return min_dist

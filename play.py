@@ -9,6 +9,8 @@ import torch as th
 import gym
 import gym_search
 
+from gym_search.utils import travel_dist
+
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
 
@@ -49,6 +51,11 @@ for ep in range(args.episodes):
     
     done = False
     obs = env.reset()
+
+    if args.verbose:
+        points = [env.view.pos] + [target.pos for target in env.targets]
+        #print(len(points))
+        print("optimal:", travel_dist(points))
 
     while not done:
         img = env.render(mode="rgb_array", observe=args.observe)

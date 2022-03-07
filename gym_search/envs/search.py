@@ -8,6 +8,46 @@ from gym_search.shapes import Rect
 from gym_search.palette import add_with_alpha
 from skimage import draw
 
+
+class SignalEnv(gym.Env):
+
+    metadata = {"render.modes": ["ansi"]}
+
+    def __init__(self, shape, window, delta=None):
+        self.shape = shape
+        self.window = window
+        self.delta = delta if delta is not None else np.ones()
+
+        self.reward_range(-np.inf, np.inf)
+        self.action_space = gym.spaces.Box(0, 1, len(self.shape))
+        self.observation_space = gym.spaces.Box(0, 1, self.window)
+
+    def reset(self):
+        self.position = np.zeros(len(self.shape))
+        self.signal = np.random.uniform(0, 1, self.shape)
+        return self.observation()
+
+    def step(self, action):
+        self.position = np.array(self.shape)*self.action
+
+    def render(self, mode="ansi"):
+        print("shape:", self.shape)
+        print("window:", self.window)
+        print("position:", self.position)
+        print("observation:", self.observation())
+
+    def close(self):
+        pass
+
+    def seed(self, seed=None):
+        self.random = np.random.default_rng(seed)
+        self.generator.seed(seed)
+        return [seed]
+
+    def observation(self):
+        return self.signal # todo: index
+
+
 class SearchEnv(gym.Env):
 
     metadata = {"render.modes": ["rgb_array"]}
@@ -185,4 +225,3 @@ class SearchEnv(gym.Env):
             (ord("s"),): self.Action.SOUTH,
             (ord("a"),): self.Action.WEST,
         }
-

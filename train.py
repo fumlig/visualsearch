@@ -15,7 +15,17 @@ from agents.ac import ActorCritic
 from agents import ppo
 
 
-# todo: policy loss looks weird as hell
+"""
+todo:
+fix hparams (defaults and all that, if we set to {} they are not visible in tensorboard)
+fix dict observations
+add checkpoints
+add video recording
+add pretty plotting (yield info from learn?)
+"""
+
+
+# these are from procgen!
 
 SEED = 0
 TOT_TIMESTEPS = int(100e6)
@@ -79,7 +89,7 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=[gym.wrappers.FlattenObservation, gym.wrappers.RecordEpisodeStatistics])
+    envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=[gym.wrappers.RecordEpisodeStatistics, gym.wrappers.FlattenObservation])
     #envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
     for env in envs.envs:
@@ -101,3 +111,5 @@ if __name__ == "__main__":
 
     envs.close()
     writer.close()
+
+    th.save(agent, f"models/{args.name}.pt")

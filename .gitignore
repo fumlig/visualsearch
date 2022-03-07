@@ -1,3 +1,8 @@
+logs/
+videos/
+models/
+data/
+
 *.aux
 *.bbl
 *.blg
@@ -10,6 +15,3 @@ __pycache__/
 
 .ipynb_checkpoints
 .vscode
-
-logs/
-videos/

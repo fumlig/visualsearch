@@ -9,6 +9,8 @@ import torch as th
 import gym
 import gym_search
 
+from gym_search.utils import travel_dist
+
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
 
@@ -50,6 +52,10 @@ for ep in range(args.episodes):
     done = False
     obs = env.reset()
 
+    #if args.verbose:
+    #    points = [env.view.pos] + [target.pos for target in env.targets]
+    #    print("optimal:", travel_dist(points))
+
     while not done:
         img = env.render(mode="rgb_array", observe=args.observe)
         img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
@@ -81,7 +87,7 @@ for ep in range(args.episodes):
 
     if done:
         print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
-        cv.imwrite("search.jpg", env.image(show_path=True))
+        #cv.imwrite("search.jpg", env._image(show_path=True))
 
 
 print(

@@ -7,6 +7,24 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 
 
+"""
+fuck
+
+we have to be able to store the observations in the ppo buffers
+with the current structure extractions have to happen
+
+options:
+- rewrite ppo so that it can use an extractor class and run the proper back propagation on it
+- then the agent would need a "preprocess/extract method" which we call and get the proper backprop on
+
+- keep flattened observations and use a unified architecture, i.e. use only convolution or mlp for all features
+- alphazero did this by having one channel per extra feature, actually not too dumb...
+- make an observation transformation wrapper that creates a channel for each key in the dictobs
+- discretes are simply filled in
+- try and see if it gets the same performance as an mlp first of all
+"""
+
+
 #def init_weights(module, gain=1.0):
 #    if isinstance(module, nn.Linear):
 #        nn.init.orthogonal_(module.weight, gain)
@@ -18,66 +36,65 @@ def init_weights(layer, gain=np.sqrt(2)):
     return layer
 
 
-def is_image_space(obs_space):
-    return isinstance(obs_space, gym.spaces.Box) and len(obs_space.shape == 3) and obs_space.shape[2] == 3 and obs_space.dtype == np.uint8
 
+class Actor(nn.Module):
+    def __init__(self, num_features, num_actions):
+        super(Actor, self).__init__()
 
-# https://github.com/AIcrowd/neurips2020-procgen-starter-kit/blob/142d09586d2272a17f44481a115c4bd817cf6a94/models/impala_cnn_torch.py
-class ResidualBlock(nn.Module):
-    def __init__(self, channels):
-        super().__init__()
-        self.conv0 = nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1)
-        self.conv1 = nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1)
-
+        self.policy = nn.Sequential(
+            init_weights(nn.Linear(num_features, 64)),
+            nn.Tanh(),
+            init_weights(nn.Linear(64, 64)),
+            nn.Tanh(),
+            init_weights(nn.Linear(64, num_actions), gain=0.01)
+        )
+    
     def forward(self, x):
-        inputs = x
-        x = F.relu(x)
-        x = self.conv0(x)
-        x = F.relu(x)
-        x = self.conv1(x)
-        return x + inputs
+        logits = self.policy(x)
+        pi = Categorical(logits=logits)
+        return pi
+    
 
+class Critic(nn.Module):
+    def __init__(self, num_features):
+        super(Critic, self).__init__()
 
-class ConvSequence(nn.Module):
-    def __init__(self, input_shape, out_channels):
-        super().__init__()
-        self._input_shape = input_shape
-        self._out_channels = out_channels
-        self.conv = nn.Conv2d(in_channels=self._input_shape[0], out_channels=self._out_channels, kernel_size=3, padding=1)
-        self.res0 = ResidualBlock(self._out_channels)
-        self.res1 = ResidualBlock(self._out_channels)
-
+        self.value = nn.Sequential(
+            init_weights(nn.Linear(num_features, 64)),
+            nn.Tanh(),
+            init_weights(nn.Linear(64, 64)),
+            nn.Tanh(),
+            init_weights(nn.Linear(64, 1), gain=1.0)
+        )
+    
     def forward(self, x):
-        x = self.conv(x)
-        x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
-        x = self.res0(x)
-        x = self.res1(x)
-        assert x.shape[1:] == self.output_shape()
-        return x
-
-    def output_shape(self):
-        _c, h, w = self._input_shape
-        return (self._out_channels, (h + 1) // 2, (w + 1) // 2)
+        v = self.value(x)
+        return v
 
 """
-class FeatureExtractor(nn.Module):
-    import gym.spaces
-    def __init__(self, obs_space):
-        if isinstance(obs_space, gym.spaces.Box) and is_image_space(obs_space):
-            self.preprocess = None
-            self.extract = None # conv
-        elif isinstance(obs_space, gym.spaces.Dict):
-            self.extract = nn.ModuleDict({name: FeatureExtractor(space) for name, space in obs_space})
-        else:
-            self.preprocess = gym.spaces.flatten
-            self.extract = None
+class DictExtractor(nn.Module):
+    def __init__(self, envs):
+        super(ActorCritic, self).__init__()
+        obs_space = envs.single_observation_space
+        height, width, channels = obs_space["img"].shape
+        num_positions = obs_space["pos"].shape
 
-    def forward(self, obs):
-        img = obs["img"] # conv
-        pos = obs["pos"] # encode as one-hot
+        # convolutions: batch, channels, height, width
+        # channels can change between convolution layers
+
+        self.conv_seq = nn.Sequential(
+            init_weights(nn.Conv2d(channels, 32, 3, padding=1)),
+            nn.ReLU(),
+            init_weights(nn.Conv2d(32, 32, 3, padding=1)),
+            nn.ReLU(),
+            nn.Flatten(),
+            init_weights(nn.Linear(height*width*32)),
+            nn.ReLU()
+        )
+
+    def forward(obs):
+        img_hidden = 
 """
-
-
 
 class ActorCritic(nn.Module):
     def __init__(self, envs):
@@ -86,45 +103,27 @@ class ActorCritic(nn.Module):
         num_features, = envs.single_observation_space.shape
         num_actions = envs.single_action_space.n
 
-        #self.network = nn.Identity()
-        self.network = nn.Sequential()
+        print(num_features)
 
-        self.actor = nn.Sequential(
-            init_weights(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, num_actions), gain=0.01)
-        )
+        self.extractor = nn.Identity()
+        self.network = nn.Identity()
 
-        self.critic = nn.Sequential(
-            init_weights(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 1), gain=1.0)
-        )
+        self.policy = Actor(num_features, num_actions)
+        self.value = Critic(num_features)
 
         #self.network.apply(lambda m: init_weights(m, np.sqrt(2)))
         #self.actor.apply(lambda m: init_weights(m, 0.01))
         #self.critic.apply(lambda m: init_weights(m, 1.0))
 
     def forward(self, obs):
-        hid = self.network(obs)
-        pi = self.policy(hid)
-        v = self.value(hid)
+        x = self.extractor(obs)
+        h = self.network(x)
+        pi = self.policy(h)
+        v = self.value(h)
         return pi, v
 
     def predict(self, obs):
-        hid = self.network(obs)
-        pi = self.policy(hid)
-        return pi.sample()
-
-    def policy(self, hid):
-        logits = self.actor(hid)
-        pi = Categorical(logits=logits)
-        return pi
-
-    def value(self, hid):
-        v = self.critic(hid)
-        return v
+        x = self.extractor(obs)
+        h = self.network(x)
+        pi = self.policy(h)
+        return pi.sample().item()

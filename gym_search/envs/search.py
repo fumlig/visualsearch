@@ -124,7 +124,7 @@ class SearchEnv(gym.Env):
         if observe:
             img = self._observe()["img"]
         else:
-            img = self._image(show_targets=True)
+            img = self._image(show_targets=True, show_hits=True, show_path=True)
             rect_coords = tuple(draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape))
             img[rect_coords] = add_with_alpha(img[rect_coords], (0, 0, 0), 0.25)
             img = img.astype(np.uint8)

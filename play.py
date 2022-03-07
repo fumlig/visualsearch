@@ -52,10 +52,9 @@ for ep in range(args.episodes):
     done = False
     obs = env.reset()
 
-    if args.verbose:
-        points = [env.view.pos] + [target.pos for target in env.targets]
-        #print(len(points))
-        print("optimal:", travel_dist(points))
+    #if args.verbose:
+    #    points = [env.view.pos] + [target.pos for target in env.targets]
+    #    print("optimal:", travel_dist(points))
 
     while not done:
         img = env.render(mode="rgb_array", observe=args.observe)

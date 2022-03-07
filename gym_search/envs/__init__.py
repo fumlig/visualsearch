@@ -1,6 +1,6 @@
 import gym
 
-from gym_search.datasets import AirbusDataset
+from gym_search.datasets import AirbusAircraftDataset, AirbusOilDataset
 from gym_search.envs.search import SearchEnv
 from gym_search.envs.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
 
@@ -52,10 +52,20 @@ gym.register(
 )
 
 gym.register(
-    id="SearchAirbus-v0",
+    id="SearchAirbusAircraft-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        generator=DatasetGenerator(AirbusDataset("data/airbus")),
+        generator=DatasetGenerator(AirbusAircraftDataset()),
+        view_shape=(128, 128),
+        step_size=128
+    )
+)
+
+gym.register(
+    id="SearchAirbusOil-v0",
+    entry_point=SearchEnv,
+    kwargs=dict(
+        generator=DatasetGenerator(AirbusOilDataset()),
         view_shape=(128, 128),
         step_size=128
     )

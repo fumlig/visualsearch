@@ -24,7 +24,7 @@ parser.add_argument("--agent", type=str)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--observe", action="store_true")
 parser.add_argument("--verbose", action="store_true")
-parser.add_argument("--episodes", type=int, default=100)
+parser.add_argument("--episodes", type=int, default=1024)
 
 args = parser.parse_args()
 

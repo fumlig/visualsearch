@@ -4,8 +4,7 @@ import numpy as np
 
 from gym.utils import seeding
 from gym_search.utils import clamp
-from gym_search.terrain import gaussian_terrain
-from gym_search.shape import Rect
+from gym_search.shapes import Rect
 from gym_search.palette import add_with_alpha
 from skimage import draw
 
@@ -23,19 +22,18 @@ class SearchEnv(gym.Env):
         # todo: done action?
 
     def __init__(
-        self, 
-        world_shape=(256, 256), 
+        self,
+        generator,
         view_shape=(32, 32), 
-        step_size=32, 
-        terrain_func=gaussian_terrain,
-        random_pos=True,
+        step_size=1, 
+        random_pos=False,
         rew_exploration=True,
         max_steps=1000
     ):
-        self.shape = world_shape
+        self.generator = generator
+        self.shape = generator.shape
         self.view = Rect(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
-        self.terrain_func = terrain_func
         self.random_pos = random_pos
         self.rew_exploration = rew_exploration
         self.max_steps = max_steps
@@ -59,12 +57,12 @@ class SearchEnv(gym.Env):
         h, w = self.shape
         
         if self.random_pos:
-            y, x = self.random.randint(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.randint(0, (w-self.view.w+1)//self.step_size)*self.step_size
+            y, x = self.random.integers(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.integers(0, (w-self.view.w+1)//self.step_size)*self.step_size
         else:
             y, x = 0, 0
 
         self.view.pos = (y, x)
-        self.terrain, self.targets = self.terrain_func(self.shape, self.random)
+        self.terrain, self.targets = self.generator.generate()
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)
         self.triggered = np.full(self.shape, False)
@@ -126,7 +124,7 @@ class SearchEnv(gym.Env):
         if observe:
             img = self._observe()["img"]
         else:
-            img = self._image(show_path=True)
+            img = self._image(show_targets=True)
             rect_coords = draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape)
             img[rect_coords] = add_with_alpha(img[rect_coords], (0, 0, 0), 0.25)
             img = img.astype(np.uint8)
@@ -137,7 +135,8 @@ class SearchEnv(gym.Env):
         pass
 
     def seed(self, seed=None):
-        self.random, _ = seeding.np_random(seed)
+        self.random = np.random.default_rng(seed)
+        self.generator.seed(seed)
         return [seed]
 
     def _observe(self):
@@ -156,19 +155,22 @@ class SearchEnv(gym.Env):
         )
 
 
-    def _image(self, show_hit=True, show_path=False):
+    def _image(self, show_targets=False, show_hits=True, show_path=False):
         img = self.terrain.copy()
 
-        if show_hit:
+        if show_targets or show_hits:
             for i in range(len(self.targets)):
-                if self.hits[i]:
-                    ty0, tx0, ty1, tx1 = self.targets[i].corners()
-                    img[ty0:ty1, tx0:tx1] = np.array((255, 255, 255)) - img[ty0:ty1, tx0:tx1]
+                coords  = draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape)
+
+                if show_hits and self.hits[i]:
+                    img[coords] = add_with_alpha(img[coords], (0, 255, 0), 0.5)
+                elif show_targets:
+                    img[coords] = add_with_alpha(img[coords], (255, 0, 0), 0.5)
 
         if show_path:
             for i, (y, x) in enumerate(self.path):
-                rr, cc = draw.disk((y+self.view.h//2-1, x+self.view.w//2-1), min(self.view.shape)//4)
-                img[rr, cc] = add_with_alpha(img[rr, cc], (0, 0, 0), 0.25+0.5*i/len(self.path))
+                rr, cc = draw.disk((y+self.view.h//2-1, x+self.view.w//2-1), min(self.view.shape)//8)
+                img[rr, cc] = add_with_alpha(img[rr, cc], (0, 0, 0), 0.25+0.25*i/len(self.path))
 
         return img
 

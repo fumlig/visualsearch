@@ -31,13 +31,15 @@ class Rect:
         y, x = p
         return y0 <= y and y <= y1 and x0 <= x and x <= x1
 
-    def overlap(self, rect):
+    def union(self, rect):
+        return self.area() + rect.area() - self.intersection(rect)
+
+    def intersection(self, rect):
         y0 = max(self.y, rect.y)
         x0 = max(self.x, rect.x)
         y1 = min(self.y+self.h, rect.y+rect.h)
         x1 = min(self.x+self.w, rect.x+rect.w)
+        return max(0, x1-x0) * max(0, y1-y0)
 
-        intersection = max(0, x1-x0) * max(0, y1-y0)
-        union = self.area() + rect.area() - intersection
-
-        return intersection/union
+    def overlap(self, rect):
+        return self.intersection(rect)/self.union(rect)

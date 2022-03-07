@@ -1,8 +1,8 @@
 import numpy as np
-import gym
+
 
 def to_point(i, w):
-    return (i//w, i%w)
+    return i//w, i%w
 
 def to_index(x, y, w):
     return y*w + x
@@ -58,3 +58,7 @@ def gaussian_kernel(size, sigma=1):
     gauss = np.exp(-0.5 * np.square(ax) / np.square(sigma))
     kernel = np.outer(gauss, gauss)
     return kernel / np.sum(kernel)
+
+def sample_coords(shape, n, p, random=np.random):
+    choice = random.choice(np.prod(shape), n, p=p.flatten(), replace=False)
+    return [to_point(i, shape[1]) for i in choice]

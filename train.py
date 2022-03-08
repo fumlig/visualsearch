@@ -11,7 +11,7 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from agents.ac import ActorCritic, ConvActorCritic
+from agents.ac import ActorCritic
 from agents import ppo
 
 
@@ -99,8 +99,7 @@ if __name__ == "__main__":
 
     # we can write the feature extractor here!
 
-    #agent = ActorCritic(envs)
-    agent = ConvActorCritic(envs)
+    agent = ActorCritic(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 

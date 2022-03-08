@@ -30,11 +30,6 @@ def init_weights(layer, gain=np.sqrt(2)):
     return layer
 
 
-def conv_output_shape(input_shape, kernel_size, stride=1, padding=0):
-    return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
-
-
-
 class Actor(nn.Module):
     def __init__(self, num_features, num_actions, hidden_dims=None):
         super(Actor, self).__init__()
@@ -106,18 +101,91 @@ class Critic(nn.Module):
         return v
 
 
+
+class CNN(nn.Module):
+    # "NatureCNN"
+    # Mnih, Volodymyr, et al.
+    #"Human-level control through deep reinforcement learning."
+    
+    def __init__(self, observation_space, features_dim=512):
+        super(CNN, self).__init__()
+        assert isinstance(observation_space, gym.spaces.Box)
+        
+        in_channels = observation_space.shape[2]
+
+        self.cnn = nn.Sequential(
+            init_weights(nn.Conv2d(in_channels, 32, 8, stride=4, padding=0)),
+            nn.ReLU(),
+            init_weights(nn.Conv2d(32, 64, 4, stride=2, padding=0)),
+            nn.ReLU(),
+            init_weights(nn.Conv2d(64, 64, 3, stride=1, padding=0)),
+            nn.ReLU(),
+            nn.Flatten(),
+        )
+
+        with th.no_grad():
+            hidden_dim = self.cnn(th.tensor(observation_space.sample()[np.newaxis]).float().permute(0, 3, 1, 2)).shape[1]
+
+        self.linear = nn.Sequential(
+            init_weights(nn.Linear(hidden_dim, features_dim)),
+            nn.ReLU()
+        )
+
+        self.features_dim = features_dim
+
+    def forward(self, obs):
+        return self.linear(self.cnn(obs.permute(0, 3, 1, 2)))
+
+    def _output_shape(self, input_shape, kernel_size, stride=1, padding=0):
+        return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
+
+
+
+class Extractor(nn.Module):
+    def __init__(self, observation_space):
+        super(Extractor, self).__init__()
+        assert isinstance(observation_space, gym.spaces.Dict)
+
+        extractors = {}
+        features_dim = 0
+
+        for key, space in observation_space.items():
+            if isinstance(space, gym.spaces.Box):
+                if key == "image":
+                    extractors[key] = CNN(space)
+                    features_dim += extractors[key].features_dim
+                else:
+                    extractors[key] = nn.Flatten()
+                    self.features_dim += gym.spaces.flatdim(space)
+            elif isinstance(space, gym.spaces.Discrete):
+                # discrete should be made one hot...
+                extractors[key] = lambda x: F.one_hot(x, num_classes=space.n)
+                features_dim += gym.spaces.flatdim(space)
+            else:
+                assert False
+
+        self.extractors = nn.ModuleDict(extractors)
+        self.features_dim = features_dim
+
+    def forward(self, obs):
+        tensors = []
+
+        for key, observation in obs.items():
+            x = self.extractors[key](observation)
+            tensors.append(x)
+        
+        return th.cat(tensors, dim=1)
+
+
 class ActorCritic(nn.Module):
     def __init__(self, envs):
         super(ActorCritic, self).__init__()
 
-        num_features, = envs.single_observation_space.shape
-        num_actions = envs.single_action_space.n
-
-        self.extractor = nn.Identity()
+        self.extractor = Extractor(envs.single_observation_space)
         self.network = nn.Identity()
 
-        self.policy = Actor(num_features, num_actions, hidden_dims=[64, 64])
-        self.value = Critic(num_features, hidden_dims=[64, 64])
+        self.policy = Actor(self.extractor.features_dim, envs.single_action_space.n, hidden_dims=[64, 64])
+        self.value = Critic(self.extractor.features_dim, hidden_dims=[64, 64])
 
     def forward(self, obs):
         x = self.extractor(obs)
@@ -132,7 +200,7 @@ class ActorCritic(nn.Module):
         pi = self.policy(h)
         return pi.sample().item()
 
-
+"""
 class ConvActorCritic(nn.Module):
     def __init__(self, envs):
         super(ConvActorCritic, self).__init__()
@@ -180,3 +248,4 @@ class ConvActorCritic(nn.Module):
         h = self.network(x)
         pi = self.policy(h)
         return pi.sample().item()
+"""

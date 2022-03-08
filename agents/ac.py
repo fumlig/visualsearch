@@ -6,23 +6,6 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-"""
-fuck
-
-we have to be able to store the observations in the ppo buffers
-with the current structure extractions have to happen
-
-options:
-- rewrite ppo so that it can use an extractor class and run the proper back propagation on it
-- then the agent would need a "preprocess/extract method" which we call and get the proper backprop on
-
-- keep flattened observations and use a unified architecture, i.e. use only convolution or mlp for all features
-- alphazero did this by having one channel per extra feature, actually not too dumb...
-- make an observation transformation wrapper that creates a channel for each key in the dictobs
-- discretes are simply filled in
-- try and see if it gets the same performance as an mlp first of all
-"""
-
 
 def init_weights(layer, gain=np.sqrt(2)):
     nn.init.orthogonal_(layer.weight, gain)
@@ -146,6 +129,7 @@ class Extractor(nn.Module):
         super(Extractor, self).__init__()
         assert isinstance(observation_space, gym.spaces.Dict)
 
+        preprocessors = {}
         extractors = {}
         features_dim = 0
 
@@ -158,12 +142,12 @@ class Extractor(nn.Module):
                     extractors[key] = nn.Flatten()
                     self.features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
-                # discrete should be made one hot...
-                extractors[key] = lambda x: F.one_hot(x, num_classes=space.n)
+                preprocessors[key] = lambda x: F.one_hot(x.long(), num_classes=space.n).float()
                 features_dim += gym.spaces.flatdim(space)
             else:
                 assert False
 
+        self.preprocessors = preprocessors
         self.extractors = nn.ModuleDict(extractors)
         self.features_dim = features_dim
 
@@ -171,7 +155,14 @@ class Extractor(nn.Module):
         tensors = []
 
         for key, observation in obs.items():
-            x = self.extractors[key](observation)
+            x = observation
+            
+            if key in self.preprocessors:
+                x = self.preprocessors[key](x)
+            
+            if key in self.extractors:
+                x = self.extractors[key](x)
+
             tensors.append(x)
         
         return th.cat(tensors, dim=1)
@@ -199,53 +190,3 @@ class ActorCritic(nn.Module):
         h = self.network(x)
         pi = self.policy(h)
         return pi.sample().item()
-
-"""
-class ConvActorCritic(nn.Module):
-    def __init__(self, envs):
-        super(ConvActorCritic, self).__init__()
-
-        in_height, in_width, in_channels = envs.single_observation_space["image"].shape
-        num_actions = envs.single_action_space.n
-        num_features = 256
-        
-        out_height, out_width = conv_output_shape(
-            conv_output_shape(
-                conv_output_shape(
-                    (in_height, in_width), 8, stride=4
-                ),4, stride=2
-            ), 3, stride=1
-        )
-
-        self.network = nn.Sequential(
-            init_weights(nn.Conv2d(in_channels, 32, 8, stride=4)),
-            nn.ReLU(),
-            init_weights(nn.Conv2d(32, 32, 4, stride=2)),
-            nn.ReLU(),
-            init_weights(nn.Conv2d(32, 32, 3, stride=1)),
-            nn.ReLU(),
-            nn.Flatten(),
-            init_weights(nn.Linear(out_height*out_width*32, num_features)),
-            nn.ReLU(),
-        )
-
-        self.policy = Actor(num_features, num_actions)
-        self.value = Critic(num_features)
-
-        #self.network.apply(lambda m: init_weights(m, np.sqrt(2)))
-        #self.actor.apply(lambda m: init_weights(m, 0.01))
-        #self.critic.apply(lambda m: init_weights(m, 1.0))
-
-    def forward(self, obs):
-        x = obs["image"].permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
-        h = self.network(x)
-        pi = self.policy(h)
-        v = self.value(h)
-        return pi, v
-
-    def predict(self, obs):
-        x = obs["image"].permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
-        h = self.network(x)
-        pi = self.policy(h)
-        return pi.sample().item()
-"""

@@ -11,6 +11,7 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
+from gym_search.wrappers import InsertPosition
 from agents.ac import ActorCritic
 from agents import ppo
 
@@ -89,15 +90,13 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics]#, gym.wrappers.FlattenObservation]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, InsertPosition]
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
     envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
     for env in envs.envs:
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
-
-    # we can write the feature extractor here!
 
     agent = ActorCritic(envs)
 

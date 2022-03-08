@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     writer = SummaryWriter(f"logs/{args.name}")
 
-    ppo.learn(args.tot_timesteps, envs, agent, device, writer, **args.hparams)
+    ppo.learn(args.tot_timesteps, envs, agent, device, writer, **args.alg_params)
 
     envs.close()
     writer.close()

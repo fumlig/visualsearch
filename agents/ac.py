@@ -137,7 +137,7 @@ class ConvActorCritic(nn.Module):
     def __init__(self, envs):
         super(ConvActorCritic, self).__init__()
 
-        in_height, in_width, in_channels = envs.single_observation_space.shape
+        in_height, in_width, in_channels = envs.single_observation_space["image"].shape
         num_actions = envs.single_action_space.n
         num_features = 256
         
@@ -169,14 +169,14 @@ class ConvActorCritic(nn.Module):
         #self.critic.apply(lambda m: init_weights(m, 1.0))
 
     def forward(self, obs):
-        x = obs.permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
+        x = obs["image"].permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
         h = self.network(x)
         pi = self.policy(h)
         v = self.value(h)
         return pi, v
 
     def predict(self, obs):
-        x = obs.permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
+        x = obs["image"].permute(0, 3, 1, 2) # n, h, w, c -> n, c, h, w
         h = self.network(x)
         pi = self.policy(h)
         return pi.sample().item()

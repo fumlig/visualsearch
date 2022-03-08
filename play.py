@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from collections import defaultdict
+from time import process_time
 
 import cv2 as cv
 import numpy as np
@@ -30,7 +31,7 @@ parser.add_argument("--episodes", type=int, default=1024)
 
 args = parser.parse_args()
 
-env = gym.wrappers.FlattenObservation(gym.make(args.env))
+env = gym.make(args.env)
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
 stats = [defaultdict(int) for _ in range(args.episodes)]
 
@@ -70,7 +71,14 @@ for ep in range(args.episodes):
             with th.no_grad():
                 act = agent.predict(th.tensor(obs, dtype=th.float).to(device))
         
+        if args.verbose:
+            step_begin = process_time()
+        
         obs, rew, done, info = env.step(act)
+        
+        if args.verbose:
+            step_end = process_time()
+            print("fps:", 1.0/(step_end - step_begin))
 
         if key == KEY_RET:
             done = True

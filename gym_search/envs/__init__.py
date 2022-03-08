@@ -1,8 +1,9 @@
+import os
 import gym
 
 from gym_search.datasets import AirbusAircraftDataset, AirbusOilDataset
 from gym_search.envs.search import SearchEnv
-from gym_search.envs.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
+from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
 
 """
 is the agent rewarded for finishing quickly?
@@ -51,24 +52,24 @@ gym.register(
     )
 )
 
-"""
-gym.register(
-    id="SearchAirbusAircraft-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=DatasetGenerator(AirbusAircraftDataset()),
-        view_shape=(128, 128),
-        step_size=128
+if os.path.exists("data/airbus-aircraft"):
+    gym.register(
+        id="SearchAirbusAircraft-v0",
+        entry_point=SearchEnv,
+        kwargs=dict(
+            generator=DatasetGenerator(AirbusAircraftDataset("data/airbus-aircraft")),
+            view_shape=(128, 128),
+            step_size=128
+        )
     )
-)
 
-gym.register(
-    id="SearchAirbusOil-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=DatasetGenerator(AirbusOilDataset()),
-        view_shape=(128, 128),
-        step_size=128
+if os.path.exists("data/airbus-oil"):
+    gym.register(
+        id="SearchAirbusOil-v0",
+        entry_point=SearchEnv,
+        kwargs=dict(
+            generator=DatasetGenerator(AirbusOilDataset("data/airbus-oil")),
+            view_shape=(128, 128),
+            step_size=128
+        )
     )
-)
-"""

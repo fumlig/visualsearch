@@ -4,7 +4,7 @@ import numpy as np
 
 from gym.utils import seeding
 from gym_search.utils import clamp
-from gym_search.shapes import Rect
+from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
 from skimage import draw
 
@@ -60,6 +60,8 @@ class SearchEnv(gym.Env):
         SOUTH = 4
         WEST = 5
         # todo: done action?
+        # todo: either trigger has a cost, which means that some expensive step has to be made to check if something is there,
+        # or the trigger is implicit, each observation corresponds to the expensive step
 
     def __init__(
         self,
@@ -72,7 +74,7 @@ class SearchEnv(gym.Env):
     ):
         self.generator = generator
         self.shape = generator.shape
-        self.view = Rect(0, 0, view_shape[0], view_shape[1])
+        self.view = Box(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
         self.random_pos = random_pos
         self.rew_exploration = rew_exploration
@@ -80,16 +82,16 @@ class SearchEnv(gym.Env):
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
+        """
         self.observation_space = gym.spaces.Dict(dict(
             time=gym.spaces.Discrete(max_steps),
             image=gym.spaces.Box(0, 1, (*self.view.shape, 3)),
-            #img=gym.spaces.Box(0, 255, (*self.view.shape, 3), np.uint8),
             position=gym.spaces.Discrete(self.shape[0]*self.shape[1]),
             visited=gym.spaces.Box(0, 1, self.shape),
             #triggered=gym.spaces.Box(0, 1, self.shape),
         ))
-        # this observation space makes some sense, position = pan tilt percentage (the world is only what can possibly be seen by the sensor)
-
+        """
+        self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8)))
         self.seed()
 
 
@@ -102,14 +104,14 @@ class SearchEnv(gym.Env):
             y, x = 0, 0
 
         self.view.pos = (y, x)
-        self.terrain, self.targets = self.generator.generate()
+        self.terrain, self.targets = self.generator.sample()
         self.hits = [False for _ in range(len(self.targets))]
         self.visited = np.full(self.shape, False)
         self.triggered = np.full(self.shape, False)
         self.path = [self.view.pos]
         self.num_steps = 0
 
-        return self._observe()
+        return self.observation()
 
 
     def step(self, action):
@@ -151,7 +153,7 @@ class SearchEnv(gym.Env):
         if done:
             rew = 100
 
-        obs = self._observe()
+        obs = self.observation()
 
         self.num_steps += 1
 
@@ -160,13 +162,29 @@ class SearchEnv(gym.Env):
 
         return obs, rew, done, {}
 
-    def render(self, mode="rgb_array", observe=False):
+    def render(self, mode="rgb_array", observe=False, show_targets=True, show_hits=True, show_path=True):
         if observe:
-            img = self._observe()["img"]
+            #img = self._observe()["img"]
+            img = self.observation()
         else:
-            img = self._image(show_targets=True, show_hits=True, show_path=True)
-            rect_coords = tuple(draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape))
-            img[rect_coords] = add_with_alpha(img[rect_coords], (0, 0, 0), 0.25)
+            img = self.terrain.copy()
+
+            if show_targets or show_hits:
+                for i in range(len(self.targets)):
+                    coords = tuple(draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape))
+
+                    if show_hits and self.hits[i]:
+                        img[coords] = add_with_alpha(img[coords], (0, 255, 0), 0.5)
+                    elif show_targets:
+                        img[coords] = add_with_alpha(img[coords], (255, 0, 0), 0.5)
+
+            if show_path:
+                for i, (y, x) in enumerate(self.path):
+                    rr, cc = draw.disk((y+self.view.h//2-1, x+self.view.w//2-1), min(self.view.shape)//8)
+                    img[rr, cc] = add_with_alpha(img[rr, cc], (0, 0, 0), 0.25+0.25*i/len(self.path))
+
+            view_coords = tuple(draw.rectangle(self.view.pos, extent=self.view.shape, shape=self.shape))
+            img[view_coords] = add_with_alpha(img[view_coords], (0, 0, 0), 0.25)
             img = img.astype(np.uint8)
 
         return img
@@ -179,12 +197,14 @@ class SearchEnv(gym.Env):
         self.generator.seed(seed)
         return [seed]
 
-    def _observe(self):
+    def observation(self):
         y0, x0, y1, x1 = self.view.corners()
         h, w = self.shape
-        img = self._image()
-        obs = img[y0:y1,x0:x1]
+        obs = self.terrain[y0:y1,x0:x1]
 
+        return dict(image=obs)
+
+        """
         return dict(
             time=self.num_steps,
             image=(obs/255).astype(dtype=float),
@@ -193,26 +213,7 @@ class SearchEnv(gym.Env):
             visited=self.visited.astype(dtype=float),
             #triggered=self.triggered
         )
-
-
-    def _image(self, show_targets=False, show_hits=True, show_path=False):
-        img = self.terrain.copy()
-
-        if show_targets or show_hits:
-            for i in range(len(self.targets)):
-                coords = tuple(draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape))
-
-                if show_hits and self.hits[i]:
-                    img[coords] = add_with_alpha(img[coords], (0, 255, 0), 0.5)
-                elif show_targets:
-                    img[coords] = add_with_alpha(img[coords], (255, 0, 0), 0.5)
-
-        if show_path:
-            for i, (y, x) in enumerate(self.path):
-                rr, cc = draw.disk((y+self.view.h//2-1, x+self.view.w//2-1), min(self.view.shape)//8)
-                img[rr, cc] = add_with_alpha(img[rr, cc], (0, 0, 0), 0.25+0.25*i/len(self.path))
-
-        return img
+        """
 
     def get_action_meanings(self):
         return [a.name for a in self.Action]

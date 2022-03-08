@@ -1,5 +1,7 @@
 # Master's Thesis
 
+Learning to Search in High-Dimensional Signals
+
 - rewrite to n-dimensional signals
 - implement cnns
 - environment should by default maybe just return signal, use wrappers for position and visited and so on

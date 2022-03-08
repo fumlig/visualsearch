@@ -3,6 +3,16 @@
 
 In this chapter, the method is described.
 
+\section{Problem Statement}
+
+% Formally define problem
+
+% Given an n-dimensional signal with N i.i.d. targets located with some unknown distribution
+% We assume that the targes correlate with the environment (signal).
+% How should this be formally defined? 
+% It *is* true in many cases.
+% Although in general it might be that the target itself is the correlation?
+
 \section{Environment}
 
 The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances. For all environments, the appearance correlates to the probability of targets.
@@ -12,6 +22,10 @@ The environments to be searched are drawn from a distribution, with varying but 
 \subsection{Observation Space}
 
 \subsection{Reward Signal}
+
+% reward normalization: 
+% reward clipping: done in "playing atari with deep reinforcement learning": they state that since the scale of scores varies from game to game they fix all positive rewards to be one and negative to be -1. 0 rewards are left unchanged. this limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games. could also affect agent's performance as it cannot distinguish between rewards of different magnitudes.
+% could be important for us if the number of targets and the reward varies a lot
 
 \subsection{Algorithm}
 

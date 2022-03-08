@@ -11,7 +11,7 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from agents.ac import ActorCritic
+from agents.ac import ActorCritic, ConvActorCritic
 from agents import ppo
 
 
@@ -28,14 +28,14 @@ add pretty plotting (yield info from learn?)
 # these are from procgen!
 
 SEED = 0
-TOT_TIMESTEPS = int(100e6)
-NUM_ENVS = 64 # also a hyperparameter...
-HPARAMS = dict(
-    learning_rate=5e-4,
+TOT_TIMESTEPS = int(10e6)
+NUM_ENVS = 8 # also a hyperparameter...
+ALG_PARAMS = dict(
+    learning_rate=2.5e-4,
     num_steps=256,
-    num_minibatches=8,
-    num_epochs=3,
-    gamma=0.999,
+    num_minibatches=4,
+    num_epochs=4,
+    gamma=0.99,
     gae_lambda=0.95,
     norm_adv=True,
     clip_range=0.2,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
-    parser.add_argument("--hparams", type=parse_hparams, default=HPARAMS)
+    parser.add_argument("--alg-params", type=parse_hparams, default=ALG_PARAMS)
 
     args = parser.parse_args()
 
@@ -89,8 +89,9 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=[gym.wrappers.RecordEpisodeStatistics, gym.wrappers.FlattenObservation])
-    #envs = gym.wrappers.NormalizeReward(envs)
+    wrappers = [gym.wrappers.RecordEpisodeStatistics]#, gym.wrappers.FlattenObservation]
+    envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
+    envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
     for env in envs.envs:
         env.action_space.seed(args.seed)
@@ -98,14 +99,10 @@ if __name__ == "__main__":
 
     # we can write the feature extractor here!
 
-    agent = ActorCritic(envs)
+    #agent = ActorCritic(envs)
+    agent = ConvActorCritic(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
-    writer.add_text(
-        "hyperparameters",
-        "|param|value|\n|-|-|\n" +
-        "\n".join([f"|{key}|{value}|" for key, value in args.hparams.items()]) 
-    )
 
     ppo.learn(args.tot_timesteps, envs, agent, device, writer, **args.hparams)
 

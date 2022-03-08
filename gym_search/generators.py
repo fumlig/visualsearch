@@ -5,11 +5,11 @@ from functools import lru_cache
 from gym_search.utils import gaussian_kernel, normalize, clamp, sample_coords
 from gym_search.palette import pick_color, EARTH_TOON
 from gym_search.noise import fractal_noise_2d
-from gym_search.shapes import Rect
+from gym_search.shapes import Box
 
 
 class Generator:
-    def generate(self):
+    def sample(self):
         raise NotImplementedError
 
     def seed(self, seed=None):
@@ -25,7 +25,7 @@ class GaussianGenerator(Generator):
         self.sigma = sigma
         self.random = np.random.default_rng()
 
-    def generate(self):
+    def sample(self):
         h, w = self.shape
         kernel = gaussian_kernel(self.size, sigma=self.sigma)
         plane = np.zeros((h+self.size*2,w+self.size*2))
@@ -44,7 +44,7 @@ class GaussianGenerator(Generator):
         for y, x in targets:
             img[y,x] = (255, 255, 0)
 
-        return img, [Rect(*t, 1, 1) for t in targets]
+        return img, [Box(*t, 1, 1) for t in targets]
 
 
 class TerrainGenerator(Generator):
@@ -53,7 +53,7 @@ class TerrainGenerator(Generator):
         self.max_terrains = max_terrains
         self.random = np.random.default_rng()
 
-    def generate(self):
+    def sample(self):
         # https://jackmckew.dev/3d-terrain-in-python.html
         # https://www.redblobgames.com/maps/terrain-from-noise/
         # http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
@@ -83,7 +83,7 @@ class TerrainGenerator(Generator):
 
         for y, x in target_pos:
             size = self.random.integers(2, 4)
-            rect = Rect(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
+            rect = Box(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
             coords = tuple(draw.rectangle(rect.pos, extent=rect.shape))
             img[coords] = (255, 0, 0)
@@ -104,7 +104,7 @@ class DatasetGenerator(Generator):
         self.shape = dataset[0][0].shape[:2]
         self.random = np.random.default_rng()
     
-    def generate(self):
+    def sample(self):
         idx = self.random.choice(len(self.dataset))
         image, targets = self.dataset[idx]
-        return image, [Rect(*pos, *shape) for pos, shape in targets]
+        return image, [Box(*pos, *shape) for pos, shape in targets]

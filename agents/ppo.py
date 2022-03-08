@@ -32,6 +32,16 @@ def learn(
     minibatch_size = batch_size // num_minibatches
     num_batches = tot_timesteps // batch_size
 
+    #hparams = locals()
+    #hparams.pop(envs)
+    #hparams.pop()
+
+    #writer.add_text(
+    #    "hyperparameters",
+    #    "|param|value|\n|-|-|\n" +
+    #    "\n".join([f"|{key}|{value}|" for key, value in args.hparams.items()]) 
+    #)
+
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
 

@@ -16,10 +16,10 @@ class SignalEnv(gym.Env):
     def __init__(self, shape, window, delta=None):
         self.shape = shape
         self.window = window
-        self.delta = delta if delta is not None else np.ones()
+        self.delta = delta if delta is not None else np.ones(len(shape))
 
         self.reward_range(-np.inf, np.inf)
-        self.action_space = gym.spaces.Box(0, 1, len(self.shape))
+        self.action_space = gym.spaces.Box(0, 1, len(self.shape)*2)
         self.observation_space = gym.spaces.Box(0, 1, self.window)
 
     def reset(self):
@@ -28,7 +28,15 @@ class SignalEnv(gym.Env):
         return self.observation()
 
     def step(self, action):
-        self.position = np.array(self.shape)*self.action
+        dim = action // 2
+        neg = action % 2
+
+        if neg and self.position[dim] - self.delta[dim] >= 0:
+            self.position[dim] -= self.delta[dim]
+        elif self.position[dim] + self.delta[dim] < self.shape[dim] - self.window[dim]:
+            self.position[dim] += self.delta[dim]
+
+        return self.observation(), 0.0, False, {}
 
     def render(self, mode="ansi"):
         print("shape:", self.shape)
@@ -41,11 +49,14 @@ class SignalEnv(gym.Env):
 
     def seed(self, seed=None):
         self.random = np.random.default_rng(seed)
-        self.generator.seed(seed)
         return [seed]
 
     def observation(self):
-        return self.signal # todo: index
+        return self.signal[:]
+
+    def visible(self):
+        mask = np.full(self.shape, False)
+        np.lib.stride_tricks.sliding_window_view
 
 
 class SearchEnv(gym.Env):
@@ -82,16 +93,8 @@ class SearchEnv(gym.Env):
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
-        """
-        self.observation_space = gym.spaces.Dict(dict(
-            time=gym.spaces.Discrete(max_steps),
-            image=gym.spaces.Box(0, 1, (*self.view.shape, 3)),
-            position=gym.spaces.Discrete(self.shape[0]*self.shape[1]),
-            visited=gym.spaces.Box(0, 1, self.shape),
-            #triggered=gym.spaces.Box(0, 1, self.shape),
-        ))
-        """
         self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8)))
+        
         self.seed()
 
 
@@ -164,8 +167,7 @@ class SearchEnv(gym.Env):
 
     def render(self, mode="rgb_array", observe=False, show_targets=True, show_hits=True, show_path=True):
         if observe:
-            #img = self._observe()["img"]
-            img = self.observation()
+            img = self.observation()["image"]
         else:
             img = self.terrain.copy()
 
@@ -204,16 +206,8 @@ class SearchEnv(gym.Env):
 
         return dict(image=obs)
 
-        """
-        return dict(
-            time=self.num_steps,
-            image=(obs/255).astype(dtype=float),
-            #img=obs,
-            position=y0*w+x0,
-            visited=self.visited.astype(dtype=float),
-            #triggered=self.triggered
-        )
-        """
+    def position(self):
+        return
 
     def get_action_meanings(self):
         return [a.name for a in self.Action]

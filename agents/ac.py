@@ -136,11 +136,12 @@ class Extractor(nn.Module):
         for key, space in observation_space.items():
             if isinstance(space, gym.spaces.Box):
                 if key == "image":
+                    preprocessors[key] = lambda x: x / 255.0
                     extractors[key] = CNN(space)
                     features_dim += extractors[key].features_dim
                 else:
                     extractors[key] = nn.Flatten()
-                    self.features_dim += gym.spaces.flatdim(space)
+                    features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
                 preprocessors[key] = lambda x: F.one_hot(x.long(), num_classes=space.n).float()
                 features_dim += gym.spaces.flatdim(space)
@@ -190,3 +191,51 @@ class ActorCritic(nn.Module):
         h = self.network(x)
         pi = self.policy(h)
         return pi.sample().item()
+
+
+class MemoryActorCritic(nn.Module):
+    def __init__(self, envs):
+        super(MemoryActorCritic, self).__init__()
+
+        self.extractor = Extractor(envs.single_observation_space)
+        self.memory = nn.LSTM(self.extractor.features_dim, 128)
+
+        self.policy = Actor(128, envs.single_action_space.n, hidden_dims=[])
+        self.value = Critic(128, hidden_dims=[])
+
+        for name, param in self.memory.named_parameters():
+            if "bias" in name:
+                nn.init.constant_(param, 0)
+            elif "weight" in name:
+                nn.init.orthogonal_(param, 1.0)
+
+    def remember(self, x, state, done):
+        batch_size = state[0].shape[1]
+        x = x.reshape((-1, batch_size, self.memory.input_size))
+        done = done.reshape((-1, batch_size))
+
+        new_hidden = []
+
+        for h, d in zip(x, done):
+            hidden = (1.0 - d).view(1, -1, 1) * state[0]
+            cell = (1.0 - d).view(1, -1, 1) * state[1]
+            h, state = self.memory(h.unsqueeze(0), (hidden, cell))
+            new_hidden += [h]
+        
+        new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
+
+        return new_hidden, state
+
+    def forward(self, obs, state, done):        
+        x = self.extractor(obs)
+        h, s = self.remember(x, state, done)
+        pi = self.policy(h)
+        v = self.value(h)
+
+        return pi, v, s
+
+    def predict(self, obs, state, done):
+        x = self.extractor(obs)
+        h, s = self.remember(x, state, done)
+        pi = self.policy(h)
+        return pi.sample().item(), s

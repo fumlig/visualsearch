@@ -11,6 +11,7 @@ import gym
 import gym_search
 
 from gym_search.utils import travel_dist
+from gym_search.wrappers import ObservePosition, ResizeImage
 
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
@@ -32,6 +33,10 @@ parser.add_argument("--episodes", type=int, default=1024)
 args = parser.parse_args()
 
 env = gym.make(args.env)
+
+for wrapper in [ResizeImage, ObservePosition]:
+    env = wrapper(env)
+
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
 stats = [defaultdict(int) for _ in range(args.episodes)]
 
@@ -76,6 +81,8 @@ for ep in range(args.episodes):
         
         obs, rew, done, info = env.step(act)
         
+        print(obs["image"].shape)
+
         if args.verbose:
             step_end = process_time()
             print("fps:", 1.0/(step_end - step_begin))
@@ -91,6 +98,7 @@ for ep in range(args.episodes):
         stats[ep]["triggers"] += act == env.Action.TRIGGER
 
         if args.verbose:
+            print("position:", obs["position"])
             print("action:", env.get_action_meanings()[act], "reward:", rew)
 
     if done:

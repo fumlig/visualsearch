@@ -48,9 +48,6 @@ def learn(
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
 
-    # todo: make larger buffer?
-    # why should the buffer length be smaller than the total number of steps in an episode?
-
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
     rews = th.zeros((num_steps, num_envs)).to(device)
     dones = th.zeros((num_steps, num_envs)).to(device)
@@ -103,7 +100,7 @@ def learn(
 
         # bootstrap value
         with th.no_grad():
-            _, next_val = agent(obs)
+            _, next_val = agent(obs) # todo: use or ignore state?
             advs = th.zeros_like(rews).to(device)
             last_gae_lambda = 0
 
@@ -139,6 +136,7 @@ def learn(
 
             for minibatch in range(num_minibatches):
                 minibatch_idx = batch_idx[minibatch*minibatch_size:(minibatch+1)*minibatch_size]
+                
                 minibatch_obss = {key: batch_observation[minibatch_idx] for key, batch_observation in batch_obss.items()}
                 minibatch_acts = batch_acts[minibatch_idx]
                 minibatch_logprobs = batch_logprobs[minibatch_idx]

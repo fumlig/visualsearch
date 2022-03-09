@@ -11,10 +11,12 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from gym_search.wrappers import InsertPosition
+from gym_search.wrappers import ResizeImage, ObservePosition, ObserveVisited
 from agents.ac import ActorCritic
 from agents import ppo
 
+
+import gym.wrappers
 
 """
 todo:
@@ -90,7 +92,7 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, InsertPosition]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObservePosition]#, ObserveVisited]
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
     envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)

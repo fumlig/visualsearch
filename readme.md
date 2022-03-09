@@ -11,3 +11,5 @@ Learning to Search in High-Dimensional Signals
 - add support for transforms from torchvision, scikit-image has:
   - hog: https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_hog.html
   - sift: https://scikit-image.org/docs/0.19.x/auto_examples/features_detection/plot_sift.html
+- the datasets (usb and airbus are very small, maybe take some precautions to increase their size?)
+  - torchvision has some data augmentation techniques: https://pytorch.org/vision/stable/transforms.html

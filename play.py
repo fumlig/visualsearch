@@ -81,8 +81,6 @@ for ep in range(args.episodes):
         
         obs, rew, done, info = env.step(act)
         
-        print(obs["image"].shape)
-
         if args.verbose:
             step_end = process_time()
             print("fps:", 1.0/(step_end - step_begin))

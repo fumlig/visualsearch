@@ -2,61 +2,10 @@ import gym
 import enum
 import numpy as np
 
-from gym.utils import seeding
 from gym_search.utils import clamp
 from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
 from skimage import draw
-
-
-class SignalEnv(gym.Env):
-
-    metadata = {"render.modes": ["ansi"]}
-
-    def __init__(self, shape, window, delta=None):
-        self.shape = shape
-        self.window = window
-        self.delta = delta if delta is not None else np.ones(len(shape))
-
-        self.reward_range(-np.inf, np.inf)
-        self.action_space = gym.spaces.Box(0, 1, len(self.shape)*2)
-        self.observation_space = gym.spaces.Box(0, 1, self.window)
-
-    def reset(self):
-        self.position = np.zeros(len(self.shape))
-        self.signal = np.random.uniform(0, 1, self.shape)
-        return self.observation()
-
-    def step(self, action):
-        dim = action // 2
-        neg = action % 2
-
-        if neg and self.position[dim] - self.delta[dim] >= 0:
-            self.position[dim] -= self.delta[dim]
-        elif self.position[dim] + self.delta[dim] < self.shape[dim] - self.window[dim]:
-            self.position[dim] += self.delta[dim]
-
-        return self.observation(), 0.0, False, {}
-
-    def render(self, mode="ansi"):
-        print("shape:", self.shape)
-        print("window:", self.window)
-        print("position:", self.position)
-        print("observation:", self.observation())
-
-    def close(self):
-        pass
-
-    def seed(self, seed=None):
-        self.random = np.random.default_rng(seed)
-        return [seed]
-
-    def observation(self):
-        return self.signal[:]
-
-    def visible(self):
-        mask = np.full(self.shape, False)
-        np.lib.stride_tricks.sliding_window_view
 
 
 class SearchEnv(gym.Env):

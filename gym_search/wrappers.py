@@ -39,7 +39,7 @@ class InsertObservation(gym.ObservationWrapper):
         self.value_func = value_func
         self.observation_space = gym.spaces.Dict()
 
-        for key, space in env.observation_space.items():
+        for key, space in self.env.observation_space.items():
             self.observation_space[key] = space
         
         self.observation_space[self.key] = self.space_func()

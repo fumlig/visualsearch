@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObservePosition]#, ObserveVisited]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObservePosition, ObserveVisited]
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
     envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)

@@ -49,14 +49,13 @@ class InsertObservation(gym.ObservationWrapper):
         new_obs.update({self.key: self.value_func()})
         return new_obs
 
-
 class ResizeImage(InsertObservation):
     def __init__(self, env, key="image", shape=(64, 64)):
         super().__init__(
             env,
             key,
-            lambda: gym.spaces.Box(0, 255, shape + self.env.observation_space[key].shape[2:], dtype=np.uint8),
-            lambda: cv.resize(self.env.observation()[key], shape[::-1], interpolation=cv.INTER_AREA)
+            lambda self=self: gym.spaces.Box(0, 255, shape + self.env.observation_space[key].shape[2:], dtype=np.uint8),
+            lambda self=self: cv.resize(self.env.observation()[key], shape, interpolation=cv.INTER_AREA)
         )
 
 
@@ -65,8 +64,8 @@ class ObservePosition(InsertObservation):
         super().__init__(
             env,
             key,
-            lambda: gym.spaces.Discrete(self.shape[0]//self.view.shape[0] * self.shape[1]//self.view.shape[1]),
-            lambda: self.view.pos[0]//self.view.shape[0]*self.shape[1]//self.view.shape[1]+self.view.pos[1]//self.view.shape[1]
+            lambda self=self: gym.spaces.Discrete(self.shape[0]//self.view.shape[0] * self.shape[1]//self.view.shape[1]),
+            lambda self=self: self.view.pos[0]//self.view.shape[0]*self.shape[1]//self.view.shape[1]+self.view.pos[1]//self.view.shape[1]
         )
 
 
@@ -75,7 +74,7 @@ class ObserveVisited(InsertObservation):
         super().__init__(
             env,
             key,
-            lambda: gym.spaces.Box(0, 1, self.shape),
-            lambda: self.visited
+            lambda self=self: gym.spaces.Box(0, 1, self.shape),
+            lambda self=self: self.visited
         )
 

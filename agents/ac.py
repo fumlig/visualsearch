@@ -3,6 +3,7 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 import torch.nn.functional as F
+import cv2 as cv
 
 from torch.distributions import Categorical
 
@@ -143,7 +144,7 @@ class Extractor(nn.Module):
                     extractors[key] = nn.Flatten()
                     features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
-                preprocessors[key] = lambda x: F.one_hot(x.long(), num_classes=space.n).float()
+                preprocessors[key] = lambda x, space=space: F.one_hot(x.long(), num_classes=space.n).float() # todo: this is weird, without default capture it captures by name?
                 features_dim += gym.spaces.flatdim(space)
             else:
                 assert False

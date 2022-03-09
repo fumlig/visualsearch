@@ -11,7 +11,7 @@ import gym
 import gym_search
 
 from gym_search.utils import travel_dist
-from gym_search.wrappers import ObservePosition, ResizeImage
+from gym_search.wrappers import ObservePosition
 
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
@@ -34,7 +34,7 @@ args = parser.parse_args()
 
 env = gym.make(args.env)
 
-for wrapper in [ResizeImage, ObservePosition]:
+for wrapper in [ObservePosition]:
     env = wrapper(env)
 
 device = th.device("cuda" if th.cuda.is_available() else "cpu")

@@ -74,6 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("env_id", type=str, **env_default("ENV_ID"))
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument("--load", type=str)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
@@ -100,7 +101,10 @@ if __name__ == "__main__":
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
-    agent = ac.ActorCritic(envs)
+    if args.load:
+        agent = th.load(args.load)
+    else:
+        agent = ac.ActorCritic(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 

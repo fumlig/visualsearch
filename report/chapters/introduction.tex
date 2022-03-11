@@ -8,23 +8,13 @@ In this thesis project, the problem of searching for targets in unknown but fami
 
 The ability to visually search for targets in an environment is crucial to many parts of our daily lives. We are constantly looking for things, be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest. In many cases, it is important that this search is efficient and fast. Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
-While searching for targets is often seemingly effortless to humans, it is a complex process. How humans and animals search for things has been extensively studied in neuroscience and neurobiology~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}. In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}. It is of great interest to automate visual search. Applications range from search and rescue to ...
+While searching for targets is often seemingly effortless to humans, it is a complex process. How humans and animals search for things has been extensively studied in neuroscience and neurobiology~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}. It is of great interest to automate visual search. Applications range from automated search and rescue to helping robots. In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}. Most attempts focus on fully observable scenes where the target is in view and the task is to localize it (object localization). However, in many real-world visual search scenarios the field-of-view is limited. This means that the search process is split into two steps: directing the field of view (covert attention), and locating targets within the view (overt attention). Much work has been focused on latter, locating targets within the field of view~\cite{}. 
 
-Problematically, it is difficult to manually create search algorithms. The appearance and distribution of targets in an environment varies greatly, and may be subtle. If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
+When only a fraction of the environment is visible, where to move the field of view becomes an important decision. The characteristics of the searched environment can often be used to find targets quicker. For example, if one is foraging for blueberries it makes sense to search the ground rather than the trees. Similarly, if one is searching a satellite image for boats it is reasonable to focus on ocean shores. If you see a railroad track or the wake of a boat you can usually follow it to find a vehicle. The exact characteristics of the environment need not be constant - forests with blueberries can vary greatly in appearance and boats can be found in all of the seven seas. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments. Humans are able to generalize in such cases.
 
-In many real-world visual search scenarios the field-of-view is limited. This means that the search process is split into two steps: directing the field of view, and locating targets within the view. Much work has been focused on latter, locating targets within the field of view~\cite{}. Often, only a fraction of the environment is visible. In these cases where to move the field of view becomes an important decision.
+Manually creating search algorithms for such tasks is problematic. The appearance and distribution of targets in an environment varies greatly, and may be subtle. The visual richness of the environment itself is another problem. How can you identify useful hints from the environment to guide covert attention? Manually engineering such a platform seems infeasuble. If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
-The characteristics of the searched environment can often be used to find targets quicker. For example, if one is foraging for blueberries it makes sense to search the ground rather than the trees. Similarly, if one is searching a satellite image for boats it is reasonable to focus on ocean shores. If you see a railroad track or the wake of a boat you can usually follow it to find a vehicle.
 
-The exact characteristics of the environment need not be constant - forests with blueberries can vary greatly in appearance and boats can be found in all of the seven seas. In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments. Humans are able to generalize in such cases.
-
-% unmanned search and rescue
-
-% Humans are able to generalize to unseen environments, which is important
-% Underlying probability may be subtle, difficult to learn and utilize.
-
-% should this be moved?
-This work tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment. This is a problem that has been less studied in the literature than visual search in smaller environments. There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
 
 % we want a system that can
 % - work in familiar environments
@@ -38,6 +28,8 @@ This work tries to address these issues, focusing on strategic scans of larger e
 
 \section{Aim}
 \label{sec:aim}
+
+This work tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment. This is a problem that has been less studied in the literature than visual search in smaller environments. There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
 
 % what will be done
 The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets. The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively. Furthermore, the agent should be able to 

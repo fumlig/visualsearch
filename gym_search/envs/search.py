@@ -139,7 +139,7 @@ class SearchEnv(gym.Env):
         done = all(self.hits)
 
         if done:
-            rew = 0
+            rew = 10
 
         obs = self.observation()
 

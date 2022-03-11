@@ -1,9 +1,10 @@
 import gym
 import numpy as np
 import torch as th
+import cv2 as cv
 import torch.nn as nn
 import torch.nn.functional as F
-import cv2 as cv
+import functools
 
 from torch.distributions import Categorical
 
@@ -12,6 +13,24 @@ def init_weights(layer, gain=np.sqrt(2)):
     nn.init.orthogonal_(layer.weight, gain)
     nn.init.constant_(layer.bias, 0.0)
     return layer
+
+def one_hot(x, n):
+    return F.one_hot(x.long(), num_classes=n).float()
+
+def normalize_image(image):
+    return image/255.0
+
+def channels_first(image):
+    if image.ndim == 4 and image.shape[3] == 3:
+        return image.permute(0, 3, 1, 2)
+    else:
+        return image
+
+def preprocess_image(image):
+    if image.ndim == 3:
+        image = image.unsqueeze(0)
+
+    return normalize_image(channels_first(image))
 
 
 class Actor(nn.Module):
@@ -108,7 +127,7 @@ class CNN(nn.Module):
         )
 
         with th.no_grad():
-            hidden_dim = self.cnn(th.tensor(observation_space.sample()[np.newaxis]).float().permute(0, 3, 1, 2)).shape[1]
+            hidden_dim = self.cnn(preprocess_image(th.tensor(observation_space.sample())).float()).shape[1]
 
         self.linear = nn.Sequential(
             init_weights(nn.Linear(hidden_dim, features_dim)),
@@ -118,7 +137,7 @@ class CNN(nn.Module):
         self.features_dim = features_dim
 
     def forward(self, obs):
-        return self.linear(self.cnn(obs.permute(0, 3, 1, 2)))
+        return self.linear(self.cnn(obs))
 
     def _output_shape(self, input_shape, kernel_size, stride=1, padding=0):
         return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
@@ -137,14 +156,14 @@ class Extractor(nn.Module):
         for key, space in observation_space.items():
             if isinstance(space, gym.spaces.Box):
                 if key == "image":
-                    preprocessors[key] = lambda x: x / 255.0
+                    preprocessors[key] = preprocess_image
                     extractors[key] = CNN(space)
                     features_dim += extractors[key].features_dim
                 else:
                     extractors[key] = nn.Flatten()
                     features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
-                preprocessors[key] = lambda x, n=space.n: F.one_hot(x.long(), num_classes=n).float() # this is weird, without default capture it captures by name
+                preprocessors[key] = functools.partial(one_hot, n=space.n)
                 features_dim += gym.spaces.flatdim(space)
             else:
                 assert False

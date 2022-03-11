@@ -109,4 +109,5 @@ if __name__ == "__main__":
     envs.close()
     writer.close()
 
+    print(f"saving as {args.name}")
     th.save(agent, f"models/{args.name}.pt")

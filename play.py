@@ -81,7 +81,8 @@ for ep in range(args.episodes):
             act = env.get_keys_to_action().get((key,), 0)
         else:
             with th.no_grad():
-                act = agent.predict(th.tensor(obs, dtype=th.float).to(device))
+                obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
+                act = agent.predict(obs)
         
         if args.verbose:
             step_begin = process_time()

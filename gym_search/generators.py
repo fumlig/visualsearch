@@ -17,41 +17,47 @@ class Generator:
 
 
 class GaussianGenerator(Generator):
-    def __init__(self, shape, num_targets, num_kernels, size, sigma=1):
+    def __init__(self, shape, num_targets, target_size, num_kernels, kernel_size, sigma=1):
+        assert target_size < min(shape)
+        assert kernel_size < min(shape)
+
         self.shape = shape
         self.num_targets = num_targets
+        self.target_size = target_size
         self.num_kernels = num_kernels
-        self.size = size
+        self.kernel_size = kernel_size
         self.sigma = sigma
-        self.random = np.random.default_rng()
+        self.seed()
 
     def sample(self):
         h, w = self.shape
-        kernel = gaussian_kernel(self.size, sigma=self.sigma)
-        plane = np.zeros((h+self.size*2,w+self.size*2))
+        kernel = gaussian_kernel(self.kernel_size, sigma=self.sigma)
+        terrain = np.zeros(self.shape)
 
         for _ in range(self.num_kernels):
-            y, x = self.random.integers(0, h+self.size), self.random.integers(0, w+self.size)
-            plane[y:y+self.size,x:x+self.size] += kernel
+            y, x = self.random.integers(0, h-self.kernel_size), self.random.integers(0, w-self.kernel_size)
+            terrain[y:y+self.kernel_size,x:x+self.kernel_size] += kernel
 
-        terrain = normalize(plane[self.size:self.size+h,self.size:self.size+w])
+        terrain = normalize(terrain)
         prob = terrain/terrain.sum()
         targets = sample_coords(self.shape, self.num_targets, prob, random=self.random)
-        img = np.full((*self.shape, 3), 255, dtype=np.uint8)
-        img[:,:,1] = img[:,:,1] - terrain*255
-        img[:,:,2] = img[:,:,2] - terrain*255
+        img = np.zeros((*self.shape, 3), dtype=np.uint8)
+        img[:,:,2] = terrain*255
 
         for y, x in targets:
-            img[y,x] = (255, 255, 0)
+            r = self.target_size//2
+            rr, cc = draw.disk((y+r, x+r), r, shape=self.shape)
+            img[rr, cc] = (255, 255, 0)
 
-        return img, [Box(*t, 1, 1) for t in targets]
+        return img, [Box(*t, self.target_size, self.target_size) for t in targets]
 
 
 class TerrainGenerator(Generator):
-    def __init__(self, shape, max_terrains=1024):
+    def __init__(self, shape, num_targets=1, max_terrains=1024):
         self.shape = shape
+        self.num_targets = num_targets
         self.max_terrains = max_terrains
-        self.random = np.random.default_rng()
+        self.seed()
 
     def sample(self):
         # https://jackmckew.dev/3d-terrain-in-python.html
@@ -77,12 +83,12 @@ class TerrainGenerator(Generator):
             img[rr, cc] = (0, 63, 0)
 
         target_prob = tree_prob
-        target_count = self.random.integers(5, 25)
+        target_count = self.num_targets # self.random.integers(5, 25)
         target_pos = sample_coords(self.shape, target_count, target_prob, random=self.random)
         targets = []
 
         for y, x in target_pos:
-            size = self.random.integers(2, 4)
+            size = self.random.integers(4, 8)
             rect = Box(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
             coords = tuple(draw.rectangle(rect.pos, extent=rect.shape))
@@ -102,7 +108,7 @@ class DatasetGenerator(Generator):
     def __init__(self, dataset):
         self.dataset = dataset
         self.shape = dataset[0][0].shape[:2]
-        self.random = np.random.default_rng()
+        self.seed()
     
     def sample(self):
         idx = self.random.choice(len(self.dataset))

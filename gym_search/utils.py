@@ -68,6 +68,9 @@ def manhattan_dist(p1, p2):
     p12 = np.array(p2) - np.array(p1)
     return np.sum(np.abs(p12))
 
+def euclidean_dist(p1, p2):
+    return np.linalg.norm(np.array(p2) - np.array(p1))
+
 def travel_dist(points, dist_func=manhattan_dist):
     # naïve TSP, maybe make something better if it feels necessary
     min_dist = np.inf

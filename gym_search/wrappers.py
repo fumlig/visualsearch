@@ -69,6 +69,26 @@ class ObservePosition(InsertObservation):
         )
 
 
+class ObserveTime(InsertObservation):
+    def __init__(self, env, key="time"):
+        super().__init__(
+            env,
+            key,
+            lambda self=self: gym.spaces.Discrete(self.max_steps),
+            lambda self=self: self.num_steps
+        )
+
+
+class ObserveVisible(InsertObservation):
+    def __init__(self, env, key="visible"):
+        super().__init__(
+            env,
+            key,
+            lambda self=self: gym.spaces.Box(0, 1, self.shape),
+            lambda self=self: self.visible
+        )
+
+
 class ObserveVisited(InsertObservation):
     def __init__(self, env, key="visited"):
         super().__init__(

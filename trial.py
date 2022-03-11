@@ -3,6 +3,9 @@ import numpy as np
 import cv2 as cv
 
 
+# we can do two levels of zoom by having a signal with six channels and a step size of 3 in depth
+
+
 class SignalEnv(gym.Env):
 
     metadata = {"render.modes": ["ansi"]}

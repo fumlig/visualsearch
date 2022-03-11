@@ -89,7 +89,7 @@ class Critic(nn.Module):
 class CNN(nn.Module):
     # "NatureCNN"
     # Mnih, Volodymyr, et al.
-    #"Human-level control through deep reinforcement learning."
+    # "Human-level control through deep reinforcement learning."
     
     def __init__(self, observation_space, features_dim=512):
         super(CNN, self).__init__()
@@ -144,7 +144,7 @@ class Extractor(nn.Module):
                     extractors[key] = nn.Flatten()
                     features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
-                preprocessors[key] = lambda x, space=space: F.one_hot(x.long(), num_classes=space.n).float() # todo: this is weird, without default capture it captures by name?
+                preprocessors[key] = lambda x, n=space.n: F.one_hot(x.long(), num_classes=n).float() # this is weird, without default capture it captures by name
                 features_dim += gym.spaces.flatdim(space)
             else:
                 assert False
@@ -152,6 +152,7 @@ class Extractor(nn.Module):
         self.preprocessors = preprocessors
         self.extractors = nn.ModuleDict(extractors)
         self.features_dim = features_dim
+
 
     def forward(self, obs):
         tensors = []

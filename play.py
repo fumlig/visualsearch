@@ -11,7 +11,7 @@ import gym
 import gym_search
 
 from gym_search.utils import travel_dist
-from gym_search.wrappers import ObservePosition
+from gym_search.wrappers import ObserveVisible, ResizeImage, ObserveTime, ObserveVisible, ObserveVisited
 
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
@@ -34,7 +34,9 @@ args = parser.parse_args()
 
 env = gym.make(args.env)
 
-for wrapper in [ObservePosition]:
+wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage]#, ObserveTime, ObserveVisible, ObserveVisited]
+
+for wrapper in wrappers:
     env = wrapper(env)
 
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
@@ -63,8 +65,13 @@ for ep in range(args.episodes):
     #    print("optimal:", travel_dist(points))
 
     while not done:
-        img = env.render(mode="rgb_array", observe=args.observe)
-        img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_NEAREST)
+        if args.observe:
+            img = obs["image"]
+            print(obs)
+        else:
+            img = env.render(mode="rgb_array")
+
+        img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         cv.imshow(args.env, img)	
 
@@ -96,7 +103,6 @@ for ep in range(args.episodes):
         stats[ep]["triggers"] += act == env.Action.TRIGGER
 
         if args.verbose:
-            print("position:", obs["position"])
             print("action:", env.get_action_meanings()[act], "reward:", rew)
 
     if done:

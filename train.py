@@ -11,8 +11,8 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from gym_search.wrappers import ResizeImage, ObservePosition, ObserveVisited
-from agents.ac import ActorCritic
+from gym_search.wrappers import ResizeImage
+from agents import ac
 from agents import ppo
 
 
@@ -92,15 +92,15 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObservePosition, ObserveVisited]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage]#, ObservePosition, ObserveTime, ObserveVisible, ObserveVisited]
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
-    envs = gym.wrappers.NormalizeReward(envs)
+    #envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
     for env in envs.envs:
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
-    agent = ActorCritic(envs)
+    agent = ac.ActorCritic(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 

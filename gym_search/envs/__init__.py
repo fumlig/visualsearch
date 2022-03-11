@@ -15,42 +15,32 @@ gym.register(
     id="Search-v0",
     entry_point=SearchEnv,
     kwargs=dict(
+        generator=GaussianGenerator((4, 4), 1, 1, 1, 1),
+        view_shape=(1, 1),
+        step_size=1
+    )
+)
+
+gym.register(
+    id="SearchGaussian-v0",
+    entry_point=SearchEnv,
+    kwargs=dict(
+        generator=GaussianGenerator((256, 256), 1, 4, 3, 128, sigma=24),
+        view_shape=(16, 16),
+        step_size=16,
+    )
+)
+
+gym.register(
+    id="SearchTerrain-v0",
+    entry_point=SearchEnv,
+    kwargs=dict(
         generator=TerrainGenerator((1024, 1024), max_terrains=1024),
         view_shape=(64, 64),
         step_size=64,
     )
 )
 
-gym.register(
-    id="SearchDense-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=GaussianGenerator((32, 32), num_targets=8, num_kernels=8, size=32, sigma=4),
-        view_shape=(8, 8), 
-        step_size=1,
-    )
-)
-
-gym.register(
-    id="SearchDense-v1",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=GaussianGenerator((32, 32), num_targets=8, num_kernels=8, size=32, sigma=4),
-        view_shape=(4, 4), 
-        step_size=4,
-        max_steps=250,
-    )
-)
-
-gym.register(
-    id="SearchSparse-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=GaussianGenerator((32, 32), num_targets=1, num_kernels=1, size=128, sigma=16),
-        view_shape=(8, 8), 
-        step_size=1,
-    )
-)
 
 if os.path.exists("data/airbus-aircraft"):
     gym.register(

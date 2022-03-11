@@ -20,6 +20,10 @@ class Box:
     pos = property(get_pos, set_pos)
     shape = property(get_shape, set_shape)
 
+    @property
+    def extent(self):
+        return (self.h - 1, self.w - 1)
+
     def area(self):
         return self.h*self.w
 
@@ -43,3 +47,6 @@ class Box:
 
     def overlap(self, rect):
         return self.intersection(rect)/self.union(rect)
+
+    def center(self):
+        return self.y + self.h/2, self.x + self.w/2

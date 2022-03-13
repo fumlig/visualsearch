@@ -6,15 +6,14 @@ In this chapter, the method used is described. Section \ref{sec:problem} formali
 \section{Problem Statement}
 \label{sec:problem}
 
-The problem of finding an optimal sequence of actions to find can be cast as a partially observable Markov decision process (POMDP). The environment's state is described by an \(n\)-dimensional matrix \(S\) whose members are drawn from some unknown distribution. In the environment, there are \(N\) targets \(\mathbb{T}\).
+% environment: discrete grid
+% observation: subset of grid, equals attention
+% action: transform subset of grid, trigger is binary decision telling whether target is found, or whether it should be checked for thoroughly?
+% reward: used to achieve correct trigger in few actions
 
-The agent observes a window \(\mathbb{W}\) of this matrix. The actions available to the agent change the members of the window \(\mathbb{W}\) but not the number of elements.
+The problem of finding an optimal sequence of actions to find can be cast as a partially observable Markov decision process (POMDP). 
 
-Every camera move is associated with a cost, and it is therefore important that the targets are identified as quickly as possible. % Reward signal.
-
-The aim of this project is to learn to search efficiently in the visual domain with a pan-tilt-zoom camera. To make the problem more manageable, it is approximated as follows. The environment state is an RGB image of shape \((3, H, W)\). The window is fixed to \((3, 64, 64)\) and can be moved row-wise and column-wise in the image. This emulates the pan-tilt behaviour of a camera.
-
-% todo: image
+Formally, we let the environment's state be described by an \(n\)-dimensional discrete Euclidean space. In the environment, there are \(N\) targets, each described by a subspace. The agent observes a subspace of the state and can, though a discrete set of actions, transform this subspace. This corresponds to changing the field of perception. With a final action, the agent can indicate that it thinks that a target space intersects with the observed subspace. The goal of the agent is to minimize the number of actions until all \(N\) targets have been found.
 
 % "Learning to optimize" has some good formulation tips
 % explains that policy search is intractable
@@ -24,11 +23,24 @@ The aim of this project is to learn to search efficiently in the visual domain w
 \section{Environment}
 \label{sec:environment}
 
-To train a learning agent, an environment for search was implemented. The searched environment is approximated by an RGB image with dimensions \((3, H, W)\). The behaviour of a pan-tilt-zoom camera is approximated by giving the   At any given time, only a \((3, 64, 64)\) subregion of the image is observable to the agent.
+In this project, we focus on search in the visual domain. We let the state space be a three-dimensional of shape \((H, W, C)\) where \(H\) is the height of the space, \(W\) is the width of the space, and \(C\) is the number of channels in the space. The observation space is three-dimensional of shape \((H_v, H_w, C)\). We let the action space consist of four view-transforming actions that translate the observed subspace up, down, left or right along. This roughly corresponds to panning and tilting a camera to look around in an environment.
 
 The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances. For all environments, the appearance correlates to the probability of targets.
 
 To incentivize finding targets quickly, the reward signal is set to -1 for each time step. Since viewing a window twice is redundant, such actions are punished by setting the reward to -2. If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5. When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
+
+To test the capability of the method, we use three environments of varying difficulty. The first environment visually simple ... The second environment is ... The third environment consists of real images.
+
+
+
+\section{Algorithm}
+\label{sec:algorithm}
+
+The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
+
+The architecture of the neural network is presented in Figure X.
+
+The network is split into three main section: the feature extraction, the shared network, and the policy and value heads. Like Mnih et al., we use a CNN~\cite for feature extraction. The shared network consists of an LSTM~\cite{hochreiter}. Finally, both the policy and the value head are two-layer MLPs.
 
 % section 17.4 in sutton is good!
 
@@ -41,13 +53,6 @@ To incentivize finding targets quickly, the reward signal is set to -1 for each 
 % reward normalization: 
 % reward clipping: done in "playing atari with deep reinforcement learning": they state that since the scale of scores varies from game to game they fix all positive rewards to be one and negative to be -1. 0 rewards are left unchanged. this limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games. could also affect agent's performance as it cannot distinguish between rewards of different magnitudes.
 % could be important for us if the number of targets and the reward varies a lot
-
-\section{Algorithm}
-\label{sec:algorithm}
-
-The 
-
-The agent is trained with reinforcement learning 
 
 % Actor critic
 
@@ -72,7 +77,7 @@ Additionally, experiments to eveluate the generalization capability of the agent
 
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 
-\subsection{Memory}
+For each experiment, we report the mean return and episode length over time during training. We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments. As per [rlliable], we report results across multiple seeds.
 
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights

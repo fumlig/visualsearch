@@ -19,4 +19,8 @@
 
 When it comes to hyperparameters, we find that letting the number of rollout steps be substantially lower than the episode length we achieve much more stable training results.
 Furthermore, increasing the number of weights in the neural network made it more difficult to train.
+
+We find that the hyperparameters from [procgen] perform well, especially when the number of environments is large.
+
+
 This coupled with a sparse reward signal led to many cases where the agent converged towards a poor local optimum (or perhaps never converged at all).

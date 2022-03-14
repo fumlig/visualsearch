@@ -57,9 +57,42 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 % computers do not naturally have this constraint and most CV algorithms do not use foveated vision
 % (although visual attention models exist)
 
-\section{Search in Partially Observable Environments}
+\section{Local Search}
 % Artificial Intelligence - A modern approach
+% Page 134
 % Should cover belief states?
+% ~\cite{russell_artificial_2021}
+% https://en.wikipedia.org/wiki/Tabu_search
+% tabu search is mentioned in russel
+% could be interesting as inspiration for reward function
+% and also observation space
+% bring in "learning to optimize" here
+
+% an annealed step size could be interesting...
+% more general and there are certainly parallells to other areas.
+
+% local search
+% https://en.wikipedia.org/wiki/Local_search_(optimization)
+% https://en.wikipedia.org/wiki/Guided_Local_Search
+
+% "learning local search"
+% "learning to optimize"
+
+% Reinforcement Learning for Local Search
+
+% Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics
+% Levine et al. seems like it could be useful
+
+% we could draw inspiration from multiple local search approaches
+
+% it is essentially a combinatorial optimization problem (I think)
+
+%Schuurman & Southey propose three measures of effectiveness for local search (depth, mobility, and coverage):[2]
+%
+%    depth: the cost of the current (best) solution;
+%    mobility: the ability to rapidly move to different areas of the search space (whilst keeping the cost low);
+%    coverage: how systematically the search covers the search space, the maximum distance between any unexplored assignment and all visited assignments.
+
 
 \section{Active Vision}
 \label{sec:activevision}
@@ -131,7 +164,7 @@ The goal of object detection is to, given an input image, detect instances of se
 This includes assigning a bounding box to the objects, and classifying the object.
 The input image is usually passively sampled, and the whole scene is visible at once.
 
-Caicedo and Lazebnik (2015)~\cite{aol} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
+Caicedo and Lazebnik (2015)~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
 An agent is trained to successively improve a bounding box using translating and scaling transformations.
 They use a reward signal that is proportional to how well the current box covers the target object.
 An action that improves the region is rewarded with +1, and -1 otherwise.
@@ -140,7 +173,7 @@ Binary rewards communicate more clearly which transformations keep the object in
 When there is no action that improves the bounding box, the agent may select a trigger action (which would be the only action that does not give a negative reward) which resets the box.
 This way the agent may select additional bounding boxes.
 Each trigger modifies the environment by marking it so that the agent may learn to not select the same region twice.
-This is referred to as an inhibition-of-return mechanism, and is widely used in visual attention models~\cite{16 in aol}.
+This is referred to as an inhibition-of-return mechanism, and is widely used in visual attention models~\cite{[16] in caicedo_active_2015}.
 This method has a few shortcomings for the problem considered in this project.
 The object may not be visible in the initial frame so the agent cannot act in the same way. 
 
@@ -149,6 +182,40 @@ In active object search, % explain
 % difference is tht this is the first deep dive into these particular aspects
 % write about the work that uses object co-occurences though
 % we should stress that we do not explicitly model the environment guidance, but are rather interested in whether it can be learned efficiently by the system
+
+% Visual Navigation is another thing to call it...
+
+% 
+
+A similar work by Ghesu et al. (2016)~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
+Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
+The agent sees a limited region of interest in an image, with its center representing the current position of the agent.
+The actions available to the agent translate the view up, down, left and aright.
+A reward is given to the agent that is equal to the supervised relative distance-change to the landmark after each action.
+Three datasets of 891 anatomical images are used.
+The agent starts at random positions in the image close to the target landmark and is tasked with moving to the target location.
+While achieving strong results (90\% success rate), the scenes and targets are all drawn from a distribution with low variance.
+Most real-world search tasks exhibit larger variance than anatomical images of the human body.
+
+Zhu et al. (2016)~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indooor scenes with DRL.
+An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
+The agent moves forwards, backwards, and turns left and right at constant step lengths.
+They use a reward signal with a small time penalty to incentivize task completion in few steps.
+They compare their approach to random walk and the shortest path and achieve promising results.
+This setup is quite similar to the one considered in this report, but the authors make a few assumptions that we do not.
+They a set of 32 scenes, each of which contain a fixed number of object instances.
+They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
+Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
+
+A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object recognition module with a deep reinforcement learning based visual navigation module.
+They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
+Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
+
+
+% CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
+
+% CV material: different in that the object is assumed to be visible
+
 
 \section{Visual Attention}
 
@@ -255,8 +322,3 @@ This work will focus on policy optimization algorithms.
 
 Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
 
-\section{Automating Visual Search}
-
-% CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
-
-% CV material: different in that the object is assumed to be visible

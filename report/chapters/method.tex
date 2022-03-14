@@ -15,7 +15,6 @@
 % the method chapter is structured accordingly with suitable named
 % sub-headings.
 
-
 In this chapter, the method used is described.
 Section \ref{sec:problem} formalizes the problem solved.
 Section \ref{sec:environment} details the environment used to train and test an agent.
@@ -24,6 +23,8 @@ Section \ref{sec:algorithm} describes the algorithm used to train the agent.
 \section{Problem Statement}
 \label{sec:problem}
 
+% and problem formulation
+
 % environment: discrete grid
 % observation: subset of grid, equals attention
 % action: transform subset of grid, trigger is binary decision telling whether target is found, or whether it should be checked for thoroughly?
@@ -31,7 +32,7 @@ Section \ref{sec:algorithm} describes the algorithm used to train the agent.
 
 The problem of finding an optimal sequence of actions to find can be cast as a partially observable Markov decision process (POMDP). 
 
-Formally, we let the environment's state be described by an \(n\)-dimensional discrete Euclidean space.
+Formally, we let the environment's scene be described by an \(n\)-dimensional discrete Euclidean space.
 In the environment, there are \(N\) targets, each described by a subspace.
 The agent observes a subspace of the state and can, though a discrete set of actions, transform this subspace.
 This corresponds to changing the field of perception.
@@ -51,6 +52,7 @@ We let the state space be a three-dimensional of shape \((H, W, C)\) where \(H\)
 The observation space is three-dimensional of shape \((H_v, H_w, C)\).
 We let the action space consist of four view-transforming actions that translate the observed subspace up, down, left or right along.
 This roughly corresponds to panning and tilting a camera to look around in an environment.
+It is a discretization and simplification of such a task in a 3D environment
 
 The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances.
 For all environments, the appearance correlates to the probability of targets.
@@ -63,8 +65,9 @@ When all targets have been triggered, or when 1000 time steps have passed, the e
 To test the capability of the method, we use three environments of varying difficulty.
 The first environment visually simple ...
 The second environment is ...
-The third environment consists of real images.
+The third environment consists of real images for object localization. The images are from the dataset [cite] and consists of N training samples and M test samples. Each image is 2440x2440 pixels and is therefore expensive to run object detection algorithms on. There are N training samples and M test samples.
 
+Note that all environments are static, in that the scene is unaffected by the actions of the agent. The methods presented do, however, apply to other unknown dynamics.
 
 
 \section{Algorithm}
@@ -100,6 +103,12 @@ Finally, both the policy and the value head are two-layer MLPs.
 % Policy Head
 % Value Head
 
+% we should clearly explain the thought process
+% connect back to local search problems
+% we need a good feature extraction
+% and then something for a belief state
+% finally, what is the idea behind policy and value (should be in theory instead)
+
 \section{Implementation}
 
 The environment is implemented with Gym~\cite{gym}, and the agent is implemented with PyTorch~\cite{pytorch}. 
@@ -117,11 +126,13 @@ Results of these experiments are presented for this environment only.
 The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments.
 Hyperparameters are tuned with random search separately for each environment.
 For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
+The agent was trained and tested on the full distribution of environments.
 
 Additionally, experiments to eveluate the generalization capability of the agent were conducted.
 These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}.
 During training, the seed pool size was fixed to various sizes to limit the training set size.
-The agent was trained for varying number of timesteps and then evaluated on the full distribution of environments.
+The agent was trained for varying number of timesteps and then tested on the full distribution of environments.
+This way, we can get a sense of how much data and simulation is required to use the approach for real-world tasks.
 
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 

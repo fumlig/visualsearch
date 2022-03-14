@@ -9,6 +9,7 @@ import numpy as np
 import torch as th
 import gym
 import gym_search
+import random
 
 from gym_search.utils import travel_dist
 from gym_search.wrappers import ObserveVisible, ResizeImage, ObserveTime, ObserveVisible, ObserveVisited
@@ -26,6 +27,7 @@ parser.add_argument("env", type=str)
 parser.add_argument("--seed", type=int, default=None)
 parser.add_argument("--model", type=str)
 parser.add_argument("--delay", type=int, default=1)
+parser.add_argument("--cpu", action="store_true")
 parser.add_argument("--observe", action="store_true")
 parser.add_argument("--verbose", action="store_true")
 parser.add_argument("--episodes", type=int, default=1024)
@@ -40,13 +42,18 @@ for wrapper in wrappers:
     env = wrapper(env)
 
 agent = None
-device = th.device("cuda" if th.cuda.is_available() else "cpu")
+device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
 stats = [defaultdict(int) for _ in range(args.episodes)]
 
+
 if args.seed is not None:
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    th.manual_seed(args.seed)
     env.seed(args.seed)
 
-if args.model is not None:
+if args.model:
+    print(f"loading {args.model}")
     agent = th.load(args.model).to(device)
     agent.eval()
 
@@ -64,7 +71,6 @@ for ep in range(args.episodes):
     while not done:
         if args.observe:
             img = obs["image"]
-            print(obs)
         else:
             img = env.render(mode="rgb_array")
 
@@ -103,9 +109,9 @@ for ep in range(args.episodes):
         if args.verbose:
             print("action:", env.get_action_meanings()[act], "reward:", rew)
 
-    if done:
-        print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
-        #cv.imwrite("search.jpg", env._image(show_path=True))
+        if done:
+            print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
+            #cv.imwrite("search.jpg", env._image(show_path=True))
 
 
 print(

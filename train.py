@@ -31,12 +31,12 @@ add pretty plotting (yield info from learn?)
 # these are from procgen!
 
 SEED = 0
-TOT_TIMESTEPS = int(10e6)
-NUM_ENVS = 8 # also a hyperparameter...
+TOT_TIMESTEPS = int(25e6)
+NUM_ENVS = 64 # also a hyperparameter...
 ALG_PARAMS = dict(
     learning_rate=5e-4,
     num_steps=128,
-    num_minibatches=4,
+    num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
     gae_lambda=0.95,
@@ -74,11 +74,13 @@ if __name__ == "__main__":
     parser.add_argument("env_id", type=str, **env_default("ENV_ID"))
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--seed", type=int, default=SEED)
-    parser.add_argument("--load", type=str)
+    parser.add_argument("--model", type=str)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
     parser.add_argument("--alg-params", type=parse_hparams, default=ALG_PARAMS)
+
+    #ppo.add_arguments(parser)
 
     args = parser.parse_args()
 
@@ -101,8 +103,8 @@ if __name__ == "__main__":
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
-    if args.load:
-        agent = th.load(args.load)
+    if args.model:
+        agent = th.load(args.model)
     else:
         agent = ac.ActorCritic(envs)
 

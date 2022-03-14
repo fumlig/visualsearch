@@ -13,7 +13,7 @@ class SearchEnv(gym.Env):
     metadata = {"render.modes": ["rgb_array"]}
 
     class Action(enum.IntEnum):
-        NONE = 0
+        NONE = 0 # todo: remove... if we choose deterministic, it always chooses this action for some reason
         TRIGGER = 1
         NORTH = 2
         EAST = 3
@@ -94,6 +94,19 @@ class SearchEnv(gym.Env):
         self.view.pos = (y, x)
         self.path.append(self.view.pos)
 
+        if action == self.Action.TRIGGER:
+            self.triggered[self.scaled_position] = True
+
+            for i in range(len(self.targets)):                
+                if self.hits[i]: continue
+                if self.view.overlap(self.targets[i]) > 0:
+                    self.hits[i] = True
+
+        self.visible = np.full(self.scaled_shape, False)
+        self.visited[self.scaled_position] = True
+        self.visible[self.scaled_position] = True
+
+
         """
         rew = -2
 
@@ -123,28 +136,19 @@ class SearchEnv(gym.Env):
 
         # todo: remove
         assert(len(self.targets) == 1)
-        
+
+        """        
         dist = euclidean_dist(self.view.center(), self.targets[0].center())
         rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
         self.last_dist = dist
         
         if self.visited[self.scaled_position]:
             rew -= 1
+        """
 
-        if action == self.Action.TRIGGER:
-            self.triggered[self.scaled_position] = True
-
-            for i in range(len(self.targets)):                
-                if self.hits[i]: continue
-                if self.view.overlap(self.targets[i]) > 0:
-                    self.hits[i] = True
-
-        self.visible = np.full(self.scaled_shape, False)
-        self.visited[self.scaled_position] = True
-        self.visible[self.scaled_position] = True
-
-        done = all(self.hits)
         obs = self.observation()
+        done = all(self.hits)
+        rew = 1 if all(self.hits) else -1
 
         self.num_steps += 1
 

@@ -147,11 +147,15 @@ class ActorCritic(nn.Module):
         v = self.value(h)
         return pi, v
 
-    def predict(self, obs):
+    def predict(self, obs, deterministic=False):
         x = self.extractor(obs)
         h = self.network(x)
         pi = self.policy(h)
-        return pi.sample().item()
+
+        if deterministic:
+            return pi.mean.item()
+        else:
+            return pi.sample().item()
 
 
 class MemoryActorCritic(nn.Module):

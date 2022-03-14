@@ -5,8 +5,9 @@ import torch.nn as nn
 
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from collections import deque
 
+
+# work in progress...
 
 def learn(
     tot_timesteps,
@@ -14,7 +15,8 @@ def learn(
     agent,
     device,
     writer=None,
-    learning_rate=2.5e-4,
+    # hyperparameters
+    learning_rate=5e-4,
     num_steps=128,
     gamma=0.99,
     gae_lambda=0.95,
@@ -26,7 +28,15 @@ def learn(
     ent_coef=0.01,
     vf_coef=0.5,
     max_grad_norm=0.5,
-    target_kl=None
+    target_kl=None,
+    # ppg specific
+    num_iter=32,
+    e_policy=1,
+    v_value=1,
+    e_aux=6,
+    beta_clone=1,
+    num_aux_minibatches=16*32,
+    num_aux_grad_acc=1
 ):
     assert isinstance(envs.single_action_space, gym.spaces.Discrete)
     assert isinstance(envs.single_observation_space, gym.spaces.Dict)
@@ -34,6 +44,8 @@ def learn(
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
     minibatch_size = batch_size // num_minibatches
+    aux_batch_size = batch_size * num_iter
+    aux_minibatch_size = aux_batch_size // (num_aux_minibatches*num_aux_grad_acc)
     num_batches = tot_timesteps // batch_size
 
     #hparams = locals()
@@ -60,7 +72,6 @@ def learn(
     done = th.zeros(envs.num_envs).to(device)
 
     pbar = tqdm(total=tot_timesteps)
-    ep_infos = deque(maxlen=100)
 
     timestep = 0
 
@@ -92,13 +103,12 @@ def learn(
 
             for i in info:
                 if "episode" in i:
-                    ep_info = i["episode"]
-                    writer.add_scalar("charts/episode_return", ep_info["r"], timestep)
-                    writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
-                    
-                    ep_infos.append(ep_info)
-                    writer.add_scalar("charts/average_return", np.mean([ep_info["r"] for ep_info in ep_infos]))
-                    writer.add_scalar("charts/average_length", np.mean([ep_info["l"] for ep_info in ep_infos]))
+                    ep_r = i["episode"]["r"]
+                    ep_l = i["episode"]["l"]
+                    _ep_t = i["episode"]["t"]
+
+                    writer.add_scalar("charts/episode_return", ep_r, timestep)
+                    writer.add_scalar("charts/episode_length", ep_l, timestep)
 
 
         # bootstrap value

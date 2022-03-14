@@ -114,6 +114,12 @@ class SearchEnv(gym.Env):
                 rew += 1
         """
 
+        """
+        - reward moving towards target
+        - reward exploring new tiles
+        - punsish visiting visited tiles
+        """
+
 
         # todo: remove
         assert(len(self.targets) == 1)
@@ -121,14 +127,15 @@ class SearchEnv(gym.Env):
         dist = euclidean_dist(self.view.center(), self.targets[0].center())
         rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
         self.last_dist = dist
+        
+        if self.visited[self.scaled_position]:
+            rew -= 1
 
         if action == self.Action.TRIGGER:
             self.triggered[self.scaled_position] = True
 
             for i in range(len(self.targets)):                
-                if self.hits[i]:
-                    continue
-                
+                if self.hits[i]: continue
                 if self.view.overlap(self.targets[i]) > 0:
                     self.hits[i] = True
 
@@ -137,10 +144,6 @@ class SearchEnv(gym.Env):
         self.visible[self.scaled_position] = True
 
         done = all(self.hits)
-
-        if done:
-            rew = 10
-
         obs = self.observation()
 
         self.num_steps += 1

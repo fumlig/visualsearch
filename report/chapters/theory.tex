@@ -57,7 +57,9 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 % computers do not naturally have this constraint and most CV algorithms do not use foveated vision
 % (although visual attention models exist)
 
-\section{Visual Perception}
+\section{Search in Partially Observable Environments}
+% Artificial Intelligence - A modern approach
+% Should cover belief states?
 
 \section{Active Vision}
 \label{sec:activevision}
@@ -154,14 +156,27 @@ In active object search, % explain
 % note: reinforcement learning part, soft and hard attention
 % https://shairozsohail.medium.com/a-survey-of-visual-attention-mechanisms-in-deep-learning-1043eb25f343
 
+\section{Neural Networks}
+
+An artificial neural network (ANN) is a type of universal function approximator
+
+\subsection{Multi-layer Perceptron}
+
+\subsection{Long Short-Term Memory}
+
+\subsection{Convolutional Neural Network}
+
 \section{Reinforcement Learning}
 
 Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
 An \textit{agent} and its \textit{environment} interact continually over discrete time steps.
 At each time step the agent selects some \textit{action} that updates the state of the environment, and gives it a \textit{reward}.
-The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.
+The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.~\cite{sutton_reinforcement_2018}
 
 \subsection{Markov Decision Process}
+
+% should likely be its own separate section
+% take inspiration from other works?
 
 The RL setup is usually formalized as a (finite) Markov decision process (MDP).
 
@@ -200,7 +215,8 @@ The goal of the agent is to maximize the \textit{discounted return}, defined as 
 
 %An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
 
-Planning in a POMDP is undecidable, and solving them is often computationally intractable. Approximate solutions are more common.
+Planning in a POMDP is undecidable, and solving them is often computationally intractable.
+Approximate solutions are more common.
 
 % Belief state
 
@@ -239,17 +255,8 @@ This work will focus on policy optimization algorithms.
 
 Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
 
-
 \section{Automating Visual Search}
 
 % CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
 
 % CV material: different in that the object is assumed to be visible
-
-\section{Neural Networks}
-
-\subsection{Multi-layer Perceptron}
-
-\subsection{Long Short-Term Memory}
-
-\subsection{Convolutional Neural Network}

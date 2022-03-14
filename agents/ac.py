@@ -8,27 +8,8 @@ import functools
 
 from torch.distributions import Categorical
 
-
-def init_weights(layer, gain=np.sqrt(2)):
-    nn.init.orthogonal_(layer.weight, gain)
-    nn.init.constant_(layer.bias, 0.0)
-    return layer
-
-def one_hot(x, n):
-    return F.one_hot(x.long(), num_classes=n).float()
-
-def normalize_image(image):
-    return image/255.0
-
-def channels_first(image):
-    assert image.ndim == 4 and image.shape[3] == 3
-    return image.permute(0, 3, 1, 2)
-    
-def preprocess_image(image):
-    if image.ndim == 3:
-        image = image.unsqueeze(0)
-
-    return normalize_image(channels_first(image))
+from agents.cnn import NatureCNN
+from agents.utils import preprocess_image, one_hot, init_weights
 
 
 class Actor(nn.Module):
@@ -103,45 +84,6 @@ class Critic(nn.Module):
 
 
 
-class CNN(nn.Module):
-    # "NatureCNN"
-    # Mnih, Volodymyr, et al.
-    # "Human-level control through deep reinforcement learning."
-    
-    def __init__(self, observation_space, features_dim=512):
-        super(CNN, self).__init__()
-        assert isinstance(observation_space, gym.spaces.Box)
-        
-        in_channels = observation_space.shape[2]
-
-        self.cnn = nn.Sequential(
-            init_weights(nn.Conv2d(in_channels, 32, 8, stride=4, padding=0)),
-            nn.ReLU(),
-            init_weights(nn.Conv2d(32, 64, 4, stride=2, padding=0)),
-            nn.ReLU(),
-            init_weights(nn.Conv2d(64, 64, 3, stride=1, padding=0)),
-            nn.ReLU(),
-            nn.Flatten(),
-        )
-
-        with th.no_grad():
-            hidden_dim = self.cnn(preprocess_image(th.tensor(observation_space.sample()).float())).shape[1]
-
-        self.linear = nn.Sequential(
-            init_weights(nn.Linear(hidden_dim, features_dim)),
-            nn.ReLU()
-        )
-
-        self.features_dim = features_dim
-
-    def forward(self, obs):
-        return self.linear(self.cnn(obs))
-
-    def _output_shape(self, input_shape, kernel_size, stride=1, padding=0):
-        return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
-
-
-
 class Extractor(nn.Module):
     def __init__(self, observation_space):
         super(Extractor, self).__init__()
@@ -155,7 +97,7 @@ class Extractor(nn.Module):
             if isinstance(space, gym.spaces.Box):
                 if key == "image":
                     preprocessors[key] = preprocess_image
-                    extractors[key] = CNN(space)
+                    extractors[key] = NatureCNN(space)
                     features_dim += extractors[key].features_dim
                 else:
                     extractors[key] = nn.Flatten()

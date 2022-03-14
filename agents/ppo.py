@@ -97,8 +97,8 @@ def learn(
                     writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
                     
                     ep_infos.append(ep_info)
-                    writer.add_scalar("charts/average_return", np.mean([ep_info["r"] for ep_info in ep_infos]))
-                    writer.add_scalar("charts/average_length", np.mean([ep_info["l"] for ep_info in ep_infos]))
+                    writer.add_scalar("charts/average_return", np.mean([ep_info["r"] for ep_info in ep_infos]), timestep)
+                    writer.add_scalar("charts/average_length", np.mean([ep_info["l"] for ep_info in ep_infos]), timestep)
 
 
         # bootstrap value

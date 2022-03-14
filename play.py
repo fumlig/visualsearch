@@ -24,7 +24,7 @@ WINDOW_SIZE = (640, 640)
 parser = ArgumentParser()
 parser.add_argument("env", type=str)
 parser.add_argument("--seed", type=int, default=None)
-parser.add_argument("--agent", type=str)
+parser.add_argument("--model", type=str)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--observe", action="store_true")
 parser.add_argument("--verbose", action="store_true")
@@ -39,18 +39,15 @@ wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage]#, ObserveTime, Ob
 for wrapper in wrappers:
     env = wrapper(env)
 
+agent = None
 device = th.device("cuda" if th.cuda.is_available() else "cpu")
 stats = [defaultdict(int) for _ in range(args.episodes)]
 
 if args.seed is not None:
     env.seed(args.seed)
 
-if args.agent is None:
-    agent = None
-elif args.agent == "random":
-    agent = RandomAgent(env)
-else:
-    agent = th.load(args.agent).to(device)
+if args.model is not None:
+    agent = th.load(args.model).to(device)
     agent.eval()
 
 cv.namedWindow(args.env, cv.WINDOW_AUTOSIZE)

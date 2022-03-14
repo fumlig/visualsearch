@@ -1,7 +1,10 @@
 \chapter{Method}
 \label{cha:method}
 
-In this chapter, the method used is described. Section \ref{sec:problem} formalizes the problem solved. Section \ref{sec:environment} details the environment used to train and test an agent. Section \ref{sec:algorithm} describes the algorithm used to train the agent.
+In this chapter, the method used is described.
+Section \ref{sec:problem} formalizes the problem solved.
+Section \ref{sec:environment} details the environment used to train and test an agent.
+Section \ref{sec:algorithm} describes the algorithm used to train the agent.
 
 \section{Problem Statement}
 \label{sec:problem}
@@ -13,7 +16,12 @@ In this chapter, the method used is described. Section \ref{sec:problem} formali
 
 The problem of finding an optimal sequence of actions to find can be cast as a partially observable Markov decision process (POMDP). 
 
-Formally, we let the environment's state be described by an \(n\)-dimensional discrete Euclidean space. In the environment, there are \(N\) targets, each described by a subspace. The agent observes a subspace of the state and can, though a discrete set of actions, transform this subspace. This corresponds to changing the field of perception. With a final action, the agent can indicate that it thinks that a target space intersects with the observed subspace. The goal of the agent is to minimize the number of actions until all \(N\) targets have been found.
+Formally, we let the environment's state be described by an \(n\)-dimensional discrete Euclidean space.
+In the environment, there are \(N\) targets, each described by a subspace.
+The agent observes a subspace of the state and can, though a discrete set of actions, transform this subspace.
+This corresponds to changing the field of perception.
+With a final action, the agent can indicate that it thinks that a target space intersects with the observed subspace.
+The goal of the agent is to minimize the number of actions until all \(N\) targets have been found.
 
 % "Learning to optimize" has some good formulation tips
 % explains that policy search is intractable
@@ -23,13 +31,24 @@ Formally, we let the environment's state be described by an \(n\)-dimensional di
 \section{Environment}
 \label{sec:environment}
 
-In this project, we focus on search in the visual domain. We let the state space be a three-dimensional of shape \((H, W, C)\) where \(H\) is the height of the space, \(W\) is the width of the space, and \(C\) is the number of channels in the space. The observation space is three-dimensional of shape \((H_v, H_w, C)\). We let the action space consist of four view-transforming actions that translate the observed subspace up, down, left or right along. This roughly corresponds to panning and tilting a camera to look around in an environment.
+In this project, we focus on search in the visual domain.
+We let the state space be a three-dimensional of shape \((H, W, C)\) where \(H\) is the height of the space, \(W\) is the width of the space, and \(C\) is the number of channels in the space.
+The observation space is three-dimensional of shape \((H_v, H_w, C)\).
+We let the action space consist of four view-transforming actions that translate the observed subspace up, down, left or right along.
+This roughly corresponds to panning and tilting a camera to look around in an environment.
 
-The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances. For all environments, the appearance correlates to the probability of targets.
+The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances.
+For all environments, the appearance correlates to the probability of targets.
 
-To incentivize finding targets quickly, the reward signal is set to -1 for each time step. Since viewing a window twice is redundant, such actions are punished by setting the reward to -2. If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5. When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
+To incentivize finding targets quickly, the reward signal is set to -1 for each time step.
+Since viewing a window twice is redundant, such actions are punished by setting the reward to -2.
+If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
+When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
 
-To test the capability of the method, we use three environments of varying difficulty. The first environment visually simple ... The second environment is ... The third environment consists of real images.
+To test the capability of the method, we use three environments of varying difficulty.
+The first environment visually simple ...
+The second environment is ...
+The third environment consists of real images.
 
 
 
@@ -40,7 +59,10 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 
 The architecture of the neural network is presented in Figure X.
 
-The network is split into three main section: the feature extraction, the shared network, and the policy and value heads. Like Mnih et al., we use a CNN~\cite for feature extraction. The shared network consists of an LSTM~\cite{hochreiter}. Finally, both the policy and the value head are two-layer MLPs.
+The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
+Like Mnih et al., we use a CNN~\cite{} for feature extraction.
+The shared network consists of an LSTM~\cite{hochreiter}.
+Finally, both the policy and the value head are two-layer MLPs.
 
 % section 17.4 in sutton is good!
 
@@ -67,17 +89,30 @@ The network is split into three main section: the feature extraction, the shared
 
 The environment is implemented with Gym~\cite{gym}, and the agent is implemented with PyTorch~\cite{pytorch}. 
 
+% we could give some pseudocode here
+
 \section{Experiments}
 
-The first environment was used to determine a good observation space. By just observing the current window, the agent can never learn a suitable policy to solve the problem. This is because it cannot distinguish between equal windows at different locations. Experiments are run with several additional observation types: window position, .... Results of these experiments are presented for this environment only.
+The first environment was used to determine a good observation space.
+By just observing the current window, the agent can never learn a suitable policy to solve the problem.
+This is because it cannot distinguish between equal windows at different locations.
+Experiments are run with several additional observation types: window position, ...
+Results of these experiments are presented for this environment only.
 
-The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments. Hyperparameters are tuned with random search separately for each environment. For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
+The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments.
+Hyperparameters are tuned with random search separately for each environment.
+For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
 
-Additionally, experiments to eveluate the generalization capability of the agent were conducted. These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}. During training, the seed pool size was fixed to various sizes to limit the training set size. The agent was trained for varying number of timesteps and then evaluated on the full distribution of environments.
+Additionally, experiments to eveluate the generalization capability of the agent were conducted.
+These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}.
+During training, the seed pool size was fixed to various sizes to limit the training set size.
+The agent was trained for varying number of timesteps and then evaluated on the full distribution of environments.
 
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 
-For each experiment, we report the mean return and episode length over time during training. We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments. As per [rlliable], we report results across multiple seeds.
+For each experiment, we report the mean return and episode length over time during training.
+We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
+As per [rlliable], we report results across multiple seeds.
 
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights

@@ -103,16 +103,12 @@ class SearchEnv(gym.Env):
                 if self.view.overlap(self.targets[i]) > 0:
                     self.hits[i] = True
 
-
-        # todo: remove
-        assert(len(self.targets) == 1)
-
         dist = euclidean_dist(self.view.center(), self.targets[0].center())
         rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
         self.last_dist = dist
         
-        if self.visited[self.scaled_position]:
-            rew -= 1
+        #if self.visited[self.scaled_position]:
+        #    rew -= 1
 
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
@@ -148,7 +144,7 @@ class SearchEnv(gym.Env):
         done = all(self.hits)
         
         if done:
-            rew = 5 
+            rew = 10
 
         self.num_steps += 1
 

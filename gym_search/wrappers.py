@@ -98,3 +98,24 @@ class ObserveVisited(InsertObservation):
             lambda self=self: self.visited
         )
 
+class ObserveTriggered(InsertObservation):
+    def __init__(self, env, key="triggered"):
+        super().__init__(
+            env,
+            key,
+            lambda self=self: gym.spaces.Box(0, 1, self.shape),
+            lambda self=self: self.triggered
+        )
+
+class ObserveOverview(InsertObservation):
+    def __init__(self, env, key="overview"):
+        super().__init__(
+            env,
+            key,
+            lambda self=self: gym.spaces.Box(0, 1, (*self.scaled_shape, 3)),
+            lambda self=self: np.stack([
+                self.visible,
+                self.visited,
+                self.triggered
+            ], axis=-1)
+        )

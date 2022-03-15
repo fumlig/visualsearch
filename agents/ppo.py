@@ -75,7 +75,7 @@ def learn(
                 act = pi.sample()
                 logprob = pi.log_prob(act)
             
-            next_obs, rew, next_done, info = envs.step(act.cpu().numpy())
+            next_obs, rew, next_done, infos = envs.step(act.cpu().numpy())
             rew = th.tensor(rew).to(device).view(-1)
 
             for key, observation in obs.items():
@@ -90,9 +90,11 @@ def learn(
             obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in next_obs.items()}
             done = th.tensor(next_done, dtype=th.float).to(device)
 
-            for i in info:
-                if "episode" in i:
-                    ep_info = i["episode"]
+            for i, info in enumerate(infos):
+                if "episode" in info:
+                    assert(done[i] == 1)
+
+                    ep_info = info["episode"]
                     writer.add_scalar("charts/episode_return", ep_info["r"], timestep)
                     writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
                     

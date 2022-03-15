@@ -8,7 +8,7 @@ import functools
 
 from torch.distributions import Categorical
 
-from agents.cnn import NatureCNN
+from agents.cnn import NatureCNN, AlphaCNN
 from agents.utils import preprocess_image, one_hot, init_weights
 
 
@@ -85,7 +85,7 @@ class Critic(nn.Module):
 
 
 class Extractor(nn.Module):
-    def __init__(self, observation_space):
+    def __init__(self, observation_space, custom_preprocessors=None, custom_extractors=None):
         super(Extractor, self).__init__()
         assert isinstance(observation_space, gym.spaces.Dict)
 
@@ -98,6 +98,10 @@ class Extractor(nn.Module):
                 if key == "image":
                     preprocessors[key] = preprocess_image
                     extractors[key] = NatureCNN(space)
+                    features_dim += extractors[key].features_dim
+                elif key == "overview":
+                    preprocessors[key] = preprocess_image
+                    extractors[key] = AlphaCNN(space)
                     features_dim += extractors[key].features_dim
                 else:
                     extractors[key] = nn.Flatten()

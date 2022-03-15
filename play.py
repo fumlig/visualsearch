@@ -12,7 +12,7 @@ import gym_search
 import random
 
 from gym_search.utils import travel_dist
-from gym_search.wrappers import ObserveVisible, ResizeImage, ObserveTime, ObserveVisible, ObserveVisited
+from gym_search.wrappers import ResizeImage, ObserveOverview
 
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
@@ -23,7 +23,7 @@ WINDOW_SIZE = (640, 640)
 
 
 parser = ArgumentParser()
-parser.add_argument("env", type=str)
+parser.add_argument("env_id", type=str)
 parser.add_argument("--seed", type=int, default=None)
 parser.add_argument("--model", type=str)
 parser.add_argument("--delay", type=int, default=1)
@@ -34,10 +34,9 @@ parser.add_argument("--episodes", type=int, default=1024)
 
 args = parser.parse_args()
 
-env = gym.make(args.env)
+wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObserveOverview]
 
-wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage]#, ObserveTime, ObserveVisible, ObserveVisited]
-
+env = gym.make(args.env_id)
 for wrapper in wrappers:
     env = wrapper(env)
 
@@ -57,7 +56,7 @@ if args.model:
     agent = th.load(args.model).to(device)
     agent.eval()
 
-cv.namedWindow(args.env, cv.WINDOW_AUTOSIZE)
+cv.namedWindow(args.env_id, cv.WINDOW_AUTOSIZE)
 
 for ep in range(args.episodes):
     
@@ -76,7 +75,7 @@ for ep in range(args.episodes):
 
         img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-        cv.imshow(args.env, img)	
+        cv.imshow(args.env_id, img)	
 
         key = cv.waitKey(args.delay)
 
@@ -89,9 +88,9 @@ for ep in range(args.episodes):
         
         if args.verbose:
             step_begin = process_time()
-        
+
         obs, rew, done, info = env.step(act)
-        
+
         if args.verbose:
             step_end = process_time()
             print("fps:", 1.0/(step_end - step_begin))
@@ -108,6 +107,9 @@ for ep in range(args.episodes):
 
         if args.verbose:
             print("action:", env.get_action_meanings()[act], "reward:", rew)
+
+        if args.observe:
+            print("observation:", obs)
 
         if done:
             print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))

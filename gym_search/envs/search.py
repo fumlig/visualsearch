@@ -44,6 +44,7 @@ class SearchEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
             image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8),
+            
             time=gym.spaces.Discrete(self.max_steps),
             position=gym.spaces.Discrete(np.prod(self.scaled_shape)),
             visible=gym.spaces.Box(0, 1, self.scaled_shape),
@@ -105,7 +106,6 @@ class SearchEnv(gym.Env):
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
         self.visible[self.scaled_position] = True
-
 
         """
         rew = -2
@@ -195,6 +195,7 @@ class SearchEnv(gym.Env):
 
         return dict(
             image=obs,
+            
             time=self.num_steps,
             position=self.scaled_position[0]*self.scaled_shape[1] + self.scaled_position[1],
             visible=self.visible,

@@ -16,12 +16,9 @@ def normalize_image(image):
     return image/255.0
 
 def channels_first(image):
-    assert image.ndim == 4 and image.shape[3] == 3
+    assert image.ndim == 4
     return image.permute(0, 3, 1, 2)
 
 
 def preprocess_image(image):
-    if image.ndim == 3:
-        image = image.unsqueeze(0)
-
     return normalize_image(channels_first(image))

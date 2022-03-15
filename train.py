@@ -11,7 +11,7 @@ import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from gym_search.wrappers import ResizeImage
+from gym_search.wrappers import ObserveOverview, ResizeImage
 from agents import ac
 from agents import ppo
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage]#, ObservePosition, ObserveTime, ObserveVisible, ObserveVisited]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObserveOverview]
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
     #envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)

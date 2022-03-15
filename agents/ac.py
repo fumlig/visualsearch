@@ -104,6 +104,7 @@ class Extractor(nn.Module):
                     extractors[key] = AlphaCNN(space)
                     features_dim += extractors[key].features_dim
                 else:
+                    print("should not happen")
                     extractors[key] = nn.Flatten()
                     features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
@@ -141,8 +142,8 @@ class ActorCritic(nn.Module):
         self.extractor = Extractor(envs.single_observation_space)
         self.network = nn.Identity()
 
-        self.policy = Actor(self.extractor.features_dim, envs.single_action_space.n, hidden_dims=[64, 64])
-        self.value = Critic(self.extractor.features_dim, hidden_dims=[64, 64])
+        self.policy = Actor(self.extractor.features_dim, envs.single_action_space.n)#, hidden_dims=[64, 64])
+        self.value = Critic(self.extractor.features_dim)#, hidden_dims=[64, 64])
 
     def forward(self, obs):
         x = self.extractor(obs)

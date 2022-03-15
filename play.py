@@ -12,7 +12,6 @@ import gym_search
 import random
 
 from gym_search.utils import travel_dist
-from gym_search.wrappers import ResizeImage, ObserveOverview
 
 from agents.ac import ActorCritic
 from agents.random import RandomAgent
@@ -34,7 +33,7 @@ parser.add_argument("--episodes", type=int, default=1024)
 
 args = parser.parse_args()
 
-wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObserveOverview]
+wrappers = [gym.wrappers.RecordEpisodeStatistics, gym_search.wrappers.ResizeImage, gym_search.wrappers.ObserveOverview]
 
 env = gym.make(args.env_id)
 for wrapper in wrappers:
@@ -69,7 +68,9 @@ for ep in range(args.episodes):
 
     while not done:
         if args.observe:
-            img = obs["image"]
+            img = obs["overview"]*255
+            img = img.astype(dtype=np.uint8)
+            #img = obs["image"]
         else:
             img = env.render(mode="rgb_array")
 
@@ -109,7 +110,8 @@ for ep in range(args.episodes):
             print("action:", env.get_action_meanings()[act], "reward:", rew)
 
         if args.observe:
-            print("observation:", obs)
+            #print("observation:", obs)
+            print(obs["overview"].transpose(2, 0, 1))
 
         if done:
             print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))

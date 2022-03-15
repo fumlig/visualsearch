@@ -45,11 +45,11 @@ class SearchEnv(gym.Env):
         self.observation_space = gym.spaces.Dict(dict(
             image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8),
             
-            time=gym.spaces.Discrete(self.max_steps),
-            position=gym.spaces.Discrete(np.prod(self.scaled_shape)),
-            visible=gym.spaces.Box(0, 1, self.scaled_shape),
-            visited=gym.spaces.Box(0, 1, self.scaled_shape),
-            triggered=gym.spaces.Box(0, 1, self.scaled_shape)
+            #time=gym.spaces.Discrete(self.max_steps),
+            #position=gym.spaces.Discrete(np.prod(self.scaled_shape)),
+            #visible=gym.spaces.Box(0, 1, self.scaled_shape),
+            #visited=gym.spaces.Box(0, 1, self.scaled_shape),
+            #triggered=gym.spaces.Box(0, 1, self.scaled_shape)
         ))
         
         self.seed()
@@ -103,6 +103,17 @@ class SearchEnv(gym.Env):
                 if self.view.overlap(self.targets[i]) > 0:
                     self.hits[i] = True
 
+
+        # todo: remove
+        assert(len(self.targets) == 1)
+
+        dist = euclidean_dist(self.view.center(), self.targets[0].center())
+        rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
+        self.last_dist = dist
+        
+        if self.visited[self.scaled_position]:
+            rew -= 1
+
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
         self.visible[self.scaled_position] = True
@@ -133,22 +144,11 @@ class SearchEnv(gym.Env):
         - punsish visiting visited tiles
         """
 
-
-        # todo: remove
-        assert(len(self.targets) == 1)
-
-        """        
-        dist = euclidean_dist(self.view.center(), self.targets[0].center())
-        rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
-        self.last_dist = dist
-        
-        if self.visited[self.scaled_position]:
-            rew -= 1
-        """
-
         obs = self.observation()
         done = all(self.hits)
-        rew = 1 if all(self.hits) else -1
+        
+        if done:
+            rew = 5 
 
         self.num_steps += 1
 
@@ -196,11 +196,11 @@ class SearchEnv(gym.Env):
         return dict(
             image=obs,
             
-            time=self.num_steps,
-            position=self.scaled_position[0]*self.scaled_shape[1] + self.scaled_position[1],
-            visible=self.visible,
-            visited=self.visited,
-            triggered=self.triggered,
+            #time=self.num_steps,
+            #position=self.scaled_position[0]*self.scaled_shape[1] + self.#scaled_position[1],
+            #visible=self.visible,
+            #visited=self.visited,
+            #triggered=self.triggered,
         )
 
     @property

@@ -7,16 +7,13 @@ import datetime as dt
 import numpy as np
 import torch as th
 import gym
-import gym_search
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from gym_search.wrappers import ObserveOverview, ResizeImage
-from agents import ac
-from agents import ppo
 
+import gym_search
+import agents
 
-import gym.wrappers
 
 """
 todo:
@@ -35,7 +32,7 @@ TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64 # also a hyperparameter...
 ALG_PARAMS = dict(
     learning_rate=5e-4,
-    num_steps=128,
+    num_steps=64,
     num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
@@ -75,6 +72,7 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
+    parser.add_argument("--algorithm", type=str, default="ppo")
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
@@ -84,9 +82,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    random.seed(args.seed)
-    np.random.seed(args.seed)
-    th.manual_seed(args.seed)
+    if args.seed is not None:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        th.manual_seed(args.seed)
 
     if args.deterministic:
         th.use_deterministic_algorithms(True)
@@ -95,7 +94,12 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, ResizeImage, ObserveOverview]
+    wrappers = [
+        gym.wrappers.RecordEpisodeStatistics,
+        gym_search.wrappers.ResizeImage,
+        gym_search.wrappers.ObserveOverview
+    ]
+
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
     #envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
@@ -106,11 +110,12 @@ if __name__ == "__main__":
     if args.model:
         agent = th.load(args.model)
     else:
-        agent = ac.ActorCritic(envs)
+        agent = agents.ac.ActorCritic(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 
-    ppo.learn(args.tot_timesteps, envs, agent, device, writer, **args.alg_params)
+    alg = agents.algorithm(args.algorithm)
+    alg.learn(args.tot_timesteps, envs, agent, device, writer, **args.alg_params)
 
     envs.close()
     writer.close()

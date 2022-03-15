@@ -39,6 +39,8 @@ This corresponds to changing the field of perception.
 With a final action, the agent can indicate that it thinks that a target space intersects with the observed subspace.
 The goal of the agent is to minimize the number of actions until all \(N\) targets have been found.
 
+We make the assumption that the agent has knowledge of the shape of its environment's space and its current position at each time step. Using this information it can determine where it has been previously. 
+
 % "Learning to optimize" has some good formulation tips
 % explains that policy search is intractable
 % Also uses a decaying step size, could be interesting for us as well
@@ -73,16 +75,14 @@ Note that all environments are static, in that the scene is unaffected by the ac
 \section{Algorithm}
 \label{sec:algorithm}
 
+% self-supervised pretraining?
+% https://arxiv.org/pdf/2003.14323.pdf
+
 The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
 
-The architecture of the neural network is presented in Figure X.
-
-The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
-Like Mnih et al., we use a CNN~\cite{} for feature extraction.
-The shared network consists of an LSTM~\cite{hochreiter}.
-Finally, both the policy and the value head are two-layer MLPs.
-
 % section 17.4 in sutton is good!
+
+% https://xbpeng.github.io/projects/DeepMimic/index.html
 
 % reward shaping: change reward signal as agent progresses
 % could also shape the environment itself, make it more and more difficult
@@ -94,9 +94,21 @@ Finally, both the policy and the value head are two-layer MLPs.
 % reward clipping: done in "playing atari with deep reinforcement learning": they state that since the scale of scores varies from game to game they fix all positive rewards to be one and negative to be -1. 0 rewards are left unchanged. this limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games. could also affect agent's performance as it cannot distinguish between rewards of different magnitudes.
 % could be important for us if the number of targets and the reward varies a lot
 
-% Actor critic
+\section{Architecture}
 
-% Trained with PPO (possibly PPG)
+% resnets?
+% https://efficientdl.com/how-to-train-a-resnet-efficiently/
+
+% should use a constant network architecture
+
+The architecture of the neural network is presented in Figure X.
+
+The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
+Like Mnih et al., we use a CNN~\cite{} for feature extraction.
+The shared network consists of an LSTM~\cite{hochreiter}.
+Finally, both the policy and the value head are two-layer MLPs.
+
+% Actor critic
 
 % Feature extraction
 % Shared Network
@@ -123,10 +135,15 @@ This is because it cannot distinguish between equal windows at different locatio
 Experiments are run with several additional observation types: window position, ...
 Results of these experiments are presented for this environment only.
 
-The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments.
+The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments using PPO, PPG and A2C.
 Hyperparameters are tuned with random search separately for each environment.
 For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
 The agent was trained and tested on the full distribution of environments.
+
+With the best performing algorithm we compare three different reward signals.
+One gives a constant time penalty of -1 to incentivize finding the target quickly.
+The second gives a constant time penalty of -2 and an exploration bonus of +1 when a new view is reached.
+The third gives a reward of +1 for moving closer to the target and a penalty of -1 otherwise, as in \cite{caicedo_active_2015}.
 
 Additionally, experiments to eveluate the generalization capability of the agent were conducted.
 These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}.

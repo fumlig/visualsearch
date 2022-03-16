@@ -30,6 +30,7 @@ parser.add_argument("--cpu", action="store_true")
 parser.add_argument("--observe", action="store_true")
 parser.add_argument("--verbose", action="store_true")
 parser.add_argument("--episodes", type=int, default=1024)
+parser.add_argument("--deterministic", action="store_true")
 
 args = parser.parse_args()
 
@@ -62,9 +63,10 @@ for ep in range(args.episodes):
     done = False
     obs = env.reset()
 
-    #if args.verbose:
-    #    points = [env.view.pos] + [target.pos for target in env.targets]
-    #    print("optimal:", travel_dist(points))
+    if args.verbose:
+        points = [env.view.pos] + [target.pos for target in env.targets]
+        print(points)
+        print("optimal:", travel_dist(points)/env.step_size)
 
     while not done:
         if args.observe:
@@ -85,7 +87,7 @@ for ep in range(args.episodes):
         else:
             with th.no_grad():
                 obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                act = agent.predict(obs)
+                act = agent.predict(obs, deterministic=args.deterministic)
         
         if args.verbose:
             step_begin = process_time()
@@ -104,7 +106,6 @@ for ep in range(args.episodes):
 
         stats[ep]["steps"] += 1
         stats[ep]["return"] += rew
-        stats[ep]["triggers"] += act == env.Action.TRIGGER
 
         if args.verbose:
             print("action:", env.get_action_meanings()[act], "reward:", rew)
@@ -120,6 +121,5 @@ for ep in range(args.episodes):
 
 print(
     "average return:", sum([ep["return"] for ep in stats])/len(stats),
-    "average length:", sum([ep["steps"] for ep in stats])/len(stats),
-    "average triggers:", sum([ep["triggers"] for ep in stats])/len(stats),
+    "average length:", sum([ep["length"] for ep in stats])/len(stats),
 )

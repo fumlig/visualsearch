@@ -169,7 +169,7 @@ class SearchEnv(gym.Env):
         if show_path:
             for i, pos in enumerate(self.path):
                 coords = tuple(draw.rectangle_perimeter(pos, extent=self.view.extent, shape=self.shape))
-                img[coords] = add_with_alpha(img[coords], (255, 255, 255), 0.1+0.5*i/len(self.path))
+                img[coords] = add_with_alpha(img[coords], (127, 127, 127), 0.1+0.5*i/len(self.path))
 
         coords = tuple(draw.rectangle_perimeter(self.view.pos, extent=self.view.extent, shape=self.shape))
         img[coords] = (255, 255, 255)

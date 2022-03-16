@@ -104,7 +104,6 @@ class Extractor(nn.Module):
                     extractors[key] = AlphaCNN(space)
                     features_dim += extractors[key].features_dim
                 else:
-                    print("should not happen")
                     extractors[key] = nn.Flatten()
                     features_dim += gym.spaces.flatdim(space)
             elif isinstance(space, gym.spaces.Discrete):
@@ -158,7 +157,7 @@ class ActorCritic(nn.Module):
         pi = self.policy(h)
 
         if deterministic:
-            return pi.mean.item()
+            return th.argmax(pi.probs).item()
         else:
             return pi.sample().item()
 

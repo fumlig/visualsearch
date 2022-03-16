@@ -1,6 +1,6 @@
-#logs/
-#models/
-#videos/
+logs/
+models/
+videos/
 data/
 
 *.aux

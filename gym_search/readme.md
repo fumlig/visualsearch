@@ -53,3 +53,8 @@
   - or skip attention, difficult to make time for
 
 4. some kind of room
+
+
+## Inspiration
+
+https://github.com/s-macke/VoxelSpace

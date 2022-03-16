@@ -67,7 +67,10 @@ When all targets have been triggered, or when 1000 time steps have passed, the e
 To test the capability of the method, we use three environments of varying difficulty.
 The first environment visually simple ...
 The second environment is ...
-The third environment consists of real images for object localization. The images are from the dataset [cite] and consists of N training samples and M test samples. Each image is 2440x2440 pixels and is therefore expensive to run object detection algorithms on. There are N training samples and M test samples.
+The third environment consists of real images for object localization.
+The images are from the dataset [cite] and consists of N training samples and M test samples.
+Each image is 2440x2440 pixels and is therefore expensive to run object detection algorithms on.
+There are N training samples and M test samples.
 
 Note that all environments are static, in that the scene is unaffected by the actions of the agent. The methods presented do, however, apply to other unknown dynamics.
 
@@ -81,7 +84,12 @@ Note that all environments are static, in that the scene is unaffected by the ac
     \label{fig:environments}
     \vspace*{-1cm}
     \caption{Samples from each environment.}
+    % todo:
+    % separate images for gaussian
+    % show how probability depends on color?
 \end{figure}
+
+
 
 \section{Algorithm}
 \label{sec:algorithm}

@@ -57,7 +57,83 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 % computers do not naturally have this constraint and most CV algorithms do not use foveated vision
 % (although visual attention models exist)
 
-\section{Local Search}
+\section{Artificial Neural Networks}
+
+An artificial neural network (ANN) is a type of universal function approximator.
+
+% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
+
+\subsection{Multi-layer Perceptron}
+
+\subsection{Long Short-Term Memory}
+
+% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+
+\subsection{Convolutional Neural Network}
+
+
+
+\section{Reinforcement Learning}
+
+Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
+An \textit{agent} and its \textit{environment} interact continually over discrete time steps.
+At each time step the agent selects some \textit{action} that updates the state of the environment, and gives it a \textit{reward}.
+The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.~\cite{sutton_reinforcement_2018}
+
+\subsection{Markov Decision Process}
+
+% should likely be its own separate section
+% take inspiration from other works?
+
+The RL setup is usually formalized as a (finite) Markov decision process (MDP).
+
+The problem of learning from interaction to achieve a goal is usually framed as a (finite) Markov Decision Process (MDP).
+For regular MDPs it is assumed that the learning agent has access to some representation of the underlying \textit{state} of the environment which it uses to select \textit{actions}.
+For many problems this is not true.
+A partially observable Markov decision process (POMDP) is a generalization of an MDP in which it is assumed that the environment has some well defined underlying latent state, but the agent only perceives a partial \textit{observation} of it from the environment. 
+
+A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{R}, \mathcal{T}, \Omega, \gamma \rangle\), where
+
+\begin{itemize}
+    \item \(\mathcal{S}\) is a finite set of states,
+    \item \(\mathcal{A}\) is a finite set of actions,
+    \item \(\mathcal{T}\) is a set of conditional state transition probabilities,
+    \item \(\mathcal{R} : S \times A \rightarrow \mathbb{R}\) is a reward function,
+    \item \(\Omega\) is a finite set of observations,
+    \item \(\mathcal{O}\) is a set of conditional observation probabilities, and
+    \item \(\gamma \in [0, 1]\) is a discount factor.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \input{figures/pomdp}
+    \label{fig:pomdp}
+    \caption{Partially observable Markov decision process.}
+\end{figure}
+
+The agent interacts with the environment at discrete time steps \(t = 0, 1, 2, \dots T\). At each time step \(t\), the agent receives an observation of the environment's state \(O_t \in \Omega\) and selects some action \(A_t \in \mathcal{A}\).
+In the next time step the agent receives a reward
+
+action \(a \in \mathcal{A}\) which causes the environment to transition to state \(s^\prime\) with probability \(\mathcal{T}(s^\prime | s, a)\).
+It receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(o | s^\prime, a)\), as well as a reward \(r\) given by \(\mathcal{R}(s, a)\).
+
+This interaction is repeated until the end of the episode at time step \(T\).
+The goal of the agent is to maximize the \textit{discounted return}, defined as the discounted sum of future rewards \(G_t \doteq \sum_{k=t+1}^T \gamma^{k-t-1} R_{k}\) where \(\gamma\) reflects the uncertainty of the environment.
+
+%An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
+
+Planning in a POMDP is undecidable, and solving them is often computationally intractable.
+Approximate solutions are more common.
+
+% Belief state
+
+\subsection{Policies and Value Functions}
+
+Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state, and a 
+
+\section{Related Work}
+
+\subsection{Local Search}
 % Artificial Intelligence - A modern approach
 % Page 134
 % Should cover belief states?
@@ -94,7 +170,7 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 %    coverage: how systematically the search covers the search space, the maximum distance between any unexplored assignment and all visited assignments.
 
 
-\section{Active Vision}
+\subsection{Active Vision}
 \label{sec:activevision}
 
 % Marr?
@@ -122,7 +198,7 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\c
 % see conclusion in that paper:
 % - mirror neurons, same system responsible for generating and interpreting actions at a high level 
 
-\section{Visual Search}
+\subsection{Visual Search}
 \label{sec:visualsearch}
 
 The perceptual task of searching for something in a visual environment is usually referred to as \textit{visual search}.
@@ -155,7 +231,7 @@ These works ground the task considered in this project in psychology.
 
 % can we build a system that exhibits all of these?
 
-\section{Object Detection}
+\subsection{Object Detection}
 
 % active object detection
 
@@ -217,89 +293,13 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 % CV material: different in that the object is assumed to be visible
 
 
-\section{Visual Attention}
+\subsection{Visual Attention}
 
 % this article is very good!
 % note: reinforcement learning part, soft and hard attention
 % https://shairozsohail.medium.com/a-survey-of-visual-attention-mechanisms-in-deep-learning-1043eb25f343
 
-\section{Neural Networks}
-
-An artificial neural network (ANN) is a type of universal function approximator
-
-\subsection{Multi-layer Perceptron}
-
-\subsection{Long Short-Term Memory}
-
-\subsection{Convolutional Neural Network}
-
-\section{Reinforcement Learning}
-
-Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
-An \textit{agent} and its \textit{environment} interact continually over discrete time steps.
-At each time step the agent selects some \textit{action} that updates the state of the environment, and gives it a \textit{reward}.
-The agent selects actions using a stochastic \textit{policy} with the goal of maximizing the \textit{return} which is usually defined as the discounted sum of future rewards.~\cite{sutton_reinforcement_2018}
-
-\subsection{Markov Decision Process}
-
-% should likely be its own separate section
-% take inspiration from other works?
-
-The RL setup is usually formalized as a (finite) Markov decision process (MDP).
-
-The problem of learning from interaction to achieve a goal is usually framed as a (finite) Markov Decision Process (MDP).
-For regular MDPs it is assumed that the learning agent has access to some representation of the underlying \textit{state} of the environment which it uses to select \textit{actions}.
-For many problems this is not true.
-A partially observable Markov decision process (POMDP) is a generalization of an MDP in which it is assumed that the environment has some well defined underlying latent state, but the agent only perceives a partial \textit{observation} of it from the environment. 
-
-A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{R}, \mathcal{T}, \Omega, \gamma \rangle\), where
-
-\begin{itemize}
-    \item \(\mathcal{S}\) is a finite set of states,
-    \item \(\mathcal{A}\) is a finite set of actions,
-    \item \(\mathcal{T}\) is a set of conditional state transition probabilities,
-    \item \(\mathcal{R} : S \times A \rightarrow \mathbb{R}\) is a reward function,
-    \item \(\Omega\) is a finite set of observations,
-    \item \(\mathcal{O}\) is a set of conditional observation probabilities, and
-    \item \(\gamma \in [0, 1]\) is a discount factor.
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \input{figures/pomdp}
-    \label{fig:pomdp}
-    \caption{Partially observable Markov decision process.}
-\end{figure}
-
-The agent interacts with the environment at discrete time steps \(t = 0, 1, 2, \dots T\). At each time step \(t\), the agent receives an observation of the environment's state \(O_t \in \Omega\) and selects some action \(A_t \in \mathcal{A}\).
-In the next time step the agent receives a reward
-
-action \(a \in \mathcal{A}\) which causes the environment to transition to state \(s^\prime\) with probability \(\mathcal{T}(s^\prime | s, a)\).
-It receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(o | s^\prime, a)\), as well as a reward \(r\) given by \(\mathcal{R}(s, a)\).
-
-This interaction is repeated until the end of the episode at time step \(T\).
-The goal of the agent is to maximize the \textit{discounted return}, defined as the discounted sum of future rewards \(G_t \doteq \sum_{k=t+1}^T \gamma^{k-t-1} R_{k}\) where \(\gamma\) reflects the uncertainty of the environment.
-
-%An MDP satisfies the Markov property: the process is memoryless. A POMDP is not memoryless, as observations only convey part of the underlying state. However, the \textit{history} \(H_t = A_0, O_1, R_1, \dots, A_{t-1}, O_t, R_t\) does.
-
-Planning in a POMDP is undecidable, and solving them is often computationally intractable.
-Approximate solutions are more common.
-
-% Belief state
-
-\subsection{Policies and Value Functions}
-
-Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state, and a 
-
-% Deep Reinforcement Learning
-
-\subsection{Policy Optimization}
-
-This work will focus on policy optimization algorithms.
-
-\subsection{Actor Critic Models}
-
-\subsection{Exploration and Exploitation}
+\subsubsection{Exploration and Exploitation Trade-off}
 
 % The thesis could also be called Efficient Exploration
 
@@ -308,7 +308,7 @@ This work will focus on policy optimization algorithms.
 % Custom rewards are often needed
 % intrinsic?
 
-\subsection{Generalization}
+\subsubsection{Generalization in Deep Reinforcement Learning}
 
 % reality is dynamic
 % agents need to be robust to variation

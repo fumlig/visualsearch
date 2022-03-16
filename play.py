@@ -61,7 +61,7 @@ if __name__ == "__main__":
         agent.eval()
 
     if args.record:
-        env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True)
+        env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
     cv.namedWindow(args.env_id, cv.WINDOW_AUTOSIZE)
 

@@ -153,7 +153,7 @@ class SearchEnv(gym.Env):
 
         return obs, rew, done, {}
 
-    def render(self, mode="rgb_array", show_targets=True, show_hits=True, show_path=True):
+    def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):
 
         img = self.terrain.copy()
 
@@ -171,9 +171,10 @@ class SearchEnv(gym.Env):
                 coords = tuple(draw.rectangle_perimeter(pos, extent=self.view.extent, shape=self.shape))
                 img[coords] = add_with_alpha(img[coords], (127, 127, 127), 0.25+0.5*i/len(self.path))
 
-        coords = tuple(draw.rectangle_perimeter(self.view.pos, extent=self.view.extent, shape=self.shape))
-        img[coords] = (255, 255, 255)
-        img = img.astype(np.uint8)
+        if show_view:
+            coords = tuple(draw.rectangle_perimeter(self.view.pos, extent=self.view.extent, shape=self.shape))
+            img[coords] = (255, 255, 255)
+            img = img.astype(np.uint8)
 
         return img
 

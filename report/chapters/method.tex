@@ -30,16 +30,19 @@ Section \ref{sec:algorithm} describes the algorithm used to train the agent.
 % action: transform subset of grid, trigger is binary decision telling whether target is found, or whether it should be checked for thoroughly?
 % reward: used to achieve correct trigger in few actions
 
-The problem of finding an optimal sequence of actions to find can be cast as a partially observable Markov decision process (POMDP). 
-
-Formally, we let the environment's scene be described by an \(n\)-dimensional discrete Euclidean space.
-In the environment, there are \(N\) targets, each described by a subspace.
-The agent observes a subspace of the state and can, though a discrete set of actions, transform this subspace.
+Formally, the searched environment contains a scene with a set of targets.
+The scene is described by a Euclidean space.
+In the scene, there are \(N\) targets, each described by a subspace.
+At any given time the agent observes a subspace of the scene, which we call the view.
+This observation is given in the form of an image.
+Through a finite set of actions, the agent can transform its view.
+With a final trigger action, the agent can indicate that there is a target in the view.
+The goal of the agent is to bring all targets into the view and indicate that they have been found.
+This is to be done with a minimal number of actions.
 This corresponds to changing the field of perception.
-With a final action, the agent can indicate that it thinks that a target space intersects with the observed subspace.
-The goal of the agent is to minimize the number of actions until all \(N\) targets have been found.
 
-We make the assumption that the agent has knowledge of the shape of its environment's space and its current position at each time step. Using this information it can determine where it has been previously. 
+Furthermore, we make the assumption that the agent initially has access to its position.
+With this, it can keep track of which regions are and have been in view before.
 
 % "Learning to optimize" has some good formulation tips
 % explains that policy search is intractable
@@ -49,53 +52,78 @@ We make the assumption that the agent has knowledge of the shape of its environm
 \section{Environment}
 \label{sec:environment}
 
-In this project, we focus on search in the visual domain.
-We let the state space be a three-dimensional of shape \((H, W, C)\) where \(H\) is the height of the space, \(W\) is the width of the space, and \(C\) is the number of channels in the space.
-The observation space is three-dimensional of shape \((H_v, H_w, C)\).
-We let the action space consist of four view-transforming actions that translate the observed subspace up, down, left or right along.
-This roughly corresponds to panning and tilting a camera to look around in an environment.
-It is a discretization and simplification of such a task in a 3D environment
+% overview
+To train an test an agent for the problem, we use three environments of varying difficulty.
+In each environment there is a scene with a background of distractors and a foreground of targets.
+The scenes are drawn from some unknown distribution.
+The background and foreground are assumed to be correlated.
+This means that by looking at the background, an agent should sometimes be able to deduce a suitable action.
+All scenes are assumed to be static in that the actions of the agent do not affect their appearance.
 
-The environments to be searched are drawn from a distribution, with varying but similar appearance, target locations and appearances.
-For all environments, the appearance correlates to the probability of targets.
+% observations, actions and rewards
+The scenes of each environment are discretized into a grid.
+We use the same action space, observation space and reward signal for all environment.
+The 
+
+% use R^n notation for everything, including distance
 
 To incentivize finding targets quickly, the reward signal is set to -1 for each time step.
 Since viewing a window twice is redundant, such actions are punished by setting the reward to -2.
 If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
 When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
 
-To test the capability of the method, we use three environments of varying difficulty.
-The first environment visually simple ...
-The second environment is ...
-The third environment consists of real images for object localization.
-The images are from the dataset [cite] and consists of N training samples and M test samples.
-Each image is 2440x2440 pixels and is therefore expensive to run object detection algorithms on.
-There are N training samples and M test samples.
+% environment 1
+The first environment is the simplest environment. 
+The scene is a two-dimensional discrete Euclidean space.
+The appearance of the scene is given by a 256x256 RGB image.
+The agent observes a 64x64 sub-image at each time step.
+In the image there are three Gaussian kernels with random positions.
+The height of the kernel is indicated by a higher intensity in the blue channel.
+Targets are 1x1 pixels in the red channel.
+The locations of the targets are randomized weighted by the height of the Gaussian kernels.
+This means that the more intense the blue channel, the higher the probability of a target.
 
-Note that all environments are static, in that the scene is unaffected by the actions of the agent. The methods presented do, however, apply to other unknown dynamics.
+\begin{figure}
+    \centering
+    \input{figures/gaussian.pgf}
+    \label{fig:gaussian}
+    %\vspace*{-1cm}
+    \caption{Gaussian environment.}
+\end{figure}
+
+% environment 2
+The second environment is intended to look like realistic terrain.
+The environment has a two-dimensional scene whose appearance is given by a 512x512 image.
+Gradient noise is generated and used as a height map.
+The height map determines the color of the terrain.
+The height also correlates to the probability of targets.
+Specifically, targets are located between shores and mountain bases.
+
+\begin{figure}
+    \centering
+    \input{figures/terrain.pgf}
+    \label{fig:terrain}
+    %\vspace*{-1cm}
+    \caption{Terrain environment.}
+\end{figure}
+
+% environment 3
+The third environment\dots
+% 3D, or photos
+
 
 % we discretize the problem
 % should still apply to arbitrarily many dimensions
 % assuming the existence of a suitable feature extractor
 
-\begin{figure}
-    \centering
-    \input{figures/environments.pgf}
-    \label{fig:environments}
-    \vspace*{-1cm}
-    \caption{Samples from each environment.}
-    % todo:
-    % separate images for gaussian
-    % show how probability depends on color?
-\end{figure}
 
-
-
-\section{Algorithm}
+\section{Agent}
 \label{sec:algorithm}
 
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf
+
+In order to efficiently search the environments for targets, an agent needs to be able to learn 
 
 The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
 

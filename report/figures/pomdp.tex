@@ -1,8 +1,8 @@
 \begin{tikzpicture}[node distance=2cm]
     \tikzstyle{block} = [rectangle,minimum width=3cm,minimum height=1cm,text centered,draw=black,fill=white]
     \node (agent)[block]{Agent};
-    \node (environment)[block,below of=agent]{Environment};
-    \draw [->] (agent.east) -- ++(1cm,0) -- node [anchor=west]{action \(A_t\)} ++(0,-2cm) -- (environment.east);
-    \draw [->] (environment.north) -- node [anchor=west]{reward \(R_t\)} (agent.south);
-    \draw [->] (environment.west) -- ++(-1cm,0) -- node [anchor=east]{observation \(O_t\)} ++(0,+2cm) -- (agent.west);
+    \node (environment)[block,below of=agent]{Environment \(s_t\)};
+    \draw [->] (agent.east) -- ++(1cm,0) -- node [anchor=west]{action \(a_t\)} ++(0,-2cm) -- (environment.east);
+    \draw [->] (environment.north) -- node [anchor=west]{reward \(r_t\)} (agent.south);
+    \draw [->] (environment.west) -- ++(-1cm,0) -- node [anchor=east]{observation \(o_t\)} ++(0,+2cm) -- (agent.west);
 \end{tikzpicture}

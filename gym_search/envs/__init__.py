@@ -3,6 +3,7 @@ import gym
 
 from gym_search.datasets import AirbusAircraftDataset, AirbusOilDataset
 from gym_search.envs.search import SearchEnv
+from gym_search.envs.voxel import VoxelEnv
 from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
 
 """
@@ -19,6 +20,11 @@ gym.register(
         view_shape=(1, 1),
         step_size=1
     )
+)
+
+gym.register(
+    id="Voxel-v0",
+    entry_point=VoxelEnv
 )
 
 gym.register(

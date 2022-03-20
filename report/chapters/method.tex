@@ -72,7 +72,7 @@ Since viewing a window twice is redundant, such actions are punished by setting 
 If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
 When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
 
-% environment 1
+% environment 1: easy, understandable
 The first environment is the simplest environment. 
 The scene is a two-dimensional discrete Euclidean space.
 The appearance of the scene is given by a 256x256 RGB image.
@@ -82,6 +82,7 @@ The height of the kernel is indicated by a higher intensity in the blue channel.
 Targets are 1x1 pixels in the red channel.
 The locations of the targets are randomized weighted by the height of the Gaussian kernels.
 This means that the more intense the blue channel, the higher the probability of a target.
+The idea with this environment is to test that the method learns what we want it to learn.
 
 \begin{figure}
     \centering
@@ -91,7 +92,7 @@ This means that the more intense the blue channel, the higher the probability of
     \caption{Gaussian environment.}
 \end{figure}
 
-% environment 2
+% environment 2: medium, procedural and configurable
 The second environment is intended to look like realistic terrain.
 The environment has a two-dimensional scene whose appearance is given by a 512x512 image.
 Gradient noise is generated and used as a height map.
@@ -107,7 +108,7 @@ Specifically, targets are located between shores and mountain bases.
     \caption{Terrain environment.}
 \end{figure}
 
-% environment 3
+% environment 3: hard, realistic
 The third environment\dots
 % 3D, or photos
 
@@ -140,6 +141,17 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 % reward normalization: 
 % reward clipping: done in "playing atari with deep reinforcement learning": they state that since the scale of scores varies from game to game they fix all positive rewards to be one and negative to be -1. 0 rewards are left unchanged. this limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games. could also affect agent's performance as it cannot distinguish between rewards of different magnitudes.
 % could be important for us if the number of targets and the reward varies a lot
+
+% "explicit episodic (semantic) memory"
+% visible region, visited regions
+% other semantic information if available
+% feature extraction with convolutions
+% split the scene into discrete grid
+% C channels with different features
+% can even be applied to dynamic scenes with a last-seen mask
+
+% could be multiple channels for view as well
+% maybe call them "global" and "local"
 
 \section{Architecture}
 

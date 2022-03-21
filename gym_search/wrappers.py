@@ -107,8 +107,8 @@ class ObserveTriggered(InsertObservation):
             lambda self=self: self.triggered
         )
 
-class ObserveOverview(InsertObservation):
-    def __init__(self, env, key="overview"):
+class ExplicitMemory(InsertObservation):
+    def __init__(self, env, key="memory"):
         super().__init__(
             env,
             key,

@@ -102,7 +102,7 @@ The agent receives an \textit{observation} \(o \in \mathcal{O}\) with probabilit
 It also receives a \textit{reward} \(r\) given by \(\mathcal{R}(s, a)\).
 
 The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to a \textit{trajectory} of length \(T\).
-The goal of the agent is to maximize the expected \textit{discounted return} \(G_t \doteq \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k\), where \gamma is a measure of the uncertainty of the environment.  
+The goal of the agent is to maximize the expected \textit{discounted return} \(G_t \doteq \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k\), where \(\gamma\) represents the uncertainty of the environment.  
 Figure \ref{fig:pomdp} illustrates this process.
 
 \begin{figure}
@@ -126,7 +126,18 @@ Most RL algorithms estimate both a \textit{value function} that tells the agent 
 
 \subsection{Deep Reinforcement Learning}
 
-% Mnih et al., Atari
+% Mnih et al., Atari, DQN
+
+A long-standing challenge in RL is to learn good policies from high-dimensional sensory inputs like vision.
+Mnih et al. (2013)~\cite{mnih_atari_2013} address this by combining deep learning with RL.
+A CNN is trained to estimate the 
+% deep learning
+% experience replay
+% value iteration
+% deep Q-learning
+
+Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effects of adding recurrency to a DQN in order to tackle POMDPs.
+A LSTM is added after the initial 
 
 \subsection{Local Search}
 % Artificial Intelligence - A modern approach
@@ -333,3 +344,8 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 
 Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
 
+
+
+
+% Could argue that previous works do not clearly show that desireable behaviour is exhibited
+% Simpler environments would be better for this, where you can "isolate" more. 

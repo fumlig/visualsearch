@@ -8,84 +8,13 @@ import functools
 
 from torch.distributions import Categorical
 
+from agents.mlp import MLP
 from agents.cnn import NatureCNN, AlphaCNN
 from agents.utils import preprocess_image, one_hot, init_weights
 
 
-class Actor(nn.Module):
-    def __init__(self, num_features, num_actions, hidden_dims=None):
-        super(Actor, self).__init__()
-
-        hidden_dims = [] if hidden_dims is None else hidden_dims
-        layer_dims = [num_features] + hidden_dims + [num_actions]
-        layers = []
-
-        for i in range(len(layer_dims) - 1):
-            in_features = layer_dims[i]
-            out_features = layer_dims[i+1]
-            
-            if i == len(layer_dims) - 2:
-                layers.append(init_weights(nn.Linear(in_features, out_features), gain=0.01))
-            else:
-                layers.append(init_weights(nn.Linear(in_features, out_features)))
-                layers.append(nn.Tanh())
-
-        self.policy = nn.Sequential(*layers)
-
-        """
-        self.policy = nn.Sequential(
-            init_weights(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, num_actions), gain=0.01)
-        )
-        """
-    
-    def forward(self, x):
-        logits = self.policy(x)
-        pi = Categorical(logits=logits)
-        return pi
-    
-
-class Critic(nn.Module):
-    def __init__(self, num_features, hidden_dims=None):
-        super(Critic, self).__init__()
-
-        hidden_dims = [] if hidden_dims is None else hidden_dims
-        layer_dims = [num_features] + hidden_dims + [1]
-        layers = []
-
-        for i in range(len(layer_dims) - 1):
-            in_features = layer_dims[i]
-            out_features = layer_dims[i+1]
-            
-            if i == len(layer_dims) - 2:
-                layers.append(init_weights(nn.Linear(in_features, out_features), gain=1.0))
-            else:
-                layers.append(init_weights(nn.Linear(in_features, out_features)))
-                layers.append(nn.Tanh())
-
-        self.value = nn.Sequential(*layers)
-
-        """
-        self.value = nn.Sequential(
-            init_weights(nn.Linear(num_features, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 64)),
-            nn.Tanh(),
-            init_weights(nn.Linear(64, 1), gain=1.0)
-        )
-        """
-    
-    def forward(self, x):
-        v = self.value(x)
-        return v
-
-
-
 class Extractor(nn.Module):
-    def __init__(self, observation_space, custom_preprocessors=None, custom_extractors=None):
+    def __init__(self, observation_space):
         super(Extractor, self).__init__()
         assert isinstance(observation_space, gym.spaces.Dict)
 
@@ -99,7 +28,7 @@ class Extractor(nn.Module):
                     preprocessors[key] = preprocess_image
                     extractors[key] = NatureCNN(space)
                     features_dim += extractors[key].features_dim
-                elif key == "overview":
+                elif key == "memory":
                     preprocessors[key] = preprocess_image
                     extractors[key] = AlphaCNN(space)
                     features_dim += extractors[key].features_dim
@@ -134,20 +63,25 @@ class Extractor(nn.Module):
         return th.cat(tensors, dim=1)
 
 
-class ActorCritic(nn.Module):
+class SearchAgent(nn.Module):
+    """
+    Our method.
+    """
+
     def __init__(self, envs):
-        super(ActorCritic, self).__init__()
+        super(SearchAgent, self).__init__()
 
         self.extractor = Extractor(envs.single_observation_space)
         self.network = nn.Identity()
 
-        self.policy = Actor(self.extractor.features_dim, envs.single_action_space.n)#, hidden_dims=[64, 64])
-        self.value = Critic(self.extractor.features_dim)#, hidden_dims=[64, 64])
+        self.policy = MLP(self.extractor.features_dim, envs.single_action_space.n, out_gain=0.01)
+        self.value = MLP(self.extractor.features_dim, 1, out_gain=1.0)
 
     def forward(self, obs):
         x = self.extractor(obs)
         h = self.network(x)
-        pi = self.policy(h)
+        logits = self.policy(x)
+        pi = Categorical(logits=logits)
         v = self.value(h)
         return pi, v
 
@@ -162,15 +96,23 @@ class ActorCritic(nn.Module):
             return pi.sample().item()
 
 
-class MemoryActorCritic(nn.Module):
+class MemoryAgent(nn.Module):
+    """
+    Baseline method.
+    """
+
+    # https://arxiv.org/abs/1507.06527
+    # problem: uses DQN...
+    # should be fine to train it with another algorithm...
+
     def __init__(self, envs):
-        super(MemoryActorCritic, self).__init__()
+        super(MemoryAgent, self).__init__()
 
         self.extractor = Extractor(envs.single_observation_space)
         self.memory = nn.LSTM(self.extractor.features_dim, 128)
 
-        self.policy = Actor(128, envs.single_action_space.n, hidden_dims=[])
-        self.value = Critic(128, hidden_dims=[])
+        self.policy = MLP(128, envs.single_action_space.n, out_gain=0.01)
+        self.value = MLP(128, 1, out_gain=1.0)
 
         for name, param in self.memory.named_parameters():
             if "bias" in name:
@@ -198,9 +140,9 @@ class MemoryActorCritic(nn.Module):
     def forward(self, obs, state, done):        
         x = self.extractor(obs)
         h, s = self.remember(x, state, done)
-        pi = self.policy(h)
+        logits = self.policy(x)
+        pi = Categorical(logits=logits)
         v = self.value(h)
-
         return pi, v, s
 
     def predict(self, obs, state, done):

@@ -97,7 +97,7 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        gym_search.wrappers.ObserveOverview
+        gym_search.wrappers.ExplicitMemory
     ]
 
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     if args.model:
         agent = th.load(args.model)
     else:
-        agent = agents.ac.ActorCritic(envs)
+        agent = agents.ac.SearchAgent(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 

@@ -31,7 +31,7 @@ gym.register(
     id="SearchGaussian-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        generator=GaussianGenerator((256, 256), 1, 4, 3, 128, sigma=24),
+        generator=GaussianGenerator((256, 256), 3, 4, 3, 128, sigma=24),
         view_shape=(16, 16),
         step_size=16,
     )
@@ -41,7 +41,7 @@ gym.register(
     id="SearchTerrain-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        generator=TerrainGenerator((1024, 1024), max_terrains=1024),
+        generator=TerrainGenerator((1024, 1024), 3, max_terrains=1024),
         view_shape=(64, 64),
         step_size=64,
     )

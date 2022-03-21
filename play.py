@@ -14,8 +14,8 @@ import datetime as dt
 
 from gym_search.utils import travel_dist
 
-from agents.ac import ActorCritic
-from agents.random import RandomAgent
+import gym_search
+import agents
 
 
 KEY_ESC = 27
@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--observe", action="store_true")
+    parser.add_argument("--memory", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--episodes", type=int, default=1024)
     parser.add_argument("--deterministic", action="store_true")
@@ -39,7 +40,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, gym_search.wrappers.ResizeImage, gym_search.wrappers.ObserveOverview]
+    wrappers = [gym.wrappers.RecordEpisodeStatistics, gym_search.wrappers.ResizeImage, gym_search.wrappers.ExplicitMemory]
 
     env = gym.make(args.env_id)
     for wrapper in wrappers:
@@ -77,14 +78,19 @@ if __name__ == "__main__":
 
         while not done:
             if args.observe:
-                #img = obs["overview"]*255
-                #img = img.astype(dtype=np.uint8)
                 img = obs["image"]
             else:
                 img = env.render(mode="rgb_array")
 
             img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
             img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+
+            if args.memory:
+                mem = (obs["overview"]*255).astype(dtype=np.uint8)
+                mem = cv.resize(mem, WINDOW_SIZE, interpolation=cv.INTER_AREA)
+                mem = cv.cvtColor(mem, cv.COLOR_BGR2RGB)
+                img = np.hstack((img, mem))
+
             cv.imshow(args.env_id, img)	
 
             key = cv.waitKey(args.delay)

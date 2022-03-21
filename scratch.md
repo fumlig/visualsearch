@@ -67,3 +67,19 @@ explain what's happening
 send repo link to sourabh
 there are many tangents I could go on in report
 many similar tasks that are related but not exactly the same
+
+---
+
+Möte med Fredrik:
+
+- Visa resultat hittills
+- Förklara min metod just nu
+- Berätta om papper i navigation
+- Gå igenom min plan, 3 miljöer, 3 frågeställningar
+- Avvägning mellan E2E med RNN och "modulära system"
+- Object Goal Task, arbeten i navigation tacklar svårare problem bättre?
+- Kan man göra en ytterligare distinktion
+- Diskutera flera mål, mål som dyker upp och försvinner, mål som rör sig
+- Kan man definera exakt vad man är ute efter i ett sådant scenario? Man måste nästan göra som Boström-Rost och definiera ett önskat beteende.
+- Flera mål: knepigt att ha en DONE action eftersom den egentligen aldrig kan veta säkert om den har hittat alla.
+- Skippa DONE och avsluta automatiskt? Finns det i så fall en poäng med 

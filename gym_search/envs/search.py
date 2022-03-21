@@ -1,3 +1,4 @@
+from argparse import Action
 import gym
 import enum
 import numpy as np
@@ -95,62 +96,40 @@ class SearchEnv(gym.Env):
         self.view.pos = (y, x)
         self.path.append(self.view.pos)
 
-        if action == self.Action.TRIGGER:
-            self.triggered[self.scaled_position] = True
-
-            for i in range(len(self.targets)):                
-                if self.hits[i]: continue
-                if self.view.overlap(self.targets[i]) > 0:
-                    self.hits[i] = True
-
-        dist = euclidean_dist(self.view.center(), self.targets[0].center())
-        rew = 1 if dist < self.last_dist else -1 # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
-        self.last_dist = dist
-        
-        #if self.visited[self.scaled_position]:
-        #    rew -= 1
-
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
         self.visible[self.scaled_position] = True
-
-        """
-        rew = -2
-
+        
         if action == self.Action.TRIGGER:
-            rew -= 3
-
             self.triggered[self.scaled_position] = True
 
-            for i in range(len(self.targets)):                
-                if self.hits[i]:
-                    continue
-                
-                if self.view.overlap(self.targets[i]) > 0:
-                    rew += 10
-                    self.hits[i] = True
-        else:
-            if self.rew_exploration and not self.visited[self.scaled_position]:
-                rew += 1
-        """
+        dist = np.inf
+        hit = False
 
-        """
-        - reward moving towards target
-        - reward exploring new tiles
-        - punsish visiting visited tiles
-        """
+        for i in range(len(self.targets)):
+            if self.hits[i]:
+                continue
 
-        obs = self.observation()
-        done = all(self.hits)
+            if action == self.Action.TRIGGER and self.view.overlap(self.targets[i]):
+                self.hits[i] = True
+                hit = True
+
+            d = euclidean_dist(self.view.center(), self.targets[i].center())
+            if d < dist:
+                dist = d
         
-        if done:
-            rew = 10
-
+        if hit:
+            rew = 5
+        else:
+            # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
+            rew = 1 if dist < self.last_dist else -1 
+        
+        self.last_dist = dist
         self.num_steps += 1
 
-        if self.num_steps == self.max_steps:
-            done = True
-
+        obs = self.observation()
+        done = all(self.hits) or self.num_steps == self.max_steps
+    
         return obs, rew, done, {}
 
     def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):

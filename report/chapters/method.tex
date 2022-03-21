@@ -62,8 +62,10 @@ All scenes are assumed to be static in that the actions of the agent do not affe
 
 % observations, actions and rewards
 The scenes of each environment are discretized into a grid.
-We use the same action space, observation space and reward signal for all environment.
-The 
+We use the same action space, observation space and reward signal for all environments.
+% reward inspired by Tabu Search?
+% for multiple targets, give reward for moving towards closest target
+% when to stop with multiple targets? automatically when all are found?
 
 % use R^n notation for everything, including distance
 
@@ -118,8 +120,13 @@ The third environment\dots
 % assuming the existence of a suitable feature extractor
 
 
-\section{Agent}
+\section{Approach}
 \label{sec:algorithm}
+
+% trade-off between end-to-end with RNN and modular system with explicit components, like memory.
+
+% save latent representation of map?
+% As in "Cognitive Mapping and Planning for Visual Navigation"
 
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf

@@ -1,7 +1,6 @@
-from agents import ac
 from agents import ppo
 from agents import cnn
-
+from agents.agents import Agent, SearchAgent, MemoryAgent
 
 ALGORITHMS = dict(
     ppo=ppo
@@ -10,3 +9,4 @@ ALGORITHMS = dict(
 
 def algorithm(alg_id):
     return ALGORITHMS.get(alg_id)
+

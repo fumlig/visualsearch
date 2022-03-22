@@ -28,13 +28,14 @@ def learn(
     max_grad_norm=0.5,
     target_kl=None
 ):
-    assert isinstance(envs.single_action_space, gym.spaces.Discrete)
-    assert isinstance(envs.single_observation_space, gym.spaces.Dict)
-
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
     minibatch_size = batch_size // num_minibatches
     num_batches = tot_timesteps // batch_size
+
+    assert isinstance(envs.single_action_space, gym.spaces.Discrete)
+    assert isinstance(envs.single_observation_space, gym.spaces.Dict)
+    assert num_envs % num_minibatches == 0
 
     #hparams = locals()
     #hparams.pop(envs)
@@ -58,6 +59,7 @@ def learn(
 
     obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in envs.reset().items()}
     done = th.zeros(envs.num_envs).to(device)
+    state = agent.initial(num_envs)
 
     pbar = tqdm(total=tot_timesteps)
     ep_infos = deque(maxlen=100)
@@ -65,12 +67,15 @@ def learn(
     timestep = 0
 
     for _batch in range(num_batches):
+        # for train
+        initial_state = (state[0].clone(), state[1].clone())
+        
         # rollout steps
         for step in range(num_steps):
             timestep += num_envs
 
             with th.no_grad():
-                pi, v = agent(obs)
+                pi, v, state = agent(obs, state, done=done)
                 val = v.flatten()
                 act = pi.sample()
                 logprob = pi.log_prob(act)
@@ -105,7 +110,7 @@ def learn(
 
         # bootstrap value
         with th.no_grad():
-            _, next_val = agent(obs) # todo: use or ignore state?
+            _, next_val, _ = agent(obs, state, done=done)
             advs = th.zeros_like(rews).to(device)
             last_gae_lambda = 0
 
@@ -125,36 +130,42 @@ def learn(
 
 
         # train policy
-        batch_idx = np.arange(batch_size)
+        b_obss = {key: observation.reshape((-1,) + envs.single_observation_space[key].shape) for key, observation in obss.items()}
+        b_acts = acts.reshape((-1,) + envs.single_action_space.shape)
+        b_dones = dones.reshape((-1))
+        b_logprobs = logprobs.reshape((-1,))
+        b_vals = vals.reshape((-1,))
+        b_advs = advs.reshape((-1,))
+        b_rets = rets.reshape((-1,))
 
-        batch_obss = {key: observation.reshape((-1,) + envs.single_observation_space[key].shape) for key, observation in obss.items()}
-        batch_acts = acts.reshape((-1,) + envs.single_action_space.shape)
-        batch_logprobs = logprobs.reshape((-1,))
-        batch_vals = vals.reshape((-1,))
-        batch_advs = advs.reshape((-1,))
-        batch_rets = rets.reshape((-1,))
+        envs_idx = np.arange(num_envs)
+        flat_idx = np.arange(batch_size).reshape(num_steps, num_envs)
 
         clip_fracs = []
 
         for _epoch in range(num_epochs):
-            np.random.shuffle(batch_idx)
+            np.random.shuffle(envs_idx)
 
-            for minibatch in range(num_minibatches):
-                minibatch_idx = batch_idx[minibatch*minibatch_size:(minibatch+1)*minibatch_size]
+            for mb_begin in range(0, num_envs, num_envs // num_minibatches):
+                mb_end = mb_begin + num_envs // num_minibatches
+                mb_envs_idx = envs_idx[mb_begin:mb_end]
+                mb_idx = flat_idx[:, mb_envs_idx].ravel()
                 
-                minibatch_obss = {key: batch_observation[minibatch_idx] for key, batch_observation in batch_obss.items()}
-                minibatch_acts = batch_acts[minibatch_idx]
-                minibatch_logprobs = batch_logprobs[minibatch_idx]
-                minibatch_vals = batch_vals[minibatch_idx]
-                minibatch_advs = batch_advs[minibatch_idx]
-                minibatch_rets = batch_rets[minibatch_idx]
+                mb_obss = {key: b_observation[mb_idx] for key, b_observation in b_obss.items()}
+                mb_acts = b_acts[mb_idx]
+                mb_dones = b_dones[mb_idx]
+                mb_logprobs = b_logprobs[mb_idx]
+                mb_vals = b_vals[mb_idx]
+                mb_advs = b_advs[mb_idx]
+                mb_rets = b_rets[mb_idx]
+                mb_state = (initial_state[0][:, mb_envs_idx], initial_state[1][:, mb_envs_idx])
 
-                pi, v = agent(minibatch_obss)
+                pi, v, _ = agent(mb_obss, mb_state, done=mb_dones)
                 new_val = v.view(-1)
-                act = minibatch_acts.long()
+                act = mb_acts.long()
                 new_logprob = pi.log_prob(act)
                 entropy = pi.entropy()
-                logratio = new_logprob - minibatch_logprobs
+                logratio = new_logprob - mb_logprobs
                 ratio = logratio.exp()
 
                 with th.no_grad():
@@ -162,22 +173,22 @@ def learn(
                     clip_fracs.append(((ratio - 1.0).abs() > clip_range).float().mean().item())
 
                 if norm_adv:
-                    minibatch_advs = (minibatch_advs - minibatch_advs.mean()) / (minibatch_advs.std() + 1e-8)
+                    mb_advs = (mb_advs - mb_advs.mean()) / (mb_advs.std() + 1e-8)
                 
                 # policy loss
-                pg_loss1 = -minibatch_advs * ratio
-                pg_loss2 = -minibatch_advs * th.clamp(ratio, 1-clip_range, 1+clip_range)
+                pg_loss1 = -mb_advs * ratio
+                pg_loss2 = -mb_advs * th.clamp(ratio, 1-clip_range, 1+clip_range)
                 pg_loss = th.max(pg_loss1, pg_loss2).mean()
 
                 # value loss
                 if clip_vloss:
-                    val_loss_unclipped = (new_val - minibatch_rets)**2
-                    val_clipped = minibatch_vals + th.clamp(new_val-minibatch_vals, -clip_range, clip_range) # todo: this clipping is different (not added with 1)
-                    val_loss_clipped = (val_clipped - minibatch_rets)**2
+                    val_loss_unclipped = (new_val - mb_rets)**2
+                    val_clipped = mb_vals + th.clamp(new_val-mb_vals, -clip_range, clip_range) # todo: this clipping is different (not added with 1)
+                    val_loss_clipped = (val_clipped - mb_rets)**2
                     val_loss_max = th.max(val_loss_unclipped, val_loss_clipped)
                     val_loss = 0.5 * val_loss_max.mean()
                 else:
-                    val_loss = 0.5 * ((new_val - minibatch_rets)**2).mean()
+                    val_loss = 0.5 * ((new_val - mb_rets)**2).mean()
                 
                 ent_loss = entropy.mean()
                 

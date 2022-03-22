@@ -40,7 +40,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    wrappers = [gym.wrappers.RecordEpisodeStatistics, gym_search.wrappers.ResizeImage, gym_search.wrappers.ExplicitMemory]
+    wrappers = [
+        gym.wrappers.RecordEpisodeStatistics,
+        gym_search.wrappers.ResizeImage,
+        gym_search.wrappers.ExplicitMemory,
+        gym_search.wrappers.LastAction,
+        gym_search.wrappers.LastReward
+    ]
 
     env = gym.make(args.env_id)
     for wrapper in wrappers:
@@ -66,7 +72,7 @@ if __name__ == "__main__":
 
     cv.namedWindow(args.env_id, cv.WINDOW_AUTOSIZE)
 
-    for ep in range(args.episodes+1):
+    for ep in range(args.episodes):
 
         done = False
         obs = env.reset()
@@ -124,8 +130,7 @@ if __name__ == "__main__":
                 print("action:", env.get_action_meanings()[act], "reward:", rew)
 
             if args.observe:
-                #print("observation:", obs)
-                print(obs["overview"].transpose(2, 0, 1))
+                print("observation:", obs)
 
             if done:
                 print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))

@@ -131,13 +131,25 @@ Most RL algorithms estimate both a \textit{value function} that tells the agent 
 A long-standing challenge in RL is to learn good policies from high-dimensional sensory inputs like vision.
 Mnih et al. (2013)~\cite{mnih_atari_2013} address this by combining deep learning with RL.
 A CNN is trained to estimate the 
+
+Mnih et al. (2015)~\cite{mnih_human_2015}\dots % real breakthrough, human level control, origin of NatureCNN
+% 84x84x4 input image produced by preprocessing map
+% 1st: 32 filters of 8x8 with stride 4 and ReLU
+% 2nd: 64 filters of 4x4 with stride 2 and ReLU
+% 3rd: 64 filters of 3x3 with stride 1 and ReLU
+% 4th: Hidden fully connected kayer of 512 ReLU
+% 5th: Output layer with one output for each valid action
+
 % deep learning
 % experience replay
 % value iteration
 % deep Q-learning
+% refer briefly to the whole imagenet thing
 
 Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effects of adding recurrency to a DQN in order to tackle POMDPs.
 A LSTM is added after the initial 
+
+% PPO, others
 
 \subsection{Local Search}
 % Artificial Intelligence - A modern approach
@@ -305,8 +317,13 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 % note: reinforcement learning part, soft and hard attention
 % https://shairozsohail.medium.com/a-survey-of-visual-attention-mechanisms-in-deep-learning-1043eb25f343
 
-\subsection{Point Navigation}
+\subsection{Navigation}
 
+% Point navigation, Object navigation, semantic navigation
+
+Mnih et al. (2016)~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
+3D labyrinths are randomly generated, and an agent is tasked with finding objects in them.
+The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM cells after the final hidden layer.
 % https://aihabitat.org/challenge/2020/#task-1-pointnav
 
 \subsection{Object Navigation}

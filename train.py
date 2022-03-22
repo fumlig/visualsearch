@@ -110,7 +110,7 @@ if __name__ == "__main__":
     if args.model:
         agent = th.load(args.model)
     else:
-        agent = agents.ac.SearchAgent(envs)
+        agent = agents.SearchAgent(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 

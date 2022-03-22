@@ -3,31 +3,6 @@ import cv2 as cv
 import gym
 
 
-class TimeLimit(gym.Wrapper):
-    def __init__(self, env, max_episode_steps=None):
-        super().__init__(env)
-        if max_episode_steps is None and self.env.spec is not None:
-            max_episode_steps = env.spec.max_episode_steps
-        
-        if self.env.spec is not None:
-            self.env.spec.max_episode_steps = max_episode_steps
-        
-        self.max_episode_steps = max_episode_steps
-        self.num_steps = None
-
-    def step(self, action):
-        observation, reward, done, info = self.env.step(action)
-        self.num_steps += 1
-        if self.num_steps >= self.max_episode_steps:
-            info["TimeLimit.truncated"] = not done
-            done = True
-        return observation, reward, done, info
-
-    def reset(self, **kwargs):
-        self.num_steps = 0
-        return self.env.reset(**kwargs)
-
-
 class InsertObservation(gym.ObservationWrapper):
     def __init__(self, env, key, space_func, value_func):
         super().__init__(env)
@@ -49,26 +24,6 @@ class InsertObservation(gym.ObservationWrapper):
         new_obs.update({self.key: self.value_func()})
         return new_obs
 
-class ResizeImage(InsertObservation):
-    def __init__(self, env, key="image", shape=(64, 64)):
-        super().__init__(
-            env,
-            key,
-            lambda self=self: gym.spaces.Box(0, 255, shape + self.env.observation_space[key].shape[2:], dtype=np.uint8),
-            lambda self=self: cv.resize(self.env.observation()[key], shape, interpolation=cv.INTER_AREA)
-        )
-
-
-class ObservePosition(InsertObservation):
-    def __init__(self, env, key="position"):
-        super().__init__(
-            env,
-            key,
-            lambda self=self: gym.spaces.Discrete(self.shape[0]//self.view.shape[0] * self.shape[1]//self.view.shape[1]),
-            lambda self=self: self.view.pos[0]//self.view.shape[0]*self.shape[1]//self.view.shape[1]+self.view.pos[1]//self.view.shape[1]
-        )
-
-
 class ObserveTime(InsertObservation):
     def __init__(self, env, key="time"):
         super().__init__(
@@ -78,34 +33,6 @@ class ObserveTime(InsertObservation):
             lambda self=self: self.num_steps
         )
 
-
-class ObserveVisible(InsertObservation):
-    def __init__(self, env, key="visible"):
-        super().__init__(
-            env,
-            key,
-            lambda self=self: gym.spaces.Box(0, 1, self.shape),
-            lambda self=self: self.visible
-        )
-
-
-class ObserveVisited(InsertObservation):
-    def __init__(self, env, key="visited"):
-        super().__init__(
-            env,
-            key,
-            lambda self=self: gym.spaces.Box(0, 1, self.shape),
-            lambda self=self: self.visited
-        )
-
-class ObserveTriggered(InsertObservation):
-    def __init__(self, env, key="triggered"):
-        super().__init__(
-            env,
-            key,
-            lambda self=self: gym.spaces.Box(0, 1, self.shape),
-            lambda self=self: self.triggered
-        )
 
 class ExplicitMemory(InsertObservation):
     def __init__(self, env, key="memory"):
@@ -119,3 +46,74 @@ class ExplicitMemory(InsertObservation):
                 self.triggered
             ], axis=-1)
         )
+
+class ResizeImage(InsertObservation):
+    def __init__(self, env, key="image", shape=(64, 64)):
+        super().__init__(
+            env,
+            key,
+            lambda self=self: gym.spaces.Box(0, 255, shape + self.env.observation_space[key].shape[2:], dtype=np.uint8),
+            lambda self=self: cv.resize(self.env.observation()[key], shape, interpolation=cv.INTER_AREA)
+        )
+
+class LastAction(gym.ObservationWrapper):
+    def __init__(self, env):
+        super().__init__(env)
+        assert isinstance(env.observation_space, gym.spaces.Dict)
+        
+        self.observation_space = gym.spaces.Dict()
+
+        for key, space in self.env.observation_space.items():
+            self.observation_space[key] = space
+        
+        self.observation_space["last_action"] = self.space_func()
+    
+    def step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        obs = self.observation(obs)
+        self.last_action = action
+        return obs, reward, done, info
+
+    def reset(self, **kwargs):
+        self.last_action = None
+        if kwargs.get("return_info", False):
+            obs, info = self.env.reset(**kwargs)
+            return self.observation(obs), info
+        else:
+            return self.observation(self.env.reset(**kwargs))
+
+    def observation(self, obs):
+        new_obs = obs.copy()
+        new_obs["last_action"] = self.last_action
+        return new_obs
+
+class LastReward(gym.ObservationWrapper):
+    def __init__(self, env):
+        super().__init__(env)
+        assert isinstance(env.observation_space, gym.spaces.Dict)
+        
+        self.observation_space = gym.spaces.Dict()
+
+        for key, space in self.env.observation_space.items():
+            self.observation_space[key] = space
+        
+        self.observation_space["last_reward"] = self.space_func()
+    
+    def step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        obs = self.observation(obs)
+        self.last_reward = reward
+        return obs, reward, done, info
+
+    def reset(self, **kwargs):
+        self.last_reward = None
+        if kwargs.get("return_info", False):
+            obs, info = self.env.reset(**kwargs)
+            return self.observation(obs), info
+        else:
+            return self.observation(self.env.reset(**kwargs))
+
+    def observation(self, obs):
+        new_obs = obs.copy()
+        new_obs["last_reward"] = self.last_reward
+        return new_obs

@@ -102,7 +102,8 @@ class ProximalPolicyOptimization(Algorithm):
 
         obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in envs.reset().items()}
         done = th.zeros(envs.num_envs).to(device)
-        state = agent.initial(num_envs)
+        initial = agent.initial(num_envs)
+        state = (initial[0].to(device), initial[1].to(device))
 
         pbar = tqdm(total=tot_timesteps)
         ep_infos = deque(maxlen=100)

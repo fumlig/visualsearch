@@ -124,9 +124,9 @@ class MemoryAgent(Agent):
     def __init__(self, envs):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
-        assert "image" in self.observation_space
+        assert self.observation_space.get("image") is not None
 
-        self.cnn = NatureCNN(self.observation_space)
+        self.cnn = NatureCNN(self.observation_space["image"])
         self.lstm = nn.LSTM(self.cnn.features_dim, 256)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
@@ -135,7 +135,7 @@ class MemoryAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+        return (th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size))
 
     def remember(self, hidden, state, done):
         batch_size = state[0].shape[1]

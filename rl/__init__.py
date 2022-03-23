@@ -8,7 +8,8 @@ ALGORITHMS = {
 
 AGENTS = {
     "our": SearchAgent,
-    "impala": ImpalaAgent
+    "impala": ImpalaAgent,
+    "memory": MemoryAgent
 }
 
 

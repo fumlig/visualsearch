@@ -86,33 +86,37 @@ The value of the parameter \(\theta\) is learned
 Reinforcement learning (RL)~\cite{sutton_reinforcement_2018} is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
 This section introduces the fundamental concepts of RL.
 
-\subsection{Partially Observable Markov Decision Process}
+\subsection{Partially Observable Markov Decision Processes}
 
 The problem of learning from interaction to achieve some goal is often framed as a (finite) Markov decision process (MDP).
-In this work, we consider a partially observable Markov decision process (POMDP).
-Here we recount the definition provided in \cite{kaelbling_pomdp_1998}. % todo: we currently don't use this definition
-Formally, a POMDP is defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{P}, \mathcal{R}, \mathcal{Z}, \gamma \rangle\), where
+A learning \textit{agent} interacts continually with its \textit{environment}.
+The agent takes the \textit{state} of the environment as input, and select an \textit{action} to take.
+This action updates the state of the environment and gives the agent a scalar \textit{reward}.
+It is assumed that the next state and reward depend only on the previous state and the action taken.
+This is referred to as the \textit{Markov} property.~\cite{kaelbling_pomdp_1998}
+
+In an MDP, the agent can perceive the state of the environment with full certainty.
+For many problems, including the one we consider here, this is not the case.
+The agent can only perceive a partial representation of the environment's state.
+Such a process is referred to as a partially observable Markov decision process (POMDP).
+A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O}, \gamma \rangle\), where
 
 \begin{itemize}
     \item \(\mathcal{S}\) is a finite set of states,
     \item \(\mathcal{A}\) is a finite set of actions,
-    \item \(\mathcal{O}\) is a finite set of observations,
-    \item \(\mathcal{P}\) is a set of conditional transition probabilities between states,
-    \item \(\mathcal{R}\) is a reward function,
-    \item \(\mathcal{Z}\) is an observation function, and
+    \item \(\mathcal{T}: \mathcal{S} \times \mathcal{A} \rightarrow \Pi(\mathcal{S})\) is a state-transition function,
+    \item \(\mathcal{R}: \mathcal{S} \times \mathcal{A} \rightarrow \mathbb{R}\) is a reward function,
+    \item \(\Omega\) is a finite set of observations,
+    \item \(\mathcal{O}: \mathcal{S} \times \mathcal{A} \rightarrow \Pi(\Omega)\) is an observation function, and
     \item \(\gamma \in [0, 1]\) is a discount factor.
 \end{itemize}
 
-A learning \textit{agent} interacts continually with its \textit{environment}.
-At each discrete time step, the environment is in some \textit{state} \(s \in \mathcal{S}\).
-The agent picks an \textit{action} \(a \in \mathcal{A}\) to take.
-This puts the environment in state \(s^\prime\) with probability \(\mathcal{P}(s^\prime | s, a)\).
-The agent receives an \textit{observation} \(o \in \mathcal{O}\) with probability \(\mathcal{Z}(o | s^\prime, a)\).
-It also receives a \textit{reward} \(r\) given by \(\mathcal{R}(s, a)\).
-
+Assume that the environment is in state \(s \in \mathcal{S}\), and the agent selects action \(a \in \mathcal{A}\).
+Then, \(T(s, a, s^\prime)\) is the probability of ending in state \(s^\prime\) and \(R(s, a)\) is the expected reward gained by the agent.
+The agent also receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(s^\prime, a, o)\).
 The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
-The goal of the agent is to maximize the expected \textit{discounted return} \(G_t \doteq \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k\).
-Here, \(\gamma\) represents the uncertainty of the environment.  
+The goal of the agent is to maximize the expected \textit{discounted return} \(\mathbb{E} \lbrack \Sigma_{t=0}^\infty \gamma^t r_t \rbrack\).~\cite{kaelbling_pomdp_1998}
+
 Figure \ref{fig:pomdp} illustrates the interaction between agent and environment.
 
 \begin{figure}
@@ -124,7 +128,8 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 Planning in a POMDP is undecidable, and solving them is often computationally intractable.
-Approximate solutions are more common.
+Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state} \(b\) that summarizes its previous experience.
+
 % belief state
 % markov property
 

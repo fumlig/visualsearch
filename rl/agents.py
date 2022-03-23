@@ -40,9 +40,6 @@ class SearchAgent(Agent):
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("memory") is not None
 
-        # todo: we could use ImpalaCNN for both instead
-        # check training time though
-
         self.image_cnn = NatureCNN(self.observation_space["image"])
         self.memory_cnn = AlphaCNN(self.observation_space["memory"])
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim

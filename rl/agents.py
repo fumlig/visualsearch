@@ -8,9 +8,8 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from agents.mlp import MLP
-from agents.cnn import NatureCNN, AlphaCNN
-from agents.utils import preprocess_image, one_hot, init_weights, init_lstm
+from rl.models import MLP, ImpalaCNN, NatureCNN, AlphaCNN
+from rl.utils import preprocess_image, one_hot, init_weights, init_lstm
 
 
 
@@ -73,6 +72,49 @@ class SearchAgent(Agent):
             return th.argmax(pi.probs).item(), state
         else:
             return pi.sample().item(), state
+
+
+class KingAgent(Agent):
+    """
+    Our method.
+    """
+
+    def __init__(self, envs):
+        super().__init__(envs)
+        assert isinstance(self.observation_space, gym.spaces.Dict)
+        assert self.observation_space.get("image") is not None
+        assert self.observation_space.get("memory") is not None
+
+        self.image_cnn = ImpalaCNN(self.observation_space["image"])
+        self.memory_cnn = ImpalaCNN(self.observation_space["memory"])
+        self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
+
+        self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.features_dim, 1, out_gain=1.0)
+
+    def extract(self, obs):
+        xs = []
+        xs.append(self.image_cnn(preprocess_image(obs["image"])))
+        xs.append(self.memory_cnn(preprocess_image(obs["memory"])))
+        return th.cat(xs, dim=1)
+
+    def forward(self, obs, state, **kwargs):
+        x = self.extract(obs)
+        logits = self.policy(x)
+        pi = Categorical(logits=logits)
+        v = self.value(x)
+        return pi, v, state
+
+    def predict(self, obs, state, deterministic=False, **kwargs):
+        x = self.extract(obs)
+        logits = self.policy(x)
+        pi = Categorical(logits=logits)
+
+        if deterministic:
+            return th.argmax(pi.probs).item(), state
+        else:
+            return pi.sample().item(), state
+
 
 
 class MemoryAgent(Agent):

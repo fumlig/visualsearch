@@ -12,7 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
 
 import gym_search
-import agents
+import rl
 
 
 """
@@ -30,9 +30,9 @@ add pretty plotting (yield info from learn?)
 SEED = 0
 TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64 # also a hyperparameter...
-ALG_PARAMS = dict(
+HPARAMS = dict(
     learning_rate=5e-4,
-    num_steps=64,
+    num_steps=256, # 64 seems to work fine, it is recommended to have it be a lot smaller than episode length...
     num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
@@ -68,17 +68,17 @@ def env_default(key, default=None):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("env_id", type=str, **env_default("ENV_ID"))
+    parser.add_argument("environment", type=str, **env_default("ENV_ID"))
+    parser.add_argument("algorithm", type=str, choices=rl.ALGORITHMS.keys())
+    parser.add_argument("agent", type=str, choices=rl.AGENTS.keys())
+
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
-    parser.add_argument("--algorithm", type=str, default="ppo", choices=agents.ALGORITHMS.keys())
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
-    parser.add_argument("--alg-params", type=parse_hparams, default=ALG_PARAMS)
-
-    #ppo.add_arguments(parser)
+    parser.add_argument("--hparams", type=parse_hparams, default=HPARAMS)
 
     args = parser.parse_args()
 
@@ -100,22 +100,24 @@ if __name__ == "__main__":
         gym_search.wrappers.ExplicitMemory
     ]
 
-    envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
+    envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers)
     envs = gym.wrappers.NormalizeReward(envs)
+    
     envs.seed(args.seed)
     for env in envs.envs:
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
+    algorithm = rl.algorithm(args.algorithm)(**args.hparams)
+
+    agent = rl.agent(args.agent)(envs)
+
     if args.model:
         agent = th.load(args.model)
-    else:
-        agent = agents.SearchAgent(envs)
 
     writer = SummaryWriter(f"logs/{args.name}")
 
-    alg = agents.algorithm(args.algorithm)
-    alg.learn(args.tot_timesteps, envs, agent, device, writer, **args.alg_params)
+    algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
 
     envs.close()
     writer.close()

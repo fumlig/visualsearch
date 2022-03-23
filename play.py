@@ -14,8 +14,8 @@ import datetime as dt
 
 from gym_search.utils import travel_dist
 
+import rl
 import gym_search
-import agents
 
 
 KEY_ESC = 27
@@ -44,8 +44,8 @@ if __name__ == "__main__":
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
         gym_search.wrappers.ExplicitMemory,
-        gym_search.wrappers.LastAction,
-        gym_search.wrappers.LastReward
+        #gym_search.wrappers.LastAction,
+        #gym_search.wrappers.LastReward
     ]
 
     env = gym.make(args.env_id)
@@ -77,6 +77,9 @@ if __name__ == "__main__":
         done = False
         obs = env.reset()
 
+        if agent is not None:
+            state = agent.initial(1)
+
         if args.verbose:
             points = [env.view.pos] + [target.pos for target in env.targets]
             print(points)
@@ -106,7 +109,7 @@ if __name__ == "__main__":
             else:
                 with th.no_grad():
                     obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                    act = agent.predict(obs, deterministic=args.deterministic)
+                    act, state = agent.predict(obs, state, deterministic=args.deterministic)
 
             if args.verbose:
                 step_begin = process_time()

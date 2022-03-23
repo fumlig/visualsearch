@@ -4,18 +4,32 @@ import torch.nn as nn
 import torch.nn.functional as F
 import gym
 
-from agents.utils import init_weights, preprocess_image
+from rl.utils import init_weights, preprocess_image
 
 
-"""
-Learn about
-- Residual blocks
-- Max pooling
-- Batch normalization
 
-- What is proven architecture for binary maps?
-- Many for RGB images
-"""
+class MLP(nn.Module):
+    def __init__(self, in_features, out_features, hidden_dims=None, out_gain=np.sqrt(2)):
+        super(MLP, self).__init__()
+
+        hidden_dims = [] if hidden_dims is None else hidden_dims
+        layer_dims = [in_features] + hidden_dims + [out_features]
+        layers = []
+
+        for i in range(len(layer_dims) - 1):
+            in_dim = layer_dims[i]
+            out_dim = layer_dims[i+1]
+            
+            if i == len(layer_dims) - 2:
+                layers.append(init_weights(nn.Linear(in_dim, out_dim), gain=out_gain))
+            else:
+                layers.append(init_weights(nn.Linear(in_dim, out_dim)))
+                layers.append(nn.Tanh())
+
+        self.layers = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.layers(x)
 
 
 class NatureCNN(nn.Module):
@@ -176,22 +190,30 @@ class ImpalaCNN(nn.Module):
         h, w, c = obs_space.shape
         shape = (c, h, w)
 
-        conv_seqs = []
+        convs = []
         
         for out_channels in [16, 32, 32]:
             conv_seq = self.ConvSequence(shape, out_channels)
             shape = conv_seq.get_output_shape()
-            conv_seqs.append(conv_seq)
+            convs.append(conv_seq)
 
-        self.conv_seqs = nn.Sequential(conv_seqs)
-        self.hidden_fc = nn.Linear(shape[0]*shape[1]*shape[2], features_dim)
+        self.convs = nn.Sequential(
+            *convs,
+            nn.Flatten(),
+            nn.ReLU(),
+        )
+
+        self.linear = nn.Sequential(
+            nn.Linear(shape[0]*shape[1]*shape[2], features_dim),
+            nn.ReLU()
+        )
+
+        self.features_dim = features_dim
 
 
     def forward(self, obs):
         x = obs
-        x = self.conv_seqs(x)
-        x = th.flatten(x, start_dim=1)
-        x = F.relu(x)
-        x = self.hidden_fc(x)
+        x = self.convs(x)
+        x = self.linear(x)
 
         return x

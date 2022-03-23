@@ -133,6 +133,7 @@ class SearchEnv(gym.Env):
         return obs, rew, done, {}
 
     def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):
+        # todo: show_path gets slow when the path is long
 
         img = self.terrain.copy()
 

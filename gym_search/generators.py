@@ -68,7 +68,7 @@ class TerrainGenerator(Generator):
         height, width = self.shape
         seed = self.random.integers(self.max_terrains)
         terrain = self.terrain(seed)
-        img = pick_color(terrain, EARTH_TOON)
+        img = self.colors(terrain)
 
         tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
         tree_prob = tree_line.astype(float)/tree_line.sum()
@@ -95,6 +95,9 @@ class TerrainGenerator(Generator):
             img[coords] = (255, 0, 0)
 
         return img, targets
+
+    def colors(self, terrain):
+        return pick_color(terrain, EARTH_TOON)
 
     @lru_cache(maxsize=1024)
     def terrain(self, seed):

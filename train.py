@@ -101,7 +101,7 @@ if __name__ == "__main__":
     ]
 
     envs = gym.vector.make(args.env_id, args.num_envs, asynchronous=False, wrappers=wrappers)
-    #envs = gym.wrappers.NormalizeReward(envs)
+    envs = gym.wrappers.NormalizeReward(envs)
     envs.seed(args.seed)
     for env in envs.envs:
         env.action_space.seed(args.seed)

@@ -1,4 +1,4 @@
-\usepackage[backend=biber,hyperref]{biblatex}
+\usepackage[backend=biber,hyperref,backref=true]{biblatex}
 %% To set the font of your thesis, use the \setmainfont{} command,
 %% surrounded with \ifxetex if you want to switch between xelatex and pdflatex
 \ifxetex 
@@ -6,7 +6,6 @@
 \fi
 
 \usepackage{calc,color}
-
 \usepackage{tikz}
 
 \setcounter{secnumdepth}{3}
@@ -40,5 +39,10 @@
 \makeatother
 
 \ExecuteBibliographyOptions{maxnames=99}
+
+\DefineBibliographyStrings{english}{%
+  backrefpage = {page},% originally "cited on page"
+  backrefpages = {pages},% originally "cited on pages"
+}
 
 \addbibresource{references.bib}

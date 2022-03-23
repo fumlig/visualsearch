@@ -51,9 +51,9 @@ def learn(
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
 
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
+    acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
     rews = th.zeros((num_steps, num_envs)).to(device)
     dones = th.zeros((num_steps, num_envs)).to(device)
-    acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
     logprobs = th.zeros((num_steps, num_envs)).to(device)
     vals = th.zeros((num_steps, num_envs)).to(device)
 
@@ -66,7 +66,9 @@ def learn(
 
     timestep = 0
 
-    for _batch in range(num_batches):
+    for b in range(num_batches):
+        writer.add_text("log", f"batch {b}", timestep)
+
         # for train
         initial_state = (state[0].clone(), state[1].clone())
         
@@ -104,8 +106,6 @@ def learn(
                     writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
                     
                     ep_infos.append(ep_info)
-                    #writer.add_scalar("charts/average_return", np.mean([ep_info["r"] for ep_info in ep_infos]), timestep)
-                    #writer.add_scalar("charts/average_length", np.mean([ep_info["l"] for ep_info in ep_infos]), timestep)
 
 
         # bootstrap value
@@ -202,10 +202,6 @@ def learn(
             # early break
             if target_kl is not None and approx_kl > target_kl:
                 break
-
-        # write summary
-        #pred_vals = batch_vals.cpu().numpy()
-        #true_vals = batch_rets.cpu().numpy()
         
         writer.add_scalar("losses/value_loss", val_loss.item(), timestep)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), timestep)

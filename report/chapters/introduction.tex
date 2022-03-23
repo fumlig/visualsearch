@@ -30,7 +30,7 @@ In the computer vision field, there has been several attempts to mimic the way h
 Most attempts focus on fully observable scenes where the target is in view and the task is to localize it (object localization).
 However, in many real-world visual search scenarios the field-of-view is limited.
 This means that the search process is split into two steps: directing the field of view (covert attention), and locating targets within the view (overt attention).
-Much work has been focused on latter, locating targets within the field of view~\cite{}. 
+Much work has been focused on latter, locating targets within the field of view~\cite{}.
 
 When only a fraction of the environment is visible, where to move the field of view becomes an important decision.
 The characteristics of the searched environment can often be used to find targets quicker.
@@ -48,6 +48,8 @@ How can you identify useful hints from the environment to guide covert attention
 Manually engineering such a platform seems infeasible.
 If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
+Finally, one wants to avoid looking at the same region twice.
+The need for keeping track of explored areas necessites some kind of memory.
 % we want a system that can
 % - work in familiar environments
 % - learns effective scanning patterns
@@ -128,10 +130,11 @@ Crucial to the problem is generalization.
 This thesis will address the following questions:
 
 \begin{enumerate}
-  \item How can a learning agent that does efficient visual search in familiar environments be implemented?
-  \item How well does the learning agent generalize to unseen but familiar environments?
-  \item How does the learning agent compare to random walk, exhaustive search, frontier-based search, a human searcher, and standard RL methods? 
+  \item \label{itm:rq1} How can a learning agent that does efficient visual search in familiar environments be implemented?
+  \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, frontier-based search, a human searcher, and standard RL methods?
+  \item \label{itm:rq3} How well does the learning agent generalize to unseen but familiar environments?
   % use a CNN and recurrent step, like papers in navigation propose
+  % naturecnn + lstm
   % compare to our approach, which uses an explicit episodic memory
 
   %\item How does the learning agent compare to common non-learning methods?

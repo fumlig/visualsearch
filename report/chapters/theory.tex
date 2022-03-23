@@ -10,9 +10,9 @@
 % their lessons learned, it raises the perceived quality of the
 % entire report.
 % 
-% After having read the theory chapter it shall be obvious for
-% the reader that the research questions are both well
-% formulated and relevant.
+% After having read the theory chapter it shall be obvious for          <--
+% the reader that the research questions are both well                  <--
+% formulated and relevant.                                              <--
 % 
 % The chapter must contain theory of use for the intended
 % study, both in terms of technique and method. If a final thesis
@@ -61,27 +61,36 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 \section{Artificial Neural Networks}
 
 An artificial neural network (ANN) is a type of universal function approximator.
+ANNs are based on 
 
 % https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
 
-\subsection{Multi-layer Perceptron}
+\subsection{Feed-forward Neural Network}
 
-\subsection{Long Short-Term Memory}
+A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
+The value of the parameter \(\theta\) is learned  
 
-% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+~\cite{goodfellow_deep_2016}
 
 \subsection{Convolutional Neural Network}
 
 % https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
 
+\subsection{Recurrent Neural Network}
+
+% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+
+
 \section{Reinforcement Learning}
 
-Reinforcement learning (RL) is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
+Reinforcement learning (RL)~\cite{sutton_reinforcement_2018} is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
+This section introduces the fundamental concepts of RL.
 
 \subsection{Partially Observable Markov Decision Process}
 
 The problem of learning from interaction to achieve some goal is often framed as a (finite) Markov decision process (MDP).
 In this work, we consider a partially observable Markov decision process (POMDP).
+Here we recount the definition provided in \cite{kaelbling_pomdp_1998}. % todo: we currently don't use this definition
 Formally, a POMDP is defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{P}, \mathcal{R}, \mathcal{Z}, \gamma \rangle\), where
 
 \begin{itemize}
@@ -101,9 +110,10 @@ This puts the environment in state \(s^\prime\) with probability \(\mathcal{P}(s
 The agent receives an \textit{observation} \(o \in \mathcal{O}\) with probability \(\mathcal{Z}(o | s^\prime, a)\).
 It also receives a \textit{reward} \(r\) given by \(\mathcal{R}(s, a)\).
 
-The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to a \textit{trajectory} of length \(T\).
-The goal of the agent is to maximize the expected \textit{discounted return} \(G_t \doteq \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k\), where \(\gamma\) represents the uncertainty of the environment.  
-Figure \ref{fig:pomdp} illustrates this process.
+The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
+The goal of the agent is to maximize the expected \textit{discounted return} \(G_t \doteq \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k\).
+Here, \(\gamma\) represents the uncertainty of the environment.  
+Figure \ref{fig:pomdp} illustrates the interaction between agent and environment.
 
 \begin{figure}
     \centering
@@ -116,10 +126,14 @@ Since the agent receives partial observations of the environment's state, it has
 Planning in a POMDP is undecidable, and solving them is often computationally intractable.
 Approximate solutions are more common.
 % belief state
+% markov property
 
 \subsection{Policies and Value Functions}
 
 Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state.
+\cite{sutton_reinforcement_2018}
+
+\subsection{Exploration and Exploitation Trade-off}
 
 
 \section{Related Work}
@@ -150,43 +164,6 @@ Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effect
 A LSTM is added after the initial 
 
 % PPO, others
-
-\subsection{Local Search}
-% Artificial Intelligence - A modern approach
-% Page 134
-% Should cover belief states?
-% ~\cite{russell_artificial_2021}
-% https://en.wikipedia.org/wiki/Tabu_search
-% tabu search is mentioned in russel
-% could be interesting as inspiration for reward function
-% and also observation space
-% bring in "learning to optimize" here
-
-% an annealed step size could be interesting...
-% more general and there are certainly parallells to other areas.
-
-% local search
-% https://en.wikipedia.org/wiki/Local_search_(optimization)
-% https://en.wikipedia.org/wiki/Guided_Local_Search
-
-% "learning local search"
-% "learning to optimize"
-
-% Reinforcement Learning for Local Search
-
-% Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics
-% Levine et al. seems like it could be useful
-
-% we could draw inspiration from multiple local search approaches
-
-% it is essentially a combinatorial optimization problem (I think)
-
-%Schuurman & Southey propose three measures of effectiveness for local search (depth, mobility, and coverage):[2]
-%
-%    depth: the cost of the current (best) solution;
-%    mobility: the ability to rapidly move to different areas of the search space (whilst keeping the cost low);
-%    coverage: how systematically the search covers the search space, the maximum distance between any unexplored assignment and all visited assignments.
-
 
 \subsection{Active Vision}
 \label{sec:activevision}
@@ -326,26 +303,28 @@ Mnih et al. (2016)~\cite{mnih_asynchronous_2016} use a recurrent policy with onl
 The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM cells after the final hidden layer.
 % https://aihabitat.org/challenge/2020/#task-1-pointnav
 
-\subsection{Object Navigation}
+% \subsection{Object Navigation}
 
 % https://aihabitat.org/challenge/2020/#task-2-objectnav
 % https://arxiv.org/pdf/1709.06158.pdf
 
-\subsection{Semantic Navigation}
+% \subsection{Semantic Navigation}
 
 % https://arxiv.org/pdf/2007.00643.pdf
 % proposes a semantic map which is apparently very similar to my proposed method...
 % "explicit episodic (semantic) memory"
 
+Henriques and Vedaldi (2018)~\cite{henriques_vedaldi_2018} use a spatial memory...
 
-\subsection{Exploration and Exploitation Trade-off}
+Gupta et al. (2019)~\cite{gupta_cognitive_2019} use a latent spatial memory.
+The 
+They also use a planner that can plan paths given partial information of the environment.
+This allows the agent to take appearance of visited locations into account when deciding where to look next.
+The RGB observation is fed through an encoder network that\dots
+Planning in this fashion s
+% has a list of baselines
+% among them is an lstm baseline
 
-% The thesis could also be called Efficient Exploration
-
-% Go into motivation if we use this
-
-% Custom rewards are often needed
-% intrinsic?
 
 \subsection{Generalization in Deep Reinforcement Learning}
 
@@ -363,6 +342,41 @@ Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchma
 
 
 
+\subsection{Local Search}
+% Artificial Intelligence - A modern approach
+% Page 134
+% Should cover belief states?
+% ~\cite{russell_artificial_2021}
+% https://en.wikipedia.org/wiki/Tabu_search
+% tabu search is mentioned in russel
+% could be interesting as inspiration for reward function
+% and also observation space
+% bring in "learning to optimize" here
 
-% Could argue that previous works do not clearly show that desireable behaviour is exhibited
-% Simpler environments would be better for this, where you can "isolate" more. 
+% an annealed step size could be interesting...
+% more general and there are certainly parallells to other areas.
+
+% local search
+% https://en.wikipedia.org/wiki/Local_search_(optimization)
+% https://en.wikipedia.org/wiki/Guided_Local_Search
+
+% "learning local search"
+% "learning to optimize"
+
+% Reinforcement Learning for Local Search
+
+% Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics
+% Levine et al. seems like it could be useful
+
+% we could draw inspiration from multiple local search approaches
+
+% it is essentially a combinatorial optimization problem (I think)
+
+%Schuurman & Southey propose three measures of effectiveness for local search (depth, mobility, and coverage):[2]
+%
+%    depth: the cost of the current (best) solution;
+%    mobility: the ability to rapidly move to different areas of the search space (whilst keeping the cost low);
+%    coverage: how systematically the search covers the search space, the maximum distance between any unexplored assignment and all visited assignments.
+
+
+\subsection{Evaluation of Agents}

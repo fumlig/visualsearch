@@ -1,28 +1,34 @@
-import os
-# switch to "osmesa" or "egl" before loading pyrender
-#os.environ["PYOPENGL_PLATFORM"] = "egl"
-
+import cv2 as cv
 import numpy as np
 import pyrender
 from pydelatin import Delatin
+import trimesh
 from gym_search.generators import TerrainGenerator
+from gym_search.palette import pick_color, EARTH_TOON
 
 generator = TerrainGenerator((256, 256), 3)
 terrain = generator.terrain(0).astype(np.float32)
 
-tin = Delatin(terrain)
+amplitude = 50
 
-# generate mesh
-mesh = pyrender.Mesh.from_points(tin.triangles)
+tin = Delatin(terrain*amplitude)
+colors = pick_color(tin.vertices, EARTH_TOON)
+
+print(colors)
+
+
+#mesh = Mesh(tin.vertices, [("triangle", tin.triangles)])
+tm = trimesh.Trimesh(tin.vertices, tin.triangles)
+tm.visual.face_colors = trimesh.visual.color.vertex_to_face_color(colors, tin.triangles)
+
+mesh = pyrender.Mesh.from_trimesh(tm, smooth=False)
 # smooth=False)
 
 # compose scene
-scene = pyrender.Scene(ambient_light=[.1, .1, .3], bg_color=[0, 0, 0])
+scene = pyrender.Scene(ambient_light=[0.02, 0.02, 0.02, 1.0], bg_color=[0, 0, 0])
 camera = pyrender.PerspectiveCamera( yfov=np.pi / 3.0)
-light = pyrender.DirectionalLight(color=[1,1,1], intensity=2e3)
 
 scene.add(mesh, pose=np.eye(4))
-scene.add(light, pose=np.eye(4))
 #scene.add(camera)
 
 # render scene

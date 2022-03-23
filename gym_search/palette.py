@@ -3,6 +3,7 @@ from gym_search.utils import lerp
 
 def pick_color(c, palette):
     c = np.array(c)
+    c /= c.max()
     i = lerp(0, len(palette)-1, c).astype(int)
     p = np.array(palette, dtype=np.uint8)
     return p[i]

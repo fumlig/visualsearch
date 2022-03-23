@@ -17,8 +17,10 @@
 
 In this chapter, the method used is described.
 Section \ref{sec:problem} formalizes the problem solved.
-Section \ref{sec:environment} details the environment used to train and test an agent.
-Section \ref{sec:algorithm} describes the algorithm used to train the agent.
+Section \ref{sec:environment} details the environment used to evaluate solutions.
+Section \ref{sec:baseline} describes the baseline learning method.
+Section \ref{sec:approach} describes the approach used to solve the problem with a learning agent.
+Section \ref{sec:experiments} describes the experiments conducted to answer research questions \ref{itm:rq2} and \ref{itm:rq3}.
 
 \section{Problem Statement}
 \label{sec:problem}
@@ -85,13 +87,15 @@ Targets are 1x1 pixels in the red channel.
 The locations of the targets are randomized weighted by the height of the Gaussian kernels.
 This means that the more intense the blue channel, the higher the probability of a target.
 The idea with this environment is to test that the method learns what we want it to learn.
+It is easy to determine whether the agent acts well in this environment.
+Our feeling is that this is something that previous similar works has not done. % cite
 
 \begin{figure}
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
     %\vspace*{-1cm}
-    \caption{Gaussian environment.}
+    \caption{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
 \end{figure}
 
 % environment 2: medium, procedural and configurable
@@ -101,17 +105,18 @@ Gradient noise is generated and used as a height map.
 The height map determines the color of the terrain.
 The height also correlates to the probability of targets.
 Specifically, targets are located between shores and mountain bases.
+This environment simulates a UAV search-and-rescue scenario.
 
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption{Terrain environment.}
+    \caption{Second environment. Terrain seen from above with ocean, }
 \end{figure}
 
 % environment 3: hard, realistic
-The third environment\dots
+The third environment is a three-dimensional version of the second one.
 % 3D, or photos
 
 
@@ -119,9 +124,20 @@ The third environment\dots
 % should still apply to arbitrarily many dimensions
 % assuming the existence of a suitable feature extractor
 
+\section{Baseline}
+\label{sec:baseline}
 
 \section{Approach}
-\label{sec:algorithm}
+\label{sec:approach}
+
+% should we rescale to 84x84 instead?
+
+% https://www.reddit.com/r/reinforcementlearning/comments/ogwct6/how_to_deal_with_catastrophic_forgetting/
+% hopefully reward normalization fixes it
+% someone here does not recommend to clip value loss 
+
+% https://arxiv.org/pdf/2006.05990.pdf
+% cite this one...
 
 % trade-off between end-to-end with RNN and modular system with explicit components, like memory.
 
@@ -160,7 +176,7 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 % could be multiple channels for view as well
 % maybe call them "global" and "local"
 
-\section{Architecture}
+\subsection{Architecture}
 
 % resnets?
 % https://efficientdl.com/how-to-train-a-resnet-efficiently/
@@ -187,13 +203,10 @@ Finally, both the policy and the value head are two-layer MLPs.
 % and then something for a belief state
 % finally, what is the idea behind policy and value (should be in theory instead)
 
-\section{Implementation}
-
-The environment is implemented with Gym~\cite{gym}, and the agent is implemented with PyTorch~\cite{pytorch}. 
-
 % we could give some pseudocode here
 
 \section{Experiments}
+\label{sec:experiments}
 
 The first environment was used to determine a good observation space.
 By just observing the current window, the agent can never learn a suitable policy to solve the problem.
@@ -201,7 +214,7 @@ This is because it cannot distinguish between equal windows at different locatio
 Experiments are run with several additional observation types: window position, ...
 Results of these experiments are presented for this environment only.
 
-The agent was trained using the algorithm described in Section \ref{sec:algorithm} for 100 million time steps in all three environments using PPO, PPG and A2C.
+The agent was trained using the algorithm described in Section \ref{sec:approach} for 100 million time steps in all three environments using PPO, PPG and A2C.
 Hyperparameters are tuned with random search separately for each environment.
 For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
 The agent was trained and tested on the full distribution of environments.
@@ -222,6 +235,15 @@ All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeFor
 For each experiment, we report the mean return and episode length over time during training.
 We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
 As per [rlliable], we report results across multiple seeds.
+
+
+\section{Implementation}
+
+The environment is implemented with Gym~\cite{gym}, and the agent is implemented with PyTorch~\cite{pytorch}.
+Proximal policy optimization was implemented following the official implementation by OpenAI.
+Some necessary modifications were made to allow for recurrent policies.
+% a little short...
+
 
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights

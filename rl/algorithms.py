@@ -18,6 +18,7 @@ class Algorithm:
     def parse_arguments(args):
         raise NotImplementedError
 
+
 class ProximalPolicyOptimization(Algorithm):
     def __init__(
         self,

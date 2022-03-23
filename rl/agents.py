@@ -29,6 +29,14 @@ class Agent(nn.Module):
         raise NotImplementedError
 
 
+class RandomAgent(Agent):
+    def __init__(self, env):
+        self.action_space = env.action_space
+
+    def predict(self, _obs, state, **_kwargs):
+        return self.action_space.sample(), state
+
+
 class SearchAgent(Agent):
     """
     Our method.
@@ -127,7 +135,7 @@ class MemoryAgent(Agent):
         assert self.observation_space.get("image") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.features_dim, 256)
+        self.lstm = nn.LSTM(self.cnn.features_dim, 256, num_layers=1)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -165,12 +173,4 @@ class MemoryAgent(Agent):
         v = self.value(h)
 
         return pi, v, s
-
-
-class RandomAgent():
-    def __init__(self, env):
-        self.action_space = env.action_space
-
-    def predict(self, _obs):
-        return self.action_space.sample()
 

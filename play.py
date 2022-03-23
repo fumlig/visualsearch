@@ -25,7 +25,8 @@ WINDOW_SIZE = (640, 640)
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("env_id", type=str)
+    parser.add_argument("environment", type=str)
+    parser.add_argument("--agent", type=str)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--model", type=str)
@@ -48,7 +49,7 @@ if __name__ == "__main__":
         #gym_search.wrappers.LastReward
     ]
 
-    env = gym.make(args.env_id)
+    env = gym.make(args.environment)
     for wrapper in wrappers:
         env = wrapper(env)
 
@@ -62,6 +63,9 @@ if __name__ == "__main__":
         th.manual_seed(args.seed)
         env.seed(args.seed)
 
+    if args.agent is not None:
+        agent = rl.agent(args.agent)(env)
+
     if args.model:
         print(f"loading {args.model}")
         agent = th.load(args.model).to(device)
@@ -70,7 +74,7 @@ if __name__ == "__main__":
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
-    cv.namedWindow(args.env_id, cv.WINDOW_AUTOSIZE)
+    cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
 
     for ep in range(args.episodes):
 
@@ -100,7 +104,7 @@ if __name__ == "__main__":
                 mem = cv.cvtColor(mem, cv.COLOR_BGR2RGB)
                 img = np.hstack((img, mem))
 
-            cv.imshow(args.env_id, img)	
+            cv.imshow(args.environment, img)	
 
             key = cv.waitKey(args.delay)
 

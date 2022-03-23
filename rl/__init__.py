@@ -1,5 +1,5 @@
 from rl.algorithms import ProximalPolicyOptimization
-from rl.agents import Agent, SearchAgent, MemoryAgent, KingAgent
+from rl.agents import Agent, SearchAgent, MemoryAgent, ImpalaAgent
 
 
 ALGORITHMS = {
@@ -8,6 +8,7 @@ ALGORITHMS = {
 
 AGENTS = {
     "our": SearchAgent,
+    "impala": ImpalaAgent
 }
 
 

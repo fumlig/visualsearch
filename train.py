@@ -29,7 +29,7 @@ add pretty plotting (yield info from learn?)
 
 SEED = 0
 TOT_TIMESTEPS = int(25e6)
-NUM_ENVS = 64 # also a hyperparameter...
+NUM_ENVS = 64 # 64 in procgen
 HPARAMS = dict(
     learning_rate=5e-4,
     num_steps=256, # 64 seems to work fine, it is recommended to have it be a lot smaller than episode length...

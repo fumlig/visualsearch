@@ -169,8 +169,8 @@ class ImpalaCNN(nn.Module):
 
             self.conv = nn.Conv2d(in_channels=self.input_shape[0], out_channels=self.out_channels, kernel_size=3, padding=1)
             
-            self.res_block0 = self.ResidualBlock(self.out_channels)
-            self.res_block1 = self.ResidualBlock(self.out_channels)
+            self.res_block0 = ImpalaCNN.ResidualBlock(self.out_channels)
+            self.res_block1 = ImpalaCNN.ResidualBlock(self.out_channels)
 
         def forward(self, x):
             x = self.conv(x)
@@ -185,7 +185,7 @@ class ImpalaCNN(nn.Module):
             return (self.out_channels, (h + 1) // 2, (w + 1) // 2)
 
     def __init__(self, obs_space, features_dim=256):
-        super().__init__(self)
+        super().__init__()
 
         h, w, c = obs_space.shape
         shape = (c, h, w)
@@ -193,7 +193,7 @@ class ImpalaCNN(nn.Module):
         convs = []
         
         for out_channels in [16, 32, 32]:
-            conv_seq = self.ConvSequence(shape, out_channels)
+            conv_seq = ImpalaCNN.ConvSequence(shape, out_channels)
             shape = conv_seq.get_output_shape()
             convs.append(conv_seq)
 

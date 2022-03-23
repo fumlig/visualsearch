@@ -74,9 +74,9 @@ class SearchAgent(Agent):
             return pi.sample().item(), state
 
 
-class KingAgent(Agent):
+class ImpalaAgent(Agent):
     """
-    Our method.
+    Two impala resnets.
     """
 
     def __init__(self, envs):

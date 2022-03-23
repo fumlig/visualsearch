@@ -121,6 +121,29 @@ class ImpalaAgent(Agent):
             return pi.sample().item(), state
 
 
+class ImageAgent(Agent):
+    def __init__(self, envs):
+        super().__init__(envs)
+        assert isinstance(self.observation_space, gym.spaces.Dict)
+        assert self.observation_space.get("image") is not None
+
+        self.cnn = NatureCNN(self.observation_space["image"])        
+        self.policy = MLP(self.cnn.features_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.cnn.features_dim, 1, out_gain=1.0)
+
+    def forward(self, obs, state, **kwargs):
+        x = obs["image"]
+        x = preprocess_image(x)
+
+        h = self.cnn(x)
+        
+        logits = self.policy(h)
+        pi = Categorical(logits=logits)
+        v = self.value(h)
+
+        return pi, v, state
+
+
 
 class MemoryAgent(Agent):
     """
@@ -166,11 +189,11 @@ class MemoryAgent(Agent):
         x = preprocess_image(x)
         
         h = self.cnn(x)
-        h, s = self.remember(h, state, done)
+        h, state = self.remember(h, state, done)
         
         logits = self.policy(h)
         pi = Categorical(logits=logits)
         v = self.value(h)
 
-        return pi, v, s
+        return pi, v, state
 

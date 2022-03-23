@@ -320,6 +320,8 @@ Mnih et al. (2016)~\cite{mnih_asynchronous_2016} use a recurrent policy with onl
 The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM cells after the final hidden layer.
 % https://aihabitat.org/challenge/2020/#task-1-pointnav
 
+% https://ieeexplore.ieee.org/document/9102361
+
 % \subsection{Object Navigation}
 
 % https://aihabitat.org/challenge/2020/#task-2-objectnav
@@ -342,6 +344,10 @@ Planning in this fashion s
 % has a list of baselines
 % among them is an lstm baseline
 
+Object (Goal) Navigation bears resemblance to the task. 
+% evaluation:
+% https://arxiv.org/pdf/1807.06757.pdf
+% https://arxiv.org/pdf/2006.13171.pdf
 
 \subsection{Generalization in Deep Reinforcement Learning}
 
@@ -355,9 +361,9 @@ Planning in this fashion s
 
 % how do they handle training and test set?
 
-Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
+Kobbe et al. (2020)~\cite{cobbe_procgen_2020} study generalization in deep RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
 
-
+Zhang et al. (2018)~\cite{zhang_overfitting_2018} study overfitting in deep RL.
 
 \subsection{Local Search}
 % Artificial Intelligence - A modern approach
@@ -397,3 +403,18 @@ Kobbe et al. (2020)~\cite{} study generalization in RL. They introduce a benchma
 
 
 \subsection{Evaluation of Agents}
+
+Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents.
+They...
+
+Batra et al. (2020)~\cite{batra_evaluation_2020}
+
+% make point of following these in method
+A problem in RL is reproducibility.
+There is often non-determinism, both in the methods and environments used.
+This has meant that reproducing state-of-the-art deep RL results is difficult.~\cite{henderson_matters_2018}
+Henderson et al. (2018) suggest to make future results in deep RL more reproducible.
+% what do they find
+
+A similar work by Agarwal et al. (2022)~\cite{agarwal_rlliable_2022} criticises the heavy use of point estimates of aggregate performance.
+They advocate for a set of performance metrics that take uncertainty in results into account. 

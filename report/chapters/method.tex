@@ -81,6 +81,9 @@ Since viewing a window twice is redundant, such actions are punished by setting 
 If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
 When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
 
+Averaged over all possible samples, the probability of targets should be uniform over the scene.
+% to make comparison with exhaustive search fair
+
 % environment 1: easy, understandable
 The first environment is the simplest environment. 
 The scene is a two-dimensional discrete Euclidean space.

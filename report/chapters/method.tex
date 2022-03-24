@@ -64,7 +64,10 @@ All scenes are assumed to be static in that the actions of the agent do not affe
 
 % observations, actions and rewards
 The scenes of each environment are discretized into a grid.
-We use the same action space, observation space and reward signal for all environments.
+We use the same action space, reward signal for all environments.
+\(\mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace\)
+\(\mathcal{R(s, a)} = \dots\).
+The observation space always includes the currently visible region of the environment, an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\).
 % reward inspired by Tabu Search?
 % for multiple targets, give reward for moving towards closest target
 % when to stop with multiple targets? automatically when all are found?
@@ -189,6 +192,8 @@ The network is split into three main section: the feature extraction, the shared
 Like Mnih et al., we use a CNN~\cite{} for feature extraction.
 The shared network consists of an LSTM~\cite{hochreiter}.
 Finally, both the policy and the value head are two-layer MLPs.
+
+In order to be able to use the same extractor for all environments we resize the RGB image to \(64 \times 64\) pixels.
 
 % Actor critic
 

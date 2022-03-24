@@ -22,5 +22,6 @@ Furthermore, increasing the number of weights in the neural network made it more
 
 We find that the hyperparameters from [procgen] perform well, especially when the number of environments is large.
 
+Also, proximal policy optimization was unstable without reward normalization. % Discussion: We hypothesize that this is because...
 
 This coupled with a sparse reward signal led to many cases where the agent converged towards a poor local optimum (or perhaps never converged at all).

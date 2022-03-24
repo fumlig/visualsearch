@@ -72,7 +72,7 @@ if __name__ == "__main__":
     parser.add_argument("algorithm", type=str, choices=rl.ALGORITHMS.keys())
     parser.add_argument("agent", type=str, choices=rl.AGENTS.keys())
 
-    parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
+    parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
     parser.add_argument("--deterministic", action="store_true")
@@ -97,7 +97,9 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        gym_search.wrappers.ExplicitMemory
+        gym_search.wrappers.ExplicitMemory,
+        gym_search.wrappers.LastAction,
+        gym_search.wrappers.LastReward,
     ]
 
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers)
@@ -114,6 +116,9 @@ if __name__ == "__main__":
 
     if args.model:
         agent = th.load(args.model)
+
+    if args.name is None:
+        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().isoformat()}"
 
     writer = SummaryWriter(f"logs/{args.name}")
 

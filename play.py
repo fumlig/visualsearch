@@ -83,6 +83,7 @@ if __name__ == "__main__":
 
         if agent is not None:
             state = agent.initial(1)
+            state = (state[0].to(device), state[1].to(device))
 
         if args.verbose:
             points = [env.view.pos] + [target.pos for target in env.targets]
@@ -113,7 +114,10 @@ if __name__ == "__main__":
             else:
                 with th.no_grad():
                     obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                    act, state = agent.predict(obs, state, deterministic=args.deterministic)
+                    act, state = agent.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
+
+            if act == env.Action.TRIGGER:
+                stats[ep]["triggers"] += 1
 
             if args.verbose:
                 step_begin = process_time()

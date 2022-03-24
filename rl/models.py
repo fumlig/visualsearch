@@ -36,7 +36,7 @@ class NatureCNN(nn.Module):
     # Mnih, Volodymyr, et al.
     # "Human-level control through deep reinforcement learning."
     
-    def __init__(self, observation_space, features_dim=512):
+    def __init__(self, observation_space, features_dim=256):
         super().__init__()
         assert isinstance(observation_space, gym.spaces.Box)
         

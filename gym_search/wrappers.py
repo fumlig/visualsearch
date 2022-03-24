@@ -66,7 +66,7 @@ class LastAction(gym.ObservationWrapper):
         for key, space in self.env.observation_space.items():
             self.observation_space[key] = space
         
-        self.observation_space["last_action"] = self.space_func()
+        self.observation_space["last_action"] = gym.spaces.Discrete(self.env.action_space.n)
     
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
@@ -75,7 +75,7 @@ class LastAction(gym.ObservationWrapper):
         return obs, reward, done, info
 
     def reset(self, **kwargs):
-        self.last_action = None
+        self.last_action = 0
         if kwargs.get("return_info", False):
             obs, info = self.env.reset(**kwargs)
             return self.observation(obs), info
@@ -97,16 +97,16 @@ class LastReward(gym.ObservationWrapper):
         for key, space in self.env.observation_space.items():
             self.observation_space[key] = space
         
-        self.observation_space["last_reward"] = self.space_func()
+        self.observation_space["last_reward"] = gym.spaces.Box(*self.env.reward_range, (1,))
     
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         obs = self.observation(obs)
-        self.last_reward = reward
+        self.last_reward = np.array([reward])
         return obs, reward, done, info
 
     def reset(self, **kwargs):
-        self.last_reward = None
+        self.last_reward = np.array([0.0])
         if kwargs.get("return_info", False):
             obs, info = self.env.reset(**kwargs)
             return self.observation(obs), info

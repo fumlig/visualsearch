@@ -144,14 +144,25 @@ Approximate solutions are more common, where the agent usually maintains an inte
 
 % belief state
 % markov property
+% the need for memory
 
 \subsection{Policies and Value Functions}
 
 Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state.
 \cite{sutton_reinforcement_2018}
 
+% introduce the policy and value function
+% connect back to neural networks (or do that in deep reinforcement learning)
+% cover action-value function? (Q-functions)
+
 \subsection{Exploration and Exploitation Trade-off}
 
+\subsection{Common Algorithms}
+
+% https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
+
+% include pseudocode
+% clearly motivate which ones are good and bad
 
 \section{Related Work}
 
@@ -163,7 +174,9 @@ A long-standing challenge in RL is to learn good policies from high-dimensional 
 Mnih et al. (2013)~\cite{mnih_atari_2013} address this by combining deep learning with RL.
 A CNN is trained to estimate the 
 
-Mnih et al. (2015)~\cite{mnih_human_2015}\dots % real breakthrough, human level control, origin of NatureCNN
+Mnih et al. (2015)~\cite{mnih_human_2015}\dots
+% real breakthrough, human level control, origin of NatureCNN
+% or is it from the 2013 paper?
 % 84x84x4 input image produced by preprocessing map
 % 1st: 32 filters of 8x8 with stride 4 and ReLU
 % 2nd: 64 filters of 4x4 with stride 2 and ReLU
@@ -348,15 +361,16 @@ Chaplot et al. (2020)~\cite{chaplot_semantic_2020} build on the idea of an expli
 
 \subsection{Overfitting and Generalization in Deep Reinforcement Learning}
 
+% first introduce the reason why generalization is important
 % reality is dynamic
 % agents need to be robust to variation
 % capability to transfer and adapt to unseen but similar environments
 % most current research works on benchmarks that do not test this (MuJoCo, Arcade learning environment)
 
+Kirk et al. (2021)~\cite{kirk_survey_2022} survey generalization in deep RL.
+
 % refer to survey
 % specifically IID (train_dist = test_dist) and OOD environments (train_dist != test_dist)
-
-% how do they handle training and test set?
 
 While deep neural networks have proved to be effective function approximators for RL, they are also prone to \textit{overfitting}.
 High-capacity models trained over a long time may memorize the distribution seen during training rather than general patterns.
@@ -385,8 +399,13 @@ Hessel et al. (2019)~\cite{hessel_inductive_2019} investigate the trade-off betw
 Stronger biases can lead to faster learning, while weaker biases potentially lead to more general agents.
 They find that learned solutions are competitive with domain heuristics, and that they seem to be better at generalizing to unseen domains.
 For this reason, they argue for removing biases determined with domain knowledge in future research.
-% what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
 
+% what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
+% it is essentially reward shaping.
+% they introduce human bias into the possible policies.
+% the agent may fail to discover optimal policies.
+% the problem with our reward is that I am not sure it will lead to minimizing time.
+% should run experiments with time penalty and trigger reward again...
 
 % in this spirit
 Cobbe et al. (2020)~\cite{cobbe_procgen_2020} introduce a benchmark for sample efficiency and generalization in RL.

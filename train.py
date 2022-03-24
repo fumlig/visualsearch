@@ -99,7 +99,7 @@ if __name__ == "__main__":
         gym_search.wrappers.ResizeImage,
         gym_search.wrappers.ExplicitMemory,
         gym_search.wrappers.LastAction,
-        gym_search.wrappers.LastReward,
+        #gym_search.wrappers.LastReward,
     ]
 
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         agent = th.load(args.model)
 
     if args.name is None:
-        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().isoformat()}"
+        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
 
     writer = SummaryWriter(f"logs/{args.name}")
 

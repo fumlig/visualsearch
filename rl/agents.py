@@ -223,10 +223,10 @@ class BaselineAgent(Agent):
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("last_action") is not None
-        assert self.observation_space.get("last_reward") is not None
+        #assert self.observation_space.get("last_reward") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.features_dim + self.action_space.n + 1, 256, num_layers=1)
+        self.lstm = nn.LSTM(self.cnn.features_dim + self.action_space.n, 256, num_layers=1)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -240,7 +240,7 @@ class BaselineAgent(Agent):
         xs = []
         xs.append(self.cnn(preprocess_image(obs["image"])))
         xs.append(F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n))
-        xs.append(obs["last_reward"])
+        #xs.append(obs["last_reward"])
 
         # the authors additionally use relative velocity, but since we have such low-resolution discrete actions the agent should be able to learn this
         # we help it by also encoding the action as a one-hot vector

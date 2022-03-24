@@ -76,7 +76,7 @@
 \pgfsetbuttcap%
 \pgfsetmiterjoin%
 \pgfsetlinewidth{0.752812pt}%
-\definecolor{currentstroke}{rgb}{1.000000,0.000000,0.000000}%
+\definecolor{currentstroke}{rgb}{0.768627,0.305882,0.321569}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{{2.775000pt}{1.200000pt}}{0.000000pt}%
 \pgfpathmoveto{\pgfqpoint{2.935301in}{1.543856in}}%
@@ -98,7 +98,7 @@
 \pgfsetbuttcap%
 \pgfsetmiterjoin%
 \pgfsetlinewidth{0.752812pt}%
-\definecolor{currentstroke}{rgb}{1.000000,0.000000,0.000000}%
+\definecolor{currentstroke}{rgb}{0.768627,0.305882,0.321569}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{{2.775000pt}{1.200000pt}}{0.000000pt}%
 \pgfpathmoveto{\pgfqpoint{1.621534in}{2.706034in}}%
@@ -120,7 +120,7 @@
 \pgfsetbuttcap%
 \pgfsetmiterjoin%
 \pgfsetlinewidth{0.752812pt}%
-\definecolor{currentstroke}{rgb}{1.000000,0.000000,0.000000}%
+\definecolor{currentstroke}{rgb}{0.768627,0.305882,0.321569}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{{2.775000pt}{1.200000pt}}{0.000000pt}%
 \pgfpathmoveto{\pgfqpoint{2.493168in}{2.478651in}}%

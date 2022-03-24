@@ -101,7 +101,7 @@ class TerrainGenerator(Generator):
 
     @lru_cache(maxsize=1024)
     def terrain(self, seed):
-        exp = self.random.uniform(0.1, 2.0)
+        exp = self.random.uniform(0.5, 5)
         noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
         terrain = normalize(noise)**exp
         return terrain

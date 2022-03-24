@@ -174,6 +174,29 @@
   file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
 }
 
+@article{mirowski_navigate_2017,
+  title        = {Learning to Navigate in Complex Environments},
+  url          = {http://arxiv.org/abs/1611.03673},
+  abstractnote = {Learning to navigate in complex environments with dynamic elements is an important milestone in developing AI agents. In this work we formulate the navigation question as a reinforcement learning problem and show that data efficiency and task performance can be dramatically improved by relying on additional auxiliary tasks leveraging multimodal sensory inputs. In particular we consider jointly learning the goal-driven reinforcement learning problem with auxiliary depth prediction and loop closure classification tasks. This approach can learn to navigate from raw sensory input in complicated 3D mazes, approaching human-level performance even under conditions where the goal location changes frequently. We provide detailed analysis of the agent behaviour, its ability to localise, and its network activity dynamics, showing that the agent implicitly learns key navigation abilities.},
+  note         = {arXiv: 1611.03673},
+  journal      = {arXiv:1611.03673 [cs]},
+  author       = {Mirowski, Piotr and Pascanu, Razvan and Viola, Fabio and Soyer, Hubert and Ballard, Andrew J. and Banino, Andrea and Denil, Misha and Goroshin, Ross and Sifre, Laurent and Kavukcuoglu, Koray and Kumaran, Dharshan and Hadsell, Raia},
+  year         = {2017},
+  month        = {Jan}
+}
+
+@article{dhiman_critical_2019,
+  title        = {A Critical Investigation of Deep Reinforcement Learning for Navigation},
+  url          = {http://arxiv.org/abs/1802.02274},
+  abstractnote = {The navigation problem is classically approached in two steps: an exploration step, where map-information about the environment is gathered; and an exploitation step, where this information is used to navigate efficiently. Deep reinforcement learning (DRL) algorithms, alternatively, approach the problem of navigation in an end-to-end fashion. Inspired by the classical approach, we ask whether DRL algorithms are able to inherently explore, gather and exploit map-information over the course of navigation. We build upon Mirowski et al. [2017] work and introduce a systematic suite of experiments that vary three parameters: the agent’s starting location, the agent’s target location, and the maze structure. We choose evaluation metrics that explicitly measure the algorithm’s ability to gather and exploit map-information. Our experiments show that when trained and tested on the same maps, the algorithm successfully gathers and exploits map-information. However, when trained and tested on different sets of maps, the algorithm fails to transfer the ability to gather and exploit map-information to unseen maps. Furthermore, we find that when the goal location is randomized and the map is kept static, the algorithm is able to gather and exploit map-information but the exploitation is far from optimal. We open-source our experimental suite in the hopes that it serves as a framework for the comparison of future algorithms and leads to the discovery of robust alternatives to classical navigation methods.},
+  note         = {arXiv: 1802.02274},
+  journal      = {arXiv:1802.02274 [cs]},
+  author       = {Dhiman, Vikas and Banerjee, Shurjo and Griffin, Brent and Siskind, Jeffrey M. and Corso, Jason J.},
+  year         = {2019},
+  month        = {Jan}
+}
+
+
 @article{hessel_inductive_2019,
   title        = {On Inductive Biases in Deep Reinforcement Learning},
   url          = {http://arxiv.org/abs/1907.02908},
@@ -348,6 +371,18 @@
   pages        = {8476–8484}
 }
 
+@article{chaplot_semantic_2020,
+  title        = {Object Goal Navigation using Goal-Oriented Semantic Exploration},
+  url          = {http://arxiv.org/abs/2007.00643},
+  abstractnote = {This work studies the problem of object goal navigation which involves navigating to an instance of the given object category in unseen environments. End-to-end learning-based navigation methods struggle at this task as they are ineffective at exploration and long-term planning. We propose a modular system called, `Goal-Oriented Semantic Exploration’ which builds an episodic semantic map and uses it to explore the environment efficiently based on the goal object category. Empirical results in visually realistic simulation environments show that the proposed model outperforms a wide range of baselines including end-to-end learning-based methods as well as modular map-based methods and led to the winning entry of the CVPR-2020 Habitat ObjectNav Challenge. Ablation analysis indicates that the proposed model learns semantic priors of the relative arrangement of objects in a scene, and uses them to explore efficiently. Domain-agnostic module design allow us to transfer our model to a mobile robot platform and achieve similar performance for object goal navigation in the real-world.},
+  note         = {arXiv: 2007.00643},
+  journal      = {arXiv:2007.00643 [cs]},
+  author       = {Chaplot, Devendra Singh and Gandhi, Dhiraj and Gupta, Abhinav and Salakhutdinov, Ruslan},
+  year         = {2020},
+  month        = {Jul}
+}
+
+
 @article{hochreiter_schmidhuber_lstm_1997,
   title        = {Long Short-Term Memory},
   volume       = {9},
@@ -372,6 +407,18 @@
   year         = {2016},
   month        = {Jun}
 }
+
+@article{cobbe_generalization_2019,
+  title        = {Quantifying Generalization in Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1812.02341},
+  abstractnote = {In this paper, we investigate the problem of overfitting in deep reinforcement learning. Among the most common benchmarks in RL, it is customary to use the same environments for both training and testing. This practice offers relatively little insight into an agent’s ability to generalize. We address this issue by using procedurally generated environments to construct distinct training and test sets. Most notably, we introduce a new environment called CoinRun, designed as a benchmark for generalization in RL. Using CoinRun, we find that agents overfit to surprisingly large training sets. We then show that deeper convolutional architectures improve generalization, as do methods traditionally found in supervised learning, including L2 regularization, dropout, data augmentation and batch normalization.},
+  note         = {arXiv: 1812.02341},
+  journal      = {arXiv:1812.02341 [cs, stat]},
+  author       = {Cobbe, Karl and Klimov, Oleg and Hesse, Chris and Kim, Taehoon and Schulman, John},
+  year         = {2019},
+  month        = {Jul}
+}
+
 
 @article{gupta_cognitive_2019,
   title        = {Cognitive Mapping and Planning for Visual Navigation},

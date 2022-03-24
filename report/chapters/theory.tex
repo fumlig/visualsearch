@@ -302,11 +302,9 @@ A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object re
 They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
 Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
 
-
 % CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
 
 % CV material: different in that the object is assumed to be visible
-
 
 \subsection{Visual Attention}
 
@@ -316,25 +314,22 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 
 \subsection{Navigation}
 
-% Point navigation, Object navigation, semantic navigation
+The task we consider bears resemblance to many navigation tasks in robotics.
+Point navigation is the task of \dots
+Object navigation is the task of \dots
+Semantic navigation is the task of \dots
 
 Mnih et al. (2016)~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
 3D labyrinths are randomly generated, and an agent is tasked with finding objects in them.
 The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM cells after the final hidden layer.
+
 % https://aihabitat.org/challenge/2020/#task-1-pointnav
-
-% https://ieeexplore.ieee.org/document/9102361
-
-% \subsection{Object Navigation}
-
 % https://aihabitat.org/challenge/2020/#task-2-objectnav
 % https://arxiv.org/pdf/1709.06158.pdf
+% https://ieeexplore.ieee.org/document/9102361
 
-% \subsection{Semantic Navigation}
 
-% https://arxiv.org/pdf/2007.00643.pdf
-% proposes a semantic map which is apparently very similar to my proposed method...
-% "explicit episodic (semantic) memory"
+Mirowski et al. (2017)~\cite{mirowski_navigate_2017}...
 
 Henriques and Vedaldi (2018)~\cite{henriques_vedaldi_2018} use a spatial memory...
 
@@ -347,12 +342,11 @@ Planning in this fashion s
 % has a list of baselines
 % among them is an lstm baseline
 
-Object (Goal) Navigation bears resemblance to the task. 
-% evaluation:
-% https://arxiv.org/pdf/1807.06757.pdf
-% https://arxiv.org/pdf/2006.13171.pdf
+Dhiman et al. (2019)~\cite{dhiman_critical_2019} critically investigate deep RL for navigation\dots
 
-\subsection{Generalization in Deep Reinforcement Learning}
+Chaplot et al. (2020)~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
+
+\subsection{Overfitting and Generalization in Deep Reinforcement Learning}
 
 % reality is dynamic
 % agents need to be robust to variation
@@ -383,61 +377,38 @@ The effectiveness of stochastic-based evaluation depends on the properties of th
 Agents could still learn to overfit to random training data. 
 For this reason, they recommend isolation of statistically tied training and test sets.
 
+In a similar spirit, Cobbe et al. (2019)~\cite{cobbe_generalization_2019} construct distinct training and test sets to measure generalization in RL.
+They find that agents can overfit to surprisingly large training sets, and that deep convolutional architectures can improve generalization.
+Methods from supervised learning, like L2 regularization, dropout, data augmentation and batch normalization are also shown to aid with generalization.
+
 Hessel et al. (2019)~\cite{hessel_inductive_2019} investigate the trade-off between generality and performance from the perspective of inductive biases.
 Stronger biases can lead to faster learning, while weaker biases potentially lead to more general agents.
 They find that learned solutions are competitive with domain heuristics, and that they seem to be better at generalizing to unseen domains.
 For this reason, they argue for removing biases determined with domain knowledge in future research.
 % what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
 
+
 % in this spirit
-Kobbe et al. (2020)~\cite{cobbe_procgen_2020} study generalization in deep RL.
-They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
-
-
-
-\subsection{Local Search}
-% Artificial Intelligence - A modern approach
-% Page 134
-% Should cover belief states?
-% ~\cite{russell_artificial_2021}
-% https://en.wikipedia.org/wiki/Tabu_search
-% tabu search is mentioned in russel
-% could be interesting as inspiration for reward function
-% and also observation space
-% bring in "learning to optimize" here
-
-% an annealed step size could be interesting...
-% more general and there are certainly parallells to other areas.
-
-% local search
-% https://en.wikipedia.org/wiki/Local_search_(optimization)
-% https://en.wikipedia.org/wiki/Guided_Local_Search
-
-% "learning local search"
-% "learning to optimize"
-
-% Reinforcement Learning for Local Search
-
-% Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics
-% Levine et al. seems like it could be useful
-
-% we could draw inspiration from multiple local search approaches
-
-% it is essentially a combinatorial optimization problem (I think)
-
-%Schuurman & Southey propose three measures of effectiveness for local search (depth, mobility, and coverage):[2]
-%
-%    depth: the cost of the current (best) solution;
-%    mobility: the ability to rapidly move to different areas of the search space (whilst keeping the cost low);
-%    coverage: how systematically the search covers the search space, the maximum distance between any unexplored assignment and all visited assignments.
-
+Cobbe et al. (2020)~\cite{cobbe_procgen_2020} introduce a benchmark for sample efficiency and generalization in RL.
+They make use of procedural generalization to decide many parameters of the initial state of the environment.
+This forces agents to learn policies that are robust variation and avoid overfitting.
+To evaluate sample efficiency of agents in the benchmark, they train and test on the full distribution of states.
+To evaluate generalization, they fix the number of training samples and then test on held out levels.
+When an episode ends, a new sample is drawn from the training set.
+Agents may train for arbitrarily many time steps.
+The number of training samples required to generalize is dependent on the particulars and difficulty of the environment.
+The authors choose the training set size to be near the region when generalization begins to take effect.
+Empirically they find that larger model architectures improve both sample efficiency and generalization.
+Agents strongly overfit to small training sets and need many samples to generalize.
+Interestingly, training performance improves as the training set grows past a certain threshold.
+The authors attribute this to the implicit curriculum of the distribution of levels.
 
 \subsection{Evaluation of Agents}
 
 Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents.
 They...
 
-Batra et al. (2020)~\cite{batra_evaluation_2020}
+Batra et al. (2020)~\cite{batra_evaluation_2020} do something similar\dots
 
 % make point of following these in method
 A problem in RL is reproducibility.

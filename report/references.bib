@@ -174,6 +174,18 @@
   file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
 }
 
+@article{hessel_inductive_2019,
+  title        = {On Inductive Biases in Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1907.02908},
+  abstractnote = {Many deep reinforcement learning algorithms contain inductive biases that sculpt the agent’s objective and its interface to the environment. These inductive biases can take many forms, including domain knowledge and pretuned hyper-parameters. In general, there is a trade-off between generality and performance when algorithms use such biases. Stronger biases can lead to faster learning, but weaker biases can potentially lead to more general algorithms. This trade-off is important because inductive biases are not free; substantial effort may be required to obtain relevant domain knowledge or to tune hyper-parameters effectively. In this paper, we re-examine several domain-specific components that bias the objective and the environmental interface of common deep reinforcement learning agents. We investigated whether the performance deteriorates when these components are replaced with adaptive solutions from the literature. In our experiments, performance sometimes decreased with the adaptive components, as one might expect when comparing to components crafted for the domain, but sometimes the adaptive components performed better. We investigated the main benefit of having fewer domain-specific components, by comparing the learning performance of the two systems on a different set of continuous control problems, without additional tuning of either system. As hypothesized, the system with adaptive components performed better on many of the new tasks.},
+  note         = {arXiv: 1907.02908},
+  journal      = {arXiv:1907.02908 [cs, stat]},
+  author       = {Hessel, Matteo and van Hasselt, Hado and Modayil, Joseph and Silver, David},
+  year         = {2019},
+  month        = {Jul}
+}
+
+
 @article{wolfe_five_2017,
   title        = {Five factors that guide attention in visual search},
   volume       = {1},
@@ -294,17 +306,83 @@
   date        = {2021}
 }
 
-@book{goodfellow_deep_2016, place={Cambridge, MA, USA}, series={Adaptive Computation and Machine Learning series}, title={Deep Learning}, ISBN={978-0-262-03561-3}, abstractNote={An introduction to a broad range of topics in deep learning, covering mathematical and conceptual background, deep learning techniques used in industry, and research perspectives.}, publisher={MIT Press}, author={Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}, year={2016}, month={Nov}, collection={Adaptive Computation and Machine Learning series} }
+@book{goodfellow_deep_2016,
+  place        = {Cambridge, MA, USA},
+  series       = {Adaptive Computation and Machine Learning series},
+  title        = {Deep Learning},
+  isbn         = {978-0-262-03561-3},
+  abstractnote = {An introduction to a broad range of topics in deep learning, covering mathematical and conceptual background, deep learning techniques used in industry, and research perspectives.},
+  publisher    = {MIT Press},
+  author       = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
+  year         = {2016},
+  month        = {Nov},
+  collection   = {Adaptive Computation and Machine Learning series}
+}
 
-@article{kaelbling_pomdp_1998, title={Planning and acting in partially observable stochastic domains}, volume={101}, ISSN={00043702}, DOI={10.1016/S0004-3702(98)00023-X}, abstractNote={In this paper, we bring techniques from operations research to bear on the problem of choosing optimal actions in partially observable stochastic domains. We begin by introducing the theory of Markov decision processes (MDPs) and partially observable MDPs (POMDPs). We then outline a novel algorithm for solving POMDPs off line and show how, in some cases, a ﬁnite-memory controller can be extracted from the solution to a POMDP. We conclude with a discussion of how our approach relates to previous work, the complexity of ﬁnding exact solutions to POMDPs, and of some possibilities for ﬁnding approximate solutions. © 1998 Elsevier Science B.V. All rights reserved.}, number={1–2}, journal={Artificial Intelligence}, author={Kaelbling, Leslie Pack and Littman, Michael L. and Cassandra, Anthony R.}, year={1998}, month={May}, pages={99–134} }
+@article{kaelbling_pomdp_1998,
+  title        = {Planning and acting in partially observable stochastic domains},
+  volume       = {101},
+  issn         = {00043702},
+  doi          = {10.1016/S0004-3702(98)00023-X},
+  abstractnote = {In this paper, we bring techniques from operations research to bear on the problem of choosing optimal actions in partially observable stochastic domains. We begin by introducing the theory of Markov decision processes (MDPs) and partially observable MDPs (POMDPs). We then outline a novel algorithm for solving POMDPs off line and show how, in some cases, a ﬁnite-memory controller can be extracted from the solution to a POMDP. We conclude with a discussion of how our approach relates to previous work, the complexity of ﬁnding exact solutions to POMDPs, and of some possibilities for ﬁnding approximate solutions. © 1998 Elsevier Science B.V. All rights reserved.},
+  number       = {1–2},
+  journal      = {Artificial Intelligence},
+  author       = {Kaelbling, Leslie Pack and Littman, Michael L. and Cassandra, Anthony R.},
+  year         = {1998},
+  month        = {May},
+  pages        = {99–134}
+}
 
-@inproceedings{henriques_vedaldi_2018, place={Salt Lake City, UT}, title={MapNet: An Allocentric Spatial Memory for Mapping Environments}, ISBN={978-1-5386-6420-9}, url={https://ieeexplore.ieee.org/document/8578982/}, DOI={10.1109/CVPR.2018.00884}, abstractNote={Autonomous agents need to reason about the world beyond their instantaneous sensory input. Integrating information over time, however, requires switching from an egocentric representation of a scene to an allocentric one, expressed in the world reference frame. It must also be possible to update the representation dynamically, which requires localizing and registering the sensor with respect to the world reference. In this paper, we develop a differentiable module that satisﬁes such requirements, while being robust, efﬁcient, and suitable for integration in end-to-end deep networks. The module contains an allocentric spatial memory that can be accessed associatively by feeding to it the current sensory input, resulting in localization, and then updated using an LSTM or similar mechanism. We formulate efﬁcient localization and registration of sensory information as a dual pair of convolution/deconvolution operators in memory space. The map itself is a 2.5D representation of an environment storing information that a deep neural network module learns to distill from RGBD input. The result is a map that contains multi-task information, different from classical approaches to mapping such as structurefrom-motion. We present results using synthetic mazes, a dataset of hours of recorded gameplay of the classic game Doom, and the very recent Active Vision Dataset of real images captured from a robot.}, booktitle={2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition}, publisher={IEEE}, author={Henriques, Joao F. and Vedaldi, Andrea}, year={2018}, month={Jun}, pages={8476–8484} }
+@inproceedings{henriques_vedaldi_2018,
+  place        = {Salt Lake City, UT},
+  title        = {MapNet: An Allocentric Spatial Memory for Mapping Environments},
+  isbn         = {978-1-5386-6420-9},
+  url          = {https://ieeexplore.ieee.org/document/8578982/},
+  doi          = {10.1109/CVPR.2018.00884},
+  abstractnote = {Autonomous agents need to reason about the world beyond their instantaneous sensory input. Integrating information over time, however, requires switching from an egocentric representation of a scene to an allocentric one, expressed in the world reference frame. It must also be possible to update the representation dynamically, which requires localizing and registering the sensor with respect to the world reference. In this paper, we develop a differentiable module that satisﬁes such requirements, while being robust, efﬁcient, and suitable for integration in end-to-end deep networks. The module contains an allocentric spatial memory that can be accessed associatively by feeding to it the current sensory input, resulting in localization, and then updated using an LSTM or similar mechanism. We formulate efﬁcient localization and registration of sensory information as a dual pair of convolution/deconvolution operators in memory space. The map itself is a 2.5D representation of an environment storing information that a deep neural network module learns to distill from RGBD input. The result is a map that contains multi-task information, different from classical approaches to mapping such as structurefrom-motion. We present results using synthetic mazes, a dataset of hours of recorded gameplay of the classic game Doom, and the very recent Active Vision Dataset of real images captured from a robot.},
+  booktitle    = {2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  publisher    = {IEEE},
+  author       = {Henriques, Joao F. and Vedaldi, Andrea},
+  year         = {2018},
+  month        = {Jun},
+  pages        = {8476–8484}
+}
 
-@article{hochreiter_schmidhuber_lstm_1997, title={Long Short-Term Memory}, volume={9}, ISSN={0899-7667}, DOI={10.1162/neco.1997.9.8.1735}, abstractNote={Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter’s (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.}, number={8}, journal={Neural Computation}, author={Hochreiter, Sepp and Schmidhuber, Jürgen}, year={1997}, month={Nov}, pages={1735–1780} }
+@article{hochreiter_schmidhuber_lstm_1997,
+  title        = {Long Short-Term Memory},
+  volume       = {9},
+  issn         = {0899-7667},
+  doi          = {10.1162/neco.1997.9.8.1735},
+  abstractnote = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter’s (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
+  number       = {8},
+  journal      = {Neural Computation},
+  author       = {Hochreiter, Sepp and Schmidhuber, Jürgen},
+  year         = {1997},
+  month        = {Nov},
+  pages        = {1735–1780}
+}
 
+@article{brockman_gym_2016,
+  title        = {OpenAI Gym},
+  url          = {http://arxiv.org/abs/1606.01540},
+  abstractnote = {OpenAI Gym1 is a toolkit for reinforcement learning research. It includes a growing collection of benchmark problems that expose a common interface, and a website where people can share their results and compare the performance of algorithms. This whitepaper discusses the components of OpenAI Gym and the design decisions that went into the software.},
+  note         = {arXiv: 1606.01540},
+  journal      = {arXiv:1606.01540 [cs]},
+  author       = {Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
+  year         = {2016},
+  month        = {Jun}
+}
 
-
-@article{gupta_cognitive_2019, title={Cognitive Mapping and Planning for Visual Navigation}, url={http://arxiv.org/abs/1702.03920}, abstractNote={We introduce a neural architecture for navigation in novel environments. Our proposed architecture learns to map from first-person views and plans a sequence of actions towards goals in the environment. The Cognitive Mapper and Planner (CMP) is based on two key ideas: a) a unified joint architecture for mapping and planning, such that the mapping is driven by the needs of the task, and b) a spatial memory with the ability to plan given an incomplete set of observations about the world. CMP constructs a top-down belief map of the world and applies a differentiable neural net planner to produce the next action at each time step. The accumulated belief of the world enables the agent to track visited regions of the environment. We train and test CMP on navigation problems in simulation environments derived from scans of real world buildings. Our experiments demonstrate that CMP outperforms alternate learning-based architectures, as well as, classical mapping and path planning approaches in many cases. Furthermore, it naturally extends to semantically specified goals, such as “going to a chair”. We also deploy CMP on physical robots in indoor environments, where it achieves reasonable performance, even though it is trained entirely in simulation.}, note={arXiv: 1702.03920}, journal={arXiv:1702.03920 [cs]}, author={Gupta, Saurabh and Tolani, Varun and Davidson, James and Levine, Sergey and Sukthankar, Rahul and Malik, Jitendra}, year={2019}, month={Feb} }
+@article{gupta_cognitive_2019,
+  title        = {Cognitive Mapping and Planning for Visual Navigation},
+  url          = {http://arxiv.org/abs/1702.03920},
+  abstractnote = {We introduce a neural architecture for navigation in novel environments. Our proposed architecture learns to map from first-person views and plans a sequence of actions towards goals in the environment. The Cognitive Mapper and Planner (CMP) is based on two key ideas: a) a unified joint architecture for mapping and planning, such that the mapping is driven by the needs of the task, and b) a spatial memory with the ability to plan given an incomplete set of observations about the world. CMP constructs a top-down belief map of the world and applies a differentiable neural net planner to produce the next action at each time step. The accumulated belief of the world enables the agent to track visited regions of the environment. We train and test CMP on navigation problems in simulation environments derived from scans of real world buildings. Our experiments demonstrate that CMP outperforms alternate learning-based architectures, as well as, classical mapping and path planning approaches in many cases. Furthermore, it naturally extends to semantically specified goals, such as “going to a chair”. We also deploy CMP on physical robots in indoor environments, where it achieves reasonable performance, even though it is trained entirely in simulation.},
+  note         = {arXiv: 1702.03920},
+  journal      = {arXiv:1702.03920 [cs]},
+  author       = {Gupta, Saurabh and Tolani, Varun and Davidson, James and Levine, Sergey and Sukthankar, Rahul and Malik, Jitendra},
+  year         = {2019},
+  month        = {Feb}
+}
 
 
 
@@ -338,14 +416,70 @@
   file       = {IEEE Xplore Full Text PDF:/home/oslund/Zotero/storage/YYQI6JBM/Ye et al. - 2018 - Active Object Perceiver Recognition-Guided Policy.pdf:application/pdf;IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/9IX4M2IH/8593720.html:text/html}
 }
 
-@article{henderson_matters_2018, title={Deep Reinforcement Learning That Matters}, volume={32}, ISSN={2374-3468}, url={https://ojs.aaai.org/index.php/AAAI/article/view/11694}, abstractNote={In recent years, significant progress has been made in solving challenging problems across various domains using deep reinforcement learning (RL). Reproducing existing work and accurately judging the improvements offered by novel methods is vital to sustaining this progress. Unfortunately, reproducing results for state-of-the-art deep RL methods is seldom straightforward. In particular, non-determinism in standard benchmark environments, combined with variance intrinsic to the methods, can make reported results tough to interpret. Without significance metrics and tighter standardization of experimental reporting, it is difficult to determine whether improvements over the prior state-of-the-art are meaningful. In this paper, we investigate challenges posed by reproducibility, proper experimental techniques, and reporting procedures. We illustrate the variability in reported metrics and results when comparing against common baselines and suggest guidelines to make future results in deep RL more reproducible. We aim to spur discussion about how to ensure continued progress in the field by minimizing wasted effort stemming from results that are non-reproducible and easily misinterpreted.}, number={11}, journal={Proceedings of the AAAI Conference on Artificial Intelligence}, author={Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David}, year={2018}, month={Apr} }
+@article{henderson_matters_2018,
+  title        = {Deep Reinforcement Learning That Matters},
+  volume       = {32},
+  issn         = {2374-3468},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/11694},
+  abstractnote = {In recent years, significant progress has been made in solving challenging problems across various domains using deep reinforcement learning (RL). Reproducing existing work and accurately judging the improvements offered by novel methods is vital to sustaining this progress. Unfortunately, reproducing results for state-of-the-art deep RL methods is seldom straightforward. In particular, non-determinism in standard benchmark environments, combined with variance intrinsic to the methods, can make reported results tough to interpret. Without significance metrics and tighter standardization of experimental reporting, it is difficult to determine whether improvements over the prior state-of-the-art are meaningful. In this paper, we investigate challenges posed by reproducibility, proper experimental techniques, and reporting procedures. We illustrate the variability in reported metrics and results when comparing against common baselines and suggest guidelines to make future results in deep RL more reproducible. We aim to spur discussion about how to ensure continued progress in the field by minimizing wasted effort stemming from results that are non-reproducible and easily misinterpreted.},
+  number       = {11},
+  journal      = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  author       = {Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David},
+  year         = {2018},
+  month        = {Apr}
+}
 
-@article{agarwal_rlliable_2022, title={Deep Reinforcement Learning at the Edge of the Statistical Precipice}, url={http://arxiv.org/abs/2108.13264}, abstractNote={Deep reinforcement learning (RL) algorithms are predominantly evaluated by comparing their relative performance on a large suite of tasks. Most published results on deep RL benchmarks compare point estimates of aggregate performance such as mean and median scores across tasks, ignoring the statistical uncertainty implied by the use of a ﬁnite number of training runs. Beginning with the Arcade Learning Environment (ALE), the shift towards computationally-demanding benchmarks has led to the practice of evaluating only a small number of runs per task, exacerbating the statistical uncertainty in point estimates. In this paper, we argue that reliable evaluation in the few-run deep RL regime cannot ignore the uncertainty in results without running the risk of slowing down progress in the ﬁeld. We illustrate this point using a case study on the Atari 100k benchmark, where we ﬁnd substantial discrepancies between conclusions drawn from point estimates alone versus a more thorough statistical analysis. With the aim of increasing the ﬁeld’s conﬁdence in reported results with a handful of runs, we advocate for reporting interval estimates of aggregate performance and propose performance proﬁles to account for the variability in results, as well as present more robust and efﬁcient aggregate metrics, such as interquartile mean scores, to achieve small uncertainty in results. Using such statistical tools, we scrutinize performance evaluations of existing algorithms on other widely used RL benchmarks including the ALE, Procgen, and the DeepMind Control Suite, again revealing discrepancies in prior comparisons. Our ﬁndings call for a change in how we evaluate performance in deep RL, for which we present a more rigorous evaluation methodology, accompanied with an open-source library rliable2, to prevent unreliable results from stagnating the ﬁeld.}, note={arXiv: 2108.13264}, journal={arXiv:2108.13264 [cs, stat]}, author={Agarwal, Rishabh and Schwarzer, Max and Castro, Pablo Samuel and Courville, Aaron and Bellemare, Marc G.}, year={2022}, month={Jan} }
+@article{agarwal_rlliable_2022,
+  title        = {Deep Reinforcement Learning at the Edge of the Statistical Precipice},
+  url          = {http://arxiv.org/abs/2108.13264},
+  abstractnote = {Deep reinforcement learning (RL) algorithms are predominantly evaluated by comparing their relative performance on a large suite of tasks. Most published results on deep RL benchmarks compare point estimates of aggregate performance such as mean and median scores across tasks, ignoring the statistical uncertainty implied by the use of a ﬁnite number of training runs. Beginning with the Arcade Learning Environment (ALE), the shift towards computationally-demanding benchmarks has led to the practice of evaluating only a small number of runs per task, exacerbating the statistical uncertainty in point estimates. In this paper, we argue that reliable evaluation in the few-run deep RL regime cannot ignore the uncertainty in results without running the risk of slowing down progress in the ﬁeld. We illustrate this point using a case study on the Atari 100k benchmark, where we ﬁnd substantial discrepancies between conclusions drawn from point estimates alone versus a more thorough statistical analysis. With the aim of increasing the ﬁeld’s conﬁdence in reported results with a handful of runs, we advocate for reporting interval estimates of aggregate performance and propose performance proﬁles to account for the variability in results, as well as present more robust and efﬁcient aggregate metrics, such as interquartile mean scores, to achieve small uncertainty in results. Using such statistical tools, we scrutinize performance evaluations of existing algorithms on other widely used RL benchmarks including the ALE, Procgen, and the DeepMind Control Suite, again revealing discrepancies in prior comparisons. Our ﬁndings call for a change in how we evaluate performance in deep RL, for which we present a more rigorous evaluation methodology, accompanied with an open-source library rliable2, to prevent unreliable results from stagnating the ﬁeld.},
+  note         = {arXiv: 2108.13264},
+  journal      = {arXiv:2108.13264 [cs, stat]},
+  author       = {Agarwal, Rishabh and Schwarzer, Max and Castro, Pablo Samuel and Courville, Aaron and Bellemare, Marc G.},
+  year         = {2022},
+  month        = {Jan}
+}
 
-@article{anderson_evaluation_2018, title={On Evaluation of Embodied Navigation Agents}, url={http://arxiv.org/abs/1807.06757}, abstractNote={Skillful mobile operation in three-dimensional environments is a primary topic of study in Artiﬁcial Intelligence. The past two years have seen a surge of creative work on navigation. This creative output has produced a plethora of sometimes incompatible task deﬁnitions and evaluation protocols. To coordinate ongoing and future research in this area, we have convened a working group to study empirical methodology in navigation research. The present document summarizes the consensus recommendations of this working group. We discuss different problem statements and the role of generalization, present evaluation measures, and provide standard scenarios that can be used for benchmarking.}, note={arXiv: 1807.06757}, journal={arXiv:1807.06757 [cs]}, author={Anderson, Peter and Chang, Angel and Chaplot, Devendra Singh and Dosovitskiy, Alexey and Gupta, Saurabh and Koltun, Vladlen and Kosecka, Jana and Malik, Jitendra and Mottaghi, Roozbeh and Savva, Manolis and Zamir, Amir R.}, year={2018}, month={Jul} }
+@article{anderson_evaluation_2018,
+  title        = {On Evaluation of Embodied Navigation Agents},
+  url          = {http://arxiv.org/abs/1807.06757},
+  abstractnote = {Skillful mobile operation in three-dimensional environments is a primary topic of study in Artiﬁcial Intelligence. The past two years have seen a surge of creative work on navigation. This creative output has produced a plethora of sometimes incompatible task deﬁnitions and evaluation protocols. To coordinate ongoing and future research in this area, we have convened a working group to study empirical methodology in navigation research. The present document summarizes the consensus recommendations of this working group. We discuss different problem statements and the role of generalization, present evaluation measures, and provide standard scenarios that can be used for benchmarking.},
+  note         = {arXiv: 1807.06757},
+  journal      = {arXiv:1807.06757 [cs]},
+  author       = {Anderson, Peter and Chang, Angel and Chaplot, Devendra Singh and Dosovitskiy, Alexey and Gupta, Saurabh and Koltun, Vladlen and Kosecka, Jana and Malik, Jitendra and Mottaghi, Roozbeh and Savva, Manolis and Zamir, Amir R.},
+  year         = {2018},
+  month        = {Jul}
+}
 
-@article{batra_evaluation_2020, title={ObjectNav Revisited: On Evaluation of Embodied Agents Navigating to Objects}, url={http://arxiv.org/abs/2006.13171}, abstractNote={We revisit the problem of Object-Goal Navigation (ObjectNav). In its simplest form, ObjectNav is deﬁned as the task of navigating to an object, speciﬁed by its label, in an unexplored environment. In particular, the agent is initialized at a random location and pose in an environment and asked to ﬁnd an instance of an object category, e.g. ‘ﬁnd a chair’, by navigating to it.}, note={arXiv: 2006.13171}, journal={arXiv:2006.13171 [cs]}, author={Batra, Dhruv and Gokaslan, Aaron and Kembhavi, Aniruddha and Maksymets, Oleksandr and Mottaghi, Roozbeh and Savva, Manolis and Toshev, Alexander and Wijmans, Erik}, year={2020}, month={Aug} }
+@article{batra_evaluation_2020,
+  title        = {ObjectNav Revisited: On Evaluation of Embodied Agents Navigating to Objects},
+  url          = {http://arxiv.org/abs/2006.13171},
+  abstractnote = {We revisit the problem of Object-Goal Navigation (ObjectNav). In its simplest form, ObjectNav is deﬁned as the task of navigating to an object, speciﬁed by its label, in an unexplored environment. In particular, the agent is initialized at a random location and pose in an environment and asked to ﬁnd an instance of an object category, e.g. ‘ﬁnd a chair’, by navigating to it.},
+  note         = {arXiv: 2006.13171},
+  journal      = {arXiv:2006.13171 [cs]},
+  author       = {Batra, Dhruv and Gokaslan, Aaron and Kembhavi, Aniruddha and Maksymets, Oleksandr and Mottaghi, Roozbeh and Savva, Manolis and Toshev, Alexander and Wijmans, Erik},
+  year         = {2020},
+  month        = {Aug}
+}
 
-@article{cobbe_procgen_2020, title={Leveraging Procedural Generation to Benchmark Reinforcement Learning}, url={http://arxiv.org/abs/1912.01588}, abstractNote={We introduce Procgen Benchmark, a suite of 16 procedurally generated game-like environments designed to benchmark both sample efﬁciency and generalization in reinforcement learning. We believe that the community will beneﬁt from increased access to high quality training environments, and we provide detailed experimental protocols for using this benchmark. We empirically demonstrate that diverse environment distributions are essential to adequately train and evaluate RL agents, thereby motivating the extensive use of procedural content generation. We then use this benchmark to investigate the effects of scaling model size, ﬁnding that larger models signiﬁcantly improve both sample efﬁciency and generalization.}, note={arXiv: 1912.01588}, journal={arXiv:1912.01588 [cs, stat]}, author={Cobbe, Karl and Hesse, Christopher and Hilton, Jacob and Schulman, John}, year={2020}, month={Jul} }
+@article{cobbe_procgen_2020,
+  title        = {Leveraging Procedural Generation to Benchmark Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1912.01588},
+  abstractnote = {We introduce Procgen Benchmark, a suite of 16 procedurally generated game-like environments designed to benchmark both sample efﬁciency and generalization in reinforcement learning. We believe that the community will beneﬁt from increased access to high quality training environments, and we provide detailed experimental protocols for using this benchmark. We empirically demonstrate that diverse environment distributions are essential to adequately train and evaluate RL agents, thereby motivating the extensive use of procedural content generation. We then use this benchmark to investigate the effects of scaling model size, ﬁnding that larger models signiﬁcantly improve both sample efﬁciency and generalization.},
+  note         = {arXiv: 1912.01588},
+  journal      = {arXiv:1912.01588 [cs, stat]},
+  author       = {Cobbe, Karl and Hesse, Christopher and Hilton, Jacob and Schulman, John},
+  year         = {2020},
+  month        = {Jul}
+}
 
-@article{zhang_overfitting_2018, title={A Study on Overfitting in Deep Reinforcement Learning}, url={http://arxiv.org/abs/1804.06893}, abstractNote={Recent years have witnessed significant progresses in deep Reinforcement Learning (RL). Empowered with large scale neural networks, carefully designed architectures, novel training algorithms and massively parallel computing devices, researchers are able to attack many challenging RL problems. However, in machine learning, more training power comes with a potential risk of more overfitting. As deep RL techniques are being applied to critical problems such as healthcare and finance, it is important to understand the generalization behaviors of the trained agents. In this paper, we conduct a systematic study of standard RL agents and find that they could overfit in various ways. Moreover, overfitting could happen “robustly”: commonly used techniques in RL that add stochasticity do not necessarily prevent or detect overfitting. In particular, the same agents and learning algorithms could have drastically different test performance, even when all of them achieve optimal rewards during training. The observations call for more principled and careful evaluation protocols in RL. We conclude with a general discussion on overfitting in RL and a study of the generalization behaviors from the perspective of inductive bias.}, note={arXiv: 1804.06893}, journal={arXiv:1804.06893 [cs, stat]}, author={Zhang, Chiyuan and Vinyals, Oriol and Munos, Remi and Bengio, Samy}, year={2018}, month={Apr} }
+@article{zhang_overfitting_2018,
+  title        = {A Study on Overfitting in Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1804.06893},
+  abstractnote = {Recent years have witnessed significant progresses in deep Reinforcement Learning (RL). Empowered with large scale neural networks, carefully designed architectures, novel training algorithms and massively parallel computing devices, researchers are able to attack many challenging RL problems. However, in machine learning, more training power comes with a potential risk of more overfitting. As deep RL techniques are being applied to critical problems such as healthcare and finance, it is important to understand the generalization behaviors of the trained agents. In this paper, we conduct a systematic study of standard RL agents and find that they could overfit in various ways. Moreover, overfitting could happen “robustly”: commonly used techniques in RL that add stochasticity do not necessarily prevent or detect overfitting. In particular, the same agents and learning algorithms could have drastically different test performance, even when all of them achieve optimal rewards during training. The observations call for more principled and careful evaluation protocols in RL. We conclude with a general discussion on overfitting in RL and a study of the generalization behaviors from the perspective of inductive bias.},
+  note         = {arXiv: 1804.06893},
+  journal      = {arXiv:1804.06893 [cs, stat]},
+  author       = {Zhang, Chiyuan and Vinyals, Oriol and Munos, Remi and Bengio, Samy},
+  year         = {2018},
+  month        = {Apr}
+}

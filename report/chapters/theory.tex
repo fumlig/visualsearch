@@ -70,7 +70,7 @@ ANNs are based on
 A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
 The value of the parameter \(\theta\) is learned  
 
-~\cite{goodfellow_deep_2016}
+\cite{goodfellow_deep_2016}
 
 \subsection{Convolutional Neural Network}
 
@@ -81,7 +81,7 @@ As the name implies, CNNs employ the convolution operator
     s(t) 
 \]
 
-~\cite{goodfellow_deep_2016}
+\cite{goodfellow_deep_2016}
 
 % https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
 
@@ -364,12 +364,36 @@ Object (Goal) Navigation bears resemblance to the task.
 
 % how do they handle training and test set?
 
-Kobbe et al. (2020)~\cite{cobbe_procgen_2020} study generalization in deep RL. They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
-
 While deep neural networks have proved to be effective function approximators for RL, they are also prone to \textit{overfitting}.
-Training for a long time 
+High-capacity models trained over a long time may memorize the distribution seen during training rather than general patterns.
+While studied in supervised learning, overfitting is generally been neglected in deep RL.
+Training and evaluation stages are typically not separated.
+Instead, the final return on the training environments is used as a measure of agent performance.
 
-Zhang et al. (2018)~\cite{zhang_overfitting_2018} study overfitting in deep RL. 
+Zhang et al. (2018)~\cite{zhang_overfitting_2018} study overfitting and generalization in deep RL.
+With experiments, they show that RL agents are capable of memorizing training data, even when completely random.
+When the number of training samples exceeds the capacity of the agent, they overfit to them.
+When exposed to new but statistically similar environments during testing, test performance could vary significantly despite consistent training performance.
+The authors argue that good generalization requires that the \textit{inductive bias} of the algorithms is compatible with the bias of the problems.
+The inductive bias refers to a priori algorithmic preferences, like neural network architecture.
+When comparing MLPs with CNNs, they find that MLPs tend to be better at fitting the training data are worse at generalizing.
+When rewards are spatially invariant, CNNs generalize much better than MLPs.
+The authors advocate for carefully designed testing protocols for detecting overfitting.
+The effectiveness of stochastic-based evaluation depends on the properties of the task.
+Agents could still learn to overfit to random training data. 
+For this reason, they recommend isolation of statistically tied training and test sets.
+
+Hessel et al. (2019)~\cite{hessel_inductive_2019} investigate the trade-off between generality and performance from the perspective of inductive biases.
+Stronger biases can lead to faster learning, while weaker biases potentially lead to more general agents.
+They find that learned solutions are competitive with domain heuristics, and that they seem to be better at generalizing to unseen domains.
+For this reason, they argue for removing biases determined with domain knowledge in future research.
+% what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
+
+% in this spirit
+Kobbe et al. (2020)~\cite{cobbe_procgen_2020} study generalization in deep RL.
+They introduce a benchmark of procedurally generated i.i.d. environments, and find that this is essential to 
+
+
 
 \subsection{Local Search}
 % Artificial Intelligence - A modern approach

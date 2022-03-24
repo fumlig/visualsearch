@@ -43,6 +43,8 @@ The goal of the agent is to bring all targets into the view and indicate that th
 This is to be done with a minimal number of actions.
 This corresponds to changing the field of perception.
 
+We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
+
 Furthermore, we make the assumption that the agent initially has access to its position.
 With this, it can keep track of which regions are and have been in view before.
 
@@ -150,7 +152,15 @@ The third environment is a three-dimensional version of the second one.
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf
 
-In order to efficiently search the environments for targets, an agent needs to be able to learn 
+We postulate that an effective searcher should be able to:
+
+\begin{itemize}
+    \item Learn a probability distribution of targets and its correlation with the appearance of the scene.
+    \item Avoid visiting the same location multiple times.
+    \item Remember the appearance of previously visited areas in order to prioritize where to go next.
+\end{itemize}
+
+
 
 The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
 
@@ -189,9 +199,6 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 The architecture of the neural network is presented in Figure X.
 
 The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
-Like Mnih et al., we use a CNN~\cite{} for feature extraction.
-The shared network consists of an LSTM~\cite{hochreiter}.
-Finally, both the policy and the value head are two-layer MLPs.
 
 In order to be able to use the same extractor for all environments we resize the RGB image to \(64 \times 64\) pixels.
 
@@ -244,7 +251,7 @@ As per [rlliable], we report results across multiple seeds.
 
 \section{Implementation}
 
-The environment is implemented with Gym~\cite{gym}, and the agent is implemented with PyTorch~\cite{pytorch}.
+The environment is implemented with Gym~\cite{brockman_gym_2016}, and the agent is implemented with PyTorch~\cite{paszke_pytorch_nodate}.
 Proximal policy optimization was implemented following the official implementation by OpenAI.
 Some necessary modifications were made to allow for recurrent policies.
 % a little short...

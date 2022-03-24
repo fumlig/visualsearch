@@ -29,9 +29,22 @@ class Agent(nn.Module):
         raise NotImplementedError
 
 
+# how do we handle triggers for these agents?
+
+
 class RandomAgent(Agent):
     def __init__(self, env):
-        self.action_space = env.action_space
+        super().__init__()
+
+    def predict(self, _obs, state, **_kwargs):
+        return self.action_space.sample(), state
+
+
+class ExhaustiveAgent(Agent):
+    # use some coverage path planning algorithm that finds an optimal covering path given some initial position
+    # https://www.sciencedirect.com/science/article/abs/pii/S092188901300167X?via%3Dihub
+    def __init__(self, env):
+        super().__init__()
 
     def predict(self, _obs, state, **_kwargs):
         return self.action_space.sample(), state

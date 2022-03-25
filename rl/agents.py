@@ -19,8 +19,8 @@ class Agent(nn.Module):
         self.observation_space = envs.single_observation_space
         self.action_space = envs.single_action_space
 
-    def initial(self, num_envs):
-        return (th.empty(0, num_envs), th.empty(0, num_envs))
+    def initial(self, _num_envs):
+        return {}
 
     def forward(self, _obs, _state, **kwargs):
         raise NotImplementedError
@@ -75,7 +75,6 @@ class SearchAgent(Agent):
         self.memory_shape = (memory_shape[0], memory_shape[1], memory_shape[2] + self.image_cnn.features_dim)
         self.memory_cnn = ImpalaCNN(self.memory_shape)
 
-        self.last_latent = th.zeros(envs.num_envs, self.image_cnn.features_dim)
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
@@ -83,12 +82,10 @@ class SearchAgent(Agent):
 
     def extract(self, obs):
         image = obs["image"]
-        memory = th.cat([obs["memory"], self.last_latent], axis=-1)
+        memory = obs["memory"]
         
-        self.last_latent = self.image_cnn(preprocess_image(image))
-
         xs = []
-        xs.append(self.last_latent)
+        xs.append(self.image_cnn(preprocess_image(image)))
         xs.append(self.memory_cnn(preprocess_image(memory)))
 
         return th.cat(xs, dim=1)
@@ -199,9 +196,13 @@ class RecurrentAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return (th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size))
+        return {
+            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
+            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+        }
 
-    def remember(self, hidden, state, done):
+    def remember(self, hidden, state_dict, done):
+        state = (state_dict["hidden"], state_dict["cell"])
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -215,7 +216,7 @@ class RecurrentAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, state
+        return new_hidden, {"hidden": state[0], "cell": state[1]}
 
     def forward(self, obs, state, done, **kwargs):
         x = obs["image"]
@@ -271,7 +272,10 @@ class BaselineAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return (th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size))
+        return {
+            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
+            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+        }
 
     def extract(self, obs):
         xs = []
@@ -300,6 +304,21 @@ class BaselineAgent(Agent):
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
         return new_hidden, state
+
+        state = (state_dict["hidden"], state_dict["cell"])
+        batch_size = state[0].shape[1]
+        hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
+        done = done.reshape((-1, batch_size))
+        new_hidden = []
+
+        for h, d in zip(hidden, done):
+            hidden = (1.0 - d).view(1, -1, 1) * state[0]
+            cell = (1.0 - d).view(1, -1, 1) * state[1]
+            h, state = self.lstm(h.unsqueeze(0), (hidden, cell))
+            new_hidden += [h]
+        
+        new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
+
 
     def forward(self, obs, state, done, **kwargs):
         x = self.extract(obs)

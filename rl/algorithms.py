@@ -103,8 +103,12 @@ class ProximalPolicyOptimization(Algorithm):
 
         obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in envs.reset().items()}
         done = th.zeros(envs.num_envs).to(device)
-        initial = agent.initial(num_envs)
-        state = (initial[0].to(device), initial[1].to(device))
+        state = {key: initial.to(device) for key, initial in agent.initial(num_envs).items()}
+
+        # rework state to a dictionary
+        # allow all dictionaries, but their values should be tensors
+        # the rest can be handled by the agents
+        # our agent uses the latent representation as state
 
         pbar = tqdm(total=tot_timesteps)
         ep_infos = deque(maxlen=100)
@@ -115,7 +119,7 @@ class ProximalPolicyOptimization(Algorithm):
             writer.add_text("log", f"batch {b}", timestep)
 
             # for train
-            initial_state = (state[0].clone(), state[1].clone())
+            initial_state = {key: initial.clone() for key, initial in agent.initial(num_envs).items()}
             
             # rollout steps
             for step in range(num_steps):
@@ -203,7 +207,7 @@ class ProximalPolicyOptimization(Algorithm):
                     mb_vals = b_vals[mb_idx]
                     mb_advs = b_advs[mb_idx]
                     mb_rets = b_rets[mb_idx]
-                    mb_state = (initial_state[0][:, mb_envs_idx], initial_state[1][:, mb_envs_idx])
+                    mb_state = {key: initial[:, mb_envs_idx] for key, initial in initial_state.items()}
 
                     pi, v, _ = agent(mb_obss, mb_state, done=mb_dones)
                     new_val = v.view(-1)

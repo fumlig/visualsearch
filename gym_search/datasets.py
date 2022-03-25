@@ -7,6 +7,23 @@ import os
 from torch.utils.data import Dataset
 
 
+def generate_dataset(root, generator, num_train, num_test, seed=0):    
+    generator.seed(seed)
+
+    train_items = []
+    train_dir = os.path.join(root, "train")
+    os.makedirs(train_dir, exist_ok=True)
+
+    for i in range(num_train):
+        img, tgts = generator.sample()
+        img_path =  os.path.join(train_dir, f"{i}.png")
+        cv.imwrite(img_path, img)
+        train_items.append({
+            "id": i,
+            "targets": [(tgt.y, tgt.x, tgt.h, tgt.w) for tgt in tgts]
+        })
+
+
 class AirbusAircraftDataset(Dataset):
     # https://www.kaggle.com/airbusgeo/airbus-aircrafts-sample-dataset/download
 

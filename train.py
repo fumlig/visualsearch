@@ -32,7 +32,7 @@ TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64 # 64 in procgen
 HPARAMS = dict(
     learning_rate=5e-4,
-    num_steps=32, # 256 in procgen, recommended to be much smaller than episode length 
+    num_steps=256, # 256 in procgen, recommended to be much smaller than episode length 
     num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
@@ -98,6 +98,7 @@ if __name__ == "__main__":
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
         gym_search.wrappers.ExplicitMemory,
+        gym_search.wrappers.ObservePosition,
         gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]

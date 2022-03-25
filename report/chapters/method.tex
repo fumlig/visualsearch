@@ -76,6 +76,11 @@ The observation space always includes the currently visible region of the enviro
 
 % use R^n notation for everything, including distance
 
+Early experiments show that rewards like \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible are too slow to train and converge towards bad policies.
+% cite something
+% reason about good inductive biases
+% would be interesting to see if the supervised distance reward generalizes worse
+
 To incentivize finding targets quickly, the reward signal is set to -1 for each time step.
 Since viewing a window twice is redundant, such actions are punished by setting the reward to -2.
 If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
@@ -158,12 +163,10 @@ The third environment is a three-dimensional version of the second one.
 We postulate that an effective searcher should be able to:
 
 \begin{itemize}
+    \item Search the scene exhaustively, while avoiding visiting the same location multiple times.
     \item Learn a probability distribution of targets and its correlation with the appearance of the scene.
-    \item Avoid visiting the same location multiple times.
     \item Remember the appearance of previously visited areas in order to prioritize where to go next.
 \end{itemize}
-
-
 
 The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
 

@@ -53,6 +53,11 @@ class ExhaustiveAgent(Agent):
 class SearchAgent(Agent):
     """
     Our method.
+
+    We want to write the latent representation of the image to the memory as well.
+    How do we do this effectively?
+    Could store it as state in the agent
+    Not clean but don't see another way
     """
 
     def __init__(self, envs):
@@ -62,16 +67,27 @@ class SearchAgent(Agent):
         assert self.observation_space.get("memory") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])
-        self.memory_cnn = AlphaCNN(self.observation_space["memory"])
+
+        memory_shape = self.observation_space["memory"].shape
+        self.memory_shape = (memory_shape[0], memory_shape[1], memory_shape[2] + self.image_cnn.features_dim)
+        self.memory_cnn = ImpalaCNN(self.memory_shape)
+
+        self.last_latent = np.zeros(envs.num_envs, self.image_cnn.features_dim)
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.features_dim, 1, out_gain=1.0)
 
     def extract(self, obs):
+        image = obs["image"]
+        memory = th.cat([obs["memory"], self.last_latent], axis=-1)
+        
+        self.last_latent = self.image_cnn(preprocess_image(image))
+
         xs = []
-        xs.append(self.image_cnn(preprocess_image(obs["image"])))
-        xs.append(self.memory_cnn(preprocess_image(obs["memory"])))
+        xs.append(self.last_latent)
+        xs.append(self.memory_cnn(preprocess_image(memory)))
+
         return th.cat(xs, dim=1)
 
     def forward(self, obs, state, **kwargs):
@@ -79,6 +95,7 @@ class SearchAgent(Agent):
         logits = self.policy(x)
         pi = Categorical(logits=logits)
         v = self.value(x)
+
         return pi, v, state
 
     def predict(self, obs, state, deterministic=False, **kwargs):
@@ -103,8 +120,8 @@ class ImpalaAgent(Agent):
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("memory") is not None
 
-        self.image_cnn = ImpalaCNN(self.observation_space["image"])
-        self.memory_cnn = ImpalaCNN(self.observation_space["memory"])
+        self.image_cnn = ImpalaCNN(self.observation_space["image"].shape)
+        self.memory_cnn = ImpalaCNN(self.observation_space["memory"].shape)
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
@@ -235,11 +252,15 @@ class BaselineAgent(Agent):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
+        assert self.observation_space.get("position") is not None
         assert self.observation_space.get("last_action") is not None
         #assert self.observation_space.get("last_reward") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.features_dim + self.action_space.n, 256, num_layers=1)
+
+        self.features_dim = self.cnn.features_dim + self.observation_space["position"].n + self.action_space.n
+
+        self.lstm = nn.LSTM(self.features_dim, 256, num_layers=1)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -252,6 +273,7 @@ class BaselineAgent(Agent):
     def extract(self, obs):
         xs = []
         xs.append(self.cnn(preprocess_image(obs["image"])))
+        xs.append(F.one_hot(obs["position"].long(), num_classes=self.observation_space["position"].n))
         xs.append(F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n))
         #xs.append(obs["last_reward"])
 

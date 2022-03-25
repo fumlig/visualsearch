@@ -8,6 +8,14 @@ from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
 from skimage import draw
 
+"""
+We need to be able to create held out sets
+Can follow the pattern in PyTorch of setting environment in train and test mode, env.train()/env.test()
+The environment creates two seed pools which it switches between.
+It could also make other changes to ensure that a tester does not access information it should not have
+Should we update to new gym api?
+"""
+
 
 class SearchEnv(gym.Env):
 

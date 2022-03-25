@@ -184,10 +184,10 @@ class ImpalaCNN(nn.Module):
             _c, h, w = self.input_shape
             return (self.out_channels, (h + 1) // 2, (w + 1) // 2)
 
-    def __init__(self, obs_space, features_dim=256):
+    def __init__(self, obs_shape, features_dim=256):
         super().__init__()
 
-        h, w, c = obs_space.shape
+        h, w, c = obs_shape
         shape = (c, h, w)
 
         convs = []

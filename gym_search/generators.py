@@ -46,7 +46,9 @@ class GaussianGenerator(Generator):
 
         for y, x in targets:
             r = self.target_size//2
-            rr, cc = draw.disk((y+r, x+r), r, shape=self.shape)
+            y = clamp(y, r, h-r)
+            x = clamp(x, r, w-r)
+            rr, cc = draw.rectangle((y, x), extent=(self.target_size, self.target_size))
             img[rr, cc] = (255, 127, 0)
 
         return img, [Box(*t, self.target_size, self.target_size) for t in targets]

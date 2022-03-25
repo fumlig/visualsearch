@@ -252,8 +252,9 @@ class ProximalPolicyOptimization(Algorithm):
             writer.add_scalar("losses/policy_loss", pg_loss.item(), timestep)
             writer.add_scalar("losses/entropy_loss", ent_loss.item(), timestep)
 
-            avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
-            avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
-
             pbar.update(timestep - pbar.n)
-            pbar.set_description(f"ret {avg_ret}, len {avg_len}")
+
+            if ep_infos:
+                avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
+                avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
+                pbar.set_description(f"ret {round(avg_ret)}, len {round(avg_len)}")

@@ -67,16 +67,46 @@ All scenes are assumed to be static in that the actions of the agent do not affe
 % observations, actions and rewards
 The scenes of each environment are discretized into a grid.
 We use the same action space, reward signal for all environments.
-\(\mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace\)
-\(\mathcal{R(s, a)} = \dots\).
-The observation space always includes the currently visible region of the environment, an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\).
+The action space is
+
+\[
+    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
+\]
+
+where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
+The reward signal is defined as
+
+\[
+    \mathcal{R}(s_t, a_t) =
+    \begin{cases}
+        10   & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -2.5 & \text{if the current region has already been viewed, and} \\
+        -1   & \text{otherwise.}
+    \end{cases}
+\]
+
+We argue that this reward signal provides a suitable inductive bias for the task at hand.
+Targets should be triggered when in view, but triggers when targets are out of view should be penalized.
+Revisiting regions is penalized to help the agent learn exhaustive search patterns faster.
+It does, however, introduce some bias that might prevent it from acting optimally in some cases.
+The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
+The additional penalty of \(-2.5\) for revisiting regions seems to speed up convergence.
+Some other works reward actions that move towards targets and penalize those that move away from targets, using the supervised distance delta. % cite
+While this leads to faster training, it can never yield policies that search optimally nor exhaustively.
+% cite
 % reward inspired by Tabu Search?
-% for multiple targets, give reward for moving towards closest target
-% when to stop with multiple targets? automatically when all are found?
 
-% use R^n notation for everything, including distance
+The observation \(o_t\) contains
 
-Early experiments show that rewards like \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible are too slow to train and converge towards bad policies.
+\begin{itemize}
+    \item an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\) of the currently visible region of the scene, and
+    \item the current position of the agent \(p_t\). % call this something else, what is the internal state of the sensor called?
+    % previous action?
+    % the explicit memory can be built exclusively from these two
+\end{itemize}
+
 % cite something
 % reason about good inductive biases
 % would be interesting to see if the supervised distance reward generalizes worse

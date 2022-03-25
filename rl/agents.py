@@ -54,10 +54,13 @@ class SearchAgent(Agent):
     """
     Our method.
 
-    We want to write the latent representation of the image to the memory as well.
-    How do we do this effectively?
-    Could store it as state in the agent
-    Not clean but don't see another way
+    # we probably want either fewer outputs from the naturecnn, or a network afterwards whose output is used for the memory only
+    # in that case we would have to introduce an auxilliary loss for that head
+    # what could this loss be?
+
+    https://arxiv.org/abs/1702.03920
+    we will now use a representation that is useful for selecting actions and predicting value
+    these authors seem to simply compress the representation with an encoder-decoder, use the compressed representation, and then the decoded one for planning.
     """
 
     def __init__(self, envs):
@@ -72,7 +75,7 @@ class SearchAgent(Agent):
         self.memory_shape = (memory_shape[0], memory_shape[1], memory_shape[2] + self.image_cnn.features_dim)
         self.memory_cnn = ImpalaCNN(self.memory_shape)
 
-        self.last_latent = np.zeros(envs.num_envs, self.image_cnn.features_dim)
+        self.last_latent = th.zeros(envs.num_envs, self.image_cnn.features_dim)
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)

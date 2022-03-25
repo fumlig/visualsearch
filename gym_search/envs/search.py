@@ -119,11 +119,12 @@ class SearchEnv(gym.Env):
                 dist = d
         
         if hit:
-            rew = 5
+            rew = 10 # previously 5, should not matter
         else:
             # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
-            rew = 1 if dist < self.last_dist else -1 
-        
+            #rew = 1 if dist < self.last_dist else -1 
+            rew = -1
+
         self.last_dist = dist
         self.num_steps += 1
 

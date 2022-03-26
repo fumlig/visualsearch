@@ -71,10 +71,11 @@ class SearchAgent(Agent):
         assert self.observation_space.get("position") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])
+        self.latent_dim = self.image_cnn.features_dim
 
-        memory_size = self.observation_space["memory"].shape[:2]
-        memory_channels = self.observation_space["memory"].shape[2] + self.image_cnn.features_dim
-        self.memory_shape = (*memory_size, memory_channels)
+        self.memory_size = self.observation_space["memory"].shape[:2]
+        self.memory_channels = self.observation_space["memory"].shape[2] + self.latent_dim
+        self.memory_shape = (*self.memory_size, self.memory_channels)
         
         self.memory_cnn = ImpalaCNN(self.memory_shape)
         self.hidden_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
@@ -83,21 +84,26 @@ class SearchAgent(Agent):
         self.value = MLP(self.hidden_dim, 1, out_gain=1.0)
 
     def initial(self, num_envs):
-        return {"memory": None}
+        return {"memory": th.zeros((num_envs, *self.memory_size, self.latent_dim))} 
 
-    def extract(self, obs):
+    def extract(self, obs, state):
         image = obs["image"]
-        memory = obs["memory"]
-        position = obs["position"]
+        latent_image = self.image_cnn(preprocess_image(image))
 
-        xs = []
-        xs.append(self.image_cnn(preprocess_image(image)))
-        xs.append(self.memory_cnn(preprocess_image(memory)))
+        position = obs["position"].long()
+        state_memory = state["memory"]
+        state_memory[:,position[:,0],position[:,1]] = latent_image.clone().detach()
+        
+        obs_memory = obs["memory"]
+        batch_size = obs_memory.shape[0]
 
-        return th.cat(xs, dim=1)
+        memory = th.cat([state_memory.expand(batch_size, -1, -1, -1), obs_memory], axis=-1)
+        latent_memory = self.memory_cnn(preprocess_image(memory))
+
+        return th.cat([latent_image, latent_memory], dim=1), {"memory": state_memory}
 
     def forward(self, obs, state, **kwargs):
-        x = self.extract(obs)
+        x, state = self.extract(obs, state)
         logits = self.policy(x)
         pi = Categorical(logits=logits)
         v = self.value(x)

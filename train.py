@@ -32,7 +32,7 @@ TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64 # 64 in procgen
 HPARAMS = dict(
     learning_rate=5e-4,
-    num_steps=256, # 64 seems to work fine, it is recommended to have it be a lot smaller than episode length...
+    num_steps=256, # 256 in procgen, recommended to be much smaller than episode length 
     num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
@@ -94,10 +94,13 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
+    print(device)
+
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
         gym_search.wrappers.ExplicitMemory,
+        gym_search.wrappers.ObservePosition,
         gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]

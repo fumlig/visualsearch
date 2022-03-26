@@ -19,8 +19,8 @@ class Agent(nn.Module):
         self.observation_space = envs.single_observation_space
         self.action_space = envs.single_action_space
 
-    def initial(self, num_envs):
-        return (th.empty(0, num_envs), th.empty(0, num_envs))
+    def initial(self, _num_envs):
+        return {}
 
     def forward(self, _obs, _state, **kwargs):
         raise NotImplementedError
@@ -53,6 +53,14 @@ class ExhaustiveAgent(Agent):
 class SearchAgent(Agent):
     """
     Our method.
+
+    # we probably want either fewer outputs from the naturecnn, or a network afterwards whose output is used for the memory only
+    # in that case we would have to introduce an auxilliary loss for that head
+    # what could this loss be?
+
+    https://arxiv.org/abs/1702.03920
+    we will now use a representation that is useful for selecting actions and predicting value
+    these authors seem to simply compress the representation with an encoder-decoder, use the compressed representation, and then the decoded one for planning.
     """
 
     def __init__(self, envs):
@@ -62,16 +70,24 @@ class SearchAgent(Agent):
         assert self.observation_space.get("memory") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])
-        self.memory_cnn = AlphaCNN(self.observation_space["memory"])
+
+        memory_shape = self.observation_space["memory"].shape
+        self.memory_shape = (memory_shape[0], memory_shape[1], memory_shape[2] + self.image_cnn.features_dim)
+        self.memory_cnn = ImpalaCNN(self.memory_shape)
+
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.features_dim, 1, out_gain=1.0)
 
     def extract(self, obs):
+        image = obs["image"]
+        memory = obs["memory"]
+        
         xs = []
-        xs.append(self.image_cnn(preprocess_image(obs["image"])))
-        xs.append(self.memory_cnn(preprocess_image(obs["memory"])))
+        xs.append(self.image_cnn(preprocess_image(image)))
+        xs.append(self.memory_cnn(preprocess_image(memory)))
+
         return th.cat(xs, dim=1)
 
     def forward(self, obs, state, **kwargs):
@@ -79,6 +95,7 @@ class SearchAgent(Agent):
         logits = self.policy(x)
         pi = Categorical(logits=logits)
         v = self.value(x)
+
         return pi, v, state
 
     def predict(self, obs, state, deterministic=False, **kwargs):
@@ -103,8 +120,8 @@ class ImpalaAgent(Agent):
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("memory") is not None
 
-        self.image_cnn = ImpalaCNN(self.observation_space["image"])
-        self.memory_cnn = ImpalaCNN(self.observation_space["memory"])
+        self.image_cnn = ImpalaCNN(self.observation_space["image"].shape)
+        self.memory_cnn = ImpalaCNN(self.observation_space["memory"].shape)
         self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
         self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
@@ -179,9 +196,13 @@ class RecurrentAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return (th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size))
+        return {
+            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
+            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+        }
 
-    def remember(self, hidden, state, done):
+    def remember(self, hidden, state_dict, done):
+        state = (state_dict["hidden"], state_dict["cell"])
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -195,7 +216,7 @@ class RecurrentAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, state
+        return new_hidden, {"hidden": state[0], "cell": state[1]}
 
     def forward(self, obs, state, done, **kwargs):
         x = obs["image"]
@@ -235,11 +256,15 @@ class BaselineAgent(Agent):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
+        assert self.observation_space.get("position") is not None
         assert self.observation_space.get("last_action") is not None
         #assert self.observation_space.get("last_reward") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.features_dim + self.action_space.n, 256, num_layers=1)
+
+        self.features_dim = self.cnn.features_dim + self.observation_space["position"].n + self.action_space.n
+
+        self.lstm = nn.LSTM(self.features_dim, 256, num_layers=1)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -247,11 +272,15 @@ class BaselineAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return (th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size))
+        return {
+            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
+            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+        }
 
     def extract(self, obs):
         xs = []
         xs.append(self.cnn(preprocess_image(obs["image"])))
+        xs.append(F.one_hot(obs["position"].long(), num_classes=self.observation_space["position"].n))
         xs.append(F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n))
         #xs.append(obs["last_reward"])
 
@@ -275,6 +304,21 @@ class BaselineAgent(Agent):
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
         return new_hidden, state
+
+        state = (state_dict["hidden"], state_dict["cell"])
+        batch_size = state[0].shape[1]
+        hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
+        done = done.reshape((-1, batch_size))
+        new_hidden = []
+
+        for h, d in zip(hidden, done):
+            hidden = (1.0 - d).view(1, -1, 1) * state[0]
+            cell = (1.0 - d).view(1, -1, 1) * state[1]
+            h, state = self.lstm(h.unsqueeze(0), (hidden, cell))
+            new_hidden += [h]
+        
+        new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
+
 
     def forward(self, obs, state, done, **kwargs):
         x = self.extract(obs)

@@ -58,12 +58,14 @@ Section ~\ref{sec:visualsearch} describes the problem of visual searching for ta
 % computers do not naturally have this constraint and most CV algorithms do not use foveated vision
 % (although visual attention models exist)
 
-\section{Artificial Neural Networks}
+\section{Artificial Neural Network}
 
 An artificial neural network (ANN) is a type of universal function approximator.
-ANNs are based on 
+Inspired by biological neurons found in the brains of animals, ANNs are collections of connected nodes.
+Each node receives a real-valued signal, processes it and signals connected nodes.
 
-% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
+% https://www.asimovinstitute.org/neural-network-zoo/
+
 
 \subsection{Feed-forward Neural Network}
 
@@ -83,6 +85,7 @@ As the name implies, CNNs employ the convolution operator
 
 \cite{goodfellow_deep_2016}
 
+% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
 % https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
 
 \subsection{Recurrent Neural Network}
@@ -135,7 +138,7 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
     \centering
     \input{figures/pomdp}
     \label{fig:pomdp}
-    \caption{Partially observable Markov decision process.}
+    \caption[Partially observable Markov decision process]{Partially observable Markov decision process.}
 \end{figure}
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
@@ -156,6 +159,15 @@ Most RL algorithms estimate both a \textit{value function} that tells the agent 
 % cover action-value function? (Q-functions)
 
 \subsection{Exploration and Exploitation Trade-off}
+
+\subsection{Sparse Rewards and the Credit Assignment Problem}
+
+% https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
+
+% https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
+% reward shaping
+
+The (temporal) credit assignment problem (CAP)~\cite{minsky_cap_1961}\dots
 
 \subsection{Common Algorithms}
 
@@ -232,6 +244,7 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\c
 The perceptual task of searching for something in a visual environment is usually referred to as \textit{visual search}.
 The searched object or feature is the \textit{target}, and the other objects or features in the environment are the \textit{distractors}.
 This task has been studied extensively in psychology and neuroscience.
+% the reason for introducing this is to be able to use the same terminology later
 
 Wolfe (2021)~\cite{wolfe_guided_2021} describes a model of visual search
 
@@ -325,6 +338,16 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 % note: reinforcement learning part, soft and hard attention
 % https://shairozsohail.medium.com/a-survey-of-visual-attention-mechanisms-in-deep-learning-1043eb25f343
 
+% closely connected with object detection
+
+\cite{minut_mahadevan_2001}
+
+\subsection{Coverage Path Planning}
+
+\cite{galceran_carreras_2013} % survey of CPP
+
+\cite{krishna_tetromino_2020} % an approach with RL
+
 \subsection{Navigation}
 
 The task we consider bears resemblance to many navigation tasks in robotics.
@@ -355,7 +378,20 @@ Planning in this fashion s
 % has a list of baselines
 % among them is an lstm baseline
 
-Dhiman et al. (2019)~\cite{dhiman_critical_2019} critically investigate deep RL for navigation\dots
+Dhiman et al. (2019)~\cite{dhiman_critical_2019} critically investigate deep RL for navigation.
+They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
+Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
+However, when trained and tested on differen maps, it cannot do so succesfully.
+They further find that, with a single decision point whose correct.
+% could be due to their inductive biases
+% the agent does not have access to its location and can therefore not determine its location
+% their setup:
+% - random maze
+% - when agent finds goal, it respawns and the goal is at the same location (+10)
+% - smaller rewards scattered in area to incentivize exploration (+1)
+% - wall penalty (-2)
+% - respawn either static or random
+% - randomly textured walls
 
 Chaplot et al. (2020)~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
 

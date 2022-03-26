@@ -46,7 +46,9 @@ class GaussianGenerator(Generator):
 
         for y, x in targets:
             r = self.target_size//2
-            rr, cc = draw.disk((y+r, x+r), r, shape=self.shape)
+            y = clamp(y, r, h-r)
+            x = clamp(x, r, w-r)
+            rr, cc = draw.rectangle((y, x), extent=(self.target_size, self.target_size), shape=self.shape)
             img[rr, cc] = (255, 127, 0)
 
         return img, [Box(*t, self.target_size, self.target_size) for t in targets]
@@ -79,7 +81,7 @@ class TerrainGenerator(Generator):
             r = self.random.integers(3, 5)
             y = clamp(y, r, height-r)
             x = clamp(x, r, width-r)
-            rr, cc = draw.disk((y, x), r)
+            rr, cc = draw.disk((y, x), r, shape=self.shape)
             img[rr, cc] = (0, 63, 0)
 
         target_prob = tree_prob
@@ -88,10 +90,10 @@ class TerrainGenerator(Generator):
         targets = []
 
         for y, x in target_pos:
-            size = self.random.integers(4, 8)
+            size = self.random.integers(5, 10)
             rect = Box(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
-            coords = tuple(draw.rectangle(rect.pos, extent=rect.shape))
+            coords = tuple(draw.rectangle(rect.pos, extent=rect.shape, shape=self.shape))
             img[coords] = (255, 0, 0)
 
         return img, targets

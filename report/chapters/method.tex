@@ -67,14 +67,49 @@ All scenes are assumed to be static in that the actions of the agent do not affe
 % observations, actions and rewards
 The scenes of each environment are discretized into a grid.
 We use the same action space, reward signal for all environments.
-\(\mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace\)
-\(\mathcal{R(s, a)} = \dots\).
-The observation space always includes the currently visible region of the environment, an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\).
-% reward inspired by Tabu Search?
-% for multiple targets, give reward for moving towards closest target
-% when to stop with multiple targets? automatically when all are found?
+The action space is
 
-% use R^n notation for everything, including distance
+\[
+    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
+\]
+
+where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
+The reward signal is defined as
+
+\[
+    \mathcal{R}(s_t, a_t) =
+    \begin{cases}
+        10   & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -2.5 & \text{if the current region has already been viewed, and} \\
+        -1   & \text{otherwise.}
+    \end{cases}
+\]
+
+We argue that this reward signal provides a suitable inductive bias for the task at hand.
+Targets should be triggered when in view, but triggers when targets are out of view should be penalized.
+Revisiting regions is penalized to help the agent learn exhaustive search patterns faster.
+It does, however, introduce some bias that might prevent it from acting optimally in some cases.
+The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
+The additional penalty of \(-2.5\) for revisiting regions seems to speed up convergence.
+Some other works reward actions that move towards targets and penalize those that move away from targets, using the supervised distance delta. % cite
+While this leads to faster training, it can never yield policies that search optimally nor exhaustively.
+% cite
+% reward inspired by Tabu Search?
+
+The observation \(o_t\) contains
+
+\begin{itemize}
+    \item an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\) of the currently visible region of the scene, and
+    \item the current position of the agent \(p_t\). % call this something else, what is the internal state of the sensor called?
+    % previous action?
+    % the explicit memory can be built exclusively from these two
+\end{itemize}
+
+% cite something
+% reason about good inductive biases
+% would be interesting to see if the supervised distance reward generalizes worse
 
 To incentivize finding targets quickly, the reward signal is set to -1 for each time step.
 Since viewing a window twice is redundant, such actions are punished by setting the reward to -2.
@@ -103,7 +138,7 @@ Our feeling is that this is something that previous similar works has not done. 
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
     %\vspace*{-1cm}
-    \caption{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
+    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
 \end{figure}
 
 % environment 2: medium, procedural and configurable
@@ -120,7 +155,7 @@ This environment simulates a UAV search-and-rescue scenario.
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption{Second environment. Terrain seen from above with ocean, }
+    \caption[Terrain environment]{Second environment. Terrain seen from above with ocean, }
 \end{figure}
 
 % environment 3: hard, realistic
@@ -158,12 +193,10 @@ The third environment is a three-dimensional version of the second one.
 We postulate that an effective searcher should be able to:
 
 \begin{itemize}
+    \item Search the scene exhaustively, while avoiding visiting the same location multiple times.
     \item Learn a probability distribution of targets and its correlation with the appearance of the scene.
-    \item Avoid visiting the same location multiple times.
     \item Remember the appearance of previously visited areas in order to prioritize where to go next.
 \end{itemize}
-
-
 
 The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
 
@@ -249,7 +282,7 @@ All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeFor
 
 For each experiment, we report the mean return and episode length over time during training.
 We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
-As per [rlliable], we report results across multiple seeds.
+As per \cite{agarwal_rlliable_2022}, we report results across multiple seeds.
 
 % could be the case that the supervised distance reward trains faster but leads to worse solutions that generalize worse
 % should run experiments on this.

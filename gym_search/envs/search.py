@@ -8,6 +8,14 @@ from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
 from skimage import draw
 
+"""
+We need to be able to create held out sets
+Can follow the pattern in PyTorch of setting environment in train and test mode, env.train()/env.test()
+The environment creates two seed pools which it switches between.
+It could also make other changes to ensure that a tester does not access information it should not have
+Should we update to new gym api?
+"""
+
 
 class SearchEnv(gym.Env):
 
@@ -96,6 +104,8 @@ class SearchEnv(gym.Env):
         self.view.pos = (y, x)
         self.path.append(self.view.pos)
 
+        revisit = self.visited[self.scaled_position]
+
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
         self.visible[self.scaled_position] = True
@@ -119,11 +129,12 @@ class SearchEnv(gym.Env):
                 dist = d
         
         if hit:
-            rew = 5
+            rew = 10 # previously 5, should not matter
+        elif revisit:
+            rew = -2.5
         else:
-            # avoid confusion, when position is optimal the trigger is the only action that does not give negative reward.
-            rew = 1 if dist < self.last_dist else -1 
-        
+            rew = -1
+
         self.last_dist = dist
         self.num_steps += 1
 

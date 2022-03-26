@@ -74,10 +74,12 @@ The action space is
 \]
 
 where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
-The reward signal is defined as
+
+
+We experiment with two rewards signals. The first reward signal is defined as
 
 \[
-    \mathcal{R}(s_t, a_t) =
+    \mathcal{R}_1(s_t, a_t) =
     \begin{cases}
         10   & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
         -2.5 & \text{if the current region has already been viewed, and} \\
@@ -85,16 +87,28 @@ The reward signal is defined as
     \end{cases}
 \]
 
-We argue that this reward signal provides a suitable inductive bias for the task at hand.
+We argue that \(R_1\) provides a suitable inductive bias for the task at hand.
 Targets should be triggered when in view, but triggers when targets are out of view should be penalized.
 Revisiting regions is penalized to help the agent learn exhaustive search patterns faster.
 It does, however, introduce some bias that might prevent it from acting optimally in some cases.
+The additional penalty of \(-2.5\) for revisiting regions seems to speed up convergence.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
 
+\[
+    \mathcal{R}_2(s_t, a_t) =
+    \begin{cases}
+        10 & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        1  & \text{if \(a_t\) moves the view closer to the nearest target, and} \\
+        -1 & \text{otherwise.}
+    \end{cases}
+\]
+
+\(R_2\) uses the supervised distance between targets and the agent which is available during training time. % cite
+We hypothesize that this reward speeds up training time and may help the agent pick out correlations between scene and target probability quicker.
+However, it can never yield policies that search optimally nor exhaustively as these will not be rewarded.
+
 Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
-The additional penalty of \(-2.5\) for revisiting regions seems to speed up convergence.
-Some other works reward actions that move towards targets and penalize those that move away from targets, using the supervised distance delta. % cite
-While this leads to faster training, it can never yield policies that search optimally nor exhaustively.
+
 % cite
 % reward inspired by Tabu Search?
 
@@ -102,7 +116,7 @@ The observation \(o_t\) contains
 
 \begin{itemize}
     \item an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\) of the currently visible region of the scene, and
-    \item the current position of the agent \(p_t\). % call this something else, what is the internal state of the sensor called?
+    \item the current position of the agent \(p_t \in  \mathbb{R}^{W \times H}\). % call this something else, what is the internal state of the sensor called?
     % previous action?
     % the explicit memory can be built exclusively from these two
 \end{itemize}

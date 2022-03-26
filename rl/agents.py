@@ -68,20 +68,22 @@ class SearchAgent(Agent):
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("memory") is not None
+        assert self.observation_space.get("position") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])
 
         memory_size = self.observation_space["memory"].shape[:2]
         memory_channels = self.observation_space["memory"].shape[2] + self.image_cnn.features_dim
-        self.memory_cnn = ImpalaCNN((*memory_size, memory_channels))
+        self.memory_shape = (*memory_size, memory_channels)
+        
+        self.memory_cnn = ImpalaCNN(self.memory_shape)
+        self.hidden_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
 
-        self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
-
-        self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.features_dim, 1, out_gain=1.0)
+        self.policy = MLP(self.hidden_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.hidden_dim, 1, out_gain=1.0)
 
     def initial(self, num_envs):
-        return {"memory": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)}
+        return {"memory": None}
 
     def extract(self, obs):
         image = obs["image"]
@@ -100,48 +102,6 @@ class SearchAgent(Agent):
         pi = Categorical(logits=logits)
         v = self.value(x)
 
-        return pi, v, state
-
-    def predict(self, obs, state, deterministic=False, **kwargs):
-        x = self.extract(obs)
-        logits = self.policy(x)
-        pi = Categorical(logits=logits)
-
-        if deterministic:
-            return th.argmax(pi.probs).item(), state
-        else:
-            return pi.sample().item(), state
-
-
-class ImpalaAgent(Agent):
-    """
-    Two impala resnets.
-    """
-
-    def __init__(self, envs):
-        super().__init__(envs)
-        assert isinstance(self.observation_space, gym.spaces.Dict)
-        assert self.observation_space.get("image") is not None
-        assert self.observation_space.get("memory") is not None
-
-        self.image_cnn = ImpalaCNN(self.observation_space["image"].shape)
-        self.memory_cnn = ImpalaCNN(self.observation_space["memory"].shape)
-        self.features_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
-
-        self.policy = MLP(self.features_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.features_dim, 1, out_gain=1.0)
-
-    def extract(self, obs):
-        xs = []
-        xs.append(self.image_cnn(preprocess_image(obs["image"])))
-        xs.append(self.memory_cnn(preprocess_image(obs["memory"])))
-        return th.cat(xs, dim=1)
-
-    def forward(self, obs, state, **kwargs):
-        x = self.extract(obs)
-        logits = self.policy(x)
-        pi = Categorical(logits=logits)
-        v = self.value(x)
         return pi, v, state
 
     def predict(self, obs, state, deterministic=False, **kwargs):
@@ -182,7 +142,6 @@ class ImageAgent(Agent):
         return pi, v, state
 
 
-
 class RecurrentAgent(Agent):    
     # Mnih et al., 2016 (https://arxiv.org/pdf/1602.01783.pdf)
 
@@ -201,12 +160,12 @@ class RecurrentAgent(Agent):
 
     def initial(self, num_envs):
         return {
-            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
-            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+            "hidden": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size),
+            "cell": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)
         }
 
     def remember(self, hidden, state_dict, done):
-        state = (state_dict["hidden"], state_dict["cell"])
+        state = (state_dict["hidden"].transpose(0, 1), state_dict["cell"].transpose(0, 1))
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -220,7 +179,7 @@ class RecurrentAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, {"hidden": state[0], "cell": state[1]}
+        return new_hidden, {"hidden": state[0].transpose(0, 1), "cell": state[1].transpose(0, 1)}
 
     def forward(self, obs, state, done, **kwargs):
         x = obs["image"]
@@ -281,8 +240,8 @@ class BaselineAgent(Agent):
 
     def initial(self, num_envs):
         return {
-            "hidden": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size),
-            "cell": th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)
+            "hidden": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size),
+            "cell": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)
         }
 
     def extract(self, obs):
@@ -300,7 +259,7 @@ class BaselineAgent(Agent):
         return th.cat(xs, dim=1)
 
     def remember(self, hidden, state_dict, done):
-        state = (state_dict["hidden"], state_dict["cell"])
+        state = (state_dict["hidden"].transpose(0, 1), state_dict["cell"].transpose(0, 1))
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -314,7 +273,7 @@ class BaselineAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, {"hidden": state[0], "cell": state[1]}
+        return new_hidden, {"hidden": state[0].transpose(0, 1), "cell": state[1].transpose(0, 1)}
 
 
     def forward(self, obs, state, done, **kwargs):

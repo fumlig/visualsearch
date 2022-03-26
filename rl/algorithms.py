@@ -101,7 +101,7 @@ class ProximalPolicyOptimization(Algorithm):
         logprobs = th.zeros((num_steps, num_envs)).to(device)
         vals = th.zeros((num_steps, num_envs)).to(device)
 
-        obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in envs.reset().items()}
+        obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
         done = th.zeros(envs.num_envs).to(device)
         state = {key: initial.to(device) for key, initial in agent.initial(num_envs).items()}
 
@@ -119,7 +119,7 @@ class ProximalPolicyOptimization(Algorithm):
             writer.add_text("log", f"batch {b}", timestep)
 
             # for train
-            initial_state = {key: initial.clone() for key, initial in agent.initial(num_envs).items()}
+            initial_state = {key: s.clone() for key, s in state.items()} # todo: was an error here, rerun experiments
             
             # rollout steps
             for step in range(num_steps):
@@ -143,7 +143,7 @@ class ProximalPolicyOptimization(Algorithm):
                 logprobs[step] = logprob
                 vals[step] = val
 
-                obs = {key: th.tensor(observation, dtype=th.float).to(device) for key, observation in next_obs.items()}
+                obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in next_obs.items()}
                 done = th.tensor(next_done, dtype=th.float).to(device)
 
                 for i, info in enumerate(infos):
@@ -179,7 +179,7 @@ class ProximalPolicyOptimization(Algorithm):
 
 
             # train policy
-            b_obss = {key: observation.reshape((-1,) + envs.single_observation_space[key].shape) for key, observation in obss.items()}
+            b_obss = {key: o.reshape((-1,) + envs.single_observation_space[key].shape) for key, o in obss.items()}
             b_acts = acts.reshape((-1,) + envs.single_action_space.shape)
             b_dones = dones.reshape((-1))
             b_logprobs = logprobs.reshape((-1,))
@@ -200,14 +200,15 @@ class ProximalPolicyOptimization(Algorithm):
                     mb_envs_idx = envs_idx[mb_begin:mb_end]
                     mb_idx = flat_idx[:, mb_envs_idx].ravel()
                     
-                    mb_obss = {key: b_observation[mb_idx] for key, b_observation in b_obss.items()}
+                    mb_obss = {key: o[mb_idx] for key, o in b_obss.items()}
                     mb_acts = b_acts[mb_idx]
                     mb_dones = b_dones[mb_idx]
                     mb_logprobs = b_logprobs[mb_idx]
                     mb_vals = b_vals[mb_idx]
                     mb_advs = b_advs[mb_idx]
                     mb_rets = b_rets[mb_idx]
-                    mb_state = {key: initial[:, mb_envs_idx] for key, initial in initial_state.items()}
+                    #mb_state = {key: s[:, mb_envs_idx] for key, s in initial_state.items()}
+                    mb_state = {key: s[mb_envs_idx] for key, s in initial_state.items()}
 
                     pi, v, _ = agent(mb_obss, mb_state, done=mb_dones)
                     new_val = v.view(-1)

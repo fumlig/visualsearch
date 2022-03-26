@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
-    print(device)
+    print(device, args.hparams)
 
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,

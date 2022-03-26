@@ -51,15 +51,7 @@ class SearchEnv(gym.Env):
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
-        self.observation_space = gym.spaces.Dict(dict(
-            image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8),
-            
-            #time=gym.spaces.Discrete(self.max_steps),
-            #position=gym.spaces.Discrete(np.prod(self.scaled_shape)),
-            #visible=gym.spaces.Box(0, 1, self.scaled_shape),
-            #visited=gym.spaces.Box(0, 1, self.scaled_shape),
-            #triggered=gym.spaces.Box(0, 1, self.scaled_shape)
-        ))
+        self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8)))
         
         self.seed()
 
@@ -181,15 +173,7 @@ class SearchEnv(gym.Env):
         y0, x0, y1, x1 = self.view.corners()
         obs = self.terrain[y0:y1,x0:x1]
 
-        return dict(
-            image=obs,
-            
-            #time=self.num_steps,
-            #position=self.scaled_position[0]*self.scaled_shape[1] + self.#scaled_position[1],
-            #visible=self.visible,
-            #visited=self.visited,
-            #triggered=self.triggered,
-        )
+        return dict(image=obs)
 
     @property
     def scaled_shape(self):

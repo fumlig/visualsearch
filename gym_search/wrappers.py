@@ -36,13 +36,15 @@ class ObservePosition(gym.ObservationWrapper):
         for key, space in self.env.observation_space.items():
             self.observation_space[key] = space
         
-        self.observation_space[self.key] = gym.spaces.Discrete(np.prod(self.scaled_shape))
+        #self.observation_space[self.key] = gym.spaces.Discrete(np.prod(self.scaled_shape))
+        self.observation_space[self.key] = gym.spaces.MultiDiscrete(self.scaled_shape)
 
     def observation(self, observation):
         obs = observation.copy()
-        y, x = self.scaled_position
-        _, w = self.scaled_shape
-        obs[self.key] = to_index(x, y, w)
+        #y, x = self.scaled_position
+        #_, w = self.scaled_shape
+        #obs[self.key] = to_index(x, y, w)
+        obs[self.key] = self.scaled_position
         return obs
 
 

@@ -1,6 +1,8 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
+% ~3p
+
 In this thesis project, the problem of searching for targets in unknown but familiar environments is addressed.
 This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
 
@@ -18,14 +20,21 @@ This chapter presents the motivation behind the project, the research questions 
 % the reader interested in the work and create an urge to
 % continue reading.
 
-The ability to visually search for targets in an environment is crucial to many parts of our daily lives.
-We are constantly looking for things, be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest.
-In many cases, it is important that this search is efficient and fast.
+% introductory paragraph
+
+The ability to visually search for things in an environment is fundamental to intelligent behaviour.
+We humans are constantly looking for things, be it be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest.
+In many cases, it is important that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
+
+An intelligent searcher should be able to 
+
+Automating the task of searching is of great interest
 
 While searching for targets is often seemingly effortless to humans, it is a complex process.
 How humans and animals search for things has been extensively studied in neuroscience and neurobiology~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}.
-Applications from automated search and rescue to helping robots mean that it is of great interest to automate visual search.
+
+Applications such as helping robots and search and rescue mean that it is of great interest to automate visual search.
 In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}.
 Most attempts focus on fully observable scenes where the target is in view and the task is to localize it (object localization).
 However, in many real-world visual search scenarios the field-of-view is limited.
@@ -41,15 +50,16 @@ The exact characteristics of the environment need not be constant - forests with
 In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
 Humans are able to generalize in such cases.
 
+% should introduce RL advancemens, mapping state to action here
+
+
 Manually creating search algorithms for such tasks is problematic.
 The appearance and distribution of targets in an environment varies greatly, and may be subtle.
 The visual richness of the environment itself is another problem.
 How can you identify useful hints from the environment to guide covert attention?
-Manually engineering such a platform seems infeasible.
+Doing so manually can be labour intensive, especially if a searcing system should be deployed in many different environments.
 If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
-Finally, one wants to avoid looking at the same region twice.
-The need for keeping track of explored areas necessites some kind of memory.
 % we want a system that can
 % - work in familiar environments
 % - learns effective scanning patterns
@@ -59,11 +69,15 @@ The need for keeping track of explored areas necessites some kind of memory.
 % - train: show the agent some samples of previous objects and their locations
 % - test: the agent finds them in a short time
 
+% arent covert and overt attention essentially the same?
+% both are active and have the same characteristics
+
 \section{Aim}
 \label{sec:aim}
 
 % What is the underlying purpose of the thesis project?
 
+The aim of this thesis is to investigate how an agent that learns to search for targets can be implemented.
 This work tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment.
 This is a problem that has been less studied in the literature than visual search in smaller environments.
 There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
@@ -135,15 +149,8 @@ This thesis will address the following questions:
 
 \begin{enumerate}
   \item \label{itm:rq1} How can a learning agent that does efficient visual search in familiar environments be implemented?
-  \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, frontier-based search, a human searcher, and standard RL methods?
+  \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
   \item \label{itm:rq3} How well does the learning agent generalize to unseen but familiar environments?
-  % use a CNN and recurrent step, like papers in navigation propose
-  % naturecnn + lstm
-  % compare to our approach, which uses an explicit episodic memory
-
-  %\item How does the learning agent compare to common non-learning methods?
-  %\item How can a simulator that tests the ability of an agent to solve the presented problem be implemented?
-  %\item How does memory affect the agent's ability to search an environment?
 \end{enumerate}
 
 \section{Delimitations}
@@ -156,9 +163,5 @@ This thesis will address the following questions:
 
 This thesis will be focused on the behavioral aspects of the presented problem.
 We do not focus on difficult detection problems, but rather efficient actions.
-To train and test agents, a simplified environment will be used. 
-This will test the desired characteristics of the agent as presented above, but will not simulate realistic environments.
-For simplicity, we assume that the environment is static. % explain
-We also focus on the search process and not the detection, and therefore targets will be easy to detect once visible.
-
-% Having a variable number of targets becomes problematic: an exhaustive search of the environment is necessary for the agent to know for certain if it is done.
+For this reason, targets will deliberately be made easy to detect.
+For simplicity, we make the assumption that the searched environment is static. % explain

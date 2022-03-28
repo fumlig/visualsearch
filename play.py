@@ -83,8 +83,7 @@ if __name__ == "__main__":
         obs = env.reset()
 
         if agent is not None:
-            state = agent.initial(1)
-            state = (state[0].to(device), state[1].to(device))
+            state = {key: s.to(device) for key, s in agent.initial(1).items()}
 
         if args.verbose:
             points = [env.view.pos] + [target.pos for target in env.targets]
@@ -95,7 +94,7 @@ if __name__ == "__main__":
             if args.observe:
                 img = obs["image"]
             else:
-                img = env.render(mode="rgb_array")
+                img = env.render(mode="rgb_array", show_path=False)
 
             img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
             img = cv.cvtColor(img, cv.COLOR_BGR2RGB)

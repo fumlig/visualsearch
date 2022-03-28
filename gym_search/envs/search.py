@@ -38,7 +38,6 @@ class SearchEnv(gym.Env):
         view_shape=(32, 32), 
         step_size=1, 
         random_pos=True,
-        rew_exploration=True,
         max_steps=1000
     ):
         self.generator = generator
@@ -46,7 +45,6 @@ class SearchEnv(gym.Env):
         self.view = Box(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
         self.random_pos = random_pos
-        self.rew_exploration = rew_exploration
         self.max_steps = max_steps
 
         self.reward_range = (-np.inf, np.inf)
@@ -122,8 +120,8 @@ class SearchEnv(gym.Env):
         
         if hit:
             rew = 10 # previously 5, should not matter
-        elif revisit:
-            rew = -2.5
+        #elif revisit:
+        #    rew = -2.5
         else:
             rew = -1
 

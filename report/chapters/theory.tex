@@ -1,6 +1,8 @@
 \chapter{Theory}
 \label{cha:theory}
 
+% ~10p
+
 % The main purpose of this chapter is to make it obvious for
 % the reader that the report authors have made an effort to read
 % up on related research and other information of relevance for
@@ -66,10 +68,13 @@ Each node receives a real-valued signal, processes it and signals connected node
 
 % https://www.asimovinstitute.org/neural-network-zoo/
 
+This section will introduce three classes of ANNs that are relevant to this work:
+feed-forward, convolutional, and recurrent neural networks.
 
 \subsection{Feed-forward Neural Network}
 
 A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
+It consists of multiple layers of computational units
 The value of the parameter \(\theta\) is learned  
 
 \cite{goodfellow_deep_2016}
@@ -92,9 +97,26 @@ As the name implies, CNNs employ the convolution operator
 
 % https://colah.github.io/posts/2015-08-Understanding-LSTMs/
 Recurrent neural networks (RNNs) are networks designed to process sequential data.
-By sharing parameters across different parts of a network, it is possible to generalize to 
+RNNs extend ANNs by also including \textit{hidden state} in the network.
+Information from previous inputs is stored in the hidden state and used to influence the current input and output.
+This means that a single network can be used for sequences of variable length.
 
-A commonly used RNN architecture is long short-term memory (LSTM)~\cite{hochreiter_schmidhuber_lstm_1997}.
+Formally, RNNs operate on a sequence \(x^{(1), \dots, x^\{(\tau)}\).
+For each value \(x_t\) in the sequence, the hidden state is computed as \(h^{(t)} = f(h^{(t-1)}, x^{(t)}; \theta)\).
+The hidden state is used as a summary of all previous items in the sequence 
+
+% figure 10.2 in deep learning book
+
+
+In practice, conventional RNNs struggle with learning long-term dependencies.
+During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
+An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_schmidhuber_lstm_1997}.
+LSTMs have \textit{cells} in the hidden layers of the network which have an input gate, an output gate and a forget gate.
+These gates control how information flows in the network.
+By allowing 
+
+
+This makes LSTMs particularly useful for learning over long sequences.
 
 \section{Reinforcement Learning}
 
@@ -175,6 +197,8 @@ The (temporal) credit assignment problem (CAP)~\cite{minsky_cap_1961}\dots
 
 % include pseudocode
 % clearly motivate which ones are good and bad
+
+Proximal policy optimization algorithms~\cite{schulman_ppo_2017}.
 
 \section{Related Work}
 
@@ -348,7 +372,7 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 
 \cite{krishna_tetromino_2020} % an approach with RL
 
-\subsection{Navigation}
+\subsection{Visual Navigation}
 
 The task we consider bears resemblance to many navigation tasks in robotics.
 Point navigation is the task of \dots
@@ -395,7 +419,7 @@ They further find that, with a single decision point whose correct.
 
 Chaplot et al. (2020)~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
 
-\subsection{Overfitting and Generalization in Deep Reinforcement Learning}
+\subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
 
 % first introduce the reason why generalization is important
 % reality is dynamic
@@ -431,10 +455,14 @@ In a similar spirit, Cobbe et al. (2019)~\cite{cobbe_generalization_2019} constr
 They find that agents can overfit to surprisingly large training sets, and that deep convolutional architectures can improve generalization.
 Methods from supervised learning, like L2 regularization, dropout, data augmentation and batch normalization are also shown to aid with generalization.
 
-Hessel et al. (2019)~\cite{hessel_inductive_2019} investigate the trade-off between generality and performance from the perspective of inductive biases.
+Many current deep RL agents do not optimize the true objective that they are evaluated against,
+but rather a handcrafted objective that incorporates biases to simplify learning.
 Stronger biases can lead to faster learning, while weaker biases potentially lead to more general agents.
-They find that learned solutions are competitive with domain heuristics, and that they seem to be better at generalizing to unseen domains.
+Hessel et al. (2019)~\cite{hessel_inductive_2019} investigate the trade-off between generality and performance from the perspective of inductive biases.
+Through experimentation with common reward sculpting techniques, they find that learned solutions are competitive with domain heuristics like handcrafted objectives.
+Learned solutions also seem to be better at generalizing to unseen domains.
 For this reason, they argue for removing biases determined with domain knowledge in future research.
+
 
 % what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
 % it is essentially reward shaping.
@@ -458,7 +486,7 @@ Agents strongly overfit to small training sets and need many samples to generali
 Interestingly, training performance improves as the training set grows past a certain threshold.
 The authors attribute this to the implicit curriculum of the distribution of levels.
 
-\subsection{Evaluation of Agents}
+\subsection{Evaluation of Deep Reinforcement Learning Agents}
 
 Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents.
 They...

@@ -1,6 +1,8 @@
 \chapter{Method}
 \label{cha:method}
 
+% ~10p
+
 % In this chapter, the method is described in a way which shows how the
 % work was actually carried out. The description must be precise and
 % well thought through. Consider the scientific term
@@ -25,13 +27,6 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 \section{Problem Statement}
 \label{sec:problem}
 
-% and problem formulation
-
-% environment: discrete grid
-% observation: subset of grid, equals attention
-% action: transform subset of grid, trigger is binary decision telling whether target is found, or whether it should be checked for thoroughly?
-% reward: used to achieve correct trigger in few actions
-
 Formally, the searched environment contains a scene with a set of targets.
 The scene is described by a Euclidean space.
 In the scene, there are \(N\) targets, each described by a subspace.
@@ -45,18 +40,9 @@ This corresponds to changing the field of perception.
 
 We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
 
-Furthermore, we make the assumption that the agent initially has access to its position.
-With this, it can keep track of which regions are and have been in view before.
-
-% "Learning to optimize" has some good formulation tips
-% explains that policy search is intractable
-% Also uses a decaying step size, could be interesting for us as well
-% (although we have multiple targets...)
-
 \section{Environment}
 \label{sec:environment}
 
-% overview
 To train an test an agent for the problem, we use three environments of varying difficulty.
 In each environment there is a scene with a background of distractors and a foreground of targets.
 The scenes are drawn from some unknown distribution.
@@ -81,24 +67,25 @@ We experiment with two rewards signals. The first reward signal is defined as
 \[
     \mathcal{R}_1(s_t, a_t) =
     \begin{cases}
-        10   & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -2.5 & \text{if the current region has already been viewed, and} \\
-        -1   & \text{otherwise.}
+        10 & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -1 & \text{otherwise.}
     \end{cases}
 \]
 
 We argue that \(R_1\) provides a suitable inductive bias for the task at hand.
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
+The reward for finding a target speeds up training.
 Targets should be triggered when in view, but triggers when targets are out of view should be penalized.
-Revisiting regions is penalized to help the agent learn exhaustive search patterns faster.
-It does, however, introduce some bias that might prevent it from acting optimally in some cases.
-The additional penalty of \(-2.5\) for revisiting regions seems to speed up convergence.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+This reward signal is maximized when the targets are found as quickly as possible.
+
+The second reward signal is defined as
 
 \[
     \mathcal{R}_2(s_t, a_t) =
     \begin{cases}
         10 & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        1  & \text{if \(a_t\) moves the view closer to the nearest target, and} \\
+         1 & \text{if \(a_t\) moves the view closer to the nearest target, and} \\
         -1 & \text{otherwise.}
     \end{cases}
 \]
@@ -106,8 +93,6 @@ The constant penalty of \(-1\) in all other cases assures that the agent is rewa
 \(R_2\) uses the supervised distance between targets and the agent which is available during training time. % cite
 We hypothesize that this reward speeds up training time and may help the agent pick out correlations between scene and target probability quicker.
 However, it can never yield policies that search optimally nor exhaustively as these will not be rewarded.
-
-Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
 
 % cite
 % reward inspired by Tabu Search?
@@ -212,7 +197,7 @@ We postulate that an effective searcher should be able to:
     \item Remember the appearance of previously visited areas in order to prioritize where to go next.
 \end{itemize}
 
-The agent is trained with reinforcement learning using Proximal Policy Optimization with function approximation using neural networks. 
+The agent is trained with reinforcement learning using Proximal Policy Optimization~\cite{proxim} with function approximation using neural networks.
 
 % section 17.4 in sutton is good!
 
@@ -239,7 +224,7 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 % could be multiple channels for view as well
 % maybe call them "global" and "local"
 
-\subsection{Architecture}
+\subsection{Architectures}
 
 % resnets?
 % https://efficientdl.com/how-to-train-a-resnet-efficiently/
@@ -247,10 +232,12 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 % should use a constant network architecture
 
 The architecture of the neural network is presented in Figure X.
-
 The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
-
 In order to be able to use the same extractor for all environments we resize the RGB image to \(64 \times 64\) pixels.
+
+We compare our architecture to three different baselines.
+As \cite{mirowski_navigate_2017}, we use a 
+
 
 % Actor critic
 

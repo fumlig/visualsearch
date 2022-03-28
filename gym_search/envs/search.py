@@ -119,9 +119,7 @@ class SearchEnv(gym.Env):
                 dist = d
         
         if hit:
-            rew = 10 # previously 5, should not matter
-        #elif revisit:
-        #    rew = -2.5
+            rew = 10
         else:
             rew = -1
 

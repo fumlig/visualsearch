@@ -44,9 +44,9 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        gym_search.wrappers.ExplicitMemory,
-        gym_search.wrappers.LastAction,
-        gym_search.wrappers.ObservePosition
+        #gym_search.wrappers.ExplicitMemory,
+        #gym_search.wrappers.LastAction,
+        #gym_search.wrappers.ObservePosition
         #gym_search.wrappers.LastReward
     ]
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             if args.observe:
                 img = obs["image"]
             else:
-                img = env.render(mode="rgb_array", show_path=False)
+                img = env.render(mode="rgb_array")
 
             img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
             img = cv.cvtColor(img, cv.COLOR_BGR2RGB)

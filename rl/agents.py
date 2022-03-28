@@ -50,6 +50,17 @@ class ExhaustiveAgent(Agent):
         return self.action_space.sample(), state
 
 
+class GreedyAgent(Agent):
+    def __init__(self, env):
+        super().__init__()
+        self.visited = np.zeros(env.observation_space["position"].shape, dtype=bool)
+
+    def predict(self, obs, state, **kwargs):
+        position = obs["position"]
+        self.visited[position] = True
+        # sample an action, select it if it is not visited and inside
+
+
 class SearchAgent(Agent):
     """
     Our method.
@@ -92,7 +103,7 @@ class SearchAgent(Agent):
 
         position = obs["position"].long()
         state_memory = state["memory"]
-        state_memory[:,position[:,0],position[:,1]] = latent_image.clone().detach()
+        state_memory[:,position[:,0],position[:,1]] = latent_image #.clone().detach()
         
         obs_memory = obs["memory"]
         batch_size = obs_memory.shape[0]

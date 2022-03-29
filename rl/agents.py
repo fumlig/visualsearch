@@ -108,6 +108,10 @@ class SearchAgent(Agent):
         obs_memory = obs["memory"]
         batch_size = obs_memory.shape[0]
 
+        # obs memory is much larger here
+
+        print(state_memory.shape, obs_memory.shape)
+
         memory = th.cat([state_memory.expand(batch_size, -1, -1, -1), obs_memory], axis=-1)
         latent_memory = self.memory_cnn(preprocess_image(memory))
 

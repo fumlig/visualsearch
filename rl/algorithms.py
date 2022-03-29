@@ -1,3 +1,4 @@
+from imp import init_builtin
 import gym
 import numpy as np
 import torch as th
@@ -102,7 +103,7 @@ class ProximalPolicyOptimization(Algorithm):
         vals = th.zeros((num_steps, num_envs)).to(device)
 
         obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
-        done = th.zeros(envs.num_envs).to(device)
+        done = th.zeros(num_envs).to(device)
         state = {key: initial.to(device) for key, initial in agent.initial(num_envs).items()}
 
         # rework state to a dictionary

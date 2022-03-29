@@ -120,12 +120,18 @@ This makes LSTMs particularly useful for learning over long sequences.
 
 \section{Reinforcement Learning}
 
+% {arulkumaran_survey_2017} also gives a good introduction to algorithms
+
+% https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
+% https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
+% https://sites.ualberta.ca/~szepesva/rlbook.html
+
 Reinforcement learning (RL)~\cite{sutton_reinforcement_2018} is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
 This section introduces the fundamental concepts of RL.
 
 \subsection{Partially Observable Markov Decision Processes}
 
-The problem of learning from interaction to achieve some goal is often framed as a (finite) Markov decision process (MDP).
+The problem of learning from interaction to achieve some goal is often framed as a Markov decision process (MDP).
 A learning \textit{agent} interacts continually with its \textit{environment}.
 The agent takes the \textit{state} of the environment as input, and select an \textit{action} to take.
 This action updates the state of the environment and gives the agent a scalar \textit{reward}.
@@ -148,11 +154,15 @@ A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \ma
     \item \(\gamma \in [0, 1]\) is a discount factor.
 \end{itemize}
 
-Assume that the environment is in state \(s \in \mathcal{S}\), and the agent selects action \(a \in \mathcal{A}\).
-Then, \(T(s, a, s^\prime)\) is the probability of ending in state \(s^\prime\) and \(R(s, a)\) is the expected reward gained by the agent.
-The agent also receives an observation \(o \in \Omega\) with probability \(\mathcal{O}(s^\prime, a, o)\).
+Assume that the environment is in state \(s_t \in \mathcal{S}\), and the agent selects action \(a_t \in \mathcal{A}\).
+Then, \(T(s_t, a_t, s_{t+1})\) is the probability of ending in state \(s_{t+1}\) and \(r_t = R(s_t, a_t)\) is the expected reward gained by the agent.
+The agent also receives an observation \(o_t \in \Omega\) with probability \(\mathcal{O}(s_{t+1}, a_t, o_t)\).~\cite{kaelbling_pomdp_1998}
 The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
-The goal of the agent is to maximize the expected \textit{discounted return} \(\mathbb{E} \lbrack \Sigma_{t=0}^\infty \gamma^t r_t \rbrack\).~\cite{kaelbling_pomdp_1998}
+At each time step \(t\), the goal of the agent is to select the action that maximizes the expected \textit{discounted return}:
+
+\[ 
+    \mathbb{E} \left[ \sum_{k=0}^T \gamma^{k-t-1} r_k \right]
+\]
 
 Figure \ref{fig:pomdp} illustrates the interaction between agent and environment.
 
@@ -165,40 +175,61 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 Planning in a POMDP is undecidable, and solving them is often computationally intractable.
-Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state} \(b\) that summarizes its previous experience.
-
-% belief state
-% markov property
-% the need for memory
+Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_pomdp_1998} which is acts on.
+The belief state summarizes the agent's previous experience and is therefore dependent on the previous belief state, observation and action.
+It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
+From here on we will use the belief state and the environment state \(s\) interchangably. 
 
 \subsection{Policies and Value Functions}
+\label{sec:policies-values}
 
-Most RL algorithms estimate both a \textit{value function} that tells the agent how good it is to be in a given state.
-\cite{sutton_reinforcement_2018}
+The behaviour of the agent is described by its \textit{policy}.
+A policy \(\pi\) is a mapping from perceived environment states to actions.
+Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\).
+Most RL solutions methods also approximate a \textit{value function}.
+A value function \(v_\pi\) estimates how good it is to be in a state.
+The value function \(v_\pi(s)\) is the expected (discounted) return when starting at state \(s\) and following policy \(\pi\) until the end of the episode.
+With a good value function estimate, the policy can select actions so as to maximize the value function.
+This is referred to as an \textit{action-value} method.~\cite{sutton_reinforcement_2018}
+% quality functions, advantage functions
 
-% introduce the policy and value function
-% connect back to neural networks (or do that in deep reinforcement learning)
-% cover action-value function? (Q-functions)
+For problems with large state and action spaces, it is common to represent value functions with \textit{function approximation}.
+In such cases, it is common to encounter states that have never been encountered before.
+This makes it important that the estimated value function can generalize from seen to unseen states.
+With examples from the true value function, an approximation can be made with supervised learning methods.
+We write \(\hat{v}(s,w) \approx v_\pi(s)\) for the approximate value of state \(s\) with the some weight vector \(w \in \mathbb{R}^d\).
 
-\subsection{Exploration and Exploitation Trade-off}
+An alternative to action-value methods is to approximate the policy itself.
+\textit{Policy gradient methods}~\cite{sutton_policygrad_1999} learn a parametrized policy that select actions without a value function.
+We denote a parametrized policy as \(\pi(a|s,\theta)\) with \(\theta \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
+The policy parameters are usually learned based on the gradient of some performance measure \(J(\theta)\).
+As long as \(\pi(a|s,\theta)\) is differentiable with respect to its parameters, the parameters can be updated with \textit{gradient ascent} in \(J\):
 
-\subsection{Sparse Rewards and the Credit Assignment Problem}
+\[
+    \theta_{t+1} = \theta_t + \alpha \hat{\nabla J(\theta_t)}) 
+\]
+
+Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}. In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
+Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
+In these cases, there might also be some overlap between the weights \(w\) of the value function estimate and \(\theta\) of the policy estimate. 
+
+% We might imagine an artificial neural network (ANN) in which the last layer is split into multiple parts, or heads, each working on a di↵erent task. One head might produce the approximate value function for the main task (with reward as its cumulant) whereas the others would produce solutions to various auxiliary tasks. All heads could propagate errors by stochastic gradient descent into the same body—the shared preceding part of the network—which would then try to form representations, in its next-to-last layer, to support all the heads. Researchers have experimented with auxiliary tasks such as predicting change in pixels, predicting the next time step’s reward, and predicting the distribution of the return. In many cases this approach has been shown to greatly accelerate learning on the main task (Jaderberg et al., 2017). Multiple predictions have similarly been repeatedly proposed as a way of directing the construction of state estimates (see Section 17.3). (Sutton)
+
+\subsection{Challenges in Reinforcement Learning}
+
+% we can illustrate the challenges in terms of our problem
+
+
+
+\begin{itemize}
+    \item Exploration and Exploitation
+    \item Sparse Rewards
+    \item Credit Assignment~\cite{minsky_cap_1961}
+\end{itemize}
 
 % https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
-
 % https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
 % reward shaping
-
-The (temporal) credit assignment problem (CAP)~\cite{minsky_cap_1961}\dots
-
-\subsection{Common Algorithms}
-
-% https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
-
-% include pseudocode
-% clearly motivate which ones are good and bad
-
-Proximal policy optimization algorithms~\cite{schulman_ppo_2017}.
 
 \section{Related Work}
 
@@ -206,7 +237,22 @@ Proximal policy optimization algorithms~\cite{schulman_ppo_2017}.
 
 % Mnih et al., Atari, DQN
 
-A long-standing challenge in RL is to learn good policies from high-dimensional sensory inputs like vision.
+% problem with classical
+
+As mentioned in Section~\ref{sec:policies-values}, policy and value functions are often approximated.
+Neural networks have good properties for function approximation and have been used for RL with success.
+One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 90s.
+More recently, the use of deep neural networks has shown tremendous success in RL, giving birth to the field of deep RL.
+
+\cite{arulkumaran_survey_2017} % survey
+
+\cite{tesauro1995tdgammon} % TD gammon
+
+% deep learning
+
+% combination
+
+Breakthroughs in computer vision like 
 Mnih et al. (2013)~\cite{mnih_atari_2013} address this by combining deep learning with RL.
 A CNN is trained to estimate the 
 
@@ -229,7 +275,9 @@ Mnih et al. (2015)~\cite{mnih_human_2015}\dots
 Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effects of adding recurrency to a DQN in order to tackle POMDPs.
 A LSTM is added after the initial 
 
-% PPO, others
+\subsection{Proximal Policy Optimization}
+
+Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
 
 \subsection{Active Vision}
 \label{sec:activevision}

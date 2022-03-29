@@ -29,9 +29,6 @@ class Agent(nn.Module):
         raise NotImplementedError
 
 
-# how do we handle triggers for these agents?
-
-
 class RandomAgent(Agent):
     def __init__(self, env):
         super().__init__()
@@ -50,15 +47,12 @@ class ExhaustiveAgent(Agent):
         return self.action_space.sample(), state
 
 
-class GreedyAgent(Agent):
-    def __init__(self, env):
-        super().__init__()
-        self.visited = np.zeros(env.observation_space["position"].shape, dtype=bool)
-
-    def predict(self, obs, state, **kwargs):
-        position = obs["position"]
-        self.visited[position] = True
-        # sample an action, select it if it is not visited and inside
+# we should have DQN, PPO and A2C
+# maybe the actor-critic interface can be used for DQN as well, just ignore value?
+# or we use the idea from rllib:
+# forward only returns policy,
+# optionally stores value as field
+# I think this is the way to go
 
 
 class SearchAgent(Agent):

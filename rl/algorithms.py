@@ -20,6 +20,67 @@ class Algorithm:
         raise NotImplementedError
 
 
+class DeepQNetworks(Algorithm):
+    def __init__(
+        self,
+        learning_rate=2.5e-4,
+        buffer_size=10000,
+        gamma=0.99,
+        target_net_freq=500,
+        max_grad_norm=0.5,
+        batch_size=32,
+        start_eps=1,
+        end_eps=0.05,
+        exploration_frac=0.8,
+        learning_start=10000,
+        train_freq=1
+
+    ):
+        self.learning_rate = learning_rate
+        self.buffer_size = buffer_size
+        self.gamma = gamma
+        self.target_net_freq = target_net_freq
+        self.max_grad_norm = max_grad_norm
+        self.batch_size = batch_size
+        self.start_eps = start_eps
+        self.end_eps = end_eps
+        self.exploration_frac = exploration_frac
+        self.learning_start = learning_start
+        self.train_freq = train_freq
+
+    def learn(
+        self,
+        tot_timesteps,
+        envs,
+        agent,
+        device,
+        writer=None,
+    ):
+        learning_rate = self.learning_rate
+        buffer_size = self.buffer_size
+        gamma = self.gamma
+        target_net_freq = self.target_net_freq
+        max_grad_norm = self.max_grad_norm
+        batch_size = self.batch_size
+        start_eps = self.start_eps
+        end_eps = self.end_eps
+        exploration_frac = self.exploration_frac
+        learning_start = self.learning_start
+        train_freq = self.train_freq
+
+        num_envs = envs.num_envs
+
+        assert isinstance(envs.single_action_space, gym.spaces.Discrete)
+        assert isinstance(envs.single_observation_space, gym.spaces.Dict)
+
+        agent.to(device)
+        optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
+        pbar = tqdm(total=tot_timesteps)
+        ep_infos = deque(maxlen=100)
+
+        timestep = 0
+
+
 class ProximalPolicyOptimization(Algorithm):
     def __init__(
         self,
@@ -264,3 +325,4 @@ class ProximalPolicyOptimization(Algorithm):
                 avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
                 avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
                 pbar.set_description(f"ret {round(avg_ret)}, len {round(avg_len)}")
+

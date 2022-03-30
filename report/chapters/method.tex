@@ -40,6 +40,14 @@ This corresponds to changing the field of perception.
 
 We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
 
+
+% this might be better in introduction
+A successful agent should therefore:
+
+\begin{itemize}
+    \item \dots
+\end{itemize}
+
 \section{Environment}
 \label{sec:environment}
 
@@ -93,17 +101,15 @@ The second reward signal is defined as
 \(R_2\) uses the supervised distance between targets and the agent which is available during training time. % cite
 We hypothesize that this reward speeds up training time and may help the agent pick out correlations between scene and target probability quicker.
 However, it can never yield policies that search optimally nor exhaustively as these will not be rewarded.
+It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not 
 
-% cite
 % reward inspired by Tabu Search?
 
-The observation \(o_t\) contains
+At each time step, the agent receives an observation that includes
 
 \begin{itemize}
     \item an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\) of the currently visible region of the scene, and
     \item the current position of the agent \(p_t \in  \mathbb{R}^{W \times H}\). % call this something else, what is the internal state of the sensor called?
-    % previous action?
-    % the explicit memory can be built exclusively from these two
 \end{itemize}
 
 % cite something

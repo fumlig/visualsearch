@@ -82,6 +82,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if args.name is None:
+        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
+
     if args.seed is not None:
         random.seed(args.seed)
         np.random.seed(args.seed)
@@ -92,15 +95,11 @@ if __name__ == "__main__":
         #th.backends.cudnn.benchmark = False
         #th.backends.cudnn.deterministic = True
 
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
-
-    print(device, args.hparams)
-
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
         #gym_search.wrappers.ExplicitMemory,
-        #gym_search.wrappers.LastAction,
+        gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
 
@@ -112,22 +111,19 @@ if __name__ == "__main__":
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
-    algorithm = rl.algorithm(args.algorithm)(**args.hparams)
-
+    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    writer = SummaryWriter(f"logs/{args.name}")
     agent = rl.agent(args.agent)(envs)
+    algorithm = rl.algorithm(args.algorithm)(**args.hparams)
 
     if args.model:
         agent = th.load(args.model)
 
-    if args.name is None:
-        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
-
-    writer = SummaryWriter(f"logs/{args.name}")
-
-    algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
+    stats = algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
 
     envs.close()
     writer.close()
 
     print(f"saving as {args.name}")
     th.save(agent, f"models/{args.name}.pt")
+    stats.wr

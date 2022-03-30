@@ -153,8 +153,11 @@ class ProximalPolicyOptimization(Algorithm):
         #    "\n".join([f"|{key}|{value}|" for key, value in args.hparams.items()]) 
         #)
 
+        timestep = 0
         agent.to(device)
         optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
+        pbar = tqdm(total=tot_timesteps)
+        ep_infos = deque(maxlen=100)
 
         obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
         acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
@@ -165,23 +168,13 @@ class ProximalPolicyOptimization(Algorithm):
 
         obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
         done = th.zeros(num_envs).to(device)
-        state = {key: initial.to(device) for key, initial in agent.initial(num_envs).items()}
-
-        # rework state to a dictionary
-        # allow all dictionaries, but their values should be tensors
-        # the rest can be handled by the agents
-        # our agent uses the latent representation as state
-
-        pbar = tqdm(total=tot_timesteps)
-        ep_infos = deque(maxlen=100)
-
-        timestep = 0
+        state = [s.to(device) for s in agent.initial(num_envs)]
 
         for b in range(num_batches):
             writer.add_text("log", f"batch {b}", timestep)
 
             # for train
-            initial_state = {key: s.clone() for key, s in state.items()} # todo: was an error here, rerun experiments
+            initial_state = [s.clone() for s in state]
             
             # rollout steps
             for step in range(num_steps):
@@ -269,8 +262,7 @@ class ProximalPolicyOptimization(Algorithm):
                     mb_vals = b_vals[mb_idx]
                     mb_advs = b_advs[mb_idx]
                     mb_rets = b_rets[mb_idx]
-                    #mb_state = {key: s[:, mb_envs_idx] for key, s in initial_state.items()}
-                    mb_state = {key: s[mb_envs_idx] for key, s in initial_state.items()}
+                    mb_state = [s[:, mb_envs_idx] for s in initial_state]
 
                     pi, v, _ = agent(mb_obss, mb_state, done=mb_dones)
                     new_val = v.view(-1)
@@ -295,7 +287,7 @@ class ProximalPolicyOptimization(Algorithm):
                     # value loss
                     if clip_vloss:
                         val_loss_unclipped = (new_val - mb_rets)**2
-                        val_clipped = mb_vals + th.clamp(new_val-mb_vals, -clip_range, clip_range) # todo: this clipping is different (not added with 1)
+                        val_clipped = mb_vals + th.clamp(new_val-mb_vals, -clip_range, clip_range)
                         val_loss_clipped = (val_clipped - mb_rets)**2
                         val_loss_max = th.max(val_loss_unclipped, val_loss_clipped)
                         val_loss = 0.5 * val_loss_max.mean()

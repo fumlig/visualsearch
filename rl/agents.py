@@ -89,14 +89,14 @@ class SearchAgent(Agent):
         self.value = MLP(self.hidden_dim, 1, out_gain=1.0)
 
     def initial(self, num_envs):
-        return {"memory": th.zeros((num_envs, *self.memory_size, self.latent_dim))} 
+        return [th.zeros((num_envs, *self.memory_size, self.latent_dim))]
 
     def extract(self, obs, state):
         image = obs["image"]
         latent_image = self.image_cnn(preprocess_image(image))
 
         position = obs["position"].long()
-        state_memory = state["memory"]
+        state_memory, = state
         state_memory[:,position[:,0],position[:,1]] = latent_image #.clone().detach()
         
         obs_memory = obs["memory"]
@@ -174,13 +174,9 @@ class RecurrentAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return {
-            "hidden": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size),
-            "cell": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)
-        }
+        return [th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)]
 
-    def remember(self, hidden, state_dict, done):
-        state = (state_dict["hidden"].transpose(0, 1), state_dict["cell"].transpose(0, 1))
+    def remember(self, hidden, state, done):
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -194,7 +190,7 @@ class RecurrentAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, {"hidden": state[0].transpose(0, 1), "cell": state[1].transpose(0, 1)}
+        return new_hidden, state
 
     def forward(self, obs, state, done, **kwargs):
         x = obs["image"]
@@ -242,13 +238,12 @@ class BaselineAgent(Agent):
         
         hidden_dim = 0
         hidden_dim += self.cnn.features_dim
-        hidden_dim += self.observation_space["position"][0].n
-        hidden_dim += self.observation_space["position"][1].n
-        #hidden_dim += self.action_space.n
+        #hidden_dim += self.observation_space["position"][0].n
+        #hidden_dim += self.observation_space["position"][1].n
+        hidden_dim += self.action_space.n
         #hidden_dim += 1
 
         self.lstm = nn.LSTM(hidden_dim, 256, num_layers=1)
-        #self.gru = nn.GRU(hidden_dim, 256, num_layers=1)
 
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -256,18 +251,15 @@ class BaselineAgent(Agent):
         init_lstm(self.lstm)
 
     def initial(self, num_envs):
-        return {
-            "hidden": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size),
-            "cell": th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)
-        }
+        return [th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size), th.zeros(self.lstm.num_layers, num_envs, self.lstm.hidden_size)]
 
     def extract(self, obs):
         xs = []
 
         xs.append(self.cnn(preprocess_image(obs["image"])))
-        xs.append(F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n))
-        xs.append(F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n))
-        #xs.append(F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n))
+        #xs.append(F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n))
+        #xs.append(F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n))
+        xs.append(F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n))
         #xs.append(obs["last_reward"])
 
         # the authors additionally use relative velocity, but since we have such low-resolution discrete actions the agent should be able to learn this
@@ -275,8 +267,7 @@ class BaselineAgent(Agent):
 
         return th.cat(xs, dim=1)
 
-    def remember(self, hidden, state_dict, done):
-        state = (state_dict["hidden"].transpose(0, 1), state_dict["cell"].transpose(0, 1))
+    def remember(self, hidden, state, done):
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -290,7 +281,7 @@ class BaselineAgent(Agent):
         
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
 
-        return new_hidden, {"hidden": state[0].transpose(0, 1), "cell": state[1].transpose(0, 1)}
+        return new_hidden, state
 
 
     def forward(self, obs, state, done, **kwargs):

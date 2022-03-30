@@ -82,7 +82,7 @@ if __name__ == "__main__":
         obs = env.reset()
 
         if agent is not None:
-            state = {key: s.to(device) for key, s in agent.initial(1).items()}
+            state = [s.to(device) for s in agent.initial(1)]
 
         if args.verbose:
             points = [env.view.pos] + [target.pos for target in env.targets]

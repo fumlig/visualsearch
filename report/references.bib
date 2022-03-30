@@ -32,6 +32,31 @@
   pages        = {26–38}
 }
 
+ @article{bahdanau_attention_2016,
+  title        = {Neural Machine Translation by Jointly Learning to Align and Translate},
+  url          = {http://arxiv.org/abs/1409.0473},
+  abstractnote = {Neural machine translation is a recently proposed approach to machine translation. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neural machine translation often belong to a family of encoder-decoders and consists of an encoder that encodes a source sentence into a fixed-length vector from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition.},
+  note         = {arXiv: 1409.0473},
+  journal      = {arXiv:1409.0473 [cs, stat]},
+  author       = {Bahdanau, Dzmitry and Cho, Kyunghyun and Bengio, Yoshua},
+  year         = {2016},
+  month        = {May}
+}
+
+@article{zeng_survey_2020,
+  title        = {A Survey on Visual Navigation for Artificial Agents With Deep Reinforcement Learning},
+  volume       = {8},
+  issn         = {2169-3536},
+  doi          = {10.1109/ACCESS.2020.3011438},
+  abstractnote = {Visual navigation (vNavigation) is a key and fundamental technology for artificial agents’ interaction with the environment to achieve advanced behaviors. Visual navigation for artificial agents with deep reinforcement learning (DRL) is a new research hotspot in artificial intelligence and robotics that incorporates the decision making of DRL into visual navigation. Visual navigation via DRL, an end-to-end method, directly receives the high-dimensional images and generates an optimal navigation policy. In this paper, we first present an overview on reinforcement learning (RL), deep learning (DL) and deep reinforcement learning (DRL). Then, we systematically describe five main categories of visual DRL navigation: direct DRL vNavigation, hierarchical DRL vNavigation, multi-task DRL vNavigation, memory-inference DRL vNavigation and vision-language DRL vNavigation. These visual DRL navigation algorithms are reviewed in detail. Finally, we discuss the challenges and some possible opportunities to visual DRL navigation for artificial agents.},
+  journal      = {IEEE Access},
+  author       = {Zeng, Fanyu and Wang, Chen and Ge, Shuzhi Sam},
+  year         = {2020},
+  pages        = {135426–135442}
+}
+
+
+
 @article{oh_minecraft_2016,
   title        = {Control of Memory, Active Perception, and Action in Minecraft},
   url          = {http://arxiv.org/abs/1605.09128},
@@ -572,6 +597,28 @@
   author       = {Gupta, Saurabh and Tolani, Varun and Davidson, James and Levine, Sergey and Sukthankar, Rahul and Malik, Jitendra},
   year         = {2019},
   month        = {Feb}
+}
+
+@article{uzkent_detection_2020,
+  title        = {Efficient Object Detection in Large Images using Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1912.03966},
+  abstractnote = {Traditionally, an object detector is applied to every part of the scene of interest, and its accuracy and computational cost increases with higher resolution images. However, in some application domains such as remote sensing, purchasing high spatial resolution images is expensive. To reduce the large computational and monetary cost associated with using high spatial resolution images, we propose a reinforcement learning agent that adaptively selects the spatial resolution of each image that is provided to the detector. In particular, we train the agent in a dual reward setting to choose low spatial resolution images to be run through a coarse level detector when the image is dominated by large objects, and high spatial resolution images to be run through a fine level detector when it is dominated by small objects. This reduces the dependency on high spatial resolution images for building a robust detector and increases run-time efficiency. We perform experiments on the xView dataset, consisting of large images, where we increase run-time efficiency by 50% and use high resolution images only 30% of the time while maintaining similar accuracy as a detector that uses only high resolution images.},
+  note         = {arXiv: 1912.03966},
+  journal      = {arXiv:1912.03966 [cs]},
+  author       = {Uzkent, Burak and Yeh, Christopher and Ermon, Stefano},
+  year         = {2020},
+  month        = {Apr}
+}
+
+@article{mnih_attention_2014,
+  title        = {Recurrent Models of Visual Attention},
+  url          = {http://arxiv.org/abs/1406.6247},
+  abstractnote = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-speciﬁc policies. We evaluate our model on several image classiﬁcation tasks, where it signiﬁcantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
+  note         = {arXiv: 1406.6247},
+  journal      = {arXiv:1406.6247 [cs, stat]},
+  author       = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
+  year         = {2014},
+  month        = {Jun}
 }
 
 

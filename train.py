@@ -99,9 +99,8 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        gym_search.wrappers.ExplicitMemory,
-        gym_search.wrappers.ObservePosition,
-        gym_search.wrappers.LastAction,
+        #gym_search.wrappers.ExplicitMemory,
+        #gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
 

@@ -37,29 +37,26 @@ class SearchEnv(gym.Env):
         generator,
         view_shape=(32, 32), 
         step_size=1, 
-        random_pos=True,
-        max_steps=1000
     ):
         self.generator = generator
         self.shape = generator.shape
         self.view = Box(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
-        self.random_pos = random_pos
-        self.max_steps = max_steps
+
+        self.train_steps = 1000
+        self.test_steps = 5000
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
-        self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8)))
+        self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view.shape, 3), dtype=np.uint8), position=gym.spaces.MultiDiscrete(self.scaled_shape)))
         
+        self.train()
         self.seed()
 
     def reset(self):
         h, w = self.shape
-        
-        if self.random_pos:
-            y, x = self.random.integers(0, (h-self.view.h+1)//self.step_size)*self.step_size, self.random.integers(0, (w-self.view.w+1)//self.step_size)*self.step_size
-        else:
-            y, x = 0, 0
+        y = self.random.integers(0, (h-self.view.h+1)//self.step_size)*self.step_size
+        x = self.random.integers(0, (w-self.view.w+1)//self.step_size)*self.step_size
 
         self.view.pos = (y, x)
         self.terrain, self.targets = self.generator.sample()
@@ -169,7 +166,7 @@ class SearchEnv(gym.Env):
         y0, x0, y1, x1 = self.view.corners()
         obs = self.terrain[y0:y1,x0:x1]
 
-        return dict(image=obs)
+        return dict(image=obs, position=self.scaled_position)
 
     @property
     def scaled_shape(self):
@@ -195,3 +192,9 @@ class SearchEnv(gym.Env):
             (ord("s"),): self.Action.SOUTH,
             (ord("a"),): self.Action.WEST,
         }
+
+    def train(self):
+        self.max_steps = self.train_steps
+
+    def test(self):
+        self.max_steps = self.test_steps

@@ -390,19 +390,7 @@ The agent starts at random positions in the image close to the target landmark a
 While achieving strong results (90\% success rate), the scenes and targets are all drawn from a distribution with low variance.
 Most real-world search tasks exhibit larger variance than anatomical images of the human body.
 
-Zhu et al. (2016)~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indooor scenes with DRL.
-An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
-The agent moves forwards, backwards, and turns left and right at constant step lengths.
-They use a reward signal with a small time penalty to incentivize task completion in few steps.
-They compare their approach to random walk and the shortest path and achieve promising results.
-This setup is quite similar to the one considered in this report, but the authors make a few assumptions that we do not.
-They a set of 32 scenes, each of which contain a fixed number of object instances.
-They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
-Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
-
-A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object recognition module with a deep reinforcement learning based visual navigation module.
-They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
-Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
+\cite{uzkent_detection_2020}\dots
 
 % CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
 
@@ -414,9 +402,18 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 % note: reinforcement learning part, soft and hard attention
 % https://shairozsohail.medium.com/a-survey-of-visual-attention-mechanisms-in-deep-learning-1043eb25f343
 
+% "Looking through a foggy pane of glass represents soft attention, where the entire image is still being “seen”, but certain areas are being attended to more. Whereas the binoculars represent hard attention, where we are only seeing a subset of the image, hopefully the part most relevant to our task. The Recurrent Models of Visual Attention paper from above represents hard attention. The key thing to take away is that there are explicit trade-offs between these attention types: hard attention requires significantly less computation and memory (as the entire image is not being stored or operated over usually) but cannot be easily trained as the objective is non-differentiable (there is no gradient, pixels are either seen or unseen). Hence it is often trained with methods like REINFORCE. Soft attention on the other hand often requires more memory and computation (often even more then simple convolutional nets) but has a differentiable objective and can be easily trained with standard back propagation methods." <- some good points here
+
 % closely connected with object detection
 
 \cite{minut_mahadevan_2001}
+
+\cite{mnih_attention_2014}
+
+Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
+
+Partially observable processes, such as the one we consider in this work, can be seens as hard attention problems.
+By taking actions, the hard attention can be redirected.
 
 \subsection{Coverage Path Planning}
 
@@ -426,10 +423,11 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
 
 \subsection{Visual Navigation}
 
-The task we consider bears resemblance to many navigation tasks in robotics.
-Point navigation is the task of \dots
-Object navigation is the task of \dots
-Semantic navigation is the task of \dots
+The task we consider bears resemblance to visual navigation~\cite{zeng_survey_2020}. % or is an instance of?
+
+
+
+
 
 Mnih et al. (2016)~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
 3D labyrinths are randomly generated, and an agent is tasked with finding objects in them.
@@ -471,11 +469,29 @@ They further find that, with a single decision point whose correct.
 
 Chaplot et al. (2020)~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
 
+Zhu et al. (2016)~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indooor scenes with DRL.
+An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
+The agent moves forwards, backwards, and turns left and right at constant step lengths.
+They use a reward signal with a small time penalty to incentivize task completion in few steps.
+They compare their approach to random walk and the shortest path and achieve promising results.
+This setup is quite similar to the one considered in this report, but the authors make a few assumptions that we do not.
+They a set of 32 scenes, each of which contain a fixed number of object instances.
+They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
+Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
+
+A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object recognition module with a deep reinforcement learning based visual navigation module.
+They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
+Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
+
 \subsection{Memory for Deep Reinforcement Learning}
 
-% Neural Map
-% LSTMs
-% ...
+\begin{enumerate}
+    \item Frame stacking
+    \item Recurrent networks
+    \item Explicit memories~\cite{oh_minecraft_2016,parisotto_salakhutdinov_2017}.
+    % oh remembers over the past K frames, parisotto remembers the entire world
+    % parisotto tests on 3d environment. if we don't, we should at least discuss it.
+\end{enumerate}
 
 \subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
 

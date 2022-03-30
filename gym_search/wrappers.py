@@ -24,30 +24,6 @@ class ObserveTime(gym.ObservationWrapper):
         return obs
 
 
-class ObservePosition(gym.ObservationWrapper):
-    def __init__(self, env, key="position"):
-        super().__init__(env)
-        assert isinstance(env.observation_space, gym.spaces.Dict)
-        
-        self.key = key
-
-        self.observation_space = gym.spaces.Dict()
-
-        for key, space in self.env.observation_space.items():
-            self.observation_space[key] = space
-        
-        #self.observation_space[self.key] = gym.spaces.Discrete(np.prod(self.scaled_shape))
-        self.observation_space[self.key] = gym.spaces.MultiDiscrete(self.scaled_shape)
-
-    def observation(self, observation):
-        obs = observation.copy()
-        #y, x = self.scaled_position
-        #_, w = self.scaled_shape
-        #obs[self.key] = to_index(x, y, w)
-        obs[self.key] = self.scaled_position
-        return obs
-
-
 class ExplicitMemory(gym.ObservationWrapper):
     def __init__(self, env, key="memory"):
         super().__init__(env)

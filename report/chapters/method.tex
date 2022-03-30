@@ -87,7 +87,7 @@ Targets should be triggered when in view, but triggers when targets are out of v
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
 This reward signal is maximized when the targets are found as quickly as possible.
 
-The second reward signal is defined as
+The second reward signal, similar to that of \cite{caicedo_active_2015,...}, is defined as
 
 \[
     \mathcal{R}_2(s_t, a_t) =
@@ -112,19 +112,27 @@ At each time step, the agent receives an observation that includes
     \item the current position of the agent \(p_t \in  \mathbb{R}^{W \times H}\). % call this something else, what is the internal state of the sensor called?
 \end{itemize}
 
+For the position, we assume the presense of some oracle.
+In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
+If how each action moves the agent is well-defined, we do not need the position at all.
+We can use relative positions instead of absolute ones.
+Some of the baselines do not use the position.
+
+% Ego-centric neural map?
+
 % cite something
 % reason about good inductive biases
 % would be interesting to see if the supervised distance reward generalizes worse
 
-To incentivize finding targets quickly, the reward signal is set to -1 for each time step.
-Since viewing a window twice is redundant, such actions are punished by setting the reward to -2.
-If the agent selects the trigger action when a target overlaps with the window, the reward is set to 5.
-When all targets have been triggered, or when 1000 time steps have passed, the episode ends.
+The episode is terminated when all targets have been found, or when 1000 time steps have passed.
+Terminating episodes early this way is common to speed up training. % cite
 
 Averaged over all possible samples, the probability of targets should be uniform over the scene.
 % to make comparison with exhaustive search fair
 
+\subsection{Gaussian Environment}
 % environment 1: easy, understandable
+
 The first environment is the simplest environment. 
 The scene is a two-dimensional discrete Euclidean space.
 The appearance of the scene is given by a 256x256 RGB image.
@@ -146,7 +154,9 @@ Our feeling is that this is something that previous similar works has not done. 
     \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
 \end{figure}
 
+\subsection{Terrain Environment}
 % environment 2: medium, procedural and configurable
+
 The second environment is intended to look like realistic terrain.
 The environment has a two-dimensional scene whose appearance is given by a 512x512 image.
 Gradient noise is generated and used as a height map.
@@ -163,17 +173,11 @@ This environment simulates a UAV search-and-rescue scenario.
     \caption[Terrain environment]{Second environment. Terrain seen from above with ocean, }
 \end{figure}
 
+\subsection{Realistic Environment}
 % environment 3: hard, realistic
+
 The third environment is a three-dimensional version of the second one.
 % 3D, or photos
-
-
-% we discretize the problem
-% should still apply to arbitrarily many dimensions
-% assuming the existence of a suitable feature extractor
-
-\section{Baseline}
-\label{sec:baseline}
 
 \section{Approach}
 \label{sec:approach}
@@ -241,9 +245,6 @@ The architecture of the neural network is presented in Figure X.
 The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
 In order to be able to use the same extractor for all environments we resize the RGB image to \(64 \times 64\) pixels.
 
-We compare our architecture to three different baselines.
-As \cite{mirowski_navigate_2017}, we use a 
-
 
 % Actor critic
 
@@ -260,40 +261,46 @@ As \cite{mirowski_navigate_2017}, we use a
 
 % we could give some pseudocode here
 
+
+\section{Baselines}
+\label{sec:baseline}
+
+We compare our architecture to three different baselines.
+As \cite{mirowski_navigate_2017}, we use a 
+
+
 \section{Experiments}
 \label{sec:experiments}
-
-The first environment was used to determine a good observation space.
-By just observing the current window, the agent can never learn a suitable policy to solve the problem.
-This is because it cannot distinguish between equal windows at different locations.
-Experiments are run with several additional observation types: window position, ...
-Results of these experiments are presented for this environment only.
 
 The agent was trained using the algorithm described in Section \ref{sec:approach} for 100 million time steps in all three environments using PPO, PPG and A2C.
 Hyperparameters are tuned with random search separately for each environment.
 For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
 The agent was trained and tested on the full distribution of environments.
 
-With the best performing algorithm we compare three different reward signals.
-One gives a constant time penalty of -1 to incentivize finding the target quickly.
-The second gives a constant time penalty of -2 and an exploration bonus of +1 when a new view is reached.
-The third gives a reward of +1 for moving closer to the target and a penalty of -1 otherwise, as in \cite{caicedo_active_2015}.
+We compare the two reward signals on the first and second environment\dots
 
+% rq1
+The baselines and our approach was\dots
+
+% rq2
 Additionally, experiments to eveluate the generalization capability of the agent were conducted.
 These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}.
 During training, the seed pool size was fixed to various sizes to limit the training set size.
 The agent was trained for varying number of timesteps and then tested on the full distribution of environments.
 This way, we can get a sense of how much data and simulation is required to use the approach for real-world tasks.
 
+% rq3
+We compare the approach to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
+
+% eval
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 
 For each experiment, we report the mean return and episode length over time during training.
-We compare the approach to an exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
 As per \cite{agarwal_rlliable_2022}, we report results across multiple seeds.
+We also use their recommended\dots
 
-% could be the case that the supervised distance reward trains faster but leads to worse solutions that generalize worse
-% should run experiments on this.
-
+During testing, we increase the maximum episode length from 1000 time steps to 5000 time steps.
+This is to 
 
 \section{Implementation}
 

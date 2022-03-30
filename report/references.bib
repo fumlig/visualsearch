@@ -1,4 +1,15 @@
 
+@article{agarwal_rlliable_2022,
+  title        = {Deep Reinforcement Learning at the Edge of the Statistical Precipice},
+  url          = {http://arxiv.org/abs/2108.13264},
+  abstractnote = {Deep reinforcement learning (RL) algorithms are predominantly evaluated by comparing their relative performance on a large suite of tasks. Most published results on deep RL benchmarks compare point estimates of aggregate performance such as mean and median scores across tasks, ignoring the statistical uncertainty implied by the use of a ﬁnite number of training runs. Beginning with the Arcade Learning Environment (ALE), the shift towards computationally-demanding benchmarks has led to the practice of evaluating only a small number of runs per task, exacerbating the statistical uncertainty in point estimates. In this paper, we argue that reliable evaluation in the few-run deep RL regime cannot ignore the uncertainty in results without running the risk of slowing down progress in the ﬁeld. We illustrate this point using a case study on the Atari 100k benchmark, where we ﬁnd substantial discrepancies between conclusions drawn from point estimates alone versus a more thorough statistical analysis. With the aim of increasing the ﬁeld’s conﬁdence in reported results with a handful of runs, we advocate for reporting interval estimates of aggregate performance and propose performance proﬁles to account for the variability in results, as well as present more robust and efﬁcient aggregate metrics, such as interquartile mean scores, to achieve small uncertainty in results. Using such statistical tools, we scrutinize performance evaluations of existing algorithms on other widely used RL benchmarks including the ALE, Procgen, and the DeepMind Control Suite, again revealing discrepancies in prior comparisons. Our ﬁndings call for a change in how we evaluate performance in deep RL, for which we present a more rigorous evaluation methodology, accompanied with an open-source library rliable2, to prevent unreliable results from stagnating the ﬁeld.},
+  note         = {arXiv: 2108.13264},
+  journal      = {arXiv:2108.13264 [cs, stat]},
+  author       = {Agarwal, Rishabh and Schwarzer, Max and Castro, Pablo Samuel and Courville, Aaron and Bellemare, Marc G.},
+  year         = {2022},
+  month        = {Jan}
+}
+
 @article{aloimonos_active_1988,
   title        = {Active vision},
   volume       = {1},
@@ -17,6 +28,17 @@
   file         = {Active vision:/home/oslund/Zotero/storage/SFZQUV5N/aloimonos1988.pdf.pdf:application/pdf}
 }
 
+ @article{anderson_evaluation_2018,
+  title        = {On Evaluation of Embodied Navigation Agents},
+  url          = {http://arxiv.org/abs/1807.06757},
+  abstractnote = {Skillful mobile operation in three-dimensional environments is a primary topic of study in Artiﬁcial Intelligence. The past two years have seen a surge of creative work on navigation. This creative output has produced a plethora of sometimes incompatible task deﬁnitions and evaluation protocols. To coordinate ongoing and future research in this area, we have convened a working group to study empirical methodology in navigation research. The present document summarizes the consensus recommendations of this working group. We discuss different problem statements and the role of generalization, present evaluation measures, and provide standard scenarios that can be used for benchmarking.},
+  note         = {arXiv: 1807.06757},
+  journal      = {arXiv:1807.06757 [cs]},
+  author       = {Anderson, Peter and Chang, Angel and Chaplot, Devendra Singh and Dosovitskiy, Alexey and Gupta, Saurabh and Koltun, Vladlen and Kosecka, Jana and Malik, Jitendra and Mottaghi, Roozbeh and Savva, Manolis and Zamir, Amir R.},
+  year         = {2018},
+  month        = {Jul}
+}
+
 @article{arulkumaran_survey_2017,
   title        = {A Brief Survey of Deep Reinforcement Learning},
   volume       = {34},
@@ -32,7 +54,9 @@
   pages        = {26–38}
 }
 
- @article{bahdanau_attention_2016,
+
+
+@article{bahdanau_attention_2016,
   title        = {Neural Machine Translation by Jointly Learning to Align and Translate},
   url          = {http://arxiv.org/abs/1409.0473},
   abstractnote = {Neural machine translation is a recently proposed approach to machine translation. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neural machine translation often belong to a family of encoder-decoders and consists of an encoder that encodes a source sentence into a fixed-length vector from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition.},
@@ -43,159 +67,81 @@
   month        = {May}
 }
 
-@article{zeng_survey_2020,
-  title        = {A Survey on Visual Navigation for Artificial Agents With Deep Reinforcement Learning},
-  volume       = {8},
-  issn         = {2169-3536},
-  doi          = {10.1109/ACCESS.2020.3011438},
-  abstractnote = {Visual navigation (vNavigation) is a key and fundamental technology for artificial agents’ interaction with the environment to achieve advanced behaviors. Visual navigation for artificial agents with deep reinforcement learning (DRL) is a new research hotspot in artificial intelligence and robotics that incorporates the decision making of DRL into visual navigation. Visual navigation via DRL, an end-to-end method, directly receives the high-dimensional images and generates an optimal navigation policy. In this paper, we first present an overview on reinforcement learning (RL), deep learning (DL) and deep reinforcement learning (DRL). Then, we systematically describe five main categories of visual DRL navigation: direct DRL vNavigation, hierarchical DRL vNavigation, multi-task DRL vNavigation, memory-inference DRL vNavigation and vision-language DRL vNavigation. These visual DRL navigation algorithms are reviewed in detail. Finally, we discuss the challenges and some possible opportunities to visual DRL navigation for artificial agents.},
-  journal      = {IEEE Access},
-  author       = {Zeng, Fanyu and Wang, Chen and Ge, Shuzhi Sam},
+@article{bajcsy_active_1988,
+  title        = {Active perception},
+  volume       = {76},
+  issn         = {1558-2256},
+  doi          = {10.1109/5.5968},
+  abstract     = {Active perception (active vision specifically) is defined as a study of modeling and control strategies for perception. Local methods are distinguished from global models by their extent of application in space and time. The local models represent procedures and parameters such as optical distortions of the lens, focal lens, spatial resolution, bandpass filter, etc, The global models, on the other hand, characterize the overall performance and make predictions on how the individual modules interact. The control strategies are formulated as a search of such sequences of steps that would minimize a loss function while still seeking the most information. Examples are shown as the existence proof of the proposed theory on obtaining range from focus and stereo/vergence on 2-D segmentation of an image and 3-D shape parameterization.{\textless}{\textgreater}},
+  pages        = {966--1005},
+  number       = {8},
+  journaltitle = {Proceedings of the {IEEE}},
+  author       = {Bajcsy, R.},
+  date         = {1988-08},
+  note         = {646 citations (Crossref) [2022-02-28]
+                  Conference Name: Proceedings of the {IEEE}},
+  keywords     = {Band pass filters, Focusing, Image segmentation, Lenses, Optical distortion, Optical losses, Predictive models, Shape, Spatial resolution},
+  file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
+}
+
+
+@article{bajcsy_revisiting_2018,
+  title        = {Revisiting active perception},
+  volume       = {42},
+  issn         = {1573-7527},
+  url          = {https://doi.org/10.1007/s10514-017-9615-3},
+  doi          = {10.1007/s10514-017-9615-3},
+  abstract     = {Despite the recent successes in robotics, artificial intelligence and computer vision, a complete artificial agent necessarily must include active perception. A multitude of ideas and methods for how to accomplish this have already appeared in the past, their broader utility perhaps impeded by insufficient computational power or costly hardware. The history of these ideas, perhaps selective due to our perspectives, is presented with the goal of organizing the past literature and highlighting the seminal contributions. We argue that those contributions are as relevant today as they were decades ago and, with the state of modern computational tools, are poised to find new life in the robotic perception systems of the next decade.},
+  pages        = {177--196},
+  number       = {2},
+  journaltitle = {Autonomous Robots},
+  shortjournal = {Auton Robot},
+  author       = {Bajcsy, Ruzena and Aloimonos, Yiannis and Tsotsos, John K.},
+  urldate      = {2022-03-13},
+  date         = {2018-02-01},
+  langid       = {english},
+  note         = {86 citations (Crossref) [2022-03-13]},
+  file         = {Springer Full Text PDF:/home/oslund/Zotero/storage/KVGHH5A6/Bajcsy et al. - 2018 - Revisiting active perception.pdf:application/pdf}
+}
+
+
+@article{batra_evaluation_2020,
+  title        = {ObjectNav Revisited: On Evaluation of Embodied Agents Navigating to Objects},
+  url          = {http://arxiv.org/abs/2006.13171},
+  abstractnote = {We revisit the problem of Object-Goal Navigation (ObjectNav). In its simplest form, ObjectNav is deﬁned as the task of navigating to an object, speciﬁed by its label, in an unexplored environment. In particular, the agent is initialized at a random location and pose in an environment and asked to ﬁnd an instance of an object category, e.g. ‘ﬁnd a chair’, by navigating to it.},
+  note         = {arXiv: 2006.13171},
+  journal      = {arXiv:2006.13171 [cs]},
+  author       = {Batra, Dhruv and Gokaslan, Aaron and Kembhavi, Aniruddha and Maksymets, Oleksandr and Mottaghi, Roozbeh and Savva, Manolis and Toshev, Alexander and Wijmans, Erik},
   year         = {2020},
-  pages        = {135426–135442}
+  month        = {Aug}
 }
 
-
-
-@article{oh_minecraft_2016,
-  title        = {Control of Memory, Active Perception, and Action in Minecraft},
-  url          = {http://arxiv.org/abs/1605.09128},
-  abstractnote = {In this paper, we introduce a new set of reinforcement learning (RL) tasks in Minecraft (a flexible 3D world). We then use these tasks to systematically compare and contrast existing deep reinforcement learning (DRL) architectures with our new memory-based DRL architectures. These tasks are designed to emphasize, in a controllable manner, issues that pose challenges for RL methods including partial observability (due to first-person visual observations), delayed rewards, high-dimensional visual observations, and the need to use active perception in a correct manner so as to perform well in the tasks. While these tasks are conceptually simple to describe, by virtue of having all of these challenges simultaneously they are difficult for current DRL architectures. Additionally, we evaluate the generalization performance of the architectures on environments not used during training. The experimental results show that our new architectures generalize to unseen environments better than existing DRL architectures.},
-  note         = {arXiv: 1605.09128},
-  journal      = {arXiv:1605.09128 [cs]},
-  author       = {Oh, Junhyuk and Chockalingam, Valliappa and Singh, Satinder and Lee, Honglak},
-  year         = {2016},
-  month        = {May}
-}
-
-@article{parisotto_salakhutdinov_2017,
-  title        = {Neural Map: Structured Memory for Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1702.08360},
-  abstractnote = {A critical component to enabling intelligent reasoning in partially observable environments is memory. Despite this importance, Deep Reinforcement Learning (DRL) agents have so far used relatively simple memory architectures, with the main methods to overcome partial observability being either a temporal convolution over the past k frames or an LSTM layer. More recent work (Oh et al., 2016) has went beyond these architectures by using memory networks which can allow more sophisticated addressing schemes over the past k frames. But even these architectures are unsatisfactory due to the reason that they are limited to only remembering information from the last k frames. In this paper, we develop a memory system with an adaptable write operator that is customized to the sorts of 3D environments that DRL agents typically interact with. This architecture, called the Neural Map, uses a spatially structured 2D memory image to learn to store arbitrary information about the environment over long time lags. We demonstrate empirically that the Neural Map surpasses previous DRL memories on a set of challenging 2D and 3D maze environments and show that it is capable of generalizing to environments that were not seen during training.},
-  note         = {arXiv: 1702.08360},
-  journal      = {arXiv:1702.08360 [cs]},
-  author       = {Parisotto, Emilio and Salakhutdinov, Ruslan},
-  year         = {2017},
-  month        = {Feb}
-}
-
-
-@article{tesauro1995tdgammon,
-  title   = {Temporal difference learning and TD-Gammon},
-  author  = {Tesauro, Gerald and others},
-  journal = {Communications of the ACM},
-  volume  = {38},
-  number  = {3},
-  pages   = {58--68},
-  year    = {1995}
-}
-
-
-@book{sutton_reinforcement_2018,
-  location   = {Cambridge, Massachusetts},
-  edition    = {Second edition},
-  title      = {Reinforcement learning: an introduction},
-  isbn       = {978-0-262-03924-6},
-  series     = {Adaptive computation and machine learning series},
-  shorttitle = {Reinforcement learning},
-  abstract   = {"Reinforcement learning, one of the most active research areas in artificial intelligence, is a computational approach to learning whereby an agent tries to maximize the total amount of reward it receives while interacting with a complex, uncertain environment. In Reinforcement Learning, Richard Sutton and Andrew Barto provide a clear and simple account of the field's key ideas and algorithms."--},
-  pagetotal  = {526},
-  publisher  = {The {MIT} Press},
-  author     = {Sutton, Richard S. and Barto, Andrew G.},
-  date       = {2018},
-  langid     = {english},
-  keywords   = {Reinforcement learning},
-  file       = {Sutton and Barto - 2018 - Reinforcement learning an introduction.pdf:/home/oslund/Zotero/storage/HPCN43YL/Sutton and Barto - 2018 - Reinforcement learning an introduction.pdf:application/pdf}
-}
-
-@article{mnih_atari_2013,
-  title        = {Playing Atari with Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1312.5602},
-  abstractnote = {We present the ﬁrst deep learning model to successfully learn control policies directly from high-dimensional sensory input using reinforcement learning. The model is a convolutional neural network, trained with a variant of Q-learning, whose input is raw pixels and whose output is a value function estimating future rewards. We apply our method to seven Atari 2600 games from the Arcade Learning Environment, with no adjustment of the architecture or learning algorithm. We ﬁnd that it outperforms all previous approaches on six of the games and surpasses a human expert on three of them.},
-  note         = {arXiv: 1312.5602},
-  journal      = {arXiv:1312.5602 [cs]},
-  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Graves, Alex and Antonoglou, Ioannis and Wierstra, Daan and Riedmiller, Martin},
-  year         = {2013},
-  month        = {Dec}
-}
-
-@article{mnih_human_2015,
-  title        = {Human-level control through deep reinforcement learning},
-  volume       = {518},
-  issn         = {1476-4687},
-  doi          = {10.1038/nature14236},
-  abstractnote = {An artificial agent is developed that learns to play a diverse range of classic Atari 2600 computer games directly from sensory experience, achieving a performance comparable to that of an expert human player; this work paves the way to building general-purpose learning algorithms that bridge the divide between perception and action.},
-  number       = {75407540},
-  journal      = {Nature},
-  publisher    = {Nature Publishing Group},
-  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
-  year         = {2015},
-  month        = {Feb},
-  pages        = {529–533}
-}
-
-
-@article{mnih_asynchronous_2016,
-  title        = {Asynchronous Methods for Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1602.01783},
-  abstractnote = {We propose a conceptually simple and lightweight framework for deep reinforcement learning that uses asynchronous gradient descent for optimization of deep neural network controllers. We present asynchronous variants of four standard reinforcement learning algorithms and show that parallel actor-learners have a stabilizing effect on training allowing all four methods to successfully train neural network controllers. The best performing method, an asynchronous variant of actor-critic, surpasses the current state-of-the-art on the Atari domain while training for half the time on a single multi-core CPU instead of a GPU. Furthermore, we show that asynchronous actor-critic succeeds on a wide variety of continuous motor control problems as well as on a new task of navigating random 3D mazes using a visual input.},
-  note         = {arXiv: 1602.01783},
-  journal      = {arXiv:1602.01783 [cs]},
-  author       = {Mnih, Volodymyr and Badia, Adrià Puigdomènech and Mirza, Mehdi and Graves, Alex and Lillicrap, Timothy P. and Harley, Tim and Silver, David and Kavukcuoglu, Koray},
+@article{brockman_gym_2016,
+  title        = {OpenAI Gym},
+  url          = {http://arxiv.org/abs/1606.01540},
+  abstractnote = {OpenAI Gym1 is a toolkit for reinforcement learning research. It includes a growing collection of benchmark problems that expose a common interface, and a website where people can share their results and compare the performance of algorithms. This whitepaper discusses the components of OpenAI Gym and the design decisions that went into the software.},
+  note         = {arXiv: 1606.01540},
+  journal      = {arXiv:1606.01540 [cs]},
+  author       = {Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
   year         = {2016},
   month        = {Jun}
 }
 
-
-@article{hausknecht_stone_2017,
-  title        = {Deep Recurrent Q-Learning for Partially Observable MDPs},
-  url          = {http://arxiv.org/abs/1507.06527},
-  abstractnote = {Deep Reinforcement Learning has yielded proﬁcient controllers for complex tasks. However, these controllers have limited memory and rely on being able to perceive the complete game screen at each decision point. To address these shortcomings, this article investigates the effects of adding recurrency to a Deep Q-Network (DQN) by replacing the ﬁrst post-convolutional fully-connected layer with a recurrent LSTM. The resulting Deep Recurrent Q-Network (DRQN), although capable of seeing only a single frame at each timestep, successfully integrates information through time and replicates DQN’s performance on standard Atari games and partially observed equivalents featuring ﬂickering game screens. Additionally, when trained with partial observations and evaluated with incrementally more complete observations, DRQN’s performance scales as a function of observability. Conversely, when trained with full observations and evaluated with partial observations, DRQN’s performance degrades less than DQN’s. Thus, given the same length of history, recurrency is a viable alternative to stacking a history of frames in the DQN’s input layer and while recurrency confers no systematic advantage when learning to play the game, the recurrent net can better adapt at evaluation time if the quality of observations changes.},
-  note         = {arXiv: 1507.06527},
-  journal      = {arXiv:1507.06527 [cs]},
-  author       = {Hausknecht, Matthew and Stone, Peter},
-  year         = {2017},
-  month        = {Jan}
-}
-
-
-@incollection{ourselin_artificial_2016,
-  location  = {Cham},
-  title     = {An Artificial Agent for Anatomical Landmark Detection in Medical Images},
-  volume    = {9902},
-  isbn      = {978-3-319-46725-2 978-3-319-46726-9},
-  url       = {https://link.springer.com/10.1007/978-3-319-46726-9_27},
-  abstract  = {Fast and robust detection of anatomical structures or pathologies represents a fundamental task in medical image analysis. Most of the current solutions are however suboptimal and unconstrained by learning an appearance model and exhaustively scanning the space of parameters to detect a speciﬁc anatomical structure. In addition, typical feature computation or estimation of meta-parameters related to the appearance model or the search strategy, is based on local criteria or predeﬁned approximation schemes. We propose a new learning method following a fundamentally diﬀerent paradigm by simultaneously modeling both the object appearance and the parameter search strategy as a uniﬁed behavioral task for an artiﬁcial agent. The method combines the advantages of behavior learning achieved through reinforcement learning with eﬀective hierarchical feature extraction achieved through deep learning. We show that given only a sequence of annotated images, the agent can automatically and strategically learn optimal paths that converge to the sought anatomical landmark location as opposed to exhaustively scanning the entire solution space. The method signiﬁcantly outperforms state-ofthe-art machine learning and deep learning approaches both in terms of accuracy and speed on 2D magnetic resonance images, 2D ultrasound and 3D {CT} images, achieving average detection errors of 1-2 pixels, while also recognizing the absence of an object from the image.},
-  pages     = {229--237},
-  booktitle = {Medical Image Computing and Computer-Assisted Intervention - {MICCAI} 2016},
-  publisher = {Springer International Publishing},
-  author    = {Ghesu, Florin C. and Georgescu, Bogdan and Mansi, Tommaso and Neumann, Dominik and Hornegger, Joachim and Comaniciu, Dorin},
-  editor    = {Ourselin, Sebastien and Joskowicz, Leo and Sabuncu, Mert R. and Unal, Gozde and Wells, William},
-  urldate   = {2022-02-03},
-  date      = {2016},
-  langid    = {english},
-  doi       = {10.1007/978-3-319-46726-9_27},
-  note      = {Series Title: Lecture Notes in Computer Science},
-  file      = {Ghesu et al. - 2016 - An Artificial Agent for Anatomical Landmark Detect.pdf:/home/oslund/Zotero/storage/SUFGAH83/Ghesu et al. - 2016 - An Artificial Agent for Anatomical Landmark Detect.pdf:application/pdf}
-}
-
-@article{ghesu_multi_scale_2019,
-  title        = {Multi-Scale Deep Reinforcement Learning for Real-Time 3D-Landmark Detection in {CT} Scans},
-  volume       = {41},
-  issn         = {0162-8828, 2160-9292, 1939-3539},
-  url          = {https://ieeexplore.ieee.org/document/8187667/},
-  doi          = {10.1109/TPAMI.2017.2782687},
-  abstract     = {Robust and fast detection of anatomical structures is a prerequisite for both diagnostic and interventional medical image analysis. Current solutions for anatomy detection are typically based on machine learning techniques that exploit large annotated image databases in order to learn the appearance of the captured anatomy. These solutions are subject to several limitations, including the use of suboptimal feature engineering techniques and most importantly the use of computationally suboptimal search-schemes for anatomy detection. To address these issues, we propose a method that follows a new paradigm by reformulating the detection problem as a behavior learning task for an artiﬁcial agent. We couple the modeling of the anatomy appearance and the object search in a uniﬁed behavioral framework, using the capabilities of deep reinforcement learning and multi-scale image analysis. In other words, an artiﬁcial agent is trained not only to distinguish the target anatomical object from the rest of the body but also how to ﬁnd the object by learning and following an optimal navigation path to the target object in the imaged volumetric space. We evaluate our approach on 1487 3D-{CT} volumes from 532 patients, totaling over 500,000 image slices and show that we signiﬁcantly outperform state-of-the-art solutions on detecting several anatomical structures with no failed cases from a clinical acceptance perspective, while also improving the detection accuracy by 20-30\%. Most importantly, we improve the detection-speed of the reference methods by 2-3 orders of magnitude, achieving unmatched real-time performance on large 3D-{CT} scans.},
-  pages        = {176--189},
-  number       = {1},
-  journaltitle = {{IEEE} Transactions on Pattern Analysis and Machine Intelligence},
-  shortjournal = {{IEEE} Trans. Pattern Anal. Mach. Intell.},
-  author       = {Ghesu, Florin-Cristian and Georgescu, Bogdan and Zheng, Yefeng and Grbic, Sasa and Maier, Andreas and Hornegger, Joachim and Comaniciu, Dorin},
-  urldate      = {2022-02-03},
-  date         = {2019-01-01},
+@article{brockman_openai_2016,
+  title        = {{OpenAI} Gym},
+  url          = {http://arxiv.org/abs/1606.01540},
+  abstract     = {{OpenAI} Gym1 is a toolkit for reinforcement learning research. It includes a growing collection of benchmark problems that expose a common interface, and a website where people can share their results and compare the performance of algorithms. This whitepaper discusses the components of {OpenAI} Gym and the design decisions that went into the software.},
+  journaltitle = {{arXiv}:1606.01540 [cs]},
+  author       = {Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
+  urldate      = {2022-03-10},
+  date         = {2016-06-05},
   langid       = {english},
-  file         = {Ghesu et al. - 2019 - Multi-Scale Deep Reinforcement Learning for Real-T.pdf:/home/oslund/Zotero/storage/TF4ZNMC6/Ghesu et al. - 2019 - Multi-Scale Deep Reinforcement Learning for Real-T.pdf:application/pdf}
+  eprinttype   = {arxiv},
+  eprint       = {1606.01540},
+  keywords     = {⛔ No {DOI} found, Computer Science - Machine Learning, Computer Science - Artificial Intelligence},
+  file         = {Brockman et al. - 2016 - OpenAI Gym.pdf:/home/oslund/Zotero/storage/6DWT7K4D/Brockman et al. - 2016 - OpenAI Gym.pdf:application/pdf}
 }
+
 
 @article{caicedo_active_2015,
   title        = {Active Object Localization with Deep Reinforcement Learning},
@@ -210,6 +156,52 @@
   eprint       = {1511.06015},
   keywords     = {Computer Science - Computer Vision and Pattern Recognition},
   file         = {Caicedo and Lazebnik - 2015 - Active Object Localization with Deep Reinforcement.pdf:/home/oslund/Zotero/storage/ENEDBIBQ/Caicedo and Lazebnik - 2015 - Active Object Localization with Deep Reinforcement.pdf:application/pdf}
+}
+
+
+@article{chaplot_semantic_2020,
+  title        = {Object Goal Navigation using Goal-Oriented Semantic Exploration},
+  url          = {http://arxiv.org/abs/2007.00643},
+  abstractnote = {This work studies the problem of object goal navigation which involves navigating to an instance of the given object category in unseen environments. End-to-end learning-based navigation methods struggle at this task as they are ineffective at exploration and long-term planning. We propose a modular system called, `Goal-Oriented Semantic Exploration’ which builds an episodic semantic map and uses it to explore the environment efficiently based on the goal object category. Empirical results in visually realistic simulation environments show that the proposed model outperforms a wide range of baselines including end-to-end learning-based methods as well as modular map-based methods and led to the winning entry of the CVPR-2020 Habitat ObjectNav Challenge. Ablation analysis indicates that the proposed model learns semantic priors of the relative arrangement of objects in a scene, and uses them to explore efficiently. Domain-agnostic module design allow us to transfer our model to a mobile robot platform and achieve similar performance for object goal navigation in the real-world.},
+  note         = {arXiv: 2007.00643},
+  journal      = {arXiv:2007.00643 [cs]},
+  author       = {Chaplot, Devendra Singh and Gandhi, Dhiraj and Gupta, Abhinav and Salakhutdinov, Ruslan},
+  year         = {2020},
+  month        = {Jul}
+}
+
+
+@article{cobbe_generalization_2019,
+  title        = {Quantifying Generalization in Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1812.02341},
+  abstractnote = {In this paper, we investigate the problem of overfitting in deep reinforcement learning. Among the most common benchmarks in RL, it is customary to use the same environments for both training and testing. This practice offers relatively little insight into an agent’s ability to generalize. We address this issue by using procedurally generated environments to construct distinct training and test sets. Most notably, we introduce a new environment called CoinRun, designed as a benchmark for generalization in RL. Using CoinRun, we find that agents overfit to surprisingly large training sets. We then show that deeper convolutional architectures improve generalization, as do methods traditionally found in supervised learning, including L2 regularization, dropout, data augmentation and batch normalization.},
+  note         = {arXiv: 1812.02341},
+  journal      = {arXiv:1812.02341 [cs, stat]},
+  author       = {Cobbe, Karl and Klimov, Oleg and Hesse, Chris and Kim, Taehoon and Schulman, John},
+  year         = {2019},
+  month        = {Jul}
+}
+
+@article{cobbe_procgen_2020,
+  title        = {Leveraging Procedural Generation to Benchmark Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1912.01588},
+  abstractnote = {We introduce Procgen Benchmark, a suite of 16 procedurally generated game-like environments designed to benchmark both sample efﬁciency and generalization in reinforcement learning. We believe that the community will beneﬁt from increased access to high quality training environments, and we provide detailed experimental protocols for using this benchmark. We empirically demonstrate that diverse environment distributions are essential to adequately train and evaluate RL agents, thereby motivating the extensive use of procedural content generation. We then use this benchmark to investigate the effects of scaling model size, ﬁnding that larger models signiﬁcantly improve both sample efﬁciency and generalization.},
+  note         = {arXiv: 1912.01588},
+  journal      = {arXiv:1912.01588 [cs, stat]},
+  author       = {Cobbe, Karl and Hesse, Christopher and Hilton, Jacob and Schulman, John},
+  year         = {2020},
+  month        = {Jul}
+}
+
+@article{dhiman_critical_2019,
+  title        = {A Critical Investigation of Deep Reinforcement Learning for Navigation},
+  url          = {http://arxiv.org/abs/1802.02274},
+  abstractnote = {The navigation problem is classically approached in two steps: an exploration step, where map-information about the environment is gathered; and an exploitation step, where this information is used to navigate efficiently. Deep reinforcement learning (DRL) algorithms, alternatively, approach the problem of navigation in an end-to-end fashion. Inspired by the classical approach, we ask whether DRL algorithms are able to inherently explore, gather and exploit map-information over the course of navigation. We build upon Mirowski et al. [2017] work and introduce a systematic suite of experiments that vary three parameters: the agent’s starting location, the agent’s target location, and the maze structure. We choose evaluation metrics that explicitly measure the algorithm’s ability to gather and exploit map-information. Our experiments show that when trained and tested on the same maps, the algorithm successfully gathers and exploits map-information. However, when trained and tested on different sets of maps, the algorithm fails to transfer the ability to gather and exploit map-information to unseen maps. Furthermore, we find that when the goal location is randomized and the map is kept static, the algorithm is able to gather and exploit map-information but the exploitation is far from optimal. We open-source our experimental suite in the hopes that it serves as a framework for the comparison of future algorithms and leads to the discovery of robust alternatives to classical navigation methods.},
+  note         = {arXiv: 1802.02274},
+  journal      = {arXiv:1802.02274 [cs]},
+  author       = {Dhiman, Vikas and Banerjee, Shurjo and Griffin, Brent and Siskind, Jeffrey M. and Corso, Jason J.},
+  year         = {2019},
+  month        = {Jan}
 }
 
 @article{eckstein_visual_2011,
@@ -231,57 +223,101 @@
   file         = {Eckstein - 2011 - Visual search A retrospective.pdf:/home/oslund/Zotero/storage/E87E8PCH/Eckstein - 2011 - Visual search A retrospective.pdf:application/pdf;Visual search\: A retrospective:/home/oslund/Zotero/storage/PX9QE8ZC/eckstein2011.pdf.pdf:application/pdf}
 }
 
-@article{bajcsy_active_1988,
-  title        = {Active perception},
-  volume       = {76},
-  issn         = {1558-2256},
-  doi          = {10.1109/5.5968},
-  abstract     = {Active perception (active vision specifically) is defined as a study of modeling and control strategies for perception. Local methods are distinguished from global models by their extent of application in space and time. The local models represent procedures and parameters such as optical distortions of the lens, focal lens, spatial resolution, bandpass filter, etc, The global models, on the other hand, characterize the overall performance and make predictions on how the individual modules interact. The control strategies are formulated as a search of such sequences of steps that would minimize a loss function while still seeking the most information. Examples are shown as the existence proof of the proposed theory on obtaining range from focus and stereo/vergence on 2-D segmentation of an image and 3-D shape parameterization.{\textless}{\textgreater}},
-  pages        = {966--1005},
-  number       = {8},
-  journaltitle = {Proceedings of the {IEEE}},
-  author       = {Bajcsy, R.},
-  date         = {1988-08},
-  note         = {646 citations (Crossref) [2022-02-28]
-                  Conference Name: Proceedings of the {IEEE}},
-  keywords     = {Band pass filters, Focusing, Image segmentation, Lenses, Optical distortion, Optical losses, Predictive models, Shape, Spatial resolution},
-  file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
+@article{galceran_carreras_2013,
+  title        = {A survey on coverage path planning for robotics},
+  volume       = {61},
+  issn         = {09218890},
+  doi          = {10/f5j2n5},
+  abstractnote = {Coverage Path Planning (CPP) is the task of determining a path that passes over all points of an area or volume of interest while avoiding obstacles. This task is integral to many robotic applications, such as vacuum cleaning robots, painter robots, autonomous underwater vehicles creating image mosaics, demining robots, lawn mowers, automated harvesters, window cleaners and inspection of complex structures, just to name a few. A considerable body of research has addressed the CPP problem. However, no updated surveys on CPP reflecting recent advances in the field have been presented in the past ten years. In this paper, we present a review of the most successful CPP methods, focusing on the achievements made in the past decade. Furthermore, we discuss reported field applications of the described CPP methods. This work aims to become a starting point for researchers who are initiating their endeavors in CPP. Likewise, this work aims to present a comprehensive review of the recent breakthroughs in the field, providing links to the most interesting and successful works.},
+  number       = {12},
+  journal      = {Robotics and Autonomous Systems},
+  author       = {Galceran, Enric and Carreras, Marc},
+  year         = {2013},
+  month        = {Dec},
+  pages        = {1258–1276}
 }
 
-@article{mirowski_navigate_2017,
-  title        = {Learning to Navigate in Complex Environments},
-  url          = {http://arxiv.org/abs/1611.03673},
-  abstractnote = {Learning to navigate in complex environments with dynamic elements is an important milestone in developing AI agents. In this work we formulate the navigation question as a reinforcement learning problem and show that data efficiency and task performance can be dramatically improved by relying on additional auxiliary tasks leveraging multimodal sensory inputs. In particular we consider jointly learning the goal-driven reinforcement learning problem with auxiliary depth prediction and loop closure classification tasks. This approach can learn to navigate from raw sensory input in complicated 3D mazes, approaching human-level performance even under conditions where the goal location changes frequently. We provide detailed analysis of the agent behaviour, its ability to localise, and its network activity dynamics, showing that the agent implicitly learns key navigation abilities.},
-  note         = {arXiv: 1611.03673},
-  journal      = {arXiv:1611.03673 [cs]},
-  author       = {Mirowski, Piotr and Pascanu, Razvan and Viola, Fabio and Soyer, Hubert and Ballard, Andrew J. and Banino, Andrea and Denil, Misha and Goroshin, Ross and Sifre, Laurent and Kavukcuoglu, Koray and Kumaran, Dharshan and Hadsell, Raia},
+@article{ghesu_multi_scale_2019,
+  title        = {Multi-Scale Deep Reinforcement Learning for Real-Time 3D-Landmark Detection in {CT} Scans},
+  volume       = {41},
+  issn         = {0162-8828, 2160-9292, 1939-3539},
+  url          = {https://ieeexplore.ieee.org/document/8187667/},
+  doi          = {10.1109/TPAMI.2017.2782687},
+  abstract     = {Robust and fast detection of anatomical structures is a prerequisite for both diagnostic and interventional medical image analysis. Current solutions for anatomy detection are typically based on machine learning techniques that exploit large annotated image databases in order to learn the appearance of the captured anatomy. These solutions are subject to several limitations, including the use of suboptimal feature engineering techniques and most importantly the use of computationally suboptimal search-schemes for anatomy detection. To address these issues, we propose a method that follows a new paradigm by reformulating the detection problem as a behavior learning task for an artiﬁcial agent. We couple the modeling of the anatomy appearance and the object search in a uniﬁed behavioral framework, using the capabilities of deep reinforcement learning and multi-scale image analysis. In other words, an artiﬁcial agent is trained not only to distinguish the target anatomical object from the rest of the body but also how to ﬁnd the object by learning and following an optimal navigation path to the target object in the imaged volumetric space. We evaluate our approach on 1487 3D-{CT} volumes from 532 patients, totaling over 500,000 image slices and show that we signiﬁcantly outperform state-of-the-art solutions on detecting several anatomical structures with no failed cases from a clinical acceptance perspective, while also improving the detection accuracy by 20-30\%. Most importantly, we improve the detection-speed of the reference methods by 2-3 orders of magnitude, achieving unmatched real-time performance on large 3D-{CT} scans.},
+  pages        = {176--189},
+  number       = {1},
+  journaltitle = {{IEEE} Transactions on Pattern Analysis and Machine Intelligence},
+  shortjournal = {{IEEE} Trans. Pattern Anal. Mach. Intell.},
+  author       = {Ghesu, Florin-Cristian and Georgescu, Bogdan and Zheng, Yefeng and Grbic, Sasa and Maier, Andreas and Hornegger, Joachim and Comaniciu, Dorin},
+  urldate      = {2022-02-03},
+  date         = {2019-01-01},
+  langid       = {english},
+  file         = {Ghesu et al. - 2019 - Multi-Scale Deep Reinforcement Learning for Real-T.pdf:/home/oslund/Zotero/storage/TF4ZNMC6/Ghesu et al. - 2019 - Multi-Scale Deep Reinforcement Learning for Real-T.pdf:application/pdf}
+}
+
+@book{goodfellow_deep_2016,
+  place        = {Cambridge, MA, USA},
+  series       = {Adaptive Computation and Machine Learning series},
+  title        = {Deep Learning},
+  isbn         = {978-0-262-03561-3},
+  abstractnote = {An introduction to a broad range of topics in deep learning, covering mathematical and conceptual background, deep learning techniques used in industry, and research perspectives.},
+  publisher    = {MIT Press},
+  author       = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
+  year         = {2016},
+  month        = {Nov},
+  collection   = {Adaptive Computation and Machine Learning series}
+}
+
+
+@article{gupta_cognitive_2019,
+  title        = {Cognitive Mapping and Planning for Visual Navigation},
+  url          = {http://arxiv.org/abs/1702.03920},
+  abstractnote = {We introduce a neural architecture for navigation in novel environments. Our proposed architecture learns to map from first-person views and plans a sequence of actions towards goals in the environment. The Cognitive Mapper and Planner (CMP) is based on two key ideas: a) a unified joint architecture for mapping and planning, such that the mapping is driven by the needs of the task, and b) a spatial memory with the ability to plan given an incomplete set of observations about the world. CMP constructs a top-down belief map of the world and applies a differentiable neural net planner to produce the next action at each time step. The accumulated belief of the world enables the agent to track visited regions of the environment. We train and test CMP on navigation problems in simulation environments derived from scans of real world buildings. Our experiments demonstrate that CMP outperforms alternate learning-based architectures, as well as, classical mapping and path planning approaches in many cases. Furthermore, it naturally extends to semantically specified goals, such as “going to a chair”. We also deploy CMP on physical robots in indoor environments, where it achieves reasonable performance, even though it is trained entirely in simulation.},
+  note         = {arXiv: 1702.03920},
+  journal      = {arXiv:1702.03920 [cs]},
+  author       = {Gupta, Saurabh and Tolani, Varun and Davidson, James and Levine, Sergey and Sukthankar, Rahul and Malik, Jitendra},
+  year         = {2019},
+  month        = {Feb}
+}
+
+
+@article{hausknecht_stone_2017,
+  title        = {Deep Recurrent Q-Learning for Partially Observable MDPs},
+  url          = {http://arxiv.org/abs/1507.06527},
+  abstractnote = {Deep Reinforcement Learning has yielded proﬁcient controllers for complex tasks. However, these controllers have limited memory and rely on being able to perceive the complete game screen at each decision point. To address these shortcomings, this article investigates the effects of adding recurrency to a Deep Q-Network (DQN) by replacing the ﬁrst post-convolutional fully-connected layer with a recurrent LSTM. The resulting Deep Recurrent Q-Network (DRQN), although capable of seeing only a single frame at each timestep, successfully integrates information through time and replicates DQN’s performance on standard Atari games and partially observed equivalents featuring ﬂickering game screens. Additionally, when trained with partial observations and evaluated with incrementally more complete observations, DRQN’s performance scales as a function of observability. Conversely, when trained with full observations and evaluated with partial observations, DRQN’s performance degrades less than DQN’s. Thus, given the same length of history, recurrency is a viable alternative to stacking a history of frames in the DQN’s input layer and while recurrency confers no systematic advantage when learning to play the game, the recurrent net can better adapt at evaluation time if the quality of observations changes.},
+  note         = {arXiv: 1507.06527},
+  journal      = {arXiv:1507.06527 [cs]},
+  author       = {Hausknecht, Matthew and Stone, Peter},
   year         = {2017},
   month        = {Jan}
 }
 
-@inproceedings{minut_mahadevan_2001,
-  place     = {Montreal, Quebec, Canada},
-  title     = {A reinforcement learning model of selective visual attention},
-  isbn      = {978-1-58113-326-4},
-  url       = {http://portal.acm.org/citation.cfm?doid=375735.376414},
-  doi       = {10/dbwckq},
-  booktitle = {Proceedings of the fifth international conference on Autonomous agents  - AGENTS ’01},
-  publisher = {ACM Press},
-  author    = {Minut, Silviu and Mahadevan, Sridhar},
-  year      = {2001},
-  pages     = {457–464}
+@article{henderson_matters_2018,
+  title        = {Deep Reinforcement Learning That Matters},
+  volume       = {32},
+  issn         = {2374-3468},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/11694},
+  abstractnote = {In recent years, significant progress has been made in solving challenging problems across various domains using deep reinforcement learning (RL). Reproducing existing work and accurately judging the improvements offered by novel methods is vital to sustaining this progress. Unfortunately, reproducing results for state-of-the-art deep RL methods is seldom straightforward. In particular, non-determinism in standard benchmark environments, combined with variance intrinsic to the methods, can make reported results tough to interpret. Without significance metrics and tighter standardization of experimental reporting, it is difficult to determine whether improvements over the prior state-of-the-art are meaningful. In this paper, we investigate challenges posed by reproducibility, proper experimental techniques, and reporting procedures. We illustrate the variability in reported metrics and results when comparing against common baselines and suggest guidelines to make future results in deep RL more reproducible. We aim to spur discussion about how to ensure continued progress in the field by minimizing wasted effort stemming from results that are non-reproducible and easily misinterpreted.},
+  number       = {11},
+  journal      = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  author       = {Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David},
+  year         = {2018},
+  month        = {Apr}
 }
 
-
-@article{dhiman_critical_2019,
-  title        = {A Critical Investigation of Deep Reinforcement Learning for Navigation},
-  url          = {http://arxiv.org/abs/1802.02274},
-  abstractnote = {The navigation problem is classically approached in two steps: an exploration step, where map-information about the environment is gathered; and an exploitation step, where this information is used to navigate efficiently. Deep reinforcement learning (DRL) algorithms, alternatively, approach the problem of navigation in an end-to-end fashion. Inspired by the classical approach, we ask whether DRL algorithms are able to inherently explore, gather and exploit map-information over the course of navigation. We build upon Mirowski et al. [2017] work and introduce a systematic suite of experiments that vary three parameters: the agent’s starting location, the agent’s target location, and the maze structure. We choose evaluation metrics that explicitly measure the algorithm’s ability to gather and exploit map-information. Our experiments show that when trained and tested on the same maps, the algorithm successfully gathers and exploits map-information. However, when trained and tested on different sets of maps, the algorithm fails to transfer the ability to gather and exploit map-information to unseen maps. Furthermore, we find that when the goal location is randomized and the map is kept static, the algorithm is able to gather and exploit map-information but the exploitation is far from optimal. We open-source our experimental suite in the hopes that it serves as a framework for the comparison of future algorithms and leads to the discovery of robust alternatives to classical navigation methods.},
-  note         = {arXiv: 1802.02274},
-  journal      = {arXiv:1802.02274 [cs]},
-  author       = {Dhiman, Vikas and Banerjee, Shurjo and Griffin, Brent and Siskind, Jeffrey M. and Corso, Jason J.},
-  year         = {2019},
-  month        = {Jan}
+@inproceedings{henriques_vedaldi_2018,
+  place        = {Salt Lake City, UT},
+  title        = {MapNet: An Allocentric Spatial Memory for Mapping Environments},
+  isbn         = {978-1-5386-6420-9},
+  url          = {https://ieeexplore.ieee.org/document/8578982/},
+  doi          = {10.1109/CVPR.2018.00884},
+  abstractnote = {Autonomous agents need to reason about the world beyond their instantaneous sensory input. Integrating information over time, however, requires switching from an egocentric representation of a scene to an allocentric one, expressed in the world reference frame. It must also be possible to update the representation dynamically, which requires localizing and registering the sensor with respect to the world reference. In this paper, we develop a differentiable module that satisﬁes such requirements, while being robust, efﬁcient, and suitable for integration in end-to-end deep networks. The module contains an allocentric spatial memory that can be accessed associatively by feeding to it the current sensory input, resulting in localization, and then updated using an LSTM or similar mechanism. We formulate efﬁcient localization and registration of sensory information as a dual pair of convolution/deconvolution operators in memory space. The map itself is a 2.5D representation of an environment storing information that a deep neural network module learns to distill from RGBD input. The result is a map that contains multi-task information, different from classical approaches to mapping such as structurefrom-motion. We present results using synthetic mazes, a dataset of hours of recorded gameplay of the classic game Doom, and the very recent Active Vision Dataset of real images captured from a robot.},
+  booktitle    = {2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  publisher    = {IEEE},
+  author       = {Henriques, Joao F. and Vedaldi, Andrea},
+  year         = {2018},
+  month        = {Jun},
+  pages        = {8476–8484}
 }
 
 
@@ -294,6 +330,60 @@
   author       = {Hessel, Matteo and van Hasselt, Hado and Modayil, Joseph and Silver, David},
   year         = {2019},
   month        = {Jul}
+}
+
+
+@article{hochreiter_schmidhuber_lstm_1997,
+  title        = {Long Short-Term Memory},
+  volume       = {9},
+  issn         = {0899-7667},
+  doi          = {10.1162/neco.1997.9.8.1735},
+  abstractnote = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter’s (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
+  number       = {8},
+  journal      = {Neural Computation},
+  author       = {Hochreiter, Sepp and Schmidhuber, Jürgen},
+  year         = {1997},
+  month        = {Nov},
+  pages        = {1735–1780}
+}
+
+
+@article{kaelbling_pomdp_1998,
+  title        = {Planning and acting in partially observable stochastic domains},
+  volume       = {101},
+  issn         = {00043702},
+  doi          = {10.1016/S0004-3702(98)00023-X},
+  abstractnote = {In this paper, we bring techniques from operations research to bear on the problem of choosing optimal actions in partially observable stochastic domains. We begin by introducing the theory of Markov decision processes (MDPs) and partially observable MDPs (POMDPs). We then outline a novel algorithm for solving POMDPs off line and show how, in some cases, a ﬁnite-memory controller can be extracted from the solution to a POMDP. We conclude with a discussion of how our approach relates to previous work, the complexity of ﬁnding exact solutions to POMDPs, and of some possibilities for ﬁnding approximate solutions. © 1998 Elsevier Science B.V. All rights reserved.},
+  number       = {1–2},
+  journal      = {Artificial Intelligence},
+  author       = {Kaelbling, Leslie Pack and Littman, Michael L. and Cassandra, Anthony R.},
+  year         = {1998},
+  month        = {May},
+  pages        = {99–134}
+}
+
+@article{kirk_survey_2022,
+  title        = {A Survey of Generalisation in Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/2111.09794},
+  abstractnote = {The study of generalisation in deep Reinforcement Learning (RL) aims to produce RL algorithms whose policies generalise well to novel unseen situations at deployment time, avoiding overfitting to their training environments. Tackling this is vital if we are to deploy reinforcement learning algorithms in real world scenarios, where the environment will be diverse, dynamic and unpredictable. This survey is an overview of this nascent field. We provide a unifying formalism and terminology for discussing different generalisation problems, building upon previous works. We go on to categorise existing benchmarks for generalisation, as well as current methods for tackling the generalisation problem. Finally, we provide a critical discussion of the current state of the field, including recommendations for future work. Among other conclusions, we argue that taking a purely procedural content generation approach to benchmark design is not conducive to progress in generalisation, we suggest fast online adaptation and tackling RL-specific problems as some areas for future work on methods for generalisation, and we recommend building benchmarks in underexplored problem settings such as offline RL generalisation and reward-function variation.},
+  note         = {arXiv: 2111.09794},
+  journal      = {arXiv:2111.09794 [cs]},
+  author       = {Kirk, Robert and Zhang, Amy and Grefenstette, Edward and Rocktäschel, Tim},
+  year         = {2022},
+  month        = {Jan}
+}
+
+@article{krishna_tetromino_2020,
+  title        = {Complete coverage path planning using reinforcement learning for Tetromino based cleaning and maintenance robot},
+  volume       = {112},
+  issn         = {0926-5805},
+  doi          = {10.1016/j.autcon.2020.103078},
+  abstractnote = {Tiling robotics have been deployed in autonomous complete area coverage tasks such as floor cleaning, building inspection, and maintenance, surface painting. One class of tiling robotics, polyomino-based reconfigurable robots, overcome the limitation of fixed-form robots in achieving high-efficiency area coverage by adopting different morphologies to suit the needs of the current environment. Since the reconfigurable actions of these robots are produced by real-time intelligent decisions during operations, an optimal path planning algorithm is paramount to maximize the area coverage while minimizing the energy consumed by these robots. This paper proposes a complete coverage path planning (CCPP) model trained using deep blackreinforcement learning (RL) for the tetromino based reconfigurable robot platform called hTetro to simultaneously generate the optimal set of shapes for any pretrained arbitrary environment shape with a trajectory that has the least overall cost. To this end, a Convolutional Neural Network (CNN) with Long Short Term Memory (LSTM) layers is trained using Actor Critic Experience Replay (ACER) reinforcement learning algorithm. The results are compared with existing approaches which are based on the traditional tiling theory model, including zigzag, spiral, and greedy search schemes. The model is also compared with the Travelling salesman problem (TSP) based Genetic Algorithm (GA) and Ant Colony Optimization (ACO) schemes. The proposed scheme generates a path with lower cost while also requiring lesser time to generate it. The model is also highly robust and can generate a path in any pretrained arbitrary environments.},
+  journal      = {Automation in Construction},
+  author       = {Krishna Lakshmanan, Anirudh and Elara Mohan, Rajesh and Ramalingam, Balakrishnan and Vu Le, Anh and Veerajagadeshwar, Prabahar and Tiwari, Kamlesh and Ilyas, Muhammad},
+  year         = {2020},
+  month        = {Apr},
+  pages        = {103078}
 }
 
 @article{minsky_cap_1961,
@@ -310,46 +400,213 @@
   pages        = {8–30}
 }
 
-@article{krishna_tetromino_2020,
-  title        = {Complete coverage path planning using reinforcement learning for Tetromino based cleaning and maintenance robot},
-  volume       = {112},
-  issn         = {0926-5805},
-  doi          = {10.1016/j.autcon.2020.103078},
-  abstractnote = {Tiling robotics have been deployed in autonomous complete area coverage tasks such as floor cleaning, building inspection, and maintenance, surface painting. One class of tiling robotics, polyomino-based reconfigurable robots, overcome the limitation of fixed-form robots in achieving high-efficiency area coverage by adopting different morphologies to suit the needs of the current environment. Since the reconfigurable actions of these robots are produced by real-time intelligent decisions during operations, an optimal path planning algorithm is paramount to maximize the area coverage while minimizing the energy consumed by these robots. This paper proposes a complete coverage path planning (CCPP) model trained using deep blackreinforcement learning (RL) for the tetromino based reconfigurable robot platform called hTetro to simultaneously generate the optimal set of shapes for any pretrained arbitrary environment shape with a trajectory that has the least overall cost. To this end, a Convolutional Neural Network (CNN) with Long Short Term Memory (LSTM) layers is trained using Actor Critic Experience Replay (ACER) reinforcement learning algorithm. The results are compared with existing approaches which are based on the traditional tiling theory model, including zigzag, spiral, and greedy search schemes. The model is also compared with the Travelling salesman problem (TSP) based Genetic Algorithm (GA) and Ant Colony Optimization (ACO) schemes. The proposed scheme generates a path with lower cost while also requiring lesser time to generate it. The model is also highly robust and can generate a path in any pretrained arbitrary environments.},
-  journal      = {Automation in Construction},
-  author       = {Krishna Lakshmanan, Anirudh and Elara Mohan, Rajesh and Ramalingam, Balakrishnan and Vu Le, Anh and Veerajagadeshwar, Prabahar and Tiwari, Kamlesh and Ilyas, Muhammad},
-  year         = {2020},
-  month        = {Apr},
-  pages        = {103078}
+@inproceedings{minut_mahadevan_2001,
+  place     = {Montreal, Quebec, Canada},
+  title     = {A reinforcement learning model of selective visual attention},
+  isbn      = {978-1-58113-326-4},
+  url       = {http://portal.acm.org/citation.cfm?doid=375735.376414},
+  doi       = {10/dbwckq},
+  booktitle = {Proceedings of the fifth international conference on Autonomous agents  - AGENTS ’01},
+  publisher = {ACM Press},
+  author    = {Minut, Silviu and Mahadevan, Sridhar},
+  year      = {2001},
+  pages     = {457–464}
 }
 
-
-@article{galceran_carreras_2013,
-  title        = {A survey on coverage path planning for robotics},
-  volume       = {61},
-  issn         = {09218890},
-  doi          = {10/f5j2n5},
-  abstractnote = {Coverage Path Planning (CPP) is the task of determining a path that passes over all points of an area or volume of interest while avoiding obstacles. This task is integral to many robotic applications, such as vacuum cleaning robots, painter robots, autonomous underwater vehicles creating image mosaics, demining robots, lawn mowers, automated harvesters, window cleaners and inspection of complex structures, just to name a few. A considerable body of research has addressed the CPP problem. However, no updated surveys on CPP reflecting recent advances in the field have been presented in the past ten years. In this paper, we present a review of the most successful CPP methods, focusing on the achievements made in the past decade. Furthermore, we discuss reported field applications of the described CPP methods. This work aims to become a starting point for researchers who are initiating their endeavors in CPP. Likewise, this work aims to present a comprehensive review of the recent breakthroughs in the field, providing links to the most interesting and successful works.},
-  number       = {12},
-  journal      = {Robotics and Autonomous Systems},
-  author       = {Galceran, Enric and Carreras, Marc},
-  year         = {2013},
-  month        = {Dec},
-  pages        = {1258–1276}
-}
-
-
-@article{kirk_survey_2022,
-  title        = {A Survey of Generalisation in Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/2111.09794},
-  abstractnote = {The study of generalisation in deep Reinforcement Learning (RL) aims to produce RL algorithms whose policies generalise well to novel unseen situations at deployment time, avoiding overfitting to their training environments. Tackling this is vital if we are to deploy reinforcement learning algorithms in real world scenarios, where the environment will be diverse, dynamic and unpredictable. This survey is an overview of this nascent field. We provide a unifying formalism and terminology for discussing different generalisation problems, building upon previous works. We go on to categorise existing benchmarks for generalisation, as well as current methods for tackling the generalisation problem. Finally, we provide a critical discussion of the current state of the field, including recommendations for future work. Among other conclusions, we argue that taking a purely procedural content generation approach to benchmark design is not conducive to progress in generalisation, we suggest fast online adaptation and tackling RL-specific problems as some areas for future work on methods for generalisation, and we recommend building benchmarks in underexplored problem settings such as offline RL generalisation and reward-function variation.},
-  note         = {arXiv: 2111.09794},
-  journal      = {arXiv:2111.09794 [cs]},
-  author       = {Kirk, Robert and Zhang, Amy and Grefenstette, Edward and Rocktäschel, Tim},
-  year         = {2022},
+@article{mirowski_navigate_2017,
+  title        = {Learning to Navigate in Complex Environments},
+  url          = {http://arxiv.org/abs/1611.03673},
+  abstractnote = {Learning to navigate in complex environments with dynamic elements is an important milestone in developing AI agents. In this work we formulate the navigation question as a reinforcement learning problem and show that data efficiency and task performance can be dramatically improved by relying on additional auxiliary tasks leveraging multimodal sensory inputs. In particular we consider jointly learning the goal-driven reinforcement learning problem with auxiliary depth prediction and loop closure classification tasks. This approach can learn to navigate from raw sensory input in complicated 3D mazes, approaching human-level performance even under conditions where the goal location changes frequently. We provide detailed analysis of the agent behaviour, its ability to localise, and its network activity dynamics, showing that the agent implicitly learns key navigation abilities.},
+  note         = {arXiv: 1611.03673},
+  journal      = {arXiv:1611.03673 [cs]},
+  author       = {Mirowski, Piotr and Pascanu, Razvan and Viola, Fabio and Soyer, Hubert and Ballard, Andrew J. and Banino, Andrea and Denil, Misha and Goroshin, Ross and Sifre, Laurent and Kavukcuoglu, Koray and Kumaran, Dharshan and Hadsell, Raia},
+  year         = {2017},
   month        = {Jan}
 }
 
+@article{mnih_asynchronous_2016,
+  title        = {Asynchronous Methods for Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1602.01783},
+  abstractnote = {We propose a conceptually simple and lightweight framework for deep reinforcement learning that uses asynchronous gradient descent for optimization of deep neural network controllers. We present asynchronous variants of four standard reinforcement learning algorithms and show that parallel actor-learners have a stabilizing effect on training allowing all four methods to successfully train neural network controllers. The best performing method, an asynchronous variant of actor-critic, surpasses the current state-of-the-art on the Atari domain while training for half the time on a single multi-core CPU instead of a GPU. Furthermore, we show that asynchronous actor-critic succeeds on a wide variety of continuous motor control problems as well as on a new task of navigating random 3D mazes using a visual input.},
+  note         = {arXiv: 1602.01783},
+  journal      = {arXiv:1602.01783 [cs]},
+  author       = {Mnih, Volodymyr and Badia, Adrià Puigdomènech and Mirza, Mehdi and Graves, Alex and Lillicrap, Timothy P. and Harley, Tim and Silver, David and Kavukcuoglu, Koray},
+  year         = {2016},
+  month        = {Jun}
+}
+
+@article{mnih_atari_2013,
+  title        = {Playing Atari with Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1312.5602},
+  abstractnote = {We present the ﬁrst deep learning model to successfully learn control policies directly from high-dimensional sensory input using reinforcement learning. The model is a convolutional neural network, trained with a variant of Q-learning, whose input is raw pixels and whose output is a value function estimating future rewards. We apply our method to seven Atari 2600 games from the Arcade Learning Environment, with no adjustment of the architecture or learning algorithm. We ﬁnd that it outperforms all previous approaches on six of the games and surpasses a human expert on three of them.},
+  note         = {arXiv: 1312.5602},
+  journal      = {arXiv:1312.5602 [cs]},
+  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Graves, Alex and Antonoglou, Ioannis and Wierstra, Daan and Riedmiller, Martin},
+  year         = {2013},
+  month        = {Dec}
+}
+
+@article{mnih_attention_2014,
+  title        = {Recurrent Models of Visual Attention},
+  url          = {http://arxiv.org/abs/1406.6247},
+  abstractnote = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-speciﬁc policies. We evaluate our model on several image classiﬁcation tasks, where it signiﬁcantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
+  note         = {arXiv: 1406.6247},
+  journal      = {arXiv:1406.6247 [cs, stat]},
+  author       = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
+  year         = {2014},
+  month        = {Jun}
+}
+
+
+@article{mnih_human_2015,
+  title        = {Human-level control through deep reinforcement learning},
+  volume       = {518},
+  issn         = {1476-4687},
+  doi          = {10.1038/nature14236},
+  abstractnote = {An artificial agent is developed that learns to play a diverse range of classic Atari 2600 computer games directly from sensory experience, achieving a performance comparable to that of an expert human player; this work paves the way to building general-purpose learning algorithms that bridge the divide between perception and action.},
+  number       = {75407540},
+  journal      = {Nature},
+  publisher    = {Nature Publishing Group},
+  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
+  year         = {2015},
+  month        = {Feb},
+  pages        = {529–533}
+}
+
+
+
+@article{oh_minecraft_2016,
+  title        = {Control of Memory, Active Perception, and Action in Minecraft},
+  url          = {http://arxiv.org/abs/1605.09128},
+  abstractnote = {In this paper, we introduce a new set of reinforcement learning (RL) tasks in Minecraft (a flexible 3D world). We then use these tasks to systematically compare and contrast existing deep reinforcement learning (DRL) architectures with our new memory-based DRL architectures. These tasks are designed to emphasize, in a controllable manner, issues that pose challenges for RL methods including partial observability (due to first-person visual observations), delayed rewards, high-dimensional visual observations, and the need to use active perception in a correct manner so as to perform well in the tasks. While these tasks are conceptually simple to describe, by virtue of having all of these challenges simultaneously they are difficult for current DRL architectures. Additionally, we evaluate the generalization performance of the architectures on environments not used during training. The experimental results show that our new architectures generalize to unseen environments better than existing DRL architectures.},
+  note         = {arXiv: 1605.09128},
+  journal      = {arXiv:1605.09128 [cs]},
+  author       = {Oh, Junhyuk and Chockalingam, Valliappa and Singh, Satinder and Lee, Honglak},
+  year         = {2016},
+  month        = {May}
+}
+
+@incollection{ourselin_artificial_2016,
+  location  = {Cham},
+  title     = {An Artificial Agent for Anatomical Landmark Detection in Medical Images},
+  volume    = {9902},
+  isbn      = {978-3-319-46725-2 978-3-319-46726-9},
+  url       = {https://link.springer.com/10.1007/978-3-319-46726-9_27},
+  abstract  = {Fast and robust detection of anatomical structures or pathologies represents a fundamental task in medical image analysis. Most of the current solutions are however suboptimal and unconstrained by learning an appearance model and exhaustively scanning the space of parameters to detect a speciﬁc anatomical structure. In addition, typical feature computation or estimation of meta-parameters related to the appearance model or the search strategy, is based on local criteria or predeﬁned approximation schemes. We propose a new learning method following a fundamentally diﬀerent paradigm by simultaneously modeling both the object appearance and the parameter search strategy as a uniﬁed behavioral task for an artiﬁcial agent. The method combines the advantages of behavior learning achieved through reinforcement learning with eﬀective hierarchical feature extraction achieved through deep learning. We show that given only a sequence of annotated images, the agent can automatically and strategically learn optimal paths that converge to the sought anatomical landmark location as opposed to exhaustively scanning the entire solution space. The method signiﬁcantly outperforms state-ofthe-art machine learning and deep learning approaches both in terms of accuracy and speed on 2D magnetic resonance images, 2D ultrasound and 3D {CT} images, achieving average detection errors of 1-2 pixels, while also recognizing the absence of an object from the image.},
+  pages     = {229--237},
+  booktitle = {Medical Image Computing and Computer-Assisted Intervention - {MICCAI} 2016},
+  publisher = {Springer International Publishing},
+  author    = {Ghesu, Florin C. and Georgescu, Bogdan and Mansi, Tommaso and Neumann, Dominik and Hornegger, Joachim and Comaniciu, Dorin},
+  editor    = {Ourselin, Sebastien and Joskowicz, Leo and Sabuncu, Mert R. and Unal, Gozde and Wells, William},
+  urldate   = {2022-02-03},
+  date      = {2016},
+  langid    = {english},
+  doi       = {10.1007/978-3-319-46726-9_27},
+  note      = {Series Title: Lecture Notes in Computer Science},
+  file      = {Ghesu et al. - 2016 - An Artificial Agent for Anatomical Landmark Detect.pdf:/home/oslund/Zotero/storage/SUFGAH83/Ghesu et al. - 2016 - An Artificial Agent for Anatomical Landmark Detect.pdf:application/pdf}
+}
+
+
+@article{parisotto_salakhutdinov_2017,
+  title        = {Neural Map: Structured Memory for Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1702.08360},
+  abstractnote = {A critical component to enabling intelligent reasoning in partially observable environments is memory. Despite this importance, Deep Reinforcement Learning (DRL) agents have so far used relatively simple memory architectures, with the main methods to overcome partial observability being either a temporal convolution over the past k frames or an LSTM layer. More recent work (Oh et al., 2016) has went beyond these architectures by using memory networks which can allow more sophisticated addressing schemes over the past k frames. But even these architectures are unsatisfactory due to the reason that they are limited to only remembering information from the last k frames. In this paper, we develop a memory system with an adaptable write operator that is customized to the sorts of 3D environments that DRL agents typically interact with. This architecture, called the Neural Map, uses a spatially structured 2D memory image to learn to store arbitrary information about the environment over long time lags. We demonstrate empirically that the Neural Map surpasses previous DRL memories on a set of challenging 2D and 3D maze environments and show that it is capable of generalizing to environments that were not seen during training.},
+  note         = {arXiv: 1702.08360},
+  journal      = {arXiv:1702.08360 [cs]},
+  author       = {Parisotto, Emilio and Salakhutdinov, Ruslan},
+  year         = {2017},
+  month        = {Feb}
+}
+
+@article{paszke_pytorch_nodate,
+  title    = {{PyTorch}: An Imperative Style, High-Performance Deep Learning Library},
+  abstract = {Deep learning frameworks have often focused on either usability or speed, but not both. {PyTorch} is a machine learning library that shows that these two goals are in fact compatible: it provides an imperative and Pythonic programming style that supports code as a model, makes debugging easy and is consistent with other popular scientiﬁc computing libraries, while remaining efﬁcient and supporting hardware accelerators such as {GPUs}.},
+  pages    = {12},
+  author   = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and Kopf, Andreas and Yang, Edward and {DeVito}, Zachary and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
+  langid   = {english},
+  keywords = {⛔ No {DOI} found},
+  file     = {Paszke et al. - PyTorch An Imperative Style, High-Performance Dee.pdf:/home/oslund/Zotero/storage/C6CWIML9/Paszke et al. - PyTorch An Imperative Style, High-Performance Dee.pdf:application/pdf}
+}
+
+
+@book{russell_artificial_2021,
+  location    = {Hoboken, {NJ}},
+  edition     = {Fourth Edition},
+  title       = {Artificial intelligence: a modern approach},
+  isbn        = {978-0-13-461099-3},
+  series      = {Pearson Series in Artificial Intelligence},
+  shorttitle  = {Artificial intelligence},
+  abstract    = {"Updated edition of popular textbook on Artificial Intelligence. This edition specific looks at ways of keeping artificial intelligence under control"--},
+  pagetotal   = {1115},
+  publisher   = {Pearson},
+  author      = {Russell, Stuart J. and Norvig, Peter},
+  editora     = {Chang, Ming-wei and Devlin, Jacob and Dragan, Anca and Forsyth, David and Goodfellow, Ian and Malik, Jitendra and Mansinghka, Vikash and Pearl, Judea and Woolridge, Michael},
+  editoratype = {collaborator},
+  date        = {2021}
+}
+
+@article{schulman_ppo_2017,
+  title        = {Proximal Policy Optimization Algorithms},
+  url          = {http://arxiv.org/abs/1707.06347},
+  abstractnote = {We propose a new family of policy gradient methods for reinforcement learning, which alternate between sampling data through interaction with the environment, and optimizing a “surrogate” objective function using stochastic gradient ascent. Whereas standard policy gradient methods perform one gradient update per data sample, we propose a novel objective function that enables multiple epochs of minibatch updates. The new methods, which we call proximal policy optimization (PPO), have some of the benefits of trust region policy optimization (TRPO), but they are much simpler to implement, more general, and have better sample complexity (empirically). Our experiments test PPO on a collection of benchmark tasks, including simulated robotic locomotion and Atari game playing, and we show that PPO outperforms other online policy gradient methods, and overall strikes a favorable balance between sample complexity, simplicity, and wall-time.},
+  note         = {arXiv: 1707.06347},
+  journal      = {arXiv:1707.06347 [cs]},
+  author       = {Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg},
+  year         = {2017},
+  month        = {Aug}
+}
+
+
+@inproceedings{sutton_policygrad_1999,
+  title     = {Policy Gradient Methods for Reinforcement Learning with Function Approximation},
+  volume    = {12},
+  url       = {https://proceedings.neurips.cc/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf},
+  booktitle = {Advances in Neural Information Processing Systems},
+  publisher = {MIT Press},
+  author    = {Sutton, Richard S and McAllester, David and Singh, Satinder and Mansour, Yishay},
+  editor    = {Solla, S. and Leen, T. and Müller, K.},
+  year      = {1999}
+}
+
+@book{sutton_reinforcement_2018,
+  location   = {Cambridge, Massachusetts},
+  edition    = {Second edition},
+  title      = {Reinforcement learning: an introduction},
+  isbn       = {978-0-262-03924-6},
+  series     = {Adaptive computation and machine learning series},
+  shorttitle = {Reinforcement learning},
+  abstract   = {"Reinforcement learning, one of the most active research areas in artificial intelligence, is a computational approach to learning whereby an agent tries to maximize the total amount of reward it receives while interacting with a complex, uncertain environment. In Reinforcement Learning, Richard Sutton and Andrew Barto provide a clear and simple account of the field's key ideas and algorithms."--},
+  pagetotal  = {526},
+  publisher  = {The {MIT} Press},
+  author     = {Sutton, Richard S. and Barto, Andrew G.},
+  date       = {2018},
+  langid     = {english},
+  keywords   = {Reinforcement learning},
+  file       = {Sutton and Barto - 2018 - Reinforcement learning an introduction.pdf:/home/oslund/Zotero/storage/HPCN43YL/Sutton and Barto - 2018 - Reinforcement learning an introduction.pdf:application/pdf}
+}
+
+@article{tesauro1995tdgammon,
+  title   = {Temporal difference learning and TD-Gammon},
+  author  = {Tesauro, Gerald and others},
+  journal = {Communications of the ACM},
+  volume  = {38},
+  number  = {3},
+  pages   = {58--68},
+  year    = {1995}
+}
+
+
+
+@article{uzkent_detection_2020,
+  title        = {Efficient Object Detection in Large Images using Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1912.03966},
+  abstractnote = {Traditionally, an object detector is applied to every part of the scene of interest, and its accuracy and computational cost increases with higher resolution images. However, in some application domains such as remote sensing, purchasing high spatial resolution images is expensive. To reduce the large computational and monetary cost associated with using high spatial resolution images, we propose a reinforcement learning agent that adaptively selects the spatial resolution of each image that is provided to the detector. In particular, we train the agent in a dual reward setting to choose low spatial resolution images to be run through a coarse level detector when the image is dominated by large objects, and high spatial resolution images to be run through a fine level detector when it is dominated by small objects. This reduces the dependency on high spatial resolution images for building a robust detector and increases run-time efficiency. We perform experiments on the xView dataset, consisting of large images, where we increase run-time efficiency by 50% and use high resolution images only 30% of the time while maintaining similar accuracy as a detector that uses only high resolution images.},
+  note         = {arXiv: 1912.03966},
+  journal      = {arXiv:1912.03966 [cs]},
+  author       = {Uzkent, Burak and Yeh, Christopher and Ermon, Stefano},
+  year         = {2020},
+  month        = {Apr}
+}
 
 @article{wolfe_five_2017,
   title        = {Five factors that guide attention in visual search},
@@ -411,233 +668,6 @@
   file         = {Full Text:/home/oslund/Zotero/storage/CLUR5J4F/Wolfe - 2010 - Visual search.pdf:application/pdf;Snapshot:/home/oslund/Zotero/storage/F564KWBK/PMC5678963.html:text/html;Visual search:/home/oslund/Zotero/storage/N56NHYTS/wolfe2010.pdf.pdf:application/pdf}
 }
 
-@article{brockman_openai_2016,
-  title        = {{OpenAI} Gym},
-  url          = {http://arxiv.org/abs/1606.01540},
-  abstract     = {{OpenAI} Gym1 is a toolkit for reinforcement learning research. It includes a growing collection of benchmark problems that expose a common interface, and a website where people can share their results and compare the performance of algorithms. This whitepaper discusses the components of {OpenAI} Gym and the design decisions that went into the software.},
-  journaltitle = {{arXiv}:1606.01540 [cs]},
-  author       = {Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
-  urldate      = {2022-03-10},
-  date         = {2016-06-05},
-  langid       = {english},
-  eprinttype   = {arxiv},
-  eprint       = {1606.01540},
-  keywords     = {⛔ No {DOI} found, Computer Science - Machine Learning, Computer Science - Artificial Intelligence},
-  file         = {Brockman et al. - 2016 - OpenAI Gym.pdf:/home/oslund/Zotero/storage/6DWT7K4D/Brockman et al. - 2016 - OpenAI Gym.pdf:application/pdf}
-}
-
-@article{paszke_pytorch_nodate,
-  title    = {{PyTorch}: An Imperative Style, High-Performance Deep Learning Library},
-  abstract = {Deep learning frameworks have often focused on either usability or speed, but not both. {PyTorch} is a machine learning library that shows that these two goals are in fact compatible: it provides an imperative and Pythonic programming style that supports code as a model, makes debugging easy and is consistent with other popular scientiﬁc computing libraries, while remaining efﬁcient and supporting hardware accelerators such as {GPUs}.},
-  pages    = {12},
-  author   = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and Kopf, Andreas and Yang, Edward and {DeVito}, Zachary and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
-  langid   = {english},
-  keywords = {⛔ No {DOI} found},
-  file     = {Paszke et al. - PyTorch An Imperative Style, High-Performance Dee.pdf:/home/oslund/Zotero/storage/C6CWIML9/Paszke et al. - PyTorch An Imperative Style, High-Performance Dee.pdf:application/pdf}
-}
-
-@article{bajcsy_revisiting_2018,
-  title        = {Revisiting active perception},
-  volume       = {42},
-  issn         = {1573-7527},
-  url          = {https://doi.org/10.1007/s10514-017-9615-3},
-  doi          = {10.1007/s10514-017-9615-3},
-  abstract     = {Despite the recent successes in robotics, artificial intelligence and computer vision, a complete artificial agent necessarily must include active perception. A multitude of ideas and methods for how to accomplish this have already appeared in the past, their broader utility perhaps impeded by insufficient computational power or costly hardware. The history of these ideas, perhaps selective due to our perspectives, is presented with the goal of organizing the past literature and highlighting the seminal contributions. We argue that those contributions are as relevant today as they were decades ago and, with the state of modern computational tools, are poised to find new life in the robotic perception systems of the next decade.},
-  pages        = {177--196},
-  number       = {2},
-  journaltitle = {Autonomous Robots},
-  shortjournal = {Auton Robot},
-  author       = {Bajcsy, Ruzena and Aloimonos, Yiannis and Tsotsos, John K.},
-  urldate      = {2022-03-13},
-  date         = {2018-02-01},
-  langid       = {english},
-  note         = {86 citations (Crossref) [2022-03-13]},
-  file         = {Springer Full Text PDF:/home/oslund/Zotero/storage/KVGHH5A6/Bajcsy et al. - 2018 - Revisiting active perception.pdf:application/pdf}
-}
-
-@book{russell_artificial_2021,
-  location    = {Hoboken, {NJ}},
-  edition     = {Fourth Edition},
-  title       = {Artificial intelligence: a modern approach},
-  isbn        = {978-0-13-461099-3},
-  series      = {Pearson Series in Artificial Intelligence},
-  shorttitle  = {Artificial intelligence},
-  abstract    = {"Updated edition of popular textbook on Artificial Intelligence. This edition specific looks at ways of keeping artificial intelligence under control"--},
-  pagetotal   = {1115},
-  publisher   = {Pearson},
-  author      = {Russell, Stuart J. and Norvig, Peter},
-  editora     = {Chang, Ming-wei and Devlin, Jacob and Dragan, Anca and Forsyth, David and Goodfellow, Ian and Malik, Jitendra and Mansinghka, Vikash and Pearl, Judea and Woolridge, Michael},
-  editoratype = {collaborator},
-  date        = {2021}
-}
-
-@book{goodfellow_deep_2016,
-  place        = {Cambridge, MA, USA},
-  series       = {Adaptive Computation and Machine Learning series},
-  title        = {Deep Learning},
-  isbn         = {978-0-262-03561-3},
-  abstractnote = {An introduction to a broad range of topics in deep learning, covering mathematical and conceptual background, deep learning techniques used in industry, and research perspectives.},
-  publisher    = {MIT Press},
-  author       = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
-  year         = {2016},
-  month        = {Nov},
-  collection   = {Adaptive Computation and Machine Learning series}
-}
-
-@article{kaelbling_pomdp_1998,
-  title        = {Planning and acting in partially observable stochastic domains},
-  volume       = {101},
-  issn         = {00043702},
-  doi          = {10.1016/S0004-3702(98)00023-X},
-  abstractnote = {In this paper, we bring techniques from operations research to bear on the problem of choosing optimal actions in partially observable stochastic domains. We begin by introducing the theory of Markov decision processes (MDPs) and partially observable MDPs (POMDPs). We then outline a novel algorithm for solving POMDPs off line and show how, in some cases, a ﬁnite-memory controller can be extracted from the solution to a POMDP. We conclude with a discussion of how our approach relates to previous work, the complexity of ﬁnding exact solutions to POMDPs, and of some possibilities for ﬁnding approximate solutions. © 1998 Elsevier Science B.V. All rights reserved.},
-  number       = {1–2},
-  journal      = {Artificial Intelligence},
-  author       = {Kaelbling, Leslie Pack and Littman, Michael L. and Cassandra, Anthony R.},
-  year         = {1998},
-  month        = {May},
-  pages        = {99–134}
-}
-
-
-@inproceedings{sutton_policygrad_1999,
-  title     = {Policy Gradient Methods for Reinforcement Learning with Function Approximation},
-  volume    = {12},
-  url       = {https://proceedings.neurips.cc/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf},
-  booktitle = {Advances in Neural Information Processing Systems},
-  publisher = {MIT Press},
-  author    = {Sutton, Richard S and McAllester, David and Singh, Satinder and Mansour, Yishay},
-  editor    = {Solla, S. and Leen, T. and Müller, K.},
-  year      = {1999}
-}
-
-
-
-@inproceedings{henriques_vedaldi_2018,
-  place        = {Salt Lake City, UT},
-  title        = {MapNet: An Allocentric Spatial Memory for Mapping Environments},
-  isbn         = {978-1-5386-6420-9},
-  url          = {https://ieeexplore.ieee.org/document/8578982/},
-  doi          = {10.1109/CVPR.2018.00884},
-  abstractnote = {Autonomous agents need to reason about the world beyond their instantaneous sensory input. Integrating information over time, however, requires switching from an egocentric representation of a scene to an allocentric one, expressed in the world reference frame. It must also be possible to update the representation dynamically, which requires localizing and registering the sensor with respect to the world reference. In this paper, we develop a differentiable module that satisﬁes such requirements, while being robust, efﬁcient, and suitable for integration in end-to-end deep networks. The module contains an allocentric spatial memory that can be accessed associatively by feeding to it the current sensory input, resulting in localization, and then updated using an LSTM or similar mechanism. We formulate efﬁcient localization and registration of sensory information as a dual pair of convolution/deconvolution operators in memory space. The map itself is a 2.5D representation of an environment storing information that a deep neural network module learns to distill from RGBD input. The result is a map that contains multi-task information, different from classical approaches to mapping such as structurefrom-motion. We present results using synthetic mazes, a dataset of hours of recorded gameplay of the classic game Doom, and the very recent Active Vision Dataset of real images captured from a robot.},
-  booktitle    = {2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  publisher    = {IEEE},
-  author       = {Henriques, Joao F. and Vedaldi, Andrea},
-  year         = {2018},
-  month        = {Jun},
-  pages        = {8476–8484}
-}
-
-@article{chaplot_semantic_2020,
-  title        = {Object Goal Navigation using Goal-Oriented Semantic Exploration},
-  url          = {http://arxiv.org/abs/2007.00643},
-  abstractnote = {This work studies the problem of object goal navigation which involves navigating to an instance of the given object category in unseen environments. End-to-end learning-based navigation methods struggle at this task as they are ineffective at exploration and long-term planning. We propose a modular system called, `Goal-Oriented Semantic Exploration’ which builds an episodic semantic map and uses it to explore the environment efficiently based on the goal object category. Empirical results in visually realistic simulation environments show that the proposed model outperforms a wide range of baselines including end-to-end learning-based methods as well as modular map-based methods and led to the winning entry of the CVPR-2020 Habitat ObjectNav Challenge. Ablation analysis indicates that the proposed model learns semantic priors of the relative arrangement of objects in a scene, and uses them to explore efficiently. Domain-agnostic module design allow us to transfer our model to a mobile robot platform and achieve similar performance for object goal navigation in the real-world.},
-  note         = {arXiv: 2007.00643},
-  journal      = {arXiv:2007.00643 [cs]},
-  author       = {Chaplot, Devendra Singh and Gandhi, Dhiraj and Gupta, Abhinav and Salakhutdinov, Ruslan},
-  year         = {2020},
-  month        = {Jul}
-}
-
-
-@article{hochreiter_schmidhuber_lstm_1997,
-  title        = {Long Short-Term Memory},
-  volume       = {9},
-  issn         = {0899-7667},
-  doi          = {10.1162/neco.1997.9.8.1735},
-  abstractnote = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter’s (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
-  number       = {8},
-  journal      = {Neural Computation},
-  author       = {Hochreiter, Sepp and Schmidhuber, Jürgen},
-  year         = {1997},
-  month        = {Nov},
-  pages        = {1735–1780}
-}
-
-@article{schulman_ppo_2017,
-  title        = {Proximal Policy Optimization Algorithms},
-  url          = {http://arxiv.org/abs/1707.06347},
-  abstractnote = {We propose a new family of policy gradient methods for reinforcement learning, which alternate between sampling data through interaction with the environment, and optimizing a “surrogate” objective function using stochastic gradient ascent. Whereas standard policy gradient methods perform one gradient update per data sample, we propose a novel objective function that enables multiple epochs of minibatch updates. The new methods, which we call proximal policy optimization (PPO), have some of the benefits of trust region policy optimization (TRPO), but they are much simpler to implement, more general, and have better sample complexity (empirically). Our experiments test PPO on a collection of benchmark tasks, including simulated robotic locomotion and Atari game playing, and we show that PPO outperforms other online policy gradient methods, and overall strikes a favorable balance between sample complexity, simplicity, and wall-time.},
-  note         = {arXiv: 1707.06347},
-  journal      = {arXiv:1707.06347 [cs]},
-  author       = {Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg},
-  year         = {2017},
-  month        = {Aug}
-}
-
-
-@article{brockman_gym_2016,
-  title        = {OpenAI Gym},
-  url          = {http://arxiv.org/abs/1606.01540},
-  abstractnote = {OpenAI Gym1 is a toolkit for reinforcement learning research. It includes a growing collection of benchmark problems that expose a common interface, and a website where people can share their results and compare the performance of algorithms. This whitepaper discusses the components of OpenAI Gym and the design decisions that went into the software.},
-  note         = {arXiv: 1606.01540},
-  journal      = {arXiv:1606.01540 [cs]},
-  author       = {Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
-  year         = {2016},
-  month        = {Jun}
-}
-
-@article{cobbe_generalization_2019,
-  title        = {Quantifying Generalization in Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1812.02341},
-  abstractnote = {In this paper, we investigate the problem of overfitting in deep reinforcement learning. Among the most common benchmarks in RL, it is customary to use the same environments for both training and testing. This practice offers relatively little insight into an agent’s ability to generalize. We address this issue by using procedurally generated environments to construct distinct training and test sets. Most notably, we introduce a new environment called CoinRun, designed as a benchmark for generalization in RL. Using CoinRun, we find that agents overfit to surprisingly large training sets. We then show that deeper convolutional architectures improve generalization, as do methods traditionally found in supervised learning, including L2 regularization, dropout, data augmentation and batch normalization.},
-  note         = {arXiv: 1812.02341},
-  journal      = {arXiv:1812.02341 [cs, stat]},
-  author       = {Cobbe, Karl and Klimov, Oleg and Hesse, Chris and Kim, Taehoon and Schulman, John},
-  year         = {2019},
-  month        = {Jul}
-}
-
-
-@article{gupta_cognitive_2019,
-  title        = {Cognitive Mapping and Planning for Visual Navigation},
-  url          = {http://arxiv.org/abs/1702.03920},
-  abstractnote = {We introduce a neural architecture for navigation in novel environments. Our proposed architecture learns to map from first-person views and plans a sequence of actions towards goals in the environment. The Cognitive Mapper and Planner (CMP) is based on two key ideas: a) a unified joint architecture for mapping and planning, such that the mapping is driven by the needs of the task, and b) a spatial memory with the ability to plan given an incomplete set of observations about the world. CMP constructs a top-down belief map of the world and applies a differentiable neural net planner to produce the next action at each time step. The accumulated belief of the world enables the agent to track visited regions of the environment. We train and test CMP on navigation problems in simulation environments derived from scans of real world buildings. Our experiments demonstrate that CMP outperforms alternate learning-based architectures, as well as, classical mapping and path planning approaches in many cases. Furthermore, it naturally extends to semantically specified goals, such as “going to a chair”. We also deploy CMP on physical robots in indoor environments, where it achieves reasonable performance, even though it is trained entirely in simulation.},
-  note         = {arXiv: 1702.03920},
-  journal      = {arXiv:1702.03920 [cs]},
-  author       = {Gupta, Saurabh and Tolani, Varun and Davidson, James and Levine, Sergey and Sukthankar, Rahul and Malik, Jitendra},
-  year         = {2019},
-  month        = {Feb}
-}
-
-@article{uzkent_detection_2020,
-  title        = {Efficient Object Detection in Large Images using Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1912.03966},
-  abstractnote = {Traditionally, an object detector is applied to every part of the scene of interest, and its accuracy and computational cost increases with higher resolution images. However, in some application domains such as remote sensing, purchasing high spatial resolution images is expensive. To reduce the large computational and monetary cost associated with using high spatial resolution images, we propose a reinforcement learning agent that adaptively selects the spatial resolution of each image that is provided to the detector. In particular, we train the agent in a dual reward setting to choose low spatial resolution images to be run through a coarse level detector when the image is dominated by large objects, and high spatial resolution images to be run through a fine level detector when it is dominated by small objects. This reduces the dependency on high spatial resolution images for building a robust detector and increases run-time efficiency. We perform experiments on the xView dataset, consisting of large images, where we increase run-time efficiency by 50% and use high resolution images only 30% of the time while maintaining similar accuracy as a detector that uses only high resolution images.},
-  note         = {arXiv: 1912.03966},
-  journal      = {arXiv:1912.03966 [cs]},
-  author       = {Uzkent, Burak and Yeh, Christopher and Ermon, Stefano},
-  year         = {2020},
-  month        = {Apr}
-}
-
-@article{mnih_attention_2014,
-  title        = {Recurrent Models of Visual Attention},
-  url          = {http://arxiv.org/abs/1406.6247},
-  abstractnote = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-speciﬁc policies. We evaluate our model on several image classiﬁcation tasks, where it signiﬁcantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
-  note         = {arXiv: 1406.6247},
-  journal      = {arXiv:1406.6247 [cs, stat]},
-  author       = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
-  year         = {2014},
-  month        = {Jun}
-}
-
-
-
-@article{zhu_target_driven_2016,
-  title        = {Target-driven Visual Navigation in Indoor Scenes using Deep Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1609.05143},
-  abstract     = {Two less addressed issues of deep reinforcement learning are (1) lack of generalization capability to new target goals, and (2) data inefﬁciency i.e., the model requires several (and often costly) episodes of trial and error to converge, which makes it impractical to be applied to real-world scenarios. In this paper, we address these two issues and apply our model to the task of target-driven visual navigation. To address the ﬁrst issue, we propose an actor-critic model whose policy is a function of the goal as well as the current state, which allows to better generalize. To address the second issue, we propose {AI}2THOR framework, which provides an environment with highquality 3D scenes and physics engine. Our framework enables agents to take actions and interact with objects. Hence, we can collect a huge number of training samples efﬁciently.},
-  journaltitle = {{arXiv}:1609.05143 [cs]},
-  author       = {Zhu, Yuke and Mottaghi, Roozbeh and Kolve, Eric and Lim, Joseph J. and Gupta, Abhinav and Fei-Fei, Li and Farhadi, Ali},
-  urldate      = {2022-03-14},
-  date         = {2016-09-16},
-  langid       = {english},
-  eprinttype   = {arxiv},
-  eprint       = {1609.05143},
-  keywords     = {Computer Science - Computer Vision and Pattern Recognition},
-  file         = {Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:/home/oslund/Zotero/storage/H7ESWWTX/Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:application/pdf}
-}
-
 @inproceedings{ye_active_2018,
   title      = {Active Object Perceiver: Recognition-Guided Policy Learning for Object Searching on Mobile Robots},
   doi        = {10.1109/IROS.2018.8593720},
@@ -653,61 +683,16 @@
   file       = {IEEE Xplore Full Text PDF:/home/oslund/Zotero/storage/YYQI6JBM/Ye et al. - 2018 - Active Object Perceiver Recognition-Guided Policy.pdf:application/pdf;IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/9IX4M2IH/8593720.html:text/html}
 }
 
-@article{henderson_matters_2018,
-  title        = {Deep Reinforcement Learning That Matters},
-  volume       = {32},
-  issn         = {2374-3468},
-  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/11694},
-  abstractnote = {In recent years, significant progress has been made in solving challenging problems across various domains using deep reinforcement learning (RL). Reproducing existing work and accurately judging the improvements offered by novel methods is vital to sustaining this progress. Unfortunately, reproducing results for state-of-the-art deep RL methods is seldom straightforward. In particular, non-determinism in standard benchmark environments, combined with variance intrinsic to the methods, can make reported results tough to interpret. Without significance metrics and tighter standardization of experimental reporting, it is difficult to determine whether improvements over the prior state-of-the-art are meaningful. In this paper, we investigate challenges posed by reproducibility, proper experimental techniques, and reporting procedures. We illustrate the variability in reported metrics and results when comparing against common baselines and suggest guidelines to make future results in deep RL more reproducible. We aim to spur discussion about how to ensure continued progress in the field by minimizing wasted effort stemming from results that are non-reproducible and easily misinterpreted.},
-  number       = {11},
-  journal      = {Proceedings of the AAAI Conference on Artificial Intelligence},
-  author       = {Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David},
-  year         = {2018},
-  month        = {Apr}
-}
-
-@article{agarwal_rlliable_2022,
-  title        = {Deep Reinforcement Learning at the Edge of the Statistical Precipice},
-  url          = {http://arxiv.org/abs/2108.13264},
-  abstractnote = {Deep reinforcement learning (RL) algorithms are predominantly evaluated by comparing their relative performance on a large suite of tasks. Most published results on deep RL benchmarks compare point estimates of aggregate performance such as mean and median scores across tasks, ignoring the statistical uncertainty implied by the use of a ﬁnite number of training runs. Beginning with the Arcade Learning Environment (ALE), the shift towards computationally-demanding benchmarks has led to the practice of evaluating only a small number of runs per task, exacerbating the statistical uncertainty in point estimates. In this paper, we argue that reliable evaluation in the few-run deep RL regime cannot ignore the uncertainty in results without running the risk of slowing down progress in the ﬁeld. We illustrate this point using a case study on the Atari 100k benchmark, where we ﬁnd substantial discrepancies between conclusions drawn from point estimates alone versus a more thorough statistical analysis. With the aim of increasing the ﬁeld’s conﬁdence in reported results with a handful of runs, we advocate for reporting interval estimates of aggregate performance and propose performance proﬁles to account for the variability in results, as well as present more robust and efﬁcient aggregate metrics, such as interquartile mean scores, to achieve small uncertainty in results. Using such statistical tools, we scrutinize performance evaluations of existing algorithms on other widely used RL benchmarks including the ALE, Procgen, and the DeepMind Control Suite, again revealing discrepancies in prior comparisons. Our ﬁndings call for a change in how we evaluate performance in deep RL, for which we present a more rigorous evaluation methodology, accompanied with an open-source library rliable2, to prevent unreliable results from stagnating the ﬁeld.},
-  note         = {arXiv: 2108.13264},
-  journal      = {arXiv:2108.13264 [cs, stat]},
-  author       = {Agarwal, Rishabh and Schwarzer, Max and Castro, Pablo Samuel and Courville, Aaron and Bellemare, Marc G.},
-  year         = {2022},
-  month        = {Jan}
-}
-
-@article{anderson_evaluation_2018,
-  title        = {On Evaluation of Embodied Navigation Agents},
-  url          = {http://arxiv.org/abs/1807.06757},
-  abstractnote = {Skillful mobile operation in three-dimensional environments is a primary topic of study in Artiﬁcial Intelligence. The past two years have seen a surge of creative work on navigation. This creative output has produced a plethora of sometimes incompatible task deﬁnitions and evaluation protocols. To coordinate ongoing and future research in this area, we have convened a working group to study empirical methodology in navigation research. The present document summarizes the consensus recommendations of this working group. We discuss different problem statements and the role of generalization, present evaluation measures, and provide standard scenarios that can be used for benchmarking.},
-  note         = {arXiv: 1807.06757},
-  journal      = {arXiv:1807.06757 [cs]},
-  author       = {Anderson, Peter and Chang, Angel and Chaplot, Devendra Singh and Dosovitskiy, Alexey and Gupta, Saurabh and Koltun, Vladlen and Kosecka, Jana and Malik, Jitendra and Mottaghi, Roozbeh and Savva, Manolis and Zamir, Amir R.},
-  year         = {2018},
-  month        = {Jul}
-}
-
-@article{batra_evaluation_2020,
-  title        = {ObjectNav Revisited: On Evaluation of Embodied Agents Navigating to Objects},
-  url          = {http://arxiv.org/abs/2006.13171},
-  abstractnote = {We revisit the problem of Object-Goal Navigation (ObjectNav). In its simplest form, ObjectNav is deﬁned as the task of navigating to an object, speciﬁed by its label, in an unexplored environment. In particular, the agent is initialized at a random location and pose in an environment and asked to ﬁnd an instance of an object category, e.g. ‘ﬁnd a chair’, by navigating to it.},
-  note         = {arXiv: 2006.13171},
-  journal      = {arXiv:2006.13171 [cs]},
-  author       = {Batra, Dhruv and Gokaslan, Aaron and Kembhavi, Aniruddha and Maksymets, Oleksandr and Mottaghi, Roozbeh and Savva, Manolis and Toshev, Alexander and Wijmans, Erik},
+@article{zeng_survey_2020,
+  title        = {A Survey on Visual Navigation for Artificial Agents With Deep Reinforcement Learning},
+  volume       = {8},
+  issn         = {2169-3536},
+  doi          = {10.1109/ACCESS.2020.3011438},
+  abstractnote = {Visual navigation (vNavigation) is a key and fundamental technology for artificial agents’ interaction with the environment to achieve advanced behaviors. Visual navigation for artificial agents with deep reinforcement learning (DRL) is a new research hotspot in artificial intelligence and robotics that incorporates the decision making of DRL into visual navigation. Visual navigation via DRL, an end-to-end method, directly receives the high-dimensional images and generates an optimal navigation policy. In this paper, we first present an overview on reinforcement learning (RL), deep learning (DL) and deep reinforcement learning (DRL). Then, we systematically describe five main categories of visual DRL navigation: direct DRL vNavigation, hierarchical DRL vNavigation, multi-task DRL vNavigation, memory-inference DRL vNavigation and vision-language DRL vNavigation. These visual DRL navigation algorithms are reviewed in detail. Finally, we discuss the challenges and some possible opportunities to visual DRL navigation for artificial agents.},
+  journal      = {IEEE Access},
+  author       = {Zeng, Fanyu and Wang, Chen and Ge, Shuzhi Sam},
   year         = {2020},
-  month        = {Aug}
-}
-
-@article{cobbe_procgen_2020,
-  title        = {Leveraging Procedural Generation to Benchmark Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1912.01588},
-  abstractnote = {We introduce Procgen Benchmark, a suite of 16 procedurally generated game-like environments designed to benchmark both sample efﬁciency and generalization in reinforcement learning. We believe that the community will beneﬁt from increased access to high quality training environments, and we provide detailed experimental protocols for using this benchmark. We empirically demonstrate that diverse environment distributions are essential to adequately train and evaluate RL agents, thereby motivating the extensive use of procedural content generation. We then use this benchmark to investigate the effects of scaling model size, ﬁnding that larger models signiﬁcantly improve both sample efﬁciency and generalization.},
-  note         = {arXiv: 1912.01588},
-  journal      = {arXiv:1912.01588 [cs, stat]},
-  author       = {Cobbe, Karl and Hesse, Christopher and Hilton, Jacob and Schulman, John},
-  year         = {2020},
-  month        = {Jul}
+  pages        = {135426–135442}
 }
 
 @article{zhang_overfitting_2018,
@@ -719,4 +704,19 @@
   author       = {Zhang, Chiyuan and Vinyals, Oriol and Munos, Remi and Bengio, Samy},
   year         = {2018},
   month        = {Apr}
+}
+
+@article{zhu_target_driven_2016,
+  title        = {Target-driven Visual Navigation in Indoor Scenes using Deep Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1609.05143},
+  abstract     = {Two less addressed issues of deep reinforcement learning are (1) lack of generalization capability to new target goals, and (2) data inefﬁciency i.e., the model requires several (and often costly) episodes of trial and error to converge, which makes it impractical to be applied to real-world scenarios. In this paper, we address these two issues and apply our model to the task of target-driven visual navigation. To address the ﬁrst issue, we propose an actor-critic model whose policy is a function of the goal as well as the current state, which allows to better generalize. To address the second issue, we propose {AI}2THOR framework, which provides an environment with highquality 3D scenes and physics engine. Our framework enables agents to take actions and interact with objects. Hence, we can collect a huge number of training samples efﬁciently.},
+  journaltitle = {{arXiv}:1609.05143 [cs]},
+  author       = {Zhu, Yuke and Mottaghi, Roozbeh and Kolve, Eric and Lim, Joseph J. and Gupta, Abhinav and Fei-Fei, Li and Farhadi, Ali},
+  urldate      = {2022-03-14},
+  date         = {2016-09-16},
+  langid       = {english},
+  eprinttype   = {arxiv},
+  eprint       = {1609.05143},
+  keywords     = {Computer Science - Computer Vision and Pattern Recognition},
+  file         = {Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:/home/oslund/Zotero/storage/H7ESWWTX/Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:application/pdf}
 }

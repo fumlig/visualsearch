@@ -117,64 +117,6 @@ These works ground the task considered in this project in psychology.
 
 % can we build a system that exhibits all of these?
 
-\section{Artificial Neural Network}
-
-An artificial neural network (ANN) is a type of universal function approximator.
-Inspired by biological neurons found in the brains of animals, ANNs are collections of connected nodes.
-Each node receives a real-valued signal, processes it and signals connected nodes.
-
-% https://www.asimovinstitute.org/neural-network-zoo/
-
-This section will introduce three classes of ANNs that are relevant to this work:
-feed-forward, convolutional, and recurrent neural networks.
-
-\subsection{Feed-forward Neural Network}
-
-A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
-It consists of multiple layers of computational units
-The value of the parameter \(\theta\) is learned  
-
-\cite{goodfellow_deep_2016}
-
-\subsection{Convolutional Neural Network}
-
-Convolutional Neural Networks (CNNs) are designed specifically for processing data with a known grid-like topology, such as images.
-As the name implies, CNNs employ the convolution operator
-
-\[
-    s(t) 
-\]
-
-\cite{goodfellow_deep_2016}
-
-% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
-% https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
-
-\subsection{Recurrent Neural Network}
-
-% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
-Recurrent neural networks (RNNs) are networks designed to process sequential data.
-RNNs extend ANNs by also including \textit{hidden state} in the network.
-Information from previous inputs is stored in the hidden state and used to influence the current input and output.
-This means that a single network can be used for sequences of variable length.
-
-Formally, RNNs operate on a sequence \(x^{(1), \dots, x^\{(\tau)}\).
-For each value \(x_t\) in the sequence, the hidden state is computed as \(h^{(t)} = f(h^{(t-1)}, x^{(t)}; \theta)\).
-The hidden state is used as a summary of all previous items in the sequence 
-
-% figure 10.2 in deep learning book
-
-
-In practice, conventional RNNs struggle with learning long-term dependencies.
-During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
-An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_schmidhuber_lstm_1997}.
-LSTMs have \textit{cells} in the hidden layers of the network which have an input gate, an output gate and a forget gate.
-These gates control how information flows in the network.
-By allowing 
-
-
-This makes LSTMs particularly useful for learning over long sequences.
-
 \section{Reinforcement Learning}
 
 % {arulkumaran_survey_2017} also gives a good introduction to algorithms
@@ -242,19 +184,21 @@ From here on we will use the belief state and the environment state \(s\) interc
 
 The behaviour of the agent is described by its \textit{policy}.
 A policy \(\pi\) is a mapping from perceived environment states to actions.
-Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\).
+Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\).~\cite{sutton_reinforcement_2018}
+
 Most RL solutions methods also approximate a \textit{value function}.
 A value function \(v_\pi\) estimates how good it is to be in a state.
 The value function \(v_\pi(s)\) is the expected (discounted) return when starting at state \(s\) and following policy \(\pi\) until the end of the episode.
-With a good value function estimate, the policy can select actions so as to maximize the value function.
-This is referred to as an \textit{action-value} method.~\cite{sutton_reinforcement_2018}
-% quality functions, advantage functions
+There are two common alternative value functions:
+The \textit{quality function} \(q_\pi(s,a)\) gives the value of state \(s\) under policy \(\pi\) where \(a\) is the first action taken.
+Given a quality function, \textit{action-value} methods choose the action greedily at every state as \(arg\,max q_\pi(s, a)\).
+The \textit{advantage function} \(a_\pi(s, a)\) instead represents the relative advantage of actions, \(a_\pi = q_\pi - v_\pi\).~\cite{sutton_reinforcement_2018}
 
 For problems with large state and action spaces, it is common to represent value functions with \textit{function approximation}.
 In such cases, it is common to encounter states that have never been encountered before.
 This makes it important that the estimated value function can generalize from seen to unseen states.
 With examples from the true value function, an approximation can be made with supervised learning methods.
-We write \(\hat{v}(s,w) \approx v_\pi(s)\) for the approximate value of state \(s\) with the some weight vector \(w \in \mathbb{R}^d\).
+We write \(\hat{v}(s,w) \approx v_\pi(s)\) for the approximate value of state \(s\) with the some weight vector \(w \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
 
 An alternative to action-value methods is to approximate the policy itself.
 \textit{Policy gradient methods}~\cite{sutton_policygrad_1999} learn a parametrized policy that select actions without a value function.
@@ -269,6 +213,8 @@ As long as \(\pi(a|s,\theta)\) is differentiable with respect to its parameters,
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}. In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(w\) of the value function estimate and \(\theta\) of the policy estimate. 
+
+% https://www.quora.com/What-are-the-benefits-of-actor-critic-framework-in-reinforcement-learning
 
 % We might imagine an artificial neural network (ANN) in which the last layer is split into multiple parts, or heads, each working on a di↵erent task. One head might produce the approximate value function for the main task (with reward as its cumulant) whereas the others would produce solutions to various auxiliary tasks. All heads could propagate errors by stochastic gradient descent into the same body—the shared preceding part of the network—which would then try to form representations, in its next-to-last layer, to support all the heads. Researchers have experimented with auxiliary tasks such as predicting change in pixels, predicting the next time step’s reward, and predicting the distribution of the return. In many cases this approach has been shown to greatly accelerate learning on the main task (Jaderberg et al., 2017). Multiple predictions have similarly been repeatedly proposed as a way of directing the construction of state estimates (see Section 17.3). (Sutton)
 
@@ -287,6 +233,64 @@ In these cases, there might also be some overlap between the weights \(w\) of th
 % https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
 % https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
 % reward shaping
+
+\section{Artificial Neural Networks}
+
+An artificial neural network (ANN) is a type of universal function approximator.
+Inspired by biological neurons found in the brains of animals, ANNs are collections of connected nodes.
+Each node receives a real-valued signal, processes it and signals connected nodes.
+
+% https://www.asimovinstitute.org/neural-network-zoo/
+
+This section will introduce three classes of ANNs that are relevant to this work:
+feed-forward, convolutional, and recurrent neural networks.
+
+\subsection{Feed-forward Neural Network}
+
+A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
+It consists of multiple layers of computational units
+The value of the parameter \(\theta\) is learned  
+
+\cite{goodfellow_deep_2016}
+
+\subsection{Convolutional Neural Network}
+
+Convolutional Neural Networks (CNNs) are designed specifically for processing data with a known grid-like topology, such as images.
+As the name implies, CNNs employ the convolution operator
+
+\[
+    s(t) 
+\]
+
+\cite{goodfellow_deep_2016}
+
+% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
+% https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
+
+\subsection{Recurrent Neural Network}
+
+% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+Recurrent neural networks (RNNs) are networks designed to process sequential data.
+RNNs extend ANNs by also including \textit{hidden state} in the network.
+Information from previous inputs is stored in the hidden state and used to influence the current input and output.
+This means that a single network can be used for sequences of variable length.
+
+Formally, RNNs operate on a sequence \(x^{(1), \dots, x^\{(\tau)}\).
+For each value \(x_t\) in the sequence, the hidden state is computed as \(h^{(t)} = f(h^{(t-1)}, x^{(t)}; \theta)\).
+The hidden state is used as a summary of all previous items in the sequence 
+
+% figure 10.2 in deep learning book
+
+
+In practice, conventional RNNs struggle with learning long-term dependencies.
+During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
+An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_schmidhuber_lstm_1997}.
+LSTMs have \textit{cells} in the hidden layers of the network which have an input gate, an output gate and a forget gate.
+These gates control how information flows in the network.
+By allowing 
+
+
+This makes LSTMs particularly useful for learning over long sequences.
 
 \section{Related Work}
 

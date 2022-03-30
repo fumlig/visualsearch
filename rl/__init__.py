@@ -3,7 +3,8 @@ import rl.agents
 
 
 ALGORITHMS = {
-    "ppo": rl.algorithms.ProximalPolicyOptimization
+    "ppo": rl.algorithms.ProximalPolicyOptimization,
+    "dqn": rl.algorithms.DeepQNetworks
 }
 
 AGENTS = {

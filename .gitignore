@@ -6,6 +6,9 @@ data/
 *.aux
 *.bbl
 *.blg
+*.out
+*.snm
+*.nav
 *.fdb_latexmk
 *.fls
 *.log

@@ -29,10 +29,10 @@ add pretty plotting (yield info from learn?)
 
 SEED = 0
 TOT_TIMESTEPS = int(25e6)
-NUM_ENVS = 64 # 64 in procgen
+NUM_ENVS = 64
 HPARAMS = dict(
     learning_rate=5e-4,
-    num_steps=256, # 256 in procgen, recommended to be much smaller than episode length 
+    num_steps=256,
     num_minibatches=8,
     num_epochs=4,
     gamma=0.99,
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
-    parser.add_argument("--hparams", type=parse_hparams, default=HPARAMS)
+    parser.add_argument("--hparams", type=parse_hparams, default={})#HPARAMS)
 
     args = parser.parse_args()
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
         #gym_search.wrappers.ExplicitMemory,
-        gym_search.wrappers.LastAction,
+        #gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
 
@@ -119,11 +119,10 @@ if __name__ == "__main__":
     if args.model:
         agent = th.load(args.model)
 
-    stats = algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
+    algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
 
     envs.close()
     writer.close()
 
     print(f"saving as {args.name}")
     th.save(agent, f"models/{args.name}.pt")
-    stats.wr

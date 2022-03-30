@@ -217,3 +217,9 @@ class ImpalaCNN(nn.Module):
         x = self.linear(x)
 
         return x
+
+
+
+class NeuralMap(nn.Module):
+    def __init__(self):
+        super().__init__()

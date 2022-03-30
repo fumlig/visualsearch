@@ -3,6 +3,8 @@ import gym
 import numpy as np
 import torch as th
 import torch.nn as nn
+import torch.nn.functional as F
+import random
 
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -48,6 +50,10 @@ class DeepQNetworks(Algorithm):
         self.learning_start = learning_start
         self.train_freq = train_freq
 
+    def linear_schedule(self, start_e: float, end_e: float, duration: int, t: int):
+        slope = (end_e - start_e) / duration
+        return max(slope * t + start_e, end_e)
+
     def learn(
         self,
         tot_timesteps,
@@ -74,12 +80,107 @@ class DeepQNetworks(Algorithm):
         assert isinstance(envs.single_observation_space, gym.spaces.Dict)
 
         agent.to(device)
-        optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
-        pbar = tqdm(total=tot_timesteps)
-        ep_infos = deque(maxlen=100)
+        optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate)
+        target_net = type(agent)(envs).to(device)
+        target_net.load_state_dict(agent.state_dict())
 
-        timestep = 0
+        buf_obss = {key: th.zeros((buffer_size, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
+        buf_acts = th.zeros((buffer_size, num_envs) + envs.single_action_space.shape).to(device)
+        buf_rews = th.zeros((buffer_size, num_envs)).to(device)
+        buf_dones = th.zeros((buffer_size, num_envs)).to(device)
 
+        buf_next_obss = {key: th.zeros((buffer_size, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
+        buf_next_dones = {key: th.zeros((buffer_size, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
+
+        buf_pos = 0
+        buf_full = False
+
+        obs = {key: th.tensor(o).to(device) for key, o in envs.reset().items()}
+        dones = th.zeros(num_envs).to(device)
+        states = [s.to(device) for s in agent.initial(num_envs)]
+
+        for timestep in tqdm(range(tot_timesteps)):
+
+            initial_states = [s.clone() for s in states]
+
+            epsilon = self.linear_schedule(start_eps, end_eps, exploration_frac * tot_timesteps, timestep)
+            if random.random() < epsilon:
+                actions = th.tensor([envs.single_action_space.sample() for _ in range(envs.num_envs)])
+            else:
+                pi, _, states = agent(obs, states, done=dones)
+                actions = th.argmax(pi.probs, dim=1)
+
+            next_obs, rewards, dones, infos = envs.step(actions)
+            next_obs = {key: th.tensor(o).to(device) for key, o in next_obs.items()}
+            rewards = th.tensor(rewards).to(device)
+            dones = th.tensor(dones, dtype=th.float).to(device)
+
+            for info in infos:
+                if "episode" in info:
+                    ep_info = info["episode"]
+                    writer.add_scalar("charts/episode_return", ep_info["r"], timestep)
+                    writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
+                    writer.add_scalar("charts/epsilon", epsilon, timestep)
+
+            #real_next_obs = {key: o.clone() for key, o in next_obs.items()}
+            #for idx, d in enumerate(dones):
+            #    if d:
+            #        real_next_obs = {key: o[idx] for key, o in next_obs.items()}
+            #        real_next_obs[idx] = info[idx]["terminal_observation"]
+
+            # add to buffer
+            for key in obs.keys():
+                buf_obss[key][buf_pos] = obs[key]
+                buf_next_obss[key][buf_pos] = obs[key].clone()
+            
+            buf_acts[buf_pos] = actions.clone()
+            buf_rews[buf_pos] = rewards.clone()
+            buf_dones[buf_pos] = dones.clone()
+
+            buf_pos += 1
+            if buf_pos == buffer_size:
+                buf_full = True
+                buf_pos = 0
+
+            obs = next_obs
+
+            if timestep > learning_start and timestep % train_freq == 0:
+
+                # sample from buffer
+                upper_bound = buffer_size if buf_full else buf_pos
+                batch_idx = np.random.randint(0, upper_bound, size=batch_size)
+                env_idx = np.random.randint(0, high=num_envs, size=(len(batch_idx),))
+                
+                obss = {key: obs[batch_idx, env_idx].to(device) for key, obs in buf_obss.items()} # normalize?
+                next_obss = {key: obs[batch_idx, env_idx].to(device) for key, obs in buf_next_obss.items()}
+                acts = buf_acts[batch_idx, env_idx].to(device)
+                dones = buf_dones[batch_idx, env_idx]
+                rews = buf_rews[batch_idx, env_idx] # normalize?
+
+                with th.no_grad():
+                    pi, _, _, = target_net(next_obss, state, done)
+                    target_max, _ = target_net(next_obss).max(dim=1)
+                    td_target = rews.flatten() + gamma * target_max * (1 - dones.flatten())
+                pi, _, _ = agent(obss, initial_states[:, env_idx])
+                old_val = pi.gather(1, acts).squeeze()
+                loss = F.mse_loss(td_target, old_val)
+
+                if timestep % 100 == 0:
+                    writer.add_scalar("losses/td_loss", loss, timestep)
+                    writer.add_scalar("losses/q_values", old_val.mean().item(), timestep)
+
+                # optimize the model
+                optimizer.zero_grad()
+                loss.backward()
+                nn.utils.clip_grad_norm_(list(agent.parameters()), max_grad_norm)
+                optimizer.step()
+
+                # update the target network
+                if timestep % target_net_freq == 0:
+                    target_net.load_state_dict(agent.state_dict())
+
+        envs.close()
+        writer.close()
 
 class ProximalPolicyOptimization(Algorithm):
     def __init__(

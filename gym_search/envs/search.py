@@ -22,22 +22,14 @@ class SearchEnv(gym.Env):
     metadata = {"render.modes": ["rgb_array"]}
 
     class Action(enum.IntEnum):
-        NONE = 0 # todo: remove... if we choose deterministic, it always chooses this action for some reason
+        NONE = 0
         TRIGGER = 1
         NORTH = 2
         EAST = 3
         SOUTH = 4
         WEST = 5
-        # todo: done action?
-        # todo: either trigger has a cost, which means that some expensive step has to be made to check if something is there,
-        # or the trigger is implicit, each observation corresponds to the expensive step
 
-    def __init__(
-        self,
-        generator,
-        view_shape=(32, 32), 
-        step_size=1, 
-    ):
+    def __init__(self, generator, view_shape=(32, 32), step_size=1):
         self.generator = generator
         self.shape = generator.shape
         self.view = Box(0, 0, view_shape[0], view_shape[1])

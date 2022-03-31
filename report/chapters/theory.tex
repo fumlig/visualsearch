@@ -50,10 +50,11 @@
 % This chapter is called either \emph{Theory, Related Work}, or
 % \emph{Related Research}. Check with your supervisor.
 
-This chapter introduces relevant theory and related work.
-Section ~\ref{}\dots
+This chapter introduces relevant theory.
 
-\section{Active Vision}
+\section{Background}
+
+\subsection{Active Vision}
 
 % Marr?
 
@@ -80,7 +81,7 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\c
 % see conclusion in that paper:
 % - mirror neurons, same system responsible for generating and interpreting actions at a high level 
 
-\section{Visual Search}
+\subsection{Visual Search}
 \label{sec:visualsearch}
 
 % todo: should maybe remove the psychology and keep that in introduction only
@@ -117,7 +118,7 @@ These works ground the task considered in this project in psychology.
 
 % can we build a system that exhibits all of these?
 
-\section{Reinforcement Learning}
+\subsection{Reinforcement Learning}
 
 % {arulkumaran_survey_2017} also gives a good introduction to algorithms
 
@@ -128,7 +129,7 @@ These works ground the task considered in this project in psychology.
 Reinforcement learning (RL)~\cite{sutton_reinforcement_2018} is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
 This section introduces the fundamental concepts of RL.
 
-\subsection{Partially Observable Markov Decision Processes}
+\subsubsection{Partially Observable Markov Decision Processes}
 
 The problem of learning from interaction to achieve some goal is often framed as a Markov decision process (MDP).
 A learning \textit{agent} interacts continually with its \textit{environment}.
@@ -179,7 +180,7 @@ The belief state summarizes the agent's previous experience and is therefore dep
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
 From here on we will use the belief state and the environment state \(s\) interchangably. 
 
-\subsection{Policies and Value Functions}
+\subsubsection{Policies and Value Functions}
 \label{sec:policies-values}
 
 The behaviour of the agent is described by its \textit{policy}.
@@ -218,11 +219,9 @@ In these cases, there might also be some overlap between the weights \(w\) of th
 
 % We might imagine an artificial neural network (ANN) in which the last layer is split into multiple parts, or heads, each working on a di↵erent task. One head might produce the approximate value function for the main task (with reward as its cumulant) whereas the others would produce solutions to various auxiliary tasks. All heads could propagate errors by stochastic gradient descent into the same body—the shared preceding part of the network—which would then try to form representations, in its next-to-last layer, to support all the heads. Researchers have experimented with auxiliary tasks such as predicting change in pixels, predicting the next time step’s reward, and predicting the distribution of the return. In many cases this approach has been shown to greatly accelerate learning on the main task (Jaderberg et al., 2017). Multiple predictions have similarly been repeatedly proposed as a way of directing the construction of state estimates (see Section 17.3). (Sutton)
 
-\subsection{Challenges in Reinforcement Learning}
+\subsubsection{Challenges in Reinforcement Learning}
 
 % we can illustrate the challenges in terms of our problem
-
-
 
 \begin{itemize}
     \item Exploration and Exploitation
@@ -234,73 +233,91 @@ In these cases, there might also be some overlap between the weights \(w\) of th
 % https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
 % reward shaping
 
-\section{Artificial Neural Networks}
+\subsection{Deep Learning}
 
-An artificial neural network (ANN) is a type of universal function approximator.
-Inspired by biological neurons found in the brains of animals, ANNs are collections of connected nodes.
-Each node receives a real-valued signal, processes it and signals connected nodes.
+Deep learning is a family of techniques in which hypothesis are represented as computation graphs with tunable weights.
+The computation graphs are inspired by biological neurons in the brain and are referred to as \textit{neural networks}.
+Deep neural networks consist of \textit{nodes} arranged in \textit{layers}: one input layer, zero or more hidden layers and one output layer.
+Each layer receives an input \textit{representation}~\cite{bengio_representation_2014} from the previous layer and outputs a transformed representation to the next layer.
+Given some input, a neural network optimizes its output representation with regard to some objective.
+Usually, a loss function \(\mathcal{L}\) is minimized by updating the weights \(\mathbf{w}\) of the network with some variant of \textit{gradient descent} with learning rate \(\alpha\):
 
-\cite{goodfellow_deep_2016}
-\cite{bengio_representation_2014}
+\begin{equation}
+    \mathbf{w} \leftarrow \mathbf{w} - \alpha \nabla_\mathbf{w} \mathcal{L}(\mathbf{w}) 
+\end{equation}
 
-% https://www.asimovinstitute.org/neural-network-zoo/
+The only requirement on the functions computed by each node is that it is differentiable.
+As long as this holds, layers can be stacked arbitrarily and the gradients can be computed with the chain rule.
+This way, errors in the output can be passed back through the network (\textit{back-propagation}) and used to update the weights.~\cite{russell_artificial_2021,goodfellow_deep_2016}
 
-This section will introduce three classes of ANNs that are relevant to this work:
-feed-forward, convolutional, and recurrent neural networks.
+The architecture of a neural network imposes some bias onto the learning that its expected to be useful for generalizing to unseen samples.
+We now describe three neural network architectures that will be used in this work.
 
-\subsection{Feed-forward Neural Network}
+\subsubsection{Feedforward Neural Network}
 
-A feed-forward neural network, also called multi-layer perceptron (MLP) defines a mapping \(y = f(x; \theta)\).
-It consists of multiple layers of computational units
-The value of the parameter \(\theta\) is learned  
+A feedforward neural network, also known as a multi-layer perceptron (MLP)~\cite{goodfellow_deep_2016}, only has connections in one direction.
+Each node in the network receives inputs from its predecessors and outputs the result of a function of those inputs.
+The output \(y\) of each node is usually computed by taking the weighted sum of its inputs \(x\) and applying some non-linear function
 
-\cite{goodfellow_deep_2016}
+\begin{equation}
+    y_j = g_j(\mathbf{w}_j^T \mathbf{x}),
+\end{equation}
 
-\subsection{Convolutional Neural Network}
+where \(y_j\) is the output of node \(j\), \(g_j\) is a non-linear \textit{activation function}, \(\mathbf{w}_j\) is the vector of weights leading into node \(j\), and \(\mathbf{x}\) is the vector of inputs to the node.
+By convention, each layer also has some \textit{bias} that allows the total weighted input to \(g_j\) to be non-zero even when the outputs from the previous layer are zero.
+The bias is included as an extra input \(x_0\) fixed to 1, and an extra tunable weight \(w_{0,j}\).
+The non-linearity ensures that a network with at least two layers can approximate any continuous function.~\cite{russell_artificial_2021}
 
-Convolutional Neural Networks (CNNs) are designed specifically for processing data with a known grid-like topology, such as images.
-As the name implies, CNNs employ the convolution operator
+\subsubsection{Convolutional Neural Network}
 
-\[
-    s(t) 
-\]
+Convolutional Neural Networks (CNNs) contain spatially local connections.
+They have patterns of weights, called \textit{kernels}, that are replicated across units in each layer.
+With some input vector \(\mathbf{x}\) of size \(n\) and a vector kernel \(\mathbf{k}\) of size \(l\), the (discrete) convolution operation \(\mathbf{z} = \mathbf{x} \ast \mathbf{k}\) is defined as
 
-\cite{goodfellow_deep_2016}
+\begin{equation}
+    z_i = \sum_{j=1}^l k_j x_{j+1-\frac{l+1}{s}},
+\end{equation}
 
-% https://davidstutz.de/illustrating-convolutional-neural-networks-in-latex-with-tikz/
-% https://viso.ai/deep-learning/mask-r-cnn/#:~:text=Mask%20R%2DCNN%20is%20a,segmentation%20mask%20for%20each%20instance.
+where \(s\) is the \textit{stride}. This operations can be generalized up to more than one dimension, such as 2 dimensions for images and 3 dimensions for volumes.
+With \(c\) input channels and \(d\) kernels in a layer, each kernel is convolved with each channel. The outputs are then summed, giving \(d\) output channels. 
 
-\subsection{Recurrent Neural Network}
+There are several advantages to using CNNs for structured input data where neighboring values are correlated.
+Kernels are smaller than the input, which means that fewer parameters have to be stored.
+These \textit{sparse interactions} give CNNs reduced memory requirements,
+as well as improved statistical and computational efficiency.
 
-% https://colah.github.io/posts/2015-08-Understanding-LSTMs/
-Recurrent neural networks (RNNs) are networks designed to process sequential data.
-RNNs extend ANNs by also including \textit{hidden state} in the network.
-Information from previous inputs is stored in the hidden state and used to influence the current input and output.
-This means that a single network can be used for sequences of variable length.
+Furthermore, the same parameters are also used for more than one function in the CNN. \textit{Parameter sharing} across input locations mean that layers in a CNN have \textit{equivariance} to translation. 
+The output of one kernel is the same regardless of the input location.
+This property of CNNs is useful for images where similar features may be useful regardless of their location in the input.~\cite{goodfellow_deep_2016}
 
-Formally, RNNs operate on a sequence \(x^{(1), \dots, x^\{(\tau)}\).
-For each value \(x_t\) in the sequence, the hidden state is computed as \(h^{(t)} = f(h^{(t-1)}, x^{(t)}; \theta)\).
-The hidden state is used as a summary of all previous items in the sequence 
+%A common augmentation to deep CNNs is \textit{residual networks}.
 
-% figure 10.2 in deep learning book
+\subsubsection{Recurrent Neural Network}
 
+Recurrent neural networks (RNNs) extend feedforward networks by allowing cycles in the computation graph.
+Each cycle has a delay so that some \textit{hidden state} from the previous computation is used as input to the current computation.
+A recurrent layer with input \(\mathbf{x}_t\), output \(\mathbf{y}_t\) and hidden state \(\mathbf{z}_t\) is defined by
+
+\begin{align}
+    \begin{split}
+        \mathbf{z}_t &= f_\mathbf{w}(\mathbf{z}_{t-1}, \mathbf{x}_t) \\
+        \mathbf{y}_t &= g_y(\mathbf{W}_{z,y}, \mathbf{z}_t),
+    \end{split}
+\end{align}
+
+where \(f_\mathbf{w}\) is the update process for the hidden state and \(g_y\) is the activation function for the hidden layer.
+This model can be turned into a feedforward network over a sequence of input vectors \(\mathbf{x}_1, \dots \mathbf{x}_T\) and observed outputs \(\mathbf{y}_1, \dots, \mathbf{y}_T\) by \textit{unrolling} it for \(T\) steps. The weights are shared across all time steps. This means that RNNs can operate on inputs of arbitrary lengths.
+The hidden state is used as a summary of all previous items in the sequence.
+Thus, RNNs make a Markov assumption.~\cite{russell_artificial_2021}
 
 In practice, conventional RNNs struggle with learning long-term dependencies.
 During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
 An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_schmidhuber_lstm_1997}.
-LSTMs have \textit{cells} in the hidden layers of the network which have an input gate, an output gate and a forget gate.
-These gates control how information flows in the network.
-By allowing 
-
-
-This makes LSTMs particularly useful for learning over long sequences.
-
-\subsection{Backpropagation}
-
-Backpropagation algorithms are used for training ANNs.
-In general, backpropagation\dots
+LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied from time step to time step, and three soft \textit{gating units} that govern the information flow in the hidden state update process \(f\). This makes LSTMs particularly useful for learning over long sequences.
 
 \section{Related Work}
+
+In this section, related work is presented.
 
 \subsection{Deep Reinforcement Learning}
 
@@ -372,7 +389,7 @@ The input image is usually passively sampled, and the whole scene is visible at 
 Caicedo and Lazebnik (2015)~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
 An agent is trained to successively improve a bounding box using translating and scaling transformations.
 They use a reward signal that is proportional to how well the current box covers the target object.
-An action that improves the region is rewarded with +1, and -1 otherwise.
+An action that improves the region is rewarded with +1, and given a punishment of -1 otherwise.
 Without this quantization, the difference was small enough to confuse the agent.
 Binary rewards communicate more clearly which transformations keep the object inside the box and which take the box away from the target.
 When there is no action that improves the bounding box, the agent may select a trigger action (which would be the only action that does not give a negative reward) which resets the box.

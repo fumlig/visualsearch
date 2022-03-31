@@ -1,3 +1,6 @@
+% should decide on a clear terminology,
+% target, distractor, region, view, move, etc...
+
 \chapter{Introduction}
 \label{cha:introduction}
 
@@ -5,11 +8,6 @@
 
 In this thesis project, the problem of searching for targets in unknown but familiar environments is addressed.
 This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
-
-% there is extensive research in visual search.
-% can a learning agent exhibit these behaviours?
-% can also downplay visual aspect
-% specify actions properly: how do they transform view, and what does the trigger correspond to? 
 
 \section{Motivation}
 \label{sec:motivation}
@@ -19,8 +17,6 @@ This chapter presents the motivation behind the project, the research questions 
 % it is interesting and well worth studying. The aim is to make
 % the reader interested in the work and create an urge to
 % continue reading.
-
-% introductory paragraph
 
 The ability to visually search for things in an environment is fundamental to intelligent behaviour.
 We humans are constantly looking for things, be it be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest.
@@ -57,50 +53,38 @@ How can you identify useful hints from the environment to guide covert attention
 Doing so manually can be labour intensive, especially if a searcing system should be deployed in many different environments.
 If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
-% should introduce RL advancements, mapping state to action here
+% Generalization
+% Pan-tilt-zoom
+
 Deep reinforcement learning is an approach for how to act.
 It has been applied to a number of problems with sucess\dots
 
 \section{Aim}
 \label{sec:aim}
 
+% Pan-Tilt-Zoom setup
+
 % What is the underlying purpose of the thesis project?
 
-The aim of this thesis is to investigate how an agent that learns to search for targets can be implemented.
-This work tries to address these issues, focusing on strategic scans of larger environments where the field of view is small relative to the environment.
-This is a problem that has been less studied in the literature than visual search in smaller environments.
-There are other factors that become increasingly important. The field-of-view of the observer is often limited, and she has to move it efficiently to find the target.
+The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
+Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
+Specifically, we consider scenarious where the agent can only observe a small portion of its environment at any given time.
+The agent has to actively choose where to look in order to gain new information about the environment.
 
-% what will be done
-The aim of this thesis is to implement and evaluate an autonomous agent that intelligently searches its environment for targets.
-The agent should learn common characteristics of environments and utilize this knowledge to search for targets in new environments more effectively.
-Furthermore, the agent should be able to generalize to unseen environments drawn from the same distribution as the ones it has seen previously.
+We are looking for the following properties:
 
-% how it will be done
-A specific instance of the visual search problem is considered, where the environment is searched by a pan-tilt camera fixed in place.
-The camera has a limited view of the environent.
-Automating this task is of interest for multiple reasons.
-Manually controlling a camera may be costly, and the performance of a human operator may be suboptimal.
-Crucial to the problem is generalization.
+\begin{itemize}
+  \item The agent should prioritize regions where the probability of finding a target is high according to previous experience.
+  \item The agent should utilize information from previously visited regions to decide where to move.
+  \item The agent should be able to find multiple targets while minimizing its path length.
+  \item The agent should avoid looking at the same region twice.
+\end{itemize}
 
-The system should ideally\dots
+Our contributions are as follows:
 
-% we want a system that can
-% - work in familiar environments
-% - learns effective scanning patterns
-% - in the best case better than exhaustive
-% - integrates history (features, location, etc)
-
-% - train: show the agent some samples of previous objects and their locations
-% - test: the agent finds them in a short time
-
-% arent covert and overt attention essentially the same?
-% both are active and have the same characteristics
-
-
-% Contributions:
-% Method for the search problem
-% 
+\begin{itemize}
+  \item \dots
+\end{itemize}
 
 \section{Research questions}
 \label{sec:research-questions}
@@ -152,7 +136,7 @@ The system should ideally\dots
 This thesis will address the following questions:
 
 \begin{enumerate}
-  \item \label{itm:rq1} How can a learning agent that does efficient visual search in familiar environments be implemented?
+  \item \label{itm:rq1} How can a learning agent that learns to intelligently search for targets be implemented?
   \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
   \item \label{itm:rq3} How well does the learning agent generalize to unseen but familiar environments?
 \end{enumerate}
@@ -168,4 +152,5 @@ This thesis will address the following questions:
 This thesis will be focused on the behavioral aspects of the presented problem.
 We do not focus on difficult detection problems, but rather efficient actions.
 For this reason, targets will deliberately be made easy to detect.
-For simplicity, we make the assumption that the searched environment is static. % explain
+For simplicity, we make the assumption that the searched environment is static.
+The appearance of the environment and the location of the targets does not change from one observation to the next.

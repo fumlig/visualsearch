@@ -27,7 +27,8 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 \section{Problem Statement}
 \label{sec:problem}
 
-Formally, the searched environment contains a scene with a set of targets.
+We can now define the problem tackled formally.
+Searched environment contains a scene with a set of targets.
 The scene is described by a Euclidean space.
 In the scene, there are \(N\) targets, each described by a subspace.
 At any given time the agent observes a subspace of the scene, which we call the view.
@@ -304,7 +305,8 @@ This is to
 
 \section{Implementation}
 
-The environment is implemented with Gym~\cite{brockman_gym_2016}, and the agent is implemented with PyTorch~\cite{paszke_pytorch_nodate}.
+The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
+
 Proximal policy optimization was implemented following the official implementation by OpenAI.
 Some necessary modifications were made to allow for recurrent policies.
 % a little short...

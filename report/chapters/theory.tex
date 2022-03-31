@@ -278,8 +278,10 @@ With some input vector \(\mathbf{x}\) of size \(n\) and a vector kernel \(\mathb
     z_i = \sum_{j=1}^l k_j x_{j+1-\frac{l+1}{s}},
 \end{equation}
 
-where \(s\) is the \textit{stride}. This operations can be generalized up to more than one dimension, such as 2 dimensions for images and 3 dimensions for volumes.
-With \(c\) input channels and \(d\) kernels in a layer, each kernel is convolved with each channel. The outputs are then summed, giving \(d\) output channels. 
+where \(s\) is the \textit{stride}.
+This operations can be generalized up to more than one dimension, such as 2 dimensions for images and 3 dimensions for volumes.
+With multiple input channels, kernels are stacked into a \textit{filter}.
+The outputs of each kernel are then summed over, giving one output channel per filter.
 
 There are several advantages to using CNNs for structured input data where neighboring values are correlated.
 Kernels are smaller than the input, which means that fewer parameters have to be stored.
@@ -323,43 +325,29 @@ In this section, related work is presented.
 
 % Mnih et al., Atari, DQN
 
-% problem with classical
-
-As mentioned in Section~\ref{sec:policies-values}, policy and value functions are often approximated.
+As mentioned in Section~\ref{sec:policies-values}, policies and value functions are often approximated.
 Neural networks have good properties for function approximation and have been used for RL with success.
-One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 90s.
-More recently, the use of deep neural networks has shown tremendous success in RL, giving birth to the field of deep RL.
+One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 1995.
+More recently, the use of deep neural networks has shown tremendous success in RL.
 
+In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and introduce DQN, which gives birth to the field of deep reinforcement learning (deep RL).
+With a CNN architecture, DQN approximates the quality function \(q\) and select actions greedily using only visual input.
+To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.
+The input is fed through three convolutional layers:
+32 8x8 filters with stride 4,
+followed by 64 4x4 filters with stride 2,
+followed by 64 filters of size 32x32 with stride 1.
+Between each convolutional layer is a ReLU activation function.
+Then, there is a hidden fully connected layer with a ReLU activation function.
+The output layer has one output for each valid action.
+% replay buffer
+% instability
+% follow up works
+% architecture
 
-\cite{tesauro1995tdgammon} % TD gammon
+\cite{arulkumaran_survey_2017}
 
-\cite{arulkumaran_survey_2017} % survey
-
-
-% deep learning
-
-% combination
-
-Breakthroughs in computer vision like 
-Mnih et al. (2013)~\cite{mnih_atari_2013} address this by combining deep learning with RL.
-A CNN is trained to estimate the 
-
-Mnih et al. (2015)~\cite{mnih_human_2015}\dots
-% real breakthrough, human level control, origin of NatureCNN
-% or is it from the 2013 paper?
-% 84x84x4 input image produced by preprocessing map
-% 1st: 32 filters of 8x8 with stride 4 and ReLU
-% 2nd: 64 filters of 4x4 with stride 2 and ReLU
-% 3rd: 64 filters of 3x3 with stride 1 and ReLU
-% 4th: Hidden fully connected kayer of 512 ReLU
-% 5th: Output layer with one output for each valid action
-
-% deep learning
-% experience replay
-% value iteration
-% deep Q-learning
-% refer briefly to the whole imagenet thing
-
+The DQN architecture sparked great interest and several modifications.
 Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effects of adding recurrency to a DQN in order to tackle POMDPs.
 A LSTM is added after the initial 
 

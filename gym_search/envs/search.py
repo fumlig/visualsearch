@@ -1,12 +1,12 @@
-from argparse import Action
 import gym
 import enum
 import numpy as np
 
-from gym_search.utils import clamp, euclidean_dist, manhattan_dist
+from gym_search.utils import clamp, euclidean_dist, manhattan_dist, travel_dist
 from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
 from skimage import draw
+from collections import defaultdict
 
 """
 We need to be able to create held out sets
@@ -64,6 +64,9 @@ class SearchEnv(gym.Env):
         self.visible[self.scaled_position] = True
 
         self.last_dist = euclidean_dist(self.view.center(), self.targets[0].center())
+        self.optimal_steps = int(travel_dist(map(self.normalize_position, [self.view.pos] + [target.pos for target in self.targets]))) + len(self.targets)
+
+        self.counters = defaultdict(int)
 
         return self.observation()
 
@@ -115,10 +118,13 @@ class SearchEnv(gym.Env):
         self.last_dist = dist
         self.num_steps += 1
 
+        self.counters["revisits"] += revisit
+        self.counters["redundant_steps"] += self.num_steps > self.optimal_steps
+
         obs = self.observation()
         done = all(self.hits) or self.num_steps == self.max_steps
     
-        return obs, rew, done, {}
+        return obs, rew, done, {"counters": self.counters}
 
     def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):
         # todo: show_path gets slow when the path is long
@@ -171,6 +177,10 @@ class SearchEnv(gym.Env):
         y = self.view.pos[0] // self.view.shape[0]
         x = self.view.pos[1] // self.view.shape[1]
         return y, x
+
+
+    def normalize_position(self, position):
+        return position[0] // self.view.shape[0], position[1] // self.view.shape[1]
 
 
     def get_action_meanings(self):

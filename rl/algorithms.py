@@ -307,10 +307,14 @@ class ProximalPolicyOptimization(Algorithm):
                         assert(done[i] == 1)
 
                         ep_info = info["episode"]
-                        writer.add_scalar("charts/episode_return", ep_info["r"], timestep)
-                        writer.add_scalar("charts/episode_length",  ep_info["l"], timestep)
+                        writer.add_scalar("episode/return", ep_info["r"], timestep)
+                        writer.add_scalar("episode/length",  ep_info["l"], timestep)
                         
                         ep_infos.append(ep_info)
+
+                        if "counters" in info:
+                            for key, count in info["counters"].items():
+                                writer.add_scalar(f"counter/{key}", count, timestep)
 
 
             # bootstrap value

@@ -84,11 +84,6 @@ if __name__ == "__main__":
         if agent is not None:
             state = [s.to(device) for s in agent.initial(1)]
 
-        if args.verbose:
-            points = [env.view.pos] + [target.pos for target in env.targets]
-            print(points)
-            print("optimal:", travel_dist(points)/env.step_size)
-
         while not done:
             if args.observe:
                 img = obs["image"]
@@ -137,7 +132,7 @@ if __name__ == "__main__":
             stats[ep]["return"] += rew
 
             if args.verbose:
-                print("action:", env.get_action_meanings()[act], "reward:", rew)
+                print("action:", env.get_action_meanings()[act], "reward:", rew, "info:", info)
 
             if args.observe:
                 print("observation:", obs)

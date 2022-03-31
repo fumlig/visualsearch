@@ -157,13 +157,6 @@ A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \ma
 Assume that the environment is in state \(s_t \in \mathcal{S}\), and the agent selects action \(a_t \in \mathcal{A}\).
 Then, \(T(s_t, a_t, s_{t+1})\) is the probability of ending in state \(s_{t+1}\) and \(r_t = R(s_t, a_t)\) is the expected reward gained by the agent.
 The agent also receives an observation \(o_t \in \Omega\) with probability \(\mathcal{O}(s_{t+1}, a_t, o_t)\).~\cite{kaelbling_pomdp_1998}
-The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
-At each time step \(t\), the goal of the agent is to select the action that maximizes the expected \textit{discounted return}:
-
-\[ 
-    \mathbb{E} \left[ \sum_{k=0}^T \gamma^{k-t-1} r_k \right]
-\]
-
 Figure \ref{fig:pomdp} illustrates the interaction between agent and environment.
 
 \begin{figure}
@@ -172,6 +165,13 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
     \label{fig:pomdp}
     \caption[Partially observable Markov decision process]{Partially observable Markov decision process.}
 \end{figure}
+
+The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
+At each time step \(t\), the goal of the agent is to select the action that maximizes the expected \textit{discounted return}:
+
+\[ 
+    \mathbb{E} \left[ \sum_{k=0}^T \gamma^{k-t-1} r_k \right]
+\]
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 Planning in a POMDP is undecidable, and solving them is often computationally intractable.
@@ -228,6 +228,17 @@ In these cases, there might also be some overlap between the weights \(w\) of th
     \item Sparse Rewards
     \item Credit Assignment~\cite{minsky_cap_1961}
 \end{itemize}
+
+For some tasks, like certain video games, the objective is simply to maximize the score obtained.
+In this case there is an inherent reward signal and the agent achieves its task simply by maximizing this inherent signal.
+Other times, we have a task we want the agent to solve and have to design a reward signal around that task.
+Designing rewards is not straight-forward and can often have unintended effects~\cite{sutton_reinforcement_2018}.
+Special care has to be taken to ensure that the reward incentivizes the desired behaviour.
+
+Here, the problem of sparse rewards also comes into play.
+
+Reward shaping is a technique to tackle\dots~\cite{mataric_shaping_1994}
+
 
 % https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
 % https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
@@ -328,8 +339,8 @@ In this section, related work is presented.
 As mentioned in Section~\ref{sec:policies-values}, policies and value functions are often approximated.
 Neural networks have good properties for function approximation and have been used for RL with success.
 One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 1995.
-More recently, the use of deep neural networks has shown tremendous success in RL.
 
+More recently, the use of deep neural networks has shown tremendous success in RL.
 In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and introduce DQN, which gives birth to the field of deep reinforcement learning (deep RL).
 With a CNN architecture, DQN approximates the quality function \(q\) and select actions greedily using only visual input.
 To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.

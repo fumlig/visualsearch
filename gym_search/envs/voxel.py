@@ -30,7 +30,7 @@ class VoxelEnv(gym.Env):
         self.camera_view = camera_view
         self.camera_step = camera_step
         
-        self.terrain_size = 1024
+        self.terrain_size = 256
         self.terrain_height = 50
 
         self.renderer = pyr.OffscreenRenderer(*self.camera_view)
@@ -47,7 +47,7 @@ class VoxelEnv(gym.Env):
 
     def reset(self):
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
-        self.camera = pyr.PerspectiveCamera(yfov=np.pi/3.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
+        self.camera = pyr.PerspectiveCamera(yfov=np.pi/5.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
         self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((0, 50, 0)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
@@ -67,12 +67,12 @@ class VoxelEnv(gym.Env):
         visual = tri.visual.TextureVisuals(uv=uv, image=colors)
         mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
 
-        node = self.scene.add(mesh, pose=tri.transformations.translation_matrix((-self.terrain_size//2, 0, -self.terrain_size/2)))
+        self.scene.add(mesh, pose=tri.transformations.translation_matrix((-self.terrain_size//2, 0, -self.terrain_size/2)))
 
-        for t in range(100):
-            x, z = self.random.integers(-self.terrain_size/2, self.terrain_size/2, size=2)
+        for t in range(10):
+            x, z = self.random.integers(-self.terrain_size/2+1, self.terrain_size/2-1, size=2)
             y = terrain[z, x]
-            t = tri.creation.random_soup()
+            t = tri.creation.cylinder(1, 5, transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))

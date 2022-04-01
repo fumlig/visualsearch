@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from rl.models import MLP, ImpalaCNN, NatureCNN, AlphaCNN
+from rl.models import MLP, ImpalaCNN, NatureCNN, AlphaCNN, NeuralMap
 from rl.utils import preprocess_image, init_lstm
 
 
@@ -43,62 +43,35 @@ class RandomAgent(Agent):
 
 
 class SearchAgent(Agent):
-    """
-    Our method.
-
-    # we probably want either fewer outputs from the naturecnn, or a network afterwards whose output is used for the memory only
-    # in that case we would have to introduce an auxilliary loss for that head
-    # what could this loss be?
-
-    https://arxiv.org/abs/1702.03920
-    we will now use a representation that is useful for selecting actions and predicting value
-    these authors seem to simply compress the representation with an encoder-decoder, use the compressed representation, and then the decoded one for planning.
-    """
 
     def __init__(self, envs):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
-        assert self.observation_space.get("memory") is not None
         assert self.observation_space.get("position") is not None
 
-        self.image_cnn = NatureCNN(self.observation_space["image"])
-        self.latent_dim = self.image_cnn.features_dim
+        self.image_cnn = NatureCNN(self.observation_space["image"])        
+        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
 
-        self.memory_size = self.observation_space["memory"].shape[:2]
-        self.memory_channels = self.observation_space["memory"].shape[2] + self.latent_dim
-        self.memory_shape = (*self.memory_size, self.memory_channels)
-        
-        self.memory_cnn = ImpalaCNN(self.memory_shape)
-        self.hidden_dim = self.image_cnn.features_dim + self.memory_cnn.features_dim
-
-        self.policy = MLP(self.hidden_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.hidden_dim, 1, out_gain=1.0)
+        self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
 
     def initial(self, num_envs):
-        return [th.zeros((num_envs, *self.memory_size, self.latent_dim))]
-
-    def extract(self, obs, state):
-        image = obs["image"]
-        latent_image = self.image_cnn(preprocess_image(image))
-
-        position = obs["position"].long()
-        state_memory, = state
-        state_memory[:,position[:,0],position[:,1]] = latent_image #.clone().detach()
-        
-        obs_memory = obs["memory"]
-        batch_size = obs_memory.shape[0]
-
-        memory = th.cat([state_memory.expand(batch_size, -1, -1, -1), obs_memory], axis=-1)
-        latent_memory = self.memory_cnn(preprocess_image(memory))
-
-        return th.cat([latent_image, latent_memory], dim=1), {"memory": state_memory}
+        return [self.neural_map.initial(num_envs)]
 
     def forward(self, obs, state, **kwargs):
-        x, state = self.extract(obs, state)
-        logits = self.policy(x)
+        x = obs["image"]
+        x = preprocess_image(x)
+        x = self.image_cnn(x)
+
+        index = obs["position"]
+        s = state[0]
+        h, s = self.neural_map(x, s, index)
+        state = [s]
+
+        logits = self.policy(h)
         pi = Categorical(logits=logits)
-        v = self.value(x)
+        v = self.value(h)
 
         return pi, v, state
 
@@ -114,8 +87,8 @@ class ImageAgent(Agent):
         assert self.observation_space.get("image") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])        
-        self.policy = MLP(self.cnn.features_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.cnn.features_dim, 1, out_gain=1.0)
+        self.policy = MLP(self.cnn.output_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.cnn.output_dim, 1, out_gain=1.0)
 
     def forward(self, obs, state, **kwargs):
         x = obs["image"]
@@ -139,7 +112,7 @@ class RecurrentAgent(Agent):
         assert self.observation_space.get("image") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.features_dim, 256, num_layers=1)
+        self.lstm = nn.LSTM(self.cnn.output_dim, 256, num_layers=1)
         
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)
@@ -192,7 +165,7 @@ class BaselineAgent(Agent):
         self.cnn = NatureCNN(self.observation_space["image"])
         
         hidden_dim = 0
-        hidden_dim += self.cnn.features_dim
+        hidden_dim += self.cnn.output_dim
         hidden_dim += self.observation_space["position"][0].n
         hidden_dim += self.observation_space["position"][1].n
         #hidden_dim += self.action_space.n

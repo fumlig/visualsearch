@@ -36,7 +36,7 @@ class NatureCNN(nn.Module):
     # Mnih, Volodymyr, et al.
     # "Human-level control through deep reinforcement learning."
     
-    def __init__(self, observation_space, features_dim=256):
+    def __init__(self, observation_space, output_dim=256):
         super().__init__()
         assert isinstance(observation_space, gym.spaces.Box)
         
@@ -56,11 +56,11 @@ class NatureCNN(nn.Module):
             hidden_dim = self.convs(preprocess_image(th.tensor(observation_space.sample()).unsqueeze(0).float())).shape[1]
 
         self.linear = nn.Sequential(
-            init_weights(nn.Linear(hidden_dim, features_dim)),
+            init_weights(nn.Linear(hidden_dim, output_dim)),
             nn.ReLU()
         )
 
-        self.features_dim = features_dim
+        self.output_dim = output_dim
 
     def forward(self, obs):
         return self.linear(self.convs(obs))
@@ -102,7 +102,7 @@ class AlphaCNN(nn.Module):
 
             return x
 
-    def __init__(self, observation_space, features_dim=256, filters=64, blocks=2):
+    def __init__(self, observation_space, output_dim=256, filters=64, blocks=2):
         super().__init__()
         
         assert isinstance(observation_space, gym.spaces.Box)
@@ -124,15 +124,15 @@ class AlphaCNN(nn.Module):
             hidden_dim = self.residual(self.initial(preprocess_image(th.tensor(observation_space.sample()).unsqueeze(0).float()))).shape[1]
 
         self.linear = nn.Sequential(
-            init_weights(nn.Linear(hidden_dim, features_dim)),
+            init_weights(nn.Linear(hidden_dim, output_dim)),
             nn.ReLU()
         )
 
-        self.features_dim = features_dim
-        self.hidden_dim = hidden_dim
         self.channels = channels
         self.filters = filters
         self.blocks = blocks
+
+        self.output_dim = output_dim
     
     def forward(self, obs):
         x = self.initial(obs)
@@ -184,7 +184,7 @@ class ImpalaCNN(nn.Module):
             _c, h, w = self.input_shape
             return (self.out_channels, (h + 1) // 2, (w + 1) // 2)
 
-    def __init__(self, obs_shape, features_dim=256):
+    def __init__(self, obs_shape, output_dim=256):
         super().__init__()
 
         h, w, c = obs_shape
@@ -204,11 +204,11 @@ class ImpalaCNN(nn.Module):
         )
 
         self.linear = nn.Sequential(
-            nn.Linear(shape[0]*shape[1]*shape[2], features_dim),
+            nn.Linear(shape[0]*shape[1]*shape[2], output_dim),
             nn.ReLU()
         )
 
-        self.features_dim = features_dim
+        self.output_dim = output_dim
 
 
     def forward(self, obs):
@@ -221,5 +221,47 @@ class ImpalaCNN(nn.Module):
 
 
 class NeuralMap(nn.Module):
-    def __init__(self):
+    # https://arxiv.org/abs/1702.08360
+
+    def __init__(self, map_shape, input_dim, features_dim=32):
         super().__init__()
+        # all of the output the same number of features, I think...
+        self.read_net = ImpalaCNN((*map_shape, features_dim), features_dim)
+        self.query_net = MLP(input_dim + features_dim, features_dim)
+        self.write_net = MLP(input_dim + features_dim + features_dim + features_dim, features_dim)
+        
+        self.output_dim = features_dim + features_dim + features_dim
+        self.state_shape = (features_dim, *map_shape)
+
+    def initial(self, num_envs):
+        return th.zeros((num_envs, *self.state_shape))
+
+    def read(self, state):
+        return self.read_net(state)
+
+    def context(self, x, r, state):
+        
+        q = self.query_net(th.cat([x, r], dim=1))
+
+        r = q.reshape(*q.shape, 1, 1).repeat(1, 1, *state.shape[2:]).view(*q.shape, -1)
+        s = state.view(*q.shape, -1)
+
+        a = th.bmm(r.transpose(1, 2), s)
+        print(a.shape)
+        a = th.softmax(a)
+        c = th.sum(a*state)
+        return c
+
+    def write(self, x, r, c, state, index):
+        w = state[index]
+        w = self.write_net(th.cat[x, r, c, w], dim=1)
+        return w
+
+    def forward(self, x, state, index):
+        r = self.read(state)
+        c = self.context(x, r, state)
+        w = self.write(x, r, c, state)
+
+        state[index] = w
+
+        return th.cat([r, c, w], dim=1), state

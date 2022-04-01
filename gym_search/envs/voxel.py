@@ -24,14 +24,18 @@ class VoxelEnv(gym.Env):
 
     def __init__(
         self,
-        camera_view=(64, 64),
+        camera_view=(512, 512),
         camera_step=0.1,
     ):
         self.camera_view = camera_view
         self.camera_step = camera_step
+        
+        self.terrain_size = 1024
+        self.terrain_height = 50
+
         self.renderer = pyr.OffscreenRenderer(*self.camera_view)
-        self.martini = martini.Martini(257)
-        self.generator = TerrainGenerator((257, 257), 0)
+        self.martini = martini.Martini(self.terrain_size+1)
+        self.generator = TerrainGenerator((self.terrain_size+1, self.terrain_size+1), 0)
 
         self.seed()
 
@@ -42,7 +46,7 @@ class VoxelEnv(gym.Env):
         ))
 
     def reset(self):
-        self.scene = pyr.Scene(ambient_light=[0.02, 0.02, 0.02], bg_color=[1.0, 1.0, 1.0])
+        self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
         self.camera = pyr.PerspectiveCamera(yfov=np.pi/3.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
         self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((0, 50, 0)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
@@ -50,22 +54,29 @@ class VoxelEnv(gym.Env):
         self.scene.add_node(self.yaw_node)
         self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)
 
-        for t in range(10):
-            target_position = self.random.integers(-25, 25, size=3)
-            target_mesh = pyr.Mesh.from_trimesh(tri.creation.box((3, 3, 3)))
-            target_node = self.scene.add(target_mesh, pose=tri.transformations.translation_matrix(target_position))
-            #print(target.position)
-
         terrain, colors = self.generator.terrain(self.random.integers(0, 100))
+        terrain *= self.terrain_height
         tile = self.martini.create_tile(terrain.astype(np.float32))
-        vertices, indices = tile.get_mesh(0.1)
+        vertices, indices = tile.get_mesh(0.5)
         
-        vertices = martini.rescale_positions(vertices, terrain*100)
+        vertices = martini.rescale_positions(vertices, terrain)
         vertices = vertices[:,[0,2,1]]
         indices = indices.reshape(-1, 3)
 
-        mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices))
-        node = self.scene.add(mesh, pose=tri.transformations.translation_matrix((-256//2, 0, -256/2)))
+        uv = np.array([(u/self.terrain_size+1, (1-v)/self.terrain_size+1) for u, _, v in vertices])
+        visual = tri.visual.TextureVisuals(uv=uv, image=colors)
+        mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
+
+        node = self.scene.add(mesh, pose=tri.transformations.translation_matrix((-self.terrain_size//2, 0, -self.terrain_size/2)))
+
+        for t in range(100):
+            x, z = self.random.integers(-self.terrain_size/2, self.terrain_size/2, size=2)
+            y = terrain[z, x]
+            t = tri.creation.random_soup()
+            t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
+            m = pyr.Mesh.from_trimesh(t)
+            self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
+
 
         return self.observation()
 

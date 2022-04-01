@@ -69,8 +69,7 @@ class TerrainGenerator(Generator):
         
         height, width = self.shape
         seed = self.random.integers(self.max_terrains)
-        terrain = self.terrain(seed)
-        img = self.colors(terrain)
+        terrain, image = self.terrain(seed)
 
         tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
         tree_prob = tree_line.astype(float)/tree_line.sum()
@@ -98,15 +97,16 @@ class TerrainGenerator(Generator):
 
         return img, targets
 
-    def colors(self, terrain):
-        return pick_color(terrain, EARTH_TOON)
-
     @lru_cache(maxsize=1024)
-    def terrain(self, seed):
+    def terrain(self, seed, colors=True):
         exp = self.random.uniform(0.5, 5)
         noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
         terrain = normalize(noise)**exp
-        return terrain
+
+        if colors:
+            return terrain, pick_color(terrain, EARTH_TOON)
+        else:
+            return terrain
 
 
 class DatasetGenerator(Generator):

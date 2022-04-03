@@ -271,8 +271,7 @@ class ProximalPolicyOptimization(Algorithm):
         done = th.zeros(num_envs).to(device)
         state = [s.to(device) for s in agent.initial(num_envs)]
 
-        for b in range(num_batches):
-            writer.add_text("log", f"batch {b}", timestep)
+        for _b in range(num_batches):
 
             # for train
             initial_state = [s.clone() for s in state]
@@ -352,9 +351,12 @@ class ProximalPolicyOptimization(Algorithm):
 
             clip_fracs = []
 
+            # batch contains one for each step and env
+
             for _epoch in range(num_epochs):
                 np.random.shuffle(envs_idx)
 
+                # each minibatch contains some of the environments
                 for mb_begin in range(0, num_envs, num_envs // num_minibatches):
                     mb_end = mb_begin + num_envs // num_minibatches
                     mb_envs_idx = envs_idx[mb_begin:mb_end]
@@ -367,7 +369,7 @@ class ProximalPolicyOptimization(Algorithm):
                     mb_vals = b_vals[mb_idx]
                     mb_advs = b_advs[mb_idx]
                     mb_rets = b_rets[mb_idx]
-                    mb_state = [s[:, mb_envs_idx] for s in initial_state]
+                    mb_state = [s[mb_envs_idx] for s in initial_state]
 
                     pi, v, _ = agent(mb_obss, mb_state, done=mb_dones)
                     new_val = v.view(-1)

@@ -230,38 +230,39 @@ class NeuralMap(nn.Module):
         self.query_net = MLP(input_dim + features_dim, features_dim)
         self.write_net = MLP(input_dim + features_dim + features_dim + features_dim, features_dim)
         
+        self.features_dim = features_dim
+        self.input_dim = input_dim
         self.output_dim = features_dim + features_dim + features_dim
-        self.state_shape = (features_dim, *map_shape)
-
-    def initial(self, num_envs):
-        return th.zeros((num_envs, *self.state_shape))
+        self.shape = (features_dim, *map_shape)
 
     def read(self, state):
         return self.read_net(state)
 
     def context(self, x, r, state):
-        
+        b = state.shape[0]
+        c = self.features_dim
         q = self.query_net(th.cat([x, r], dim=1))
-
-        r = q.reshape(*q.shape, 1, 1).repeat(1, 1, *state.shape[2:]).view(*q.shape, -1)
-        s = state.view(*q.shape, -1)
-
-        a = th.bmm(r.transpose(1, 2), s)
-        print(a.shape)
-        a = th.softmax(a)
-        c = th.sum(a*state)
+        s = state.view(b, c, -1)
+        a = th.bmm(q.view(b, -1, c), s)
+        a = F.softmax(a, dim=2)
+        c = th.sum(a*s, dim=2)
         return c
 
     def write(self, x, r, c, state, index):
-        w = state[index]
-        w = self.write_net(th.cat[x, r, c, w], dim=1)
+        b = x.shape[0]
+        w = state[th.arange(b),:,index[:,0],index[:,1]]
+        w = self.write_net(th.cat([x, r, c, w], dim=1))
         return w
 
     def forward(self, x, state, index):
+        b = x.shape[0]
         r = self.read(state)
         c = self.context(x, r, state)
-        w = self.write(x, r, c, state)
+        w = self.write(x, r, c, state, index)
 
-        state[index] = w
+        new_state = state.clone()
+        new_state[th.arange(b),:,index[:,0],index[:,1]] = w
 
-        return th.cat([r, c, w], dim=1), state
+        return th.cat([r, c, w], dim=1), new_state
+
+        

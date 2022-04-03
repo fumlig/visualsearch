@@ -167,7 +167,7 @@ class BaselineAgent(Agent):
     # https://arxiv.org/abs/1611.03673
 
 
-    def __init__(self, envs):
+    def __init__(self, envs, num_layers=1):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
@@ -184,7 +184,7 @@ class BaselineAgent(Agent):
         #hidden_dim += self.action_space.n
         #hidden_dim += 1
 
-        self.lstm = nn.LSTM(hidden_dim, 256, num_layers=1)
+        self.lstm = nn.LSTM(hidden_dim, 256, num_layers=num_layers)
 
         self.policy = MLP(256, self.action_space.n, out_gain=0.01)
         self.value = MLP(256, 1, out_gain=1.0)

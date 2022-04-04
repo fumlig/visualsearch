@@ -21,16 +21,18 @@ class VoxelEnv(gym.Env):
         RIGHT = 3
         DOWN = 4
         UP = 5
+        IN = 6
+        OUT = 7
 
     def __init__(
         self,
-        camera_view=(512, 512),
+        camera_view=(84, 84),
         camera_step=0.1,
     ):
         self.camera_view = camera_view
         self.camera_step = camera_step
         
-        self.terrain_size = 256
+        self.terrain_size = 1024
         self.terrain_height = 50
 
         self.renderer = pyr.OffscreenRenderer(*self.camera_view)
@@ -47,19 +49,14 @@ class VoxelEnv(gym.Env):
 
     def reset(self):
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
-        self.camera = pyr.PerspectiveCamera(yfov=np.pi/5.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((0, 50, 0)))
-        self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
-        self.scene.add_node(self.yaw_node)
-        self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)
-
-        terrain, colors = self.generator.terrain(self.random.integers(0, 100))
-        terrain *= self.terrain_height
-        tile = self.martini.create_tile(terrain.astype(np.float32))
+        # terrain
+        self.terrain, colors = self.generator.terrain(self.random.integers(0, 100))
+        self.terrain *= self.terrain_height
+        tile = self.martini.create_tile(self.terrain.astype(np.float32))
         vertices, indices = tile.get_mesh(0.5)
-        
-        vertices = martini.rescale_positions(vertices, terrain)
+
+        vertices = martini.rescale_positions(vertices, self.terrain)
         vertices = vertices[:,[0,2,1]]
         indices = indices.reshape(-1, 3)
 
@@ -67,15 +64,24 @@ class VoxelEnv(gym.Env):
         visual = tri.visual.TextureVisuals(uv=uv, image=colors)
         mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
 
-        self.scene.add(mesh, pose=tri.transformations.translation_matrix((-self.terrain_size//2, 0, -self.terrain_size/2)))
+        self.scene.add(mesh, pose=np.eye(4))
 
+        # targets
         for t in range(10):
-            x, z = self.random.integers(-self.terrain_size/2+1, self.terrain_size/2-1, size=2)
-            y = terrain[z, x]
+            x, z = self.random.integers(0, self.terrain_size-1, size=2)
+            y = self.height(z, x)
             t = tri.creation.cylinder(1, 5, transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
+
+        # camera
+        self.camera = pyr.PerspectiveCamera(yfov=np.pi/3.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
+        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+50, self.terrain_size//2)))
+        self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
+
+        self.scene.add_node(self.yaw_node)
+        self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)
 
 
         return self.observation()
@@ -88,13 +94,18 @@ class VoxelEnv(gym.Env):
         elif action == self.Action.TRIGGER:
             pass
         elif action == self.Action.LEFT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0)).dot(self.yaw_node.matrix)
+            self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0), point=self.yaw_node.translation).dot(self.yaw_node.matrix)
         elif action == self.Action.RIGHT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0)).dot(self.yaw_node.matrix)
+            self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0), point=self.yaw_node.translation).dot(self.yaw_node.matrix)
         elif action == self.Action.DOWN:
             self.pitch_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (1, 0, 0)).dot(self.pitch_node.matrix)
         elif action == self.Action.UP:
             self.pitch_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (1, 0, 0)).dot(self.pitch_node.matrix)
+        elif action == self.Action.IN:
+            self.camera.yfov = np.pi/12.0
+        elif action == self.Action.OUT:
+            self.camera.yfov = np.pi/3.0
+            pass
 
         return self.observation(), 0.0, False, {}
 
@@ -114,6 +125,10 @@ class VoxelEnv(gym.Env):
             image=self.render(),
         )
 
+
+    def height(self, x, z):
+        return self.terrain[round(x), round(z)]
+
     def get_action_meanings(self):
         return [a.name for a in self.Action]
     
@@ -124,4 +139,6 @@ class VoxelEnv(gym.Env):
             (ord("d"),): self.Action.RIGHT,
             (ord("s"),): self.Action.DOWN,
             (ord("w"),): self.Action.UP,
+            (ord("q"),): self.Action.OUT,
+            (ord("e"),): self.Action.IN,
         }

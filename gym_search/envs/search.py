@@ -180,10 +180,8 @@ class SearchEnv(gym.Env):
         x = self.view.pos[1] // self.view.shape[1]
         return y, x
 
-
     def normalize_position(self, position):
         return position[0] // self.view.shape[0], position[1] // self.view.shape[1]
-
 
     def get_action_meanings(self):
         return [a.name for a in self.Action]

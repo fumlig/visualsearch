@@ -56,7 +56,9 @@ class CameraEnv(gym.Env):
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
 
         # terrain
-        self.terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains)) * self.terrain_height
+        self.terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains))
+        image = self.generator.image(self.terrain)
+        self.terrain *= self.terrain_height
         
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
         vertices, indices = tile.get_mesh(0.5)
@@ -76,13 +78,12 @@ class CameraEnv(gym.Env):
         self.hits = []
         for x, z in self.generator.targets(self.terrain):
             y = self.height(z, x)
-            t = tri.creation.cylinder(1, 5, transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
+            t = tri.creation.box((2.5, 2.5, 2.5), transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
-            m.is_visible
 
-            self.targets.append(m)
+            self.targets.append((x, y, z))
             self.hits.append(False)
 
         # camera
@@ -102,21 +103,21 @@ class CameraEnv(gym.Env):
         elif action == self.Action.TRIGGER:
             pass
         elif action == self.Action.LEFT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0), point=self.yaw_node.translation).dot(self.yaw_node.matrix)
+            self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
         elif action == self.Action.RIGHT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0), point=self.yaw_node.translation).dot(self.yaw_node.matrix)
+            self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
         elif action == self.Action.DOWN:
-            self.pitch_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (1, 0, 0)).dot(self.pitch_node.matrix)
+            self.pitch_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
         elif action == self.Action.UP:
-            self.pitch_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (1, 0, 0)).dot(self.pitch_node.matrix)
+            self.pitch_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
         elif action == self.Action.IN:
             self.camera.yfov = np.pi/12.0
         elif action == self.Action.OUT:
             self.camera.yfov = np.pi/3.0
 
-        visible = sum(t.is_visible for t in self.targets)
+        visible = [self.visible(x, y, z) for x, y, z in self.targets]
 
-        print("visible:", visible)
+        print("visible:", sum(visible))
 
         return self.observation(), 0.0, False, {}
 
@@ -140,7 +141,15 @@ class CameraEnv(gym.Env):
         return self.terrain[round(x), round(z)]
 
     def visible(self, x, y, z):
-        self.camera.get_projection_matrix
+        camera_node = self.scene.main_camera_node
+        camera_pose = self.scene.get_pose(camera_node)
+        
+        proj = camera_node.camera.get_projection_matrix(*self.camera_view)
+        view = np.linalg.inv(camera_pose)
+        position = proj @ view @ np.array([x, y, z, 1.0])
+        p = position[:3] / position[3]
+
+        return np.all((p >= -1.0) & (p <= 1.0))
 
     def get_action_meanings(self):
         return [a.name for a in self.Action]

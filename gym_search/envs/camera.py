@@ -10,7 +10,7 @@ from gym_search.shapes import Box
 from gym_search.generators import TerrainGenerator
 
 
-class VoxelEnv(gym.Env):
+class CameraEnv(gym.Env):
 
     metadata = {"render.modes": ["rgb_array"]}
 
@@ -27,17 +27,22 @@ class VoxelEnv(gym.Env):
     def __init__(
         self,
         camera_view=(84, 84),
-        camera_step=0.1,
+        terrain_size=1024,
+        terrain_height=50,
+        num_targets=10,
+        num_distractors=100
     ):
         self.camera_view = camera_view
-        self.camera_step = camera_step
-        
-        self.terrain_size = 1024
-        self.terrain_height = 50
+        self.terrain_size = terrain_size
+        self.terrain_height = terrain_height
+        self.num_targets = num_targets
+
+        self.camera_step = 0.1
+        # todo: discretize, each action should move into a discrete position
 
         self.renderer = pyr.OffscreenRenderer(*self.camera_view)
         self.martini = martini.Martini(self.terrain_size+1)
-        self.generator = TerrainGenerator((self.terrain_size+1, self.terrain_size+1), 0)
+        self.generator = TerrainGenerator((self.terrain_size+1, self.terrain_size+1), num_targets, num_distractors)
 
         self.seed()
 
@@ -51,8 +56,8 @@ class VoxelEnv(gym.Env):
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
 
         # terrain
-        self.terrain, colors = self.generator.terrain(self.random.integers(0, 100))
-        self.terrain *= self.terrain_height
+        self.terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains)) * self.terrain_height
+        
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
         vertices, indices = tile.get_mesh(0.5)
 
@@ -61,34 +66,37 @@ class VoxelEnv(gym.Env):
         indices = indices.reshape(-1, 3)
 
         uv = np.array([(u/self.terrain_size+1, (1-v)/self.terrain_size+1) for u, _, v in vertices])
-        visual = tri.visual.TextureVisuals(uv=uv, image=colors)
+        visual = tri.visual.TextureVisuals(uv=uv, image=self.generator.image(self.terrain))
         mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
 
         self.scene.add(mesh, pose=np.eye(4))
 
         # targets
-        for t in range(10):
-            x, z = self.random.integers(0, self.terrain_size-1, size=2)
+        self.targets = []
+        self.hits = []
+        for x, z in self.generator.targets(self.terrain):
             y = self.height(z, x)
             t = tri.creation.cylinder(1, 5, transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
+            m.is_visible
+
+            self.targets.append(m)
+            self.hits.append(False)
 
         # camera
         self.camera = pyr.PerspectiveCamera(yfov=np.pi/3.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+50, self.terrain_size//2)))
+        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+25, self.terrain_size//2)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
         self.scene.add_node(self.yaw_node)
         self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)
 
-
         return self.observation()
 
 
     def step(self, action):
-
         if action == self.Action.NONE:
             pass
         elif action == self.Action.TRIGGER:
@@ -105,7 +113,10 @@ class VoxelEnv(gym.Env):
             self.camera.yfov = np.pi/12.0
         elif action == self.Action.OUT:
             self.camera.yfov = np.pi/3.0
-            pass
+
+        visible = sum(t.is_visible for t in self.targets)
+
+        print("visible:", visible)
 
         return self.observation(), 0.0, False, {}
 
@@ -125,9 +136,11 @@ class VoxelEnv(gym.Env):
             image=self.render(),
         )
 
-
     def height(self, x, z):
         return self.terrain[round(x), round(z)]
+
+    def visible(self, x, y, z):
+        self.camera.get_projection_matrix
 
     def get_action_meanings(self):
         return [a.name for a in self.Action]

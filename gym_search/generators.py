@@ -55,9 +55,10 @@ class GaussianGenerator(Generator):
 
 
 class TerrainGenerator(Generator):
-    def __init__(self, shape, num_targets, max_terrains=1024):
+    def __init__(self, shape, num_targets, num_distractors, max_terrains=1024):
         self.shape = shape
         self.num_targets = num_targets
+        self.num_distractors = num_distractors
         self.max_terrains = max_terrains
         self.seed()
 
@@ -69,44 +70,47 @@ class TerrainGenerator(Generator):
         
         height, width = self.shape
         seed = self.random.integers(self.max_terrains)
-        terrain, image = self.terrain(seed)
+        terrain = self.terrain(seed)
+        image = self.image(terrain)
 
-        tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
-        tree_prob = tree_line.astype(float)/tree_line.sum()
-        tree_count = self.random.integers(100, 500)
-        trees = sample_coords(self.shape, tree_count, tree_prob, random=self.random)
-
-        for y, x in trees:
+        for y, x in self.distractors(terrain):
             r = self.random.integers(3, 5)
             y = clamp(y, r, height-r)
             x = clamp(x, r, width-r)
             rr, cc = draw.disk((y, x), r, shape=self.shape)
-            img[rr, cc] = (0, 63, 0)
+            image[rr, cc] = (0, 63, 0)
 
-        target_prob = tree_prob
-        target_count = self.num_targets # self.random.integers(5, 25)
-        target_pos = sample_coords(self.shape, target_count, target_prob, random=self.random)
         targets = []
 
-        for y, x in target_pos:
+        for y, x in self.targets(terrain):
             size = self.random.integers(5, 10)
             rect = Box(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
             coords = tuple(draw.rectangle(rect.pos, extent=rect.shape, shape=self.shape))
-            img[coords] = (255, 0, 0)
+            image[coords] = (255, 0, 0)
 
-        return img, targets
+        return image, targets
 
     @lru_cache(maxsize=1024)
-    def terrain(self, seed, colors=True):
+    def terrain(self, seed):
         exp = self.random.uniform(0.5, 5)
         noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
         terrain = normalize(noise)**exp
 
-        if colors:
-            return terrain, pick_color(terrain, EARTH_TOON)
-        else:
-            return terrain
+        return terrain
+    
+    def image(self, terrain):
+        return pick_color(terrain, EARTH_TOON)
+
+    def targets(self, terrain):
+        tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
+        target_prob = tree_line.astype(float)/tree_line.sum()
+        return sample_coords(self.shape, self.num_targets, target_prob, random=self.random)
+
+    def distractors(self, terrain):
+        tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
+        tree_prob = tree_line.astype(float)/tree_line.sum()
+        return sample_coords(self.shape, self.num_distractors, tree_prob, random=self.random)
 
 
 class DatasetGenerator(Generator):

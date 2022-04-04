@@ -3,7 +3,7 @@ import gym
 
 from gym_search.datasets import AirbusAircraftDataset, AirbusOilDataset
 from gym_search.envs.search import SearchEnv
-from gym_search.envs.voxel import VoxelEnv
+from gym_search.envs.camera import CameraEnv
 from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
 
 """
@@ -23,8 +23,8 @@ gym.register(
 )
 
 gym.register(
-    id="Voxel-v0",
-    entry_point=VoxelEnv
+    id="Camera-v0",
+    entry_point=CameraEnv
 )
 
 gym.register(
@@ -41,7 +41,7 @@ gym.register(
     id="SearchTerrain-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        generator=TerrainGenerator((1024, 1024), 3, max_terrains=1024),
+        generator=TerrainGenerator((1024, 1024), 3, 100, max_terrains=1024),
         view_shape=(64, 64),
         step_size=64,
     )

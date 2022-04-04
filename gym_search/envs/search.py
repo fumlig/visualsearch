@@ -87,6 +87,7 @@ class SearchEnv(gym.Env):
         self.path.append(self.view.pos)
 
         revisit = self.visited[self.scaled_position]
+        retrigger = self.triggered[self.scaled_position] and action == self.Action.TRIGGER
 
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
@@ -119,6 +120,7 @@ class SearchEnv(gym.Env):
         self.num_steps += 1
 
         self.counters["revisits"] += revisit
+        self.counters["retriggers"] += retrigger
         self.counters["redundant_steps"] += self.num_steps > self.optimal_steps
 
         obs = self.observation()

@@ -14,7 +14,7 @@ AGENTS = {
     "recurrent": rl.agents.RecurrentAgent,
     "baseline": rl.agents.BaselineAgent,
     # our
-    "our": rl.agents.SearchAgent
+    "map": rl.agents.MapAgent
 }
 
 

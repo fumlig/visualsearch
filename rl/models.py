@@ -69,79 +69,6 @@ class NatureCNN(nn.Module):
         return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
 
 
-
-class AlphaCNN(nn.Module):
-    """
-    Network from AlphaZero paper (with modifications).
-    """
-
-    class ResidualBlock(nn.Module):
-        def __init__(self, filters):
-            super().__init__()
-
-            self.conv1 = init_weights(nn.Conv2d(filters, filters, 3, padding=1))
-            self.norm1 = nn.BatchNorm2d(filters)
-            self.conv2 = init_weights(nn.Conv2d(filters, filters, 3, padding=1))
-            self.norm2 = nn.BatchNorm2d(filters)
-        
-            # todo: init weights?
-
-        def forward(self, x):
-            y = x
-
-            x = self.conv1(x)
-            x = self.norm1(x)
-            x = F.relu(x)
-
-            x = self.conv2(x)
-            x = self.norm2(x)
-            x = F.relu(x)
-
-            x = x + y
-            x = F.relu(x)
-
-            return x
-
-    def __init__(self, observation_space, output_dim=256, filters=64, blocks=2):
-        super().__init__()
-        
-        assert isinstance(observation_space, gym.spaces.Box)
-
-        channels = observation_space.shape[2]
-        
-        self.initial = nn.Sequential(
-            init_weights(nn.Conv2d(channels, filters, 3, stride=1, padding=1)),
-            nn.BatchNorm2d(filters),
-            nn.ReLU()
-        )
-
-        self.residual = nn.Sequential(
-            *[self.ResidualBlock(filters) for _ in range(blocks)],
-            nn.Flatten(),
-        )
-
-        with th.no_grad():
-            hidden_dim = self.residual(self.initial(preprocess_image(th.tensor(observation_space.sample()).unsqueeze(0).float()))).shape[1]
-
-        self.linear = nn.Sequential(
-            init_weights(nn.Linear(hidden_dim, output_dim)),
-            nn.ReLU()
-        )
-
-        self.channels = channels
-        self.filters = filters
-        self.blocks = blocks
-
-        self.output_dim = output_dim
-    
-    def forward(self, obs):
-        x = self.initial(obs)
-        x = self.residual(x)
-        x = self.linear(x)
-
-        return x
-
-
 class ImpalaCNN(nn.Module):
     """
     Network from IMPALA paper.
@@ -219,14 +146,45 @@ class ImpalaCNN(nn.Module):
         return x
 
 
-
 class NeuralMap(nn.Module):
     # https://arxiv.org/abs/1702.08360
+
+    class MapCNN(nn.Module):
+        # https://arxiv.org/pdf/1702.08360.pdf
+
+        def __init__(self, observation_shape, output_dim=256):
+            super().__init__()
+            
+            in_channels = observation_shape[2]
+            hidden_channels = 8
+
+            self.convs = nn.Sequential(
+                init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                nn.Flatten(),
+            )
+
+            hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
+
+            self.linear = nn.Sequential(
+                init_weights(nn.Linear(hidden_dim, output_dim)),
+                nn.ReLU()
+            )
+
+            self.output_dim = output_dim
+
+        def forward(self, obs):
+            return self.linear(self.convs(obs))
+
 
     def __init__(self, map_shape, input_dim, features_dim=32):
         super().__init__()
         # all of the output the same number of features, I think...
-        self.read_net = ImpalaCNN((*map_shape, features_dim), features_dim)
+        self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
         self.query_net = MLP(input_dim + features_dim, features_dim)
         self.write_net = MLP(input_dim + features_dim + features_dim + features_dim, features_dim)
         
@@ -265,4 +223,4 @@ class NeuralMap(nn.Module):
 
         return th.cat([r, c, w], dim=1), new_state
 
-        
+

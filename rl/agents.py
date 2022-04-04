@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from rl.models import MLP, ImpalaCNN, NatureCNN, AlphaCNN, NeuralMap
+from rl.models import MLP, NatureCNN, NeuralMap
 from rl.utils import preprocess_image, init_lstm
 
 
@@ -42,7 +42,7 @@ class RandomAgent(Agent):
         return self.action_space.sample(), state
 
 
-class SearchAgent(Agent):
+class MapAgent(Agent):
 
     def __init__(self, envs):
         super().__init__(envs)

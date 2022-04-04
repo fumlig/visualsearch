@@ -150,9 +150,8 @@ class NeuralMap(nn.Module):
     # https://arxiv.org/abs/1702.08360
 
     class MapCNN(nn.Module):
-        # https://arxiv.org/pdf/1702.08360.pdf
 
-        def __init__(self, observation_shape, output_dim=256):
+        def __init__(self, observation_shape, output_dim=32):
             super().__init__()
             
             in_channels = observation_shape[2]
@@ -171,7 +170,9 @@ class NeuralMap(nn.Module):
             hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
 
             self.linear = nn.Sequential(
-                init_weights(nn.Linear(hidden_dim, output_dim)),
+                init_weights(nn.Linear(hidden_dim, 256)),
+                nn.ReLU(),
+                init_weights(nn.Linear(256, output_dim)),
                 nn.ReLU()
             )
 

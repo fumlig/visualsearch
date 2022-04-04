@@ -26,21 +26,28 @@ class CameraEnv(gym.Env):
 
     def __init__(
         self,
-        camera_view=(84, 84),
+        view_size=(256, 256),
+        view_steps=32,
         terrain_size=1024,
         terrain_height=50,
         num_targets=10,
-        num_distractors=100
+        num_distractors=100,
     ):
-        self.camera_view = camera_view
+        self.view_size = view_size
+        self.view_steps = view_steps
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
         self.num_targets = num_targets
 
-        self.camera_step = 0.1
-        # todo: discretize, each action should move into a discrete position
+        self.camera_zoom_in = 2*np.pi/view_steps
+        self.camera_zoom_out = self.camera_zoom_in*4
+        self.camera_yaw = 0
+        self.camera_pitch = 0
+        self.camera_step = self.camera_zoom_in
 
-        self.renderer = pyr.OffscreenRenderer(*self.camera_view)
+        self.max_steps = 1000
+
+        self.renderer = pyr.OffscreenRenderer(*self.view_size)
         self.martini = martini.Martini(self.terrain_size+1)
         self.generator = TerrainGenerator((self.terrain_size+1, self.terrain_size+1), num_targets, num_distractors)
 
@@ -49,26 +56,28 @@ class CameraEnv(gym.Env):
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(self.Action))
         self.observation_space = gym.spaces.Dict(dict(
-            image=gym.spaces.Box(0, 255, (*self.camera_view, 3), dtype=np.uint8),
+            image=gym.spaces.Box(0, 255, (*self.view_size, 3), dtype=np.uint8),
+            position=gym.spaces.MultiDiscrete((self.view_steps, self.view_steps))
         ))
 
     def reset(self):
+        self.num_steps = 0
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
 
         # terrain
-        self.terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains))
-        image = self.generator.image(self.terrain)
-        self.terrain *= self.terrain_height
-        
+        terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains))
+        image = self.generator.image(terrain)
+        targets = self.generator.targets(terrain)
+
+        self.terrain = terrain*self.terrain_height
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
         vertices, indices = tile.get_mesh(0.5)
-
         vertices = martini.rescale_positions(vertices, self.terrain)
         vertices = vertices[:,[0,2,1]]
         indices = indices.reshape(-1, 3)
 
-        uv = np.array([(u/self.terrain_size+1, (1-v)/self.terrain_size+1) for u, _, v in vertices])
-        visual = tri.visual.TextureVisuals(uv=uv, image=self.generator.image(self.terrain))
+        uv = np.array([(x/self.terrain_size+1, (1-z)/self.terrain_size+1) for x, _, z in vertices])
+        visual = tri.visual.TextureVisuals(uv=uv, image=image)
         mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
 
         self.scene.add(mesh, pose=np.eye(4))
@@ -76,9 +85,13 @@ class CameraEnv(gym.Env):
         # targets
         self.targets = []
         self.hits = []
-        for x, z in self.generator.targets(self.terrain):
-            y = self.height(z, x)
-            t = tri.creation.box((2.5, 2.5, 2.5), transform=tri.transformations.rotation_matrix(np.pi/2, (1, 0, 0)))
+        for x, z in targets:
+            x = self.terrain_size - x
+            z = self.terrain_size - z
+            y = self.height(x, z) + 5
+            #z = self.terrain_size - z
+
+            t = tri.creation.box((2.5, 2.5, 2.5))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
@@ -87,8 +100,8 @@ class CameraEnv(gym.Env):
             self.hits.append(False)
 
         # camera
-        self.camera = pyr.PerspectiveCamera(yfov=np.pi/3.0, aspectRatio=self.camera_view[1]/self.camera_view[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+25, self.terrain_size//2)))
+        self.camera = pyr.PerspectiveCamera(yfov=self.camera_zoom_out, aspectRatio=self.view_size[1]/self.view_size[0])
+        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+self.terrain_height*10, self.terrain_size//2)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
         self.scene.add_node(self.yaw_node)
@@ -98,28 +111,53 @@ class CameraEnv(gym.Env):
 
 
     def step(self, action):
-        if action == self.Action.NONE:
-            pass
-        elif action == self.Action.TRIGGER:
-            pass
-        elif action == self.Action.LEFT:
+        if action == self.Action.LEFT:
             self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
+            self.camera_yaw -= 1
+            self.camera_yaw %= self.view_steps
         elif action == self.Action.RIGHT:
             self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
+            self.camera_yaw += 1
+            self.camera_yaw %= self.view_steps
         elif action == self.Action.DOWN:
             self.pitch_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
+            self.camera_pitch -= 1
+            self.camera_pitch %= self.view_steps
         elif action == self.Action.UP:
             self.pitch_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
+            self.camera_pitch += 1
+            self.camera_pitch %= self.view_steps
         elif action == self.Action.IN:
-            self.camera.yfov = np.pi/12.0
+            self.camera.yfov = self.camera_zoom_in
         elif action == self.Action.OUT:
-            self.camera.yfov = np.pi/3.0
+            self.camera.yfov = self.camera_zoom_out
 
-        visible = [self.visible(x, y, z) for x, y, z in self.targets]
+        hits = 0
 
-        print("visible:", sum(visible))
+        if action == self.Action.TRIGGER:
+            for i in range(len(self.targets)):
+                if self.hits[i]:
+                    continue
+                    
+                x, y, z = self.targets[i]
 
-        return self.observation(), 0.0, False, {}
+                if self.visible(x, y, z):
+                    self.hits[i] = True
+                    hits += 1
+
+        self.num_steps += 1
+
+        obs = self.observation()
+
+        if hits:
+            rew = hits*10
+        else:
+            rew = -1
+
+        done = all(self.hits) or self.num_steps == self.max_steps
+
+
+        return obs, rew, done, {}
 
     def render(self, mode="rgb_array"):
         color, _depth = self.renderer.render(self.scene)
@@ -135,6 +173,7 @@ class CameraEnv(gym.Env):
     def observation(self):
         return dict(
             image=self.render(),
+            position=(self.camera_yaw, self.camera_pitch)
         )
 
     def height(self, x, z):
@@ -144,7 +183,7 @@ class CameraEnv(gym.Env):
         camera_node = self.scene.main_camera_node
         camera_pose = self.scene.get_pose(camera_node)
         
-        proj = camera_node.camera.get_projection_matrix(*self.camera_view)
+        proj = camera_node.camera.get_projection_matrix(*self.view_size)
         view = np.linalg.inv(camera_pose)
         position = proj @ view @ np.array([x, y, z, 1.0])
         p = position[:3] / position[3]

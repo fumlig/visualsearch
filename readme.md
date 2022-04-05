@@ -13,3 +13,8 @@ GTrXL:
 
 PyTorch example:
 https://github.com/pytorch/examples/blob/main/word_language_model/model.py
+
+## idea
+
+For realistic environment, have one target in water, one on land and one in air.
+See if agent learns this?

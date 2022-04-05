@@ -97,7 +97,7 @@ class SearchEnv(gym.Env):
             self.triggered[self.scaled_position] = True
 
         dist = np.inf
-        hit = False
+        hits = 0
 
         for i in range(len(self.targets)):
             if self.hits[i]:
@@ -105,14 +105,14 @@ class SearchEnv(gym.Env):
 
             if action == self.Action.TRIGGER and self.view.overlap(self.targets[i]):
                 self.hits[i] = True
-                hit = True
+                hits += 1
 
             d = euclidean_dist(self.view.center(), self.targets[i].center())
             if d < dist:
                 dist = d
         
-        if hit:
-            rew = 10
+        if hits:
+            rew = hits*10
         else:
             rew = -1
 

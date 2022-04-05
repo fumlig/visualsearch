@@ -128,5 +128,5 @@ if __name__ == "__main__":
             if done:
                 infos.append(info)
 
-        # todo: spl
-        print(infos)
+    # todo: spl
+    print(infos)

@@ -8,6 +8,7 @@ import pymartini as martini
 from gym_search.utils import clamp
 from gym_search.shapes import Box
 from gym_search.generators import TerrainGenerator
+from gym_search.palette import BLUE_MARBLE
 
 
 class CameraEnv(gym.Env):
@@ -26,10 +27,10 @@ class CameraEnv(gym.Env):
 
     def __init__(
         self,
-        view_size=(256, 256),
-        view_steps=32,
-        terrain_size=4096,
-        terrain_height=128,
+        view_size=(64, 64),
+        view_steps=64,
+        terrain_size=256,
+        terrain_height=16,
         num_targets=10,
         num_distractors=100,
     ):
@@ -66,7 +67,7 @@ class CameraEnv(gym.Env):
 
         # terrain
         terrain = self.generator.terrain(self.random.integers(self.generator.max_terrains))
-        image = self.generator.image(terrain)
+        image = self.generator.image(terrain, palette=BLUE_MARBLE)
         targets = self.generator.targets(terrain)
 
         self.terrain = terrain*self.terrain_height
@@ -86,10 +87,9 @@ class CameraEnv(gym.Env):
         self.targets = []
         self.hits = []
         for z, x in targets:
-            side = 5
-            y = self.height(x, z) + 4*side
-
-            t = tri.creation.box((side, side, side), )
+            side = 1
+            y = self.height(x, z)+side
+            t = tri.creation.box((side, side, side))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
@@ -98,13 +98,18 @@ class CameraEnv(gym.Env):
             self.hits.append(False)
 
         # camera
+        
+        x = self.terrain_size//2
+        z = self.terrain_size//2
+        y = self.terrain_height # self.height(x, z)
+
         self.camera = pyr.PerspectiveCamera(yfov=self.camera_zoom_out, aspectRatio=self.view_size[1]/self.view_size[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+2.5, self.terrain_size//2)))
+        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((x, y, z)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
         # debug
         #self.yaw_node.matrix = tri.transformations.rotation_matrix(-np.pi/2, (1, 0, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
-        self.yaw_node.matrix = tri.transformations.translation_matrix((0, 256, 0)) @ self.yaw_node.matrix
+        #self.yaw_node.matrix = tri.transformations.translation_matrix((0, 256, 0)) @ self.yaw_node.matrix
 
         self.scene.add_node(self.yaw_node)
         self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)

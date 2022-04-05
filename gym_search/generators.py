@@ -3,7 +3,7 @@ from skimage import draw
 from functools import lru_cache
 
 from gym_search.utils import gaussian_kernel, normalize, clamp, sample_coords
-from gym_search.palette import pick_color, EARTH_TOON
+from gym_search.palette import pick_color, EARTH_TOON, BLUE_MARBLE
 from gym_search.noise import fractal_noise_2d
 from gym_search.shapes import Box
 
@@ -99,8 +99,8 @@ class TerrainGenerator(Generator):
 
         return terrain
     
-    def image(self, terrain):
-        return pick_color(terrain, EARTH_TOON)
+    def image(self, terrain, palette=EARTH_TOON):
+        return pick_color(terrain, palette)
 
     def targets(self, terrain):
         tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)

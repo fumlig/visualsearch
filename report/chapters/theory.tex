@@ -453,7 +453,18 @@ By taking actions, the hard attention can be redirected.
 
 \subsection{Coverage Path Planning}
 
-\cite{galceran_carreras_2013} % survey of CPP
+% could be a smaller section in background, under visual search
+
+The problem we consider in this work shares many characteristics with coverage path planning (CPP)~\cite{galceran_carreras_2013}.
+CPP is the task of determining a path that passes over all points in an area, and appears as a fundamental part of many real-world problems. 
+In the general case, an agent that does not learn to exhaustively search its environment can not be expected to be successful for the visual search task.
+The CPP is strongly related to the traveling salesman problem (TSP).
+The unrestricted CPP where there are no obstacles (the "lawnmower problem") is in fact proven to be NP-hard~\cite{arkin_lawnmowing_2000}.
+In our problem, we do not require complete coverage, but just that certain points (those that contain targets) are visited.
+The shape of the environment is known, as the sensor has limited range of movement.
+Furthermore, a good agent should also prioritize certain regions which is not part of the CPP task.
+Although a CPP agent that is able to recognize targets is not optimal, it is a suitable baseline for the task.
+Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is suitable for grid-discretized can be used. % some simple approximation
 
 \cite{krishna_tetromino_2020} % an approach with RL
 

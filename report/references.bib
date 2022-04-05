@@ -10,10 +10,32 @@
   month        = {Jan}
 }
 
-@inproceedings{chen_memory_2017, place={Venice}, title={Spatial Memory for Context Reasoning in Object Detection}, ISBN={978-1-5386-1032-9}, url={http://ieeexplore.ieee.org/document/8237702/}, DOI={10.1109/ICCV.2017.440}, abstractNote={Modeling instance-level context and object-object relationships is extremely challenging. It requires reasoning about bounding boxes of different classes, locations etc. Above all, instance-level spatial reasoning inherently requires modeling conditional distributions on previous detections. Unfortunately, our current object detection systems do not have any memory to remember what to condition on! The state-of-the-art object detectors still detect all object in parallel followed by non-maximal suppression (NMS). While memory has been used for tasks such as captioning, they mostly use image-level memory cells without capturing the spatial layout. On the other hand, modeling object-object relationships requires spatial reasoning –not only do we need a memory to store the spatial layout, but also a effective reasoning module to extract spatial patterns. This paper presents a conceptually simple yet powerful solution – Spatial Memory Network (SMN), to model the instance-level context efﬁciently and effectively. Our spatial memory essentially assembles object instances back into a pseudo “image” representation that is easy to be fed into another ConvNet for object-object context reasoning. This leads to a new sequential reasoning architecture where image and memory are processed in parallel to obtain detections which update the memory again. We show our SMN direction is promising as it provides 2.2% improvement over baseline Faster RCNN on the COCO dataset with VGG161.}, booktitle={2017 IEEE International Conference on Computer Vision (ICCV)}, publisher={IEEE}, author={Chen, Xinlei and Gupta, Abhinav}, year={2017}, month={Oct}, pages={4106–4116} }
+@inproceedings{chen_memory_2017,
+  place        = {Venice},
+  title        = {Spatial Memory for Context Reasoning in Object Detection},
+  isbn         = {978-1-5386-1032-9},
+  url          = {http://ieeexplore.ieee.org/document/8237702/},
+  doi          = {10.1109/ICCV.2017.440},
+  abstractnote = {Modeling instance-level context and object-object relationships is extremely challenging. It requires reasoning about bounding boxes of different classes, locations etc. Above all, instance-level spatial reasoning inherently requires modeling conditional distributions on previous detections. Unfortunately, our current object detection systems do not have any memory to remember what to condition on! The state-of-the-art object detectors still detect all object in parallel followed by non-maximal suppression (NMS). While memory has been used for tasks such as captioning, they mostly use image-level memory cells without capturing the spatial layout. On the other hand, modeling object-object relationships requires spatial reasoning –not only do we need a memory to store the spatial layout, but also a effective reasoning module to extract spatial patterns. This paper presents a conceptually simple yet powerful solution – Spatial Memory Network (SMN), to model the instance-level context efﬁciently and effectively. Our spatial memory essentially assembles object instances back into a pseudo “image” representation that is easy to be fed into another ConvNet for object-object context reasoning. This leads to a new sequential reasoning architecture where image and memory are processed in parallel to obtain detections which update the memory again. We show our SMN direction is promising as it provides 2.2% improvement over baseline Faster RCNN on the COCO dataset with VGG161.},
+  booktitle    = {2017 IEEE International Conference on Computer Vision (ICCV)},
+  publisher    = {IEEE},
+  author       = {Chen, Xinlei and Gupta, Abhinav},
+  year         = {2017},
+  month        = {Oct},
+  pages        = {4106–4116}
+}
 
 
-@article{bengio_representation_2014, title={Representation Learning: A Review and New Perspectives}, url={http://arxiv.org/abs/1206.5538}, abstractNote={The success of machine learning algorithms generally depends on data representation, and we hypothesize that this is because different representations can entangle and hide more or less the different explanatory factors of variation behind the data. Although specific domain knowledge can be used to help design representations, learning with generic priors can also be used, and the quest for AI is motivating the design of more powerful representation-learning algorithms implementing such priors. This paper reviews recent work in the area of unsupervised feature learning and deep learning, covering advances in probabilistic models, auto-encoders, manifold learning, and deep networks. This motivates longer-term unanswered questions about the appropriate objectives for learning good representations, for computing representations (i.e., inference), and the geometrical connections between representation learning, density estimation and manifold learning.}, note={arXiv: 1206.5538}, journal={arXiv:1206.5538 [cs]}, author={Bengio, Yoshua and Courville, Aaron and Vincent, Pascal}, year={2014}, month={Apr} }
+@article{bengio_representation_2014,
+  title        = {Representation Learning: A Review and New Perspectives},
+  url          = {http://arxiv.org/abs/1206.5538},
+  abstractnote = {The success of machine learning algorithms generally depends on data representation, and we hypothesize that this is because different representations can entangle and hide more or less the different explanatory factors of variation behind the data. Although specific domain knowledge can be used to help design representations, learning with generic priors can also be used, and the quest for AI is motivating the design of more powerful representation-learning algorithms implementing such priors. This paper reviews recent work in the area of unsupervised feature learning and deep learning, covering advances in probabilistic models, auto-encoders, manifold learning, and deep networks. This motivates longer-term unanswered questions about the appropriate objectives for learning good representations, for computing representations (i.e., inference), and the geometrical connections between representation learning, density estimation and manifold learning.},
+  note         = {arXiv: 1206.5538},
+  journal      = {arXiv:1206.5538 [cs]},
+  author       = {Bengio, Yoshua and Courville, Aaron and Vincent, Pascal},
+  year         = {2014},
+  month        = {Apr}
+}
 
 
 @article{aloimonos_active_1988,
@@ -90,7 +112,21 @@
   file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
 }
 
-@inbook{mataric_shaping_1994, place={San Francisco (CA)}, title={Reward Functions for Accelerated Learning}, ISBN={978-1-55860-335-6}, url={https://www.sciencedirect.com/science/article/pii/B9781558603356500301}, DOI={10.1016/B978-1-55860-335-6.50030-1}, abstractNote={This paper discusses why traditional reinforcement learning methods, and algorithms applied to those models, result in poor performance in situated domains characterized by multiple goals, noisy state, and inconsistent reinforcement. We propose a methodology for designing reinforcement functions that take advantage of implicit domain knowledge in order to accelerate learning in such domains. The methodology involves the use of heterogeneous reinforcement functions and progress estimators, and applies to learning in domains with a single agent or with multiple agents. The methodology is experimentally validated on a group of mobile robots learning a foraging task.}, booktitle={Machine Learning Proceedings 1994}, publisher={Morgan Kaufmann}, author={Mataric, Maja J}, editor={Cohen, William W. and Hirsh, Haym}, year={1994}, month={Jan}, pages={181–189} }
+@inbook{mataric_shaping_1994,
+  place        = {San Francisco (CA)},
+  title        = {Reward Functions for Accelerated Learning},
+  isbn         = {978-1-55860-335-6},
+  url          = {https://www.sciencedirect.com/science/article/pii/B9781558603356500301},
+  doi          = {10.1016/B978-1-55860-335-6.50030-1},
+  abstractnote = {This paper discusses why traditional reinforcement learning methods, and algorithms applied to those models, result in poor performance in situated domains characterized by multiple goals, noisy state, and inconsistent reinforcement. We propose a methodology for designing reinforcement functions that take advantage of implicit domain knowledge in order to accelerate learning in such domains. The methodology involves the use of heterogeneous reinforcement functions and progress estimators, and applies to learning in domains with a single agent or with multiple agents. The methodology is experimentally validated on a group of mobile robots learning a foraging task.},
+  booktitle    = {Machine Learning Proceedings 1994},
+  publisher    = {Morgan Kaufmann},
+  author       = {Mataric, Maja J},
+  editor       = {Cohen, William W. and Hirsh, Haym},
+  year         = {1994},
+  month        = {Jan},
+  pages        = {181–189}
+}
 
 
 @article{bajcsy_revisiting_2018,
@@ -244,6 +280,21 @@
   month        = {Dec},
   pages        = {1258–1276}
 }
+
+@article{arkin_lawnmowing_2000,
+  title        = {Approximation algorithms for lawn mowing and milling},
+  volume       = {17},
+  issn         = {0925-7721},
+  doi          = {10.1016/S0925-7721(00)00015-8},
+  abstractnote = {We study the problem of finding shortest tours/paths for “lawn mowing” and “milling” problems: Given a region in the plane, and given the shape of a “cutter” (typically, a circle or a square), find a shortest tour/path for the cutter such that every point within the region is covered by the cutter at some position along the tour/path. In the milling version of the problem, the cutter is constrained to stay within the region. The milling problem arises naturally in the area of automatic tool path generation for NC pocket machining. The lawn mowing problem arises in optical inspection, spray painting, and optimal search planning. Both problems are NP-hard in general. We give efficient constant-factor approximation algorithms for both problems. In particular, we give a (3+ε)-approximation algorithm for the lawn mowing problem and a 2.5-approximation algorithm for the milling problem. Furthermore, we give a simple 65-approximation algorithm for the TSP problem in simple grid graphs, which leads to an 115-approximation algorithm for milling simple rectilinear polygons.},
+  number       = {1},
+  journal      = {Computational Geometry},
+  author       = {Arkin, Esther M. and Fekete, Sándor P. and Mitchell, Joseph S. B.},
+  year         = {2000},
+  month        = {Oct},
+  pages        = {25–50}
+}
+
 
 @article{ghesu_multi_scale_2019,
   title        = {Multi-Scale Deep Reinforcement Learning for Real-Time 3D-Landmark Detection in {CT} Scans},
@@ -481,7 +532,16 @@
   pages        = {529–533}
 }
 
-@article{savinov_topmem_2018, title={Semi-parametric Topological Memory for Navigation}, url={http://arxiv.org/abs/1803.00653}, abstractNote={We introduce a new memory architecture for navigation in previously unseen environments, inspired by landmark-based navigation in animals. The proposed semiparametric topological memory (SPTM) consists of a (non-parametric) graph with nodes corresponding to locations in the environment and a (parametric) deep network capable of retrieving nodes from the graph based on observations. The graph stores no metric information, only connectivity of locations corresponding to the nodes. We use SPTM as a planning module in a navigation system. Given only 5 minutes of footage of a previously unseen maze, an SPTM-based navigation agent can build a topological map of the environment and use it to conﬁdently navigate towards goals. The average success rate of the SPTM agent in goal-directed navigation across test environments is higher than the best-performing baseline by a factor of three.}, note={arXiv: 1803.00653}, journal={arXiv:1803.00653 [cs]}, author={Savinov, Nikolay and Dosovitskiy, Alexey and Koltun, Vladlen}, year={2018}, month={Mar} }
+@article{savinov_topmem_2018,
+  title        = {Semi-parametric Topological Memory for Navigation},
+  url          = {http://arxiv.org/abs/1803.00653},
+  abstractnote = {We introduce a new memory architecture for navigation in previously unseen environments, inspired by landmark-based navigation in animals. The proposed semiparametric topological memory (SPTM) consists of a (non-parametric) graph with nodes corresponding to locations in the environment and a (parametric) deep network capable of retrieving nodes from the graph based on observations. The graph stores no metric information, only connectivity of locations corresponding to the nodes. We use SPTM as a planning module in a navigation system. Given only 5 minutes of footage of a previously unseen maze, an SPTM-based navigation agent can build a topological map of the environment and use it to conﬁdently navigate towards goals. The average success rate of the SPTM agent in goal-directed navigation across test environments is higher than the best-performing baseline by a factor of three.},
+  note         = {arXiv: 1803.00653},
+  journal      = {arXiv:1803.00653 [cs]},
+  author       = {Savinov, Nikolay and Dosovitskiy, Alexey and Koltun, Vladlen},
+  year         = {2018},
+  month        = {Mar}
+}
 
 
 @article{oh_minecraft_2016,

@@ -165,17 +165,26 @@ This environment simulates a UAV search-and-rescue scenario.
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption[Terrain environment]{Second environment. Terrain seen from above with ocean, }
+    \caption[Terrain environment]{Second environment. Terrain seen from above.}
 \end{figure}
 
 \subsection{Realistic Environment}
 % environment 3: hard, realistic
 
 The third environment is a three-dimensional version of the second one.
-% 3D, or photos
+
+\begin{figure}
+    \centering
+    \input{figures/camera.pgf}
+    \label{fig:camera}
+    %\vspace*{-1cm}
+    \caption[Camera environment]{Second environment. Terrain seen from a pan-tilt-zoom camera.}
+\end{figure}
 
 \section{Approach}
 \label{sec:approach}
+
+Due to the advantages described in Section \ref{theory on policy gradient}, we will limit our approaches to policy gradients.
 
 % should we rescale to 84x84 instead?
 

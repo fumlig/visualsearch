@@ -30,7 +30,7 @@ add pretty plotting (yield info from learn?)
 SEED = 0
 TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64
-HPARAMS = dict(
+ALG_KWARGS = dict(
     learning_rate=5e-4,
     num_steps=256,
     num_minibatches=8,
@@ -47,7 +47,7 @@ HPARAMS = dict(
 )
 
 
-def parse_hparams(s):
+def parse_kwargs(s):
     if os.path.exists(s):
         with open(s, "r") as f:
             return json.load(f)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
-    parser.add_argument("--hparams", type=parse_hparams, default={})#HPARAMS)
+    parser.add_argument("--alg-kwargs", type=parse_kwargs, default=ALG_KWARGS)
 
     args = parser.parse_args()
 
@@ -98,7 +98,6 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        #gym_search.wrappers.ExplicitMemory,
         #gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
@@ -114,7 +113,7 @@ if __name__ == "__main__":
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     writer = SummaryWriter(f"logs/{args.name}")
     agent = rl.agent(args.agent)(envs)
-    algorithm = rl.algorithm(args.algorithm)(**args.hparams)
+    algorithm = rl.algorithm(args.algorithm)(**args.alg_kwargs)
 
     if args.model:
         agent = th.load(args.model)

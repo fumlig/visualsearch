@@ -1,15 +1,9 @@
 import os
 import gym
 
-from gym_search.datasets import AirbusAircraftDataset, AirbusOilDataset
 from gym_search.envs.search import SearchEnv
 from gym_search.envs.camera import CameraEnv
-from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
-
-"""
-is the agent rewarded for finishing quickly?
-- not as of now, it is only punished for visiting a square twice...
-"""
+from gym_search.generators import GaussianGenerator, TerrainGenerator
 
 
 gym.register(
@@ -28,7 +22,7 @@ gym.register(
 )
 
 gym.register(
-    id="SearchGaussian-v0",
+    id="Gaussian-v0",
     entry_point=SearchEnv,
     kwargs=dict(
         generator=GaussianGenerator((256, 256), 3, 4, 3, 128, sigma=24),
@@ -38,7 +32,7 @@ gym.register(
 )
 
 gym.register(
-    id="SearchTerrain-v0",
+    id="Terrain-v0",
     entry_point=SearchEnv,
     kwargs=dict(
         generator=TerrainGenerator((1024, 1024), 3, 100, max_terrains=1024),
@@ -46,26 +40,3 @@ gym.register(
         step_size=64,
     )
 )
-
-
-if os.path.exists("data/airbus-aircraft"):
-    gym.register(
-        id="SearchAirbusAircraft-v0",
-        entry_point=SearchEnv,
-        kwargs=dict(
-            generator=DatasetGenerator(AirbusAircraftDataset("data/airbus-aircraft")),
-            view_shape=(128, 128),
-            step_size=128
-        )
-    )
-
-if os.path.exists("data/airbus-oil"):
-    gym.register(
-        id="SearchAirbusOil-v0",
-        entry_point=SearchEnv,
-        kwargs=dict(
-            generator=DatasetGenerator(AirbusOilDataset("data/airbus-oil")),
-            view_shape=(128, 128),
-            step_size=128
-        )
-    )

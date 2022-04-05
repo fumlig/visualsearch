@@ -101,7 +101,7 @@ class CameraEnv(gym.Env):
 
         # camera
         self.camera = pyr.PerspectiveCamera(yfov=self.camera_zoom_out, aspectRatio=self.view_size[1]/self.view_size[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+self.terrain_height*10, self.terrain_size//2)))
+        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+2.5, self.terrain_size//2)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
 
         self.scene.add_node(self.yaw_node)

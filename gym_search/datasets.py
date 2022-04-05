@@ -6,6 +6,30 @@ import os
 
 from torch.utils.data import Dataset
 
+"""
+if os.path.exists("data/airbus-aircraft"):
+    gym.register(
+        id="SearchAirbusAircraft-v0",
+        entry_point=SearchEnv,
+        kwargs=dict(
+            generator=DatasetGenerator(AirbusAircraftDataset("data/airbus-aircraft")),
+            view_shape=(128, 128),
+            step_size=128
+        )
+    )
+
+if os.path.exists("data/airbus-oil"):
+    gym.register(
+        id="SearchAirbusOil-v0",
+        entry_point=SearchEnv,
+        kwargs=dict(
+            generator=DatasetGenerator(AirbusOilDataset("data/airbus-oil")),
+            view_shape=(128, 128),
+            step_size=128
+        )
+    )
+"""
+
 
 def generate_dataset(root, generator, num_train, num_test, seed=0):    
     generator.seed(seed)

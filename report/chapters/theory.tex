@@ -340,9 +340,9 @@ As mentioned in Section~\ref{sec:policies-values}, policies and value functions 
 Neural networks have good properties for function approximation and have been used for RL with success.
 One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 1995.
 
-More recently, the use of deep neural networks has shown tremendous success in RL.
-In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and introduce DQN, which gives birth to the field of deep reinforcement learning (deep RL).
-With a CNN architecture, DQN approximates the quality function \(q\) and select actions greedily using only visual input.
+More recently, the successes of deep learning have bled over into the field of RL.
+In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and introduce DQN, which combines deep neural networks with RL and gives birth to the field of deep reinforcement learning (deep RL).
+DQN approximates the quality function \(q\) with a CNN, and select actions greedily using only visual input.
 To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.
 The input is fed through three convolutional layers:
 32 8x8 filters with stride 4,
@@ -355,30 +355,36 @@ The output layer has one output for each valid action.
 % instability
 % follow up works
 % architecture
-
-\cite{arulkumaran_survey_2017}
+%\cite{arulkumaran_survey_2017}
 
 The DQN architecture sparked great interest and several modifications.
-Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigates the effects of adding recurrency to a DQN in order to tackle POMDPs.
-A LSTM is added after the initial 
-
-Oh et al. ~\cite{oh_minecraft_2016} use a differentiable memory retrieval memory.
-
-Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a structured memory\dots % this one is very interesting
-
-% could have a section for memory mechanisms
-% this is detailed in the survey \cite{arulkumaran_survey_2017}
-% Taking recurrent processing further, it is possible to add a differentiable memory to the DQN, which allows it to more flexibly process information in its “working memory” [96]. In traditional RNNs, recurrent units are responsible for both performing calculations and storing information. Differentiable memories add large matrices that are purely used for storing information, and can be accessed using differentiable read and write operations, analagously to computer memory. With their key-value-based memory Q-network (MQN), Oh et al. [96] constructed an agent that could solve a simple maze built in Minecraft, where the correct goal in each episode was indicated by a coloured block shown near the start of the maze. The MQN, and especially its more sophisticated variants, significantly outperformed both DQN and DRQN baselines, highlighting the importance of using decoupled memory storage. More recent work, where the memory was given a 2D structure in order to resemble a spatial map, hints at future research where more specialised memory structures will be developed to address specific problems, such as 2D or 3D navigation [98]. Alternatively, differentiable memories can be used as approximate hash tables, allowing DRL algorithms to store and retrieve successful experiences to facilitate rapid learning [105].
-
-
+Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigate the effects of adding recurrency to a DQN in order to tackle POMDPs.
+They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
+It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 
 \subsection{Proximal Policy Optimization}
 
 Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
 
+\begin{algorithm}
+    \caption{Proximal Policy Optimization}
+    \begin{algorithmic}
+        \For{\(\text{iteration} = 1,2,\dots\)}
+            \For{\(\text{actor} = 1,2,\dots,N\)}
+                \State \(\text{Run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ timesteps}\)
+                \State \(\text{Compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
+            \EndFor
+            \State \(\text{Optimize surrogate } L \text{ wrt } \theta, \text{ with } K \text{ epochs and minibatch size } M \leq NT\)
+            \State \(\theta_{\text{old}} \leftarrow \theta\)
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
 \subsection{Object Detection}
 
 % active object detection
+
+In computer vision, the \textit{object detection} problem  
 
 A similar problem can be found in the computer vision literature under \textit{object detection}.
 The goal of object detection is to, given an input image, detect instances of semantic objects in it.
@@ -523,6 +529,17 @@ Their experiments make the same assumptions as \cite{zhu_target_driven} - the sc
     % parisotto tests on 3d environment. if we don't, we should at least discuss it.
 \end{enumerate}
 
+
+Oh et al. ~\cite{oh_minecraft_2016} use a differentiable retrieval memory.
+
+Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a structured memory\dots % this one is very interesting
+
+% could have a section for memory mechanisms
+% this is detailed in the survey \cite{arulkumaran_survey_2017}
+% Taking recurrent processing further, it is possible to add a differentiable memory to the DQN, which allows it to more flexibly process information in its “working memory” [96]. In traditional RNNs, recurrent units are responsible for both performing calculations and storing information. Differentiable memories add large matrices that are purely used for storing information, and can be accessed using differentiable read and write operations, analagously to computer memory. With their key-value-based memory Q-network (MQN), Oh et al. [96] constructed an agent that could solve a simple maze built in Minecraft, where the correct goal in each episode was indicated by a coloured block shown near the start of the maze. The MQN, and especially its more sophisticated variants, significantly outperformed both DQN and DRQN baselines, highlighting the importance of using decoupled memory storage. More recent work, where the memory was given a 2D structure in order to resemble a spatial map, hints at future research where more specialised memory structures will be developed to address specific problems, such as 2D or 3D navigation [98]. Alternatively, differentiable memories can be used as approximate hash tables, allowing DRL algorithms to store and retrieve successful experiences to facilitate rapid learning [105].
+
+
+
 \subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
 
 % first introduce the reason why generalization is important
@@ -592,17 +609,64 @@ The authors attribute this to the implicit curriculum of the distribution of lev
 
 \subsection{Evaluation of Deep Reinforcement Learning Agents}
 
-Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents.
-They...
+A problem in state-of-the art RL is reproducibility.
+There is often non-determinism, both in the methods and environments used.
+Furthermore, many methods have intrincic variance which can make published results difficult to interpret.
+This has meant that reproducing state-of-the-art deep RL results is difficult.
+
+Henderson et al.~\cite{henderson_matters_2018} discuss this problem from multiple perspectives.
+Through experimental analysis, they show that:
+
+\begin{itemize}
+    \item In policy gradient methods, hyperparameters and the choice of network architecture for policy and value function approximation can affect performance significantly.
+    They find that ReLU activations tend to perform best across environments and algorithms.
+    For PPO, the use of large networks may require changing other hyperparameters like learning rate.
+    \item Rescaling rewards can have a large effect, although it is difficult to predict how.
+    \item Variance between random seeds in stochastic environments affects performance of algorithms, and give learning curves that do not fall within the same distribution.
+    This suggests that selecting the top \(N\) trials or average over a small number of trials \(N\) can be misleading. They suggest to compare performance over many different random seeds.
+    \item For certain environments, learning curves can indicate successful optimization but the learned behaviour may not be satisfactory.
+    It is therefore important to not only show returns, but also demonstrations of the learned policy in action.
+    \item Implementation differences that are not reflected in publications can have a dramatic impact on performance.
+    It is therefore necessary to enumerate implementation details and package codebases with publications.
+    Performance of baseline experiments should also match original baseline publication code.
+\end{itemize}
+
+Due to the unstable nature of RL algorithms, it is often inadequate to just report average return.
+Henderson et al.~\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
+Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
+Various other significance tests\dots
+
+Finally, they make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
+Benchmarks environments like ALE~\cite{arcade} often have no clear winner.
+It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
+
+A similar work by Agarwal et al. (2022)~\cite{agarwal_rlliable_2022} criticises the heavy use of point estimates of aggregate performance.
+They advocate for a set of performance metrics that take uncertainty in results into account.
+\dots
+
+Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents, and make a set of recommendations.
+A navigation agent should be equipped with a special action that indicates that it has concluded the episode.
+The agent should be evaluated at the time this action is made, and not at some more favorable time step. % implicitly the trigger action for us, since we have multiple targets
+Proximity to a goal should be measured using geodesic distance, the shortest distance in the environment. % Manhattan in 2D?
+They recomnend success weighted by (normalized inverse) path length (SPL) as the primary measure of navigation performance.
+With \(N\) test episodes, SPL is computed as 
+
+\begin{equation}
+    \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i, l_i)}
+\end{equation}
+
+where \(S_i\) is a binary indicator of success,
+\(l_i\) is the shortest path distance from the agent's starting position to the goal,
+and \(p_i\) is the length of the path actually taken in the episode.
+If 50\% of test episode are successful and the agent takes the optimal path in all of them, its SPL is 0.5.
+By measuring SPL of human subjects, what is a good score can be calibrated.
+Finally, they emphasize the importance of memory mechanisms that support the construction of rich internal representations of the agent's environment.
+Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
+Agumentations like reucrrent update mechanisms add more potential.
+More advanced memory mechanisms can be important for better navigation.
+The nature of the internal representation is central to the study of embodied navigation.
+% more recommendations are there, are they relevant?
+% see citations [12, 13, 22, 23, 27] on memory mechanisms
 
 Batra et al. (2020)~\cite{batra_evaluation_2020} do something similar\dots
 
-% make point of following these in method
-A problem in RL is reproducibility.
-There is often non-determinism, both in the methods and environments used.
-This has meant that reproducing state-of-the-art deep RL results is difficult.~\cite{henderson_matters_2018}
-Henderson et al. (2018) suggest to make future results in deep RL more reproducible.
-% what do they find
-
-A similar work by Agarwal et al. (2022)~\cite{agarwal_rlliable_2022} criticises the heavy use of point estimates of aggregate performance.
-They advocate for a set of performance metrics that take uncertainty in results into account. 

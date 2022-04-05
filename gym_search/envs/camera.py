@@ -26,7 +26,7 @@ class CameraEnv(gym.Env):
 
     def __init__(
         self,
-        view_size=(256, 256),
+        view_size=(64, 64),
         view_steps=32,
         terrain_size=1024,
         terrain_height=50,
@@ -85,13 +85,11 @@ class CameraEnv(gym.Env):
         # targets
         self.targets = []
         self.hits = []
-        for x, z in targets:
-            x = self.terrain_size - x
-            z = self.terrain_size - z
-            y = self.height(x, z) + 5
-            #z = self.terrain_size - z
+        for z, x in targets:
+            side = 25
+            y = self.height(x, z) + side
 
-            t = tri.creation.box((2.5, 2.5, 2.5))
+            t = tri.creation.box((side, side, side))
             t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
             m = pyr.Mesh.from_trimesh(t)
             self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
@@ -103,6 +101,10 @@ class CameraEnv(gym.Env):
         self.camera = pyr.PerspectiveCamera(yfov=self.camera_zoom_out, aspectRatio=self.view_size[1]/self.view_size[0])
         self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((self.terrain_size//2, self.height(self.terrain_size//2, self.terrain_size//2)+2.5, self.terrain_size//2)))
         self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
+
+        # debug
+        self.yaw_node.matrix = tri.transformations.rotation_matrix(-np.pi/2, (1, 0, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
+        self.yaw_node.matrix = tri.transformations.translation_matrix((0, 1024, 0)) @ self.yaw_node.matrix
 
         self.scene.add_node(self.yaw_node)
         self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)

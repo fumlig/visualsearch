@@ -50,7 +50,10 @@
 % This chapter is called either \emph{Theory, Related Work}, or
 % \emph{Related Research}. Check with your supervisor.
 
-This chapter introduces relevant theory.
+This chapter introduces background and related work.
+
+% background: neuroscience, framework
+% related work: practical aspects, reinforcement learning
 
 \section{Background}
 
@@ -80,6 +83,8 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\c
 
 % see conclusion in that paper:
 % - mirror neurons, same system responsible for generating and interpreting actions at a high level 
+
+\cite{chen_activevisionsurvey_2011}
 
 \subsection{Visual Search}
 \label{sec:visualsearch}
@@ -117,6 +122,10 @@ Scene guidance is also identified, in which attributes of the scene guide attent
 These works ground the task considered in this project in psychology.
 
 % can we build a system that exhibits all of these?
+
+\subsection{Visual Attention}
+
+\dots
 
 \subsection{Reinforcement Learning}
 
@@ -176,9 +185,11 @@ At each time step \(t\), the goal of the agent is to select the action that maxi
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 Planning in a POMDP is undecidable, and solving them is often computationally intractable.
 Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_pomdp_1998} which is acts on.
-The belief state summarizes the agent's previous experience and is therefore dependent on the previous belief state, observation and action.
+The belief state summarizes the agent's previous experience and is therefore dependent on the full \textit{history} of actions and observations.
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
 From here on we will use the belief state and the environment state \(s\) interchangably. 
+% Sutton page 467 is better, contains latent state assumption
+
 
 \subsubsection{Policies and Value Functions}
 \label{sec:policies-values}
@@ -199,21 +210,26 @@ For problems with large state and action spaces, it is common to represent value
 In such cases, it is common to encounter states that have never been encountered before.
 This makes it important that the estimated value function can generalize from seen to unseen states.
 With examples from the true value function, an approximation can be made with supervised learning methods.
-We write \(\hat{v}(s,w) \approx v_\pi(s)\) for the approximate value of state \(s\) with the some weight vector \(w \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
+We write \(\hat{v}(s,\mathbf{w}) \approx v_\pi(s)\) for the approximate value of state \(s\) with some weight vector \(\mathbf{w} \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
 
 An alternative to action-value methods is to approximate the policy itself.
 \textit{Policy gradient methods}~\cite{sutton_policygrad_1999} learn a parametrized policy that select actions without a value function.
-We denote a parametrized policy as \(\pi(a|s,\theta)\) with \(\theta \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
-The policy parameters are usually learned based on the gradient of some performance measure \(J(\theta)\).
-As long as \(\pi(a|s,\theta)\) is differentiable with respect to its parameters, the parameters can be updated with \textit{gradient ascent} in \(J\):
+We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
+The policy parameters are usually learned based on the gradient of some performance measure \(J(\boldsymbol{\theta})\).
+As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated with \textit{gradient ascent} in \(J\):
 
 \[
-    \theta_{t+1} = \theta_t + \alpha \hat{\nabla J(\theta_t)}) 
+    \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha \hat{\nabla J(\boldsymbol{\theta}_t)}) 
 \]
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}. In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
-In these cases, there might also be some overlap between the weights \(w\) of the value function estimate and \(\theta\) of the policy estimate. 
+In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
+
+Function approximation includes important aspects of partial observability.
+If there is a state variable that is not observable,
+then the parametrization can be chosen such that the approximate value does not depend on that state variable.
+Because of this, function approximation is applicable to the partially observable case.
 
 % https://www.quora.com/What-are-the-benefits-of-actor-critic-framework-in-reinforcement-learning
 
@@ -223,23 +239,31 @@ In these cases, there might also be some overlap between the weights \(w\) of th
 
 % we can illustrate the challenges in terms of our problem
 
-\begin{itemize}
-    \item Exploration and Exploitation
-    \item Sparse Rewards
-    \item Credit Assignment~\cite{minsky_cap_1961}
-\end{itemize}
+One of the challenges that arises in reinforcement learning is the exploration-exploitation trade-off.
+An RL agent should \textit{exploit} knowledge gained from previous experiences and prefer actions that has yielded reward in the past.
+It should also \textit{explore} in order to learn better actions to take in the future.
+Agents that fail to both exploit and explore will lead to failure at the task.
+%Furthermore, striking a good balance between the two is non-trivial, and often requires care.~\cite{sutton} % ...
 
+Another challenge is the design of reeward signals.
 For some tasks, like certain video games, the objective is simply to maximize the score obtained.
 In this case there is an inherent reward signal and the agent achieves its task simply by maximizing this inherent signal.
 Other times, we have a task we want the agent to solve and have to design a reward signal around that task.
 Designing rewards is not straight-forward and can often have unintended effects~\cite{sutton_reinforcement_2018}.
 Special care has to be taken to ensure that the reward incentivizes the desired behaviour.
 
-Here, the problem of sparse rewards also comes into play.
+Here, the problem of \textit{sparse rewards} also comes into play.
+The agent has to be reward frequently enough to allow it to achieve its goal once.
+Often it has to incentivize it to achieve its goal efficiently, with multiple different starting conditions.
+If rewards are too sparse, the agent may explore aimlessly and take too long to find achieve its goal.
+In such cases, it can be effective to modify the reward to give the agent hints along the way.
+If the received reward is temporally distant from the action that caused it, the agent may have difficulty connecting the two.
+This is known as the \textit{credit assignment problem}~\cite{minsky_cap_1961}.
 
-Reward shaping is a technique to tackle\dots~\cite{mataric_shaping_1994}
+In practice, rewards are often designed through trial-and-error.
+Several iterations of a reward signal are tried until one yields expected and sufficient results.
 
-
+% Reward shaping is a technique to tackle\dots~\cite{mataric_shaping_1994}
 % https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
 % https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
 % reward shaping
@@ -384,55 +408,58 @@ Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
 
 % active object detection
 
-In computer vision, the \textit{object detection} problem  
+In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
+Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
+State of the art object detection uses deep learning techniques and usually involves a CNN~\cite{zhao_objectdetection_2019}.
 
-A similar problem can be found in the computer vision literature under \textit{object detection}.
-The goal of object detection is to, given an input image, detect instances of semantic objects in it.
-This includes assigning a bounding box to the objects, and classifying the object.
-The input image is usually passively sampled, and the whole scene is visible at once.
+Although we do not focus on difficult recognition problems in this work, the task we consider bears resemblance to object localization.
+Object detectors usually use region proposal networks that consider the whole image and return a set of bounding box candidates.
+The object recognizer is then run on each region proposal.
 
-Caicedo and Lazebnik (2015)~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
+
+Usually, images in object detection are passively sampled - they are drawn from some distribution and all are independent.
+In \textit{active object detection}, images are instead chosen so as to 
+
+
+Caicedo and Lazebnik~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
 An agent is trained to successively improve a bounding box using translating and scaling transformations.
 They use a reward signal that is proportional to how well the current box covers the target object.
 An action that improves the region is rewarded with +1, and given a punishment of -1 otherwise.
-Without this quantization, the difference was small enough to confuse the agent.
-Binary rewards communicate more clearly which transformations keep the object inside the box and which take the box away from the target.
+They find that this reward communicates more clearly which transformations keep the object inside the box and which take the box away from the target.
 When there is no action that improves the bounding box, the agent may select a trigger action (which would be the only action that does not give a negative reward) which resets the box.
 This way the agent may select additional bounding boxes.
-Each trigger modifies the environment by marking it so that the agent may learn to not select the same region twice.
-This is referred to as an inhibition-of-return mechanism, and is widely used in visual attention models~\cite{[16] in caicedo_active_2015}.
-This method has a few shortcomings for the problem considered in this project.
-The object may not be visible in the initial frame so the agent cannot act in the same way. 
+Each trigger modifies the environment by marking it so that the agent may learn to not select the same region twice. % inhibition-of-return mechanism, widely used in visual attention models ~\cite{itti_koch_2001}
 
-A separate field is active object search, which is perhaps most closely related to the problem we consider in this work.
-In active object search, % explain
-% difference is tht this is the first deep dive into these particular aspects
-% write about the work that uses object co-occurences though
-% we should stress that we do not explicitly model the environment guidance, but are rather interested in whether it can be learned efficiently by the system
 
-% Visual Navigation is another thing to call it...
 
-% 
 
-A similar work by Ghesu et al. (2016)~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
+A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
 Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
 The agent sees a limited region of interest in an image, with its center representing the current position of the agent.
-The actions available to the agent translate the view up, down, left and aright.
+The actions available to the agent translate the view up, down, left and right.
 A reward is given to the agent that is equal to the supervised relative distance-change to the landmark after each action.
 Three datasets of 891 anatomical images are used.
 The agent starts at random positions in the image close to the target landmark and is tasked with moving to the target location.
 While achieving strong results (90\% success rate), the scenes and targets are all drawn from a distribution with low variance.
 Most real-world search tasks exhibit larger variance than anatomical images of the human body.
 
-\cite{uzkent_detection_2020}\dots
+
+% not that relevant now that I read it
+% Uzkent et al.~\cite{uzkent_detection_2020} use deep RL to detect obects in large images.
+% A policy network is trained to select between high and low level of detail in images in order to reduce the computational requirements.
+% http://xviewdataset.org/ is used by Uzkent - looks promising
 
 % CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
-
 % CV material: different in that the object is assumed to be visible
 
 Chen and Gupta~\cite{chen_memory_2017} use a spatial memory for context reasoning in object detection\dots
 
 \subsection{Visual Attention}
+
+Visual attention in humans is often split into two phasesis usually split into two phases
+
+~\cite{itti_koch_2001}
+
 
 % this article is very good!
 % note: reinforcement learning part, soft and hard attention
@@ -451,6 +478,7 @@ Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
 Partially observable processes, such as the one we consider in this work, can be seens as hard attention problems.
 By taking actions, the hard attention can be redirected.
 
+
 \subsection{Coverage Path Planning}
 
 % could be a smaller section in background, under visual search
@@ -466,7 +494,7 @@ Furthermore, a good agent should also prioritize certain regions which is not pa
 Although a CPP agent that is able to recognize targets is not optimal, it is a suitable baseline for the task.
 Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is suitable for grid-discretized can be used. % some simple approximation
 
-\cite{krishna_tetromino_2020} % an approach with RL
+% \cite{krishna_tetromino_2020} -connection to RL
 
 \subsection{Visual Navigation}
 

@@ -224,4 +224,3 @@ class NeuralMap(nn.Module):
 
         return th.cat([r, c, w], dim=1), new_state
 
-

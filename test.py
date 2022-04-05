@@ -25,7 +25,7 @@ WINDOW_SIZE = (640, 640)
 
 def spl(success, shortest_path, taken_path):
     # https://arxiv.org/pdf/1807.06757.pdf
-    return np.mean(success*shortest_path/np.max(shortest_path, taken_path))
+    return success*shortest_path/max(shortest_path, taken_path)
 
 
 if __name__ == "__main__":
@@ -38,9 +38,8 @@ if __name__ == "__main__":
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--observe", action="store_true")
-    parser.add_argument("--memory", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--episodes", type=int, default=1024)
+    parser.add_argument("--episodes", type=int, default=100)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
 
@@ -49,9 +48,6 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        #gym_search.wrappers.ExplicitMemory,
-        #gym_search.wrappers.LastAction,
-        #gym_search.wrappers.LastReward
     ]
 
     env = gym.make(args.environment)
@@ -60,7 +56,7 @@ if __name__ == "__main__":
 
     agent = None
     device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
-    stats = [defaultdict(int) for _ in range(args.episodes)]
+    infos = []
 
     if args.seed is not None:
         random.seed(args.seed)
@@ -98,12 +94,6 @@ if __name__ == "__main__":
             img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
             img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
-            if args.memory:
-                mem = (obs["overview"]*255).astype(dtype=np.uint8)
-                mem = cv.resize(mem, WINDOW_SIZE, interpolation=cv.INTER_AREA)
-                mem = cv.cvtColor(mem, cv.COLOR_BGR2RGB)
-                img = np.hstack((img, mem))
-
             cv.imshow(args.environment, img)	
 
             key = cv.waitKey(args.delay)
@@ -115,17 +105,10 @@ if __name__ == "__main__":
                     obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
                     act, state = agent.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
 
-            if act == env.Action.TRIGGER:
-                stats[ep]["triggers"] += 1
-
-            if args.verbose:
-                step_begin = process_time()
-
+            
+            step_begin = process_time()
             obs, rew, done, info = env.step(act)
-
-            if args.verbose:
-                step_end = process_time()
-                print("fps:", 1.0/(step_end - step_begin))
+            step_end = process_time()
 
             if key == KEY_RET:
                 done = True
@@ -133,22 +116,17 @@ if __name__ == "__main__":
             if key == KEY_ESC:
                 exit(0)
 
-            stats[ep]["steps"] += 1
-            stats[ep]["return"] += rew
-
             if args.verbose:
                 print(
                     "action:", env.get_action_meanings()[act],
                     "observation:", obs,
                     "reward:", rew,
-                    "info:", info
+                    "info:", info,
+                    "fps:", 1.0/(step_end - step_begin)
                 )
 
             if done:
-                print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))
-                #cv.imwrite("search.jpg", env._image(show_path=True))
+                infos.append(info)
 
-    print(
-        "average return:", sum([ep["return"] for ep in stats])/len(stats),
-        "average length:", sum([ep["length"] for ep in stats])/len(stats),
-    )
+        # todo: spl
+        print(infos)

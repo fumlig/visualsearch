@@ -3,8 +3,8 @@ import gym
 
 from gym_search.envs.search import SearchEnv
 from gym_search.envs.camera import CameraEnv
-from gym_search.generators import GaussianGenerator, TerrainGenerator
-
+from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
+from gym_search.datasets import XViewDataset
 
 gym.register(
     id="Search-v0",
@@ -40,3 +40,14 @@ gym.register(
         step_size=64,
     )
 )
+
+#if os.path.exists("data/xview"):
+#    gym.register(
+#        id="XView-v0",
+#        entry_point=SearchEnv,
+#        kwargs=dict(
+#            generator=DatasetGenerator(XViewDataset("data/xview")),
+#            view_shape=(128, 128),
+#            step_size=128
+#        )
+#    )

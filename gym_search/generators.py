@@ -86,7 +86,7 @@ class TerrainGenerator(Generator):
             size = self.random.integers(5, 10)
             rect = Box(clamp(y, 0, height-size), clamp(x, 0, width-size), size, size)
             targets.append(rect)
-            coords = tuple(draw.rectangle(rect.pos, extent=rect.shape, shape=self.shape))
+            coords = tuple(draw.rectangle(rect.position, extent=rect.shape, shape=self.shape))
             image[coords] = (255, 0, 0)
 
         return image, targets

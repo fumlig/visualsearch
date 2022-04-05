@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as geopd
 import json
 import cv2 as cv
 import ast
@@ -47,6 +48,27 @@ def generate_dataset(root, generator, num_train, num_test, seed=0):
             "targets": [(tgt.y, tgt.x, tgt.h, tgt.w) for tgt in tgts]
         })
 
+
+class XViewDataset(Dataset):
+    def __init__(self, root="data/view"):
+        self.root = root
+        self.data = geopd.read_file("data/xview/train_labels/xView_train.geojson")
+
+    def __len__(self):
+        return len(self.data["image_id"].unique())
+    
+    def __getitem__(self, idx):
+        image_id = self.data.image_id.unique()[idx]
+        image = cv.imread(os.path.join(self.root, "train_images", "train_images", image_id))
+        coords = list(self.data[self.data["image_id"] == image_id]["bounds_imcoords"].apply(lambda x: tuple(map(int, x.split(",")))))
+
+        targets = []
+        for x0, y0, x1, y1 in coords:
+            x, y = x0, y0
+            w, h = x1 - x0, y1 - y0
+            targets.append(((y, x), (h, w)))
+
+        return image, targets
 
 class AirbusAircraftDataset(Dataset):
     # https://www.kaggle.com/airbusgeo/airbus-aircrafts-sample-dataset/download

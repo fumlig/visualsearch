@@ -5,10 +5,10 @@ class Box:
         self.y, self.x = y, x
         self.h, self.w = h, w
 
-    def get_pos(self):
+    def get_position(self):
         return self.y, self.x
 
-    def set_pos(self, p):
+    def set_position(self, p):
         self.y, self.x = p
 
     def get_shape(self):
@@ -17,7 +17,7 @@ class Box:
     def set_shape(self, s):
         self.h, self.w = s
 
-    pos = property(get_pos, set_pos)
+    position = property(get_position, set_position)
     shape = property(get_shape, set_shape)
 
     @property

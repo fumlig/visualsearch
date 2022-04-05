@@ -50,10 +50,10 @@ class SearchEnv(gym.Env):
         y = self.random.integers(0, (h-self.view.h+1)//self.step_size)*self.step_size
         x = self.random.integers(0, (w-self.view.w+1)//self.step_size)*self.step_size
 
-        self.view.pos = (y, x)
+        self.view.position = (y, x)
         self.terrain, self.targets = self.generator.sample()
         self.hits = [False for _ in range(len(self.targets))]
-        self.path = [self.view.pos]
+        self.path = [self.view.position]
         self.num_steps = 0
 
         self.visible = np.full(self.scaled_shape, False)
@@ -64,7 +64,7 @@ class SearchEnv(gym.Env):
         self.visible[self.scaled_position] = True
 
         self.last_dist = euclidean_dist(self.view.center(), self.targets[0].center())
-        self.optimal_steps = int(travel_dist(map(self.normalize_position, [self.view.pos] + [target.pos for target in self.targets]))) + len(self.targets)
+        self.optimal_steps = int(travel_dist(map(self.normalize_position, [self.view.position] + [target.position for target in self.targets]))) + len(self.targets)
 
         self.counters = defaultdict(int)
 
@@ -83,8 +83,8 @@ class SearchEnv(gym.Env):
         y = clamp(self.view.y+dy*self.step_size, 0, h-self.view.h)
         x = clamp(self.view.x+dx*self.step_size, 0, w-self.view.w)
 
-        self.view.pos = (y, x)
-        self.path.append(self.view.pos)
+        self.view.position = (y, x)
+        self.path.append(self.view.position)
 
         revisit = self.visited[self.scaled_position]
         retrigger = self.triggered[self.scaled_position] and action == self.Action.TRIGGER
@@ -133,7 +133,7 @@ class SearchEnv(gym.Env):
         )
 
 
-        return obs, rew, done, {"counters": self.counters}
+        return obs, rew, done, info
 
     def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):
         # todo: show_path gets slow when the path is long
@@ -142,7 +142,7 @@ class SearchEnv(gym.Env):
 
         if show_targets or show_hits:
             for i in range(len(self.targets)):
-                coords = tuple(draw.rectangle(self.targets[i].pos, extent=self.targets[i].shape, shape=self.shape))
+                coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.shape))
 
                 if show_hits and self.hits[i]:
                     img[coords] = add_with_alpha(img[coords], (0, 255, 0), 0.5)
@@ -155,7 +155,7 @@ class SearchEnv(gym.Env):
                 img[coords] = add_with_alpha(img[coords], (127, 127, 127), 0.25+0.5*i/len(self.path))
 
         if show_view:
-            coords = tuple(draw.rectangle_perimeter(self.view.pos, extent=self.view.extent, shape=self.shape))
+            coords = tuple(draw.rectangle_perimeter(self.view.position, extent=self.view.extent, shape=self.shape))
             img[coords] = (255, 255, 255)
             img = img.astype(np.uint8)
 
@@ -183,8 +183,8 @@ class SearchEnv(gym.Env):
 
     @property
     def scaled_position(self):
-        y = self.view.pos[0] // self.view.shape[0]
-        x = self.view.pos[1] // self.view.shape[1]
+        y = self.view.position[0] // self.view.shape[0]
+        x = self.view.position[1] // self.view.shape[1]
         return y, x
 
     def normalize_position(self, position):

@@ -141,7 +141,7 @@ class CameraEnv(gym.Env):
                     
                 x, y, z = self.targets[i]
 
-                if self.visible(x, y, z):
+                if self.is_visible(x, y, z):
                     self.hits[i] = True
                     hits += 1
 
@@ -179,7 +179,7 @@ class CameraEnv(gym.Env):
     def height(self, x, z):
         return self.terrain[round(x), round(z)]
 
-    def visible(self, x, y, z):
+    def is_visible(self, x, y, z):
         camera_node = self.scene.main_camera_node
         camera_pose = self.scene.get_pose(camera_node)
         

@@ -23,6 +23,11 @@ KEY_RET = 13
 WINDOW_SIZE = (640, 640)
 
 
+def spl(success, shortest_path, taken_path):
+    # https://arxiv.org/pdf/1807.06757.pdf
+    return np.mean(success*shortest_path/np.max(shortest_path, taken_path))
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
@@ -132,10 +137,12 @@ if __name__ == "__main__":
             stats[ep]["return"] += rew
 
             if args.verbose:
-                print("action:", env.get_action_meanings()[act], "reward:", rew, "info:", info)
-
-            if args.observe:
-                print("observation:", obs)
+                print(
+                    "action:", env.get_action_meanings()[act],
+                    "observation:", obs,
+                    "reward:", rew,
+                    "info:", info
+                )
 
             if done:
                 print(", ".join([f"{key}: {value}" for key, value in stats[ep].items()]))

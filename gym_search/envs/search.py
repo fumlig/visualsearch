@@ -125,7 +125,14 @@ class SearchEnv(gym.Env):
 
         obs = self.observation()
         done = all(self.hits) or self.num_steps == self.max_steps
-    
+        info = dict(
+            counters=self.counters,
+            path=self.path,
+            success=all(self.hits),
+            shortest=self.optimal_steps
+        )
+
+
         return obs, rew, done, {"counters": self.counters}
 
     def render(self, mode="rgb_array", show_view=True, show_targets=True, show_hits=True, show_path=True):

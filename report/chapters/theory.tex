@@ -338,11 +338,11 @@ In this section, related work is presented.
 
 As mentioned in Section~\ref{sec:policies-values}, policies and value functions are often approximated.
 Neural networks have good properties for function approximation and have been used for RL with success.
-One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in the 1995.
+One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in 1995.
 
 More recently, the successes of deep learning have bled over into the field of RL.
 In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and introduce DQN, which combines deep neural networks with RL and gives birth to the field of deep reinforcement learning (deep RL).
-DQN approximates the quality function \(q\) with a CNN, and select actions greedily using only visual input.
+DQN approximates the quality function \(q(s, a)\) with a CNN, and select actions greedily using only visual input.
 To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.
 The input is fed through three convolutional layers:
 32 8x8 filters with stride 4,
@@ -461,6 +461,7 @@ By taking actions, the hard attention can be redirected.
 
 The task we consider bears resemblance to visual navigation~\cite{zeng_survey_2020}. % or is an instance of?
 
+% Point navigation / Object Navigation
 
 
 
@@ -519,7 +520,9 @@ A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object re
 They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
 Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
 
-\subsection{Memory for Deep Reinforcement Learning}
+Several works in visual navigation have placed emphasis on memory representations.~\cite{savinov_topmem_2018} % cite more
+
+\subsection{Memory Architectures for Deep Reinforcement Learning}
 
 \begin{enumerate}
     \item Frame stacking
@@ -539,6 +542,23 @@ Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a struct
 % Taking recurrent processing further, it is possible to add a differentiable memory to the DQN, which allows it to more flexibly process information in its “working memory” [96]. In traditional RNNs, recurrent units are responsible for both performing calculations and storing information. Differentiable memories add large matrices that are purely used for storing information, and can be accessed using differentiable read and write operations, analagously to computer memory. With their key-value-based memory Q-network (MQN), Oh et al. [96] constructed an agent that could solve a simple maze built in Minecraft, where the correct goal in each episode was indicated by a coloured block shown near the start of the maze. The MQN, and especially its more sophisticated variants, significantly outperformed both DQN and DRQN baselines, highlighting the importance of using decoupled memory storage. More recent work, where the memory was given a 2D structure in order to resemble a spatial map, hints at future research where more specialised memory structures will be developed to address specific problems, such as 2D or 3D navigation [98]. Alternatively, differentiable memories can be used as approximate hash tables, allowing DRL algorithms to store and retrieve successful experiences to facilitate rapid learning [105].
 
 
+Anderson et al. (2018)~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations environments in navigation agents.
+Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
+Agumentations like reucrrent update mechanisms add more potential.
+More advanced memory mechanisms can be important for better navigation.
+The nature of the internal representation is central to the study of embodied navigation.
+% more recommendations are there, are they relevant?
+% see citations [12, 13, 22, 23, 27] on memory mechanisms
+% \cite{gupta_cognitive_2019}
+% 
+
+
+\subsection{Benchmarking Environments}
+
+\begin{itemize}
+    \item What is contained in an environment (represents a Markov Decision Process).
+    \item What is a good benchmarking environment
+\end{itemize}
 
 \subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
 
@@ -632,41 +652,53 @@ Through experimental analysis, they show that:
 \end{itemize}
 
 Due to the unstable nature of RL algorithms, it is often inadequate to just report average return.
-Henderson et al.~\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
+\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
 Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
 Various other significance tests\dots
 
-Finally, they make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
+Finally, \cite{henderson_matters_2018} make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
 Benchmarks environments like ALE~\cite{arcade} often have no clear winner.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
 
 A similar work by Agarwal et al. (2022)~\cite{agarwal_rlliable_2022} criticises the heavy use of point estimates of aggregate performance.
-They advocate for a set of performance metrics that take uncertainty in results into account.
-\dots
+They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis. 
+The popularity of more challenging benchmarks has lead to longer training times.
+This has made it less feasible to measure performance over many training runs,
+which in turn has led to a shift to only evaluating a small number of runs per task.
+Like \cite{henderson_matters_2018}, they advocate for the use  of performance metrics that take uncertainty in results into account.
+They propose the following set of metrics that better reflect performance across a handful of runs:
+
+\begin{itemize}
+    \item Uncertainty in aggregate performance should be reported through interval estimates via stratified bootstrap confidence intervals.
+    \item Variability in performance across tasks should be reported through performance profiles (score distributions).
+    \item Aggregate metrics for summarizing performance across tasks should be reported through interquartile mean (IQM) across all runs.
+\end{itemize}
 
 Anderson et al. (2018)~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents, and make a set of recommendations.
 A navigation agent should be equipped with a special action that indicates that it has concluded the episode.
 The agent should be evaluated at the time this action is made, and not at some more favorable time step. % implicitly the trigger action for us, since we have multiple targets
 Proximity to a goal should be measured using geodesic distance, the shortest distance in the environment. % Manhattan in 2D?
-They recomnend success weighted by (normalized inverse) path length (SPL) as the primary measure of navigation performance.
+They recommend success weighted by (normalized inverse) path length (SPL) as the primary measure of navigation performance.
 With \(N\) test episodes, SPL is computed as 
 
 \begin{equation}
     \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i, l_i)}
 \end{equation}
 
+% if we adopt SPL, we should note that the optimal path is not realistic for this problem
+
 where \(S_i\) is a binary indicator of success,
 \(l_i\) is the shortest path distance from the agent's starting position to the goal,
 and \(p_i\) is the length of the path actually taken in the episode.
 If 50\% of test episode are successful and the agent takes the optimal path in all of them, its SPL is 0.5.
 By measuring SPL of human subjects, what is a good score can be calibrated.
-Finally, they emphasize the importance of memory mechanisms that support the construction of rich internal representations of the agent's environment.
-Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
-Agumentations like reucrrent update mechanisms add more potential.
-More advanced memory mechanisms can be important for better navigation.
-The nature of the internal representation is central to the study of embodied navigation.
-% more recommendations are there, are they relevant?
-% see citations [12, 13, 22, 23, 27] on memory mechanisms
 
-Batra et al. (2020)~\cite{batra_evaluation_2020} do something similar\dots
-
+Batra et al. (2020)~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
+They note some issues with the SPL metric.
+It fails to consider the fact that some failures are less of a failure than others.
+Some failures might in fact be close to reaching the goal while some fail completely.
+The binary success introduces high variance in average SPL computation.
+Furthermore, SPL is not particularly suitable for comparison across different datasets,
+as obtaining a high SPL is more difficult for short paths than for long paths.
+They suggest that SPL should be replaced by some metric that takes these issues into account.
+However, to our knowledge such a metric is yet to be proposed and widely adopted.

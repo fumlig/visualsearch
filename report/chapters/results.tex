@@ -19,14 +19,14 @@
 % already been described in the theory chapter, making it possible to
 % refer to it as part of the justification.
 
-When it comes to hyperparameters, we find that letting the number of rollout steps be substantially lower than the episode length we achieve much more stable training results.
-Furthermore, increasing the number of weights in the neural network made it more difficult to train.
+%When it comes to hyperparameters, we find that letting the number of rollout steps be substantially lower than the episode length we achieve much more stable training results.
+%Furthermore, increasing the number of weights in the neural network made it more difficult to train.
 
-We find that the hyperparameters from [procgen] perform well, especially when the number of environments is large.
+%We find that the hyperparameters from [procgen] perform well, especially when the number of environments is large.
 
-Also, proximal policy optimization was unstable without reward normalization. % Discussion: We hypothesize that this is because...
+%Also, proximal policy optimization was unstable without reward normalization. % Discussion: We hypothesize that this is because...
 
-This coupled with a sparse reward signal led to many cases where the agent converged towards a poor local optimum (or perhaps never converged at all).
+%This coupled with a sparse reward signal led to many cases where the agent converged towards a poor local optimum (or perhaps never converged at all).
 
 
 % the effect of number of layers on performance

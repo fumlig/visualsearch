@@ -19,7 +19,7 @@
 
 In this chapter, the method used is described.
 Section \ref{sec:problem} formalizes the problem solved.
-Section \ref{sec:environment} details the environment used to evaluate solutions.
+Section \ref{sec:environments} details the environment used to evaluate solutions.
 Section \ref{sec:baseline} describes the baseline learning method.
 Section \ref{sec:approach} describes the approach used to solve the problem with a learning agent.
 Section \ref{sec:experiments} describes the experiments conducted to answer research questions \ref{itm:rq2} and \ref{itm:rq3}.
@@ -48,11 +48,12 @@ If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rve
 To train an test an agent for the problem, we use three different environments.
 The three environments have different characteristics to test the applicability of the evaluated approaches.
 In each environment there is a scene with a background of distractors and a foreground of targets.
+As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
 The scenes are drawn from some unknown distribution.
-The background and foreground are assumed to be correlated.
-This means that by looking at the background, an agent should sometimes be able to deduce a suitable action.
+The appearance of the scenes and the location of targets have some correlation in all environments.
+This means that the agent should be able to search more efficiently using knowledge from the scene.
 
-For the position, we assume the presense of some oracle.
+For the position part of the observations, we assume the presense of some oracle.
 In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
 If how each action moves the agent is well-defined, we do not need the position at all.
 We can use relative positions instead of absolute ones.
@@ -195,6 +196,7 @@ This environment is intended to model more realistic scenarios where the image i
 \section{Approach}
 \label{sec:approach}
 
+% this should maybe not be specificed yet...
 
 To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
 Considering 
@@ -206,10 +208,37 @@ The neural network of the agent is split into four parts:
 A feature extraction network is connected to a recurrent network.
 The recurrent network is in turn is connected to an actor network head and a critic network head, which approximate the policy and value function respectively.
 
+The architecture of the neural network is presented in Figure X.
+\todo{Describe approach once it is fully decided. Will be a memory.}
 
 The network is trained with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
-We 
+Furthermore, we use the same parameters as those outlines in ~\cite{cobbe_procgen_2020}.
+These are presented in Table~\ref{tab:hyperparameters}.
+We find that using many parallell environments stabilizes the training.
+
+\begin{table}
+    \centering
+    \caption{Hyperparameters used during training.}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Parameter} & \textbf{Value} \\
+        \midrule
+        \(\gamma\) & .999 \\
+        \(\lambda\) & .95 \\
+        \(\text{timesteps per rollout}\) & 256 \\
+        \(\text{epochs per rollout}\) & 3 \\
+        \(\text{minibatches per epoch}\) & 8 \\
+        \(\text{entropy bonus}\) & 0.01 \\
+        \(\text{clip range}\) & .2 \\
+        \(\text{reward normalization}\) & yes \\
+        \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
+        \(\text{parallell environments}\) & 64 \\
+        \(\text{total timesteps}\) & \(25 \times 10^6\) \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:hyperparameters}
+\end{table}
 
 \cite{andrychowicz_empirical_2020}
 
@@ -230,8 +259,6 @@ We
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf
 
-
-The agent is trained with reinforcement learning using Proximal Policy Optimization~\cite{proxim} with function approximation using neural networks.
 
 % section 17.4 in sutton is good!
 
@@ -263,11 +290,6 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 
 % should use a constant network architecture
 
-The architecture of the neural network is presented in Figure X.
-The network is split into three main section: the feature extraction, the shared network, and the policy and value heads.
-In order to be able to use the same extractor for all environments we resize the RGB image to \(64 \times 64\) pixels.
-
-
 % Actor critic
 
 % Feature extraction
@@ -294,48 +316,40 @@ As \cite{mirowski_navigate_2017}, we use a
 
 This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
 
+We train the baselines with the same algorithm as our approach.
+We also use the same hyperparameters.
+
 \section{Experiments}
 \label{sec:experiments}
 
-% train on the full distribution of environments?
-% compare and evaluate all agents on all three environments
-% report training reward, episode length, SPL, ...
+To compare our approach to the different baselines,
+we train and test all agents on all three environments.
+The agents are trained on the full distribution of environments,
+We do this for all three reward signals \(R\), \(R'\) and \(R''\).
+All agents are trained for 25 million time steps.
+They are then tested on 1000 held out samples from each environment.
 
-% generalization
-% limit training set size to 100, 1000, 10000
-% train until convergence
-% test on held out levels (how many?)
-
-The agent was trained using the algorithm described in Section \ref{sec:approach} for 100 million time steps in all three environments using PPO, PPG and A2C.
-Hyperparameters are tuned with random search separately for each environment.
-For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
-The agent was trained and tested on the full distribution of environments.
-
-We compare the two reward signals on the first and second environment\dots
-
-% rq1
-The baselines and our approach was\dots
-
-% rq2
-Additionally, experiments to eveluate the generalization capability of the agent were conducted.
-These were conducted on the procedurally generated terrain environment following the approach suggested in ~\cite{procgen}.
-During training, the seed pool size was fixed to various sizes to limit the training set size.
-The agent was trained for varying number of timesteps and then tested on the full distribution of environments.
-This way, we can get a sense of how much data and simulation is required to use the approach for real-world tasks.
-
-% rq3
-We compare the approach to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
-
-% eval
-
-Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
-We run all experiments across 3 different seeds.
-We use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}, namely\dots
-
-For each trained agent, we report the average return and episode length across all parallell environments. We train
+For each agent, environment, and reward signal we report the average return and episode length over time during training.
+During testing, we compare the learning agents to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
+We report the SPL metric for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
+The distance between two points is computed as the minimal number of actions to transform the view between the two.
 
 During testing, we increase the maximum episode length from 1000 time steps to 5000 time steps.
-This is to 
+This is to give more accurate metrics for episodes that do not terminate within 1000 time steps. 
+
+Additionally, we conduct experiments to measure the generalization capabilities of the agents.
+For this, we use the terrain environment only.
+We test on the same held out levels as before, but vary the number of samples seen during training.
+The training set size is varied from 100, 1000, 10 000, and 100 000 samples.
+This is done by limiting the seed pool used to generate the environments.
+This way, we can get a sense of how much data and simulation is required to apply the approach to real-world tasks.
+For each training set size, we train the agents until convergence.
+This is the same approach as in \cite{cobbe_procgen_2020}.
+Once again, we compare all three reward signals.
+
+Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
+We run all experiments across 3 different runs, and use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}.
+% todo: list
 
 \section{Implementation}
 

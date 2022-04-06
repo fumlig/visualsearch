@@ -102,7 +102,6 @@ Wolfe (2021)~\cite{wolfe_guided_2021} describes a model of visual search
 % general things
 % - foveated vision
 % - covert and overt attention
-% ...
 
 Eckstein (2011)~\cite{eckstein_visual_2011} reviews efforts from various subfields and identifies a set of mechanisms used to achieve efficient visual search.
 Knowledge about the target, distractor, background statistical properties, location probabilities, contextual cues, rewards and target prevalence are all identified as useful.
@@ -243,7 +242,7 @@ One of the challenges that arises in reinforcement learning is the exploration-e
 An RL agent should \textit{exploit} knowledge gained from previous experiences and prefer actions that has yielded reward in the past.
 It should also \textit{explore} in order to learn better actions to take in the future.
 Agents that fail to both exploit and explore will lead to failure at the task.
-%Furthermore, striking a good balance between the two is non-trivial, and often requires care.~\cite{sutton} % ...
+%Furthermore, striking a good balance between the two is non-trivial, and often requires care.~\cite{sutton}
 
 Another challenge is the design of reeward signals.
 For some tasks, like certain video games, the objective is simply to maximize the score obtained.
@@ -274,7 +273,7 @@ Deep learning is a family of techniques in which hypothesis are represented as c
 The computation graphs are inspired by biological neurons in the brain and are referred to as \textit{neural networks}.
 Deep neural networks consist of \textit{nodes} arranged in \textit{layers}: one input layer, zero or more hidden layers and one output layer.
 Each layer receives an input \textit{representation}~\cite{bengio_representation_2014} from the previous layer and outputs a transformed representation to the next layer.
-Given some input, a neural network optimizes its output representation with regard to some objective.
+Given some input, a neural network optimizes its output representation with regard to some criterion.
 Usually, a loss function \(\mathcal{L}\) is minimized by updating the weights \(\mathbf{w}\) of the network with some variant of \textit{gradient descent} with learning rate \(\alpha\):
 
 \begin{equation}
@@ -370,9 +369,9 @@ In 2015, Mnih et al.~\cite{mnih_human_2015} extend \cite{mnih_atari_2013} and in
 DQN approximates the quality function \(q(s, a)\) with a CNN, and select actions greedily using only visual input.
 To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.
 The input is fed through three convolutional layers:
-32 8x8 filters with stride 4,
-followed by 64 4x4 filters with stride 2,
-followed by 64 filters of size 32x32 with stride 1.
+32 \(8\times8\) filters with stride 4,
+followed by 64 \(4\times4\) filters with stride 2,
+followed by 64 filters of size \(32\times32\) with stride 1.
 Between each convolutional layer is a ReLU activation function.
 Then, there is a hidden fully connected layer with a ReLU activation function.
 The output layer has one output for each valid action.
@@ -383,7 +382,7 @@ The output layer has one output for each valid action.
 %\cite{arulkumaran_survey_2017}
 
 The DQN architecture sparked great interest and several modifications.
-Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigate the effects of adding recurrency to a DQN in order to tackle POMDPs.
+Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigate the effects of adding a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 

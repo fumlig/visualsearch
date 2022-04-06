@@ -38,7 +38,7 @@ The actions in \(\mathcal{A}\) transform the view.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
 With a final trigger action, the agent can indicate that there is one or more target in the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
-The set of observations \(\Omega\) contains tuples \(o = \left\langle x, p \right\rangle\),
+The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\),
 where \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent.
 If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
@@ -154,19 +154,26 @@ Our feeling is that this is something that previous similar works has not done. 
 % environment 2: medium, procedural and configurable
 
 The second environment is intended to look like realistic terrain.
-The environment has a two-dimensional scene whose appearance is given by a 512x512 image.
+The scene's appearance is given by a 512x512 RGB image.
+The agent's view is a 64x64 sub-image.
 Gradient noise is generated and used as a height map.
 The height map determines the color of the terrain.
 The height also correlates to the probability of targets.
 Specifically, targets are located between shores and mountain bases.
-This environment simulates a UAV search-and-rescue scenario.
+There are 10 targets in each scene.
+
+The environment roughly corresponds to a UAV search-and-rescue scenario.
+It is desirable that a searching agent should learn to not search oceans and lakes.
+The agent should prioritize searching along the edges of land masses.
+The appearance of the environment is highly configurable and has high variance.
+We use this environment for evaluating the generalization capabilities of agents.
 
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption[Terrain environment]{Second environment. Terrain seen from above.}
+    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges. The white border indicates the agent's current view.}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -175,20 +182,37 @@ This environment simulates a UAV search-and-rescue scenario.
 The third environment is a three-dimensional version of the second one.
 The scene 
 
+This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+
 \begin{figure}
     \centering
     \input{figures/camera.pgf}
     \label{fig:camera}
     %\vspace*{-1cm}
-    \caption[Camera environment]{Second environment. Terrain seen from a pan-tilt-zoom camera.}
+    \caption[Camera environment]{Three samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
 \end{figure}
 
 \section{Approach}
 \label{sec:approach}
 
-To tackle the problem, we draw inspiration from several previous works and adapt them to better suit this particular task.
 
-Due to time constraints and the advantages described in Section \ref{sec:policy-value}, we will limit our approaches to policy gradients.
+To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
+Considering 
+
+Due to time constraints and the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradients.
+Specifically, we use an actor-critic method.
+The policy and value function are approximated using a multi-headed neural network.
+The neural network of the agent is split into four parts:
+A feature extraction network is connected to a recurrent network.
+The recurrent network is in turn is connected to an actor network head and a critic network head, which approximate the policy and value function respectively.
+
+
+The network is trained with PPO~\cite{schulman_ppo_2017}.
+Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
+We 
+
+\cite{andrychowicz_empirical_2020}
+
 
 % should we rescale to 84x84 instead?
 
@@ -199,7 +223,6 @@ Due to time constraints and the advantages described in Section \ref{sec:policy-
 % https://arxiv.org/pdf/2006.05990.pdf
 % cite this one...
 
-% trade-off between end-to-end with RNN and modular system with explicit components, like memory.
 
 % save latent representation of map?
 % As in "Cognitive Mapping and Planning for Visual Navigation"
@@ -207,15 +230,6 @@ Due to time constraints and the advantages described in Section \ref{sec:policy-
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf
 
-
-
-We postulate that an effective searcher should be able to:
-
-\begin{itemize}
-    \item Search the scene exhaustively, while avoiding visiting the same location multiple times.
-    \item Learn a probability distribution of targets and its correlation with the appearance of the scene.
-    \item Remember the appearance of previously visited areas in order to prioritize where to go next.
-\end{itemize}
 
 The agent is trained with reinforcement learning using Proximal Policy Optimization~\cite{proxim} with function approximation using neural networks.
 
@@ -283,6 +297,15 @@ This way, we can clearly see the effect memory, image observations and position 
 \section{Experiments}
 \label{sec:experiments}
 
+% train on the full distribution of environments?
+% compare and evaluate all agents on all three environments
+% report training reward, episode length, SPL, ...
+
+% generalization
+% limit training set size to 100, 1000, 10000
+% train until convergence
+% test on held out levels (how many?)
+
 The agent was trained using the algorithm described in Section \ref{sec:approach} for 100 million time steps in all three environments using PPO, PPG and A2C.
 Hyperparameters are tuned with random search separately for each environment.
 For all experiments, the average return per episode is reported together with the theoretically optimal reward (obtained with an optimal path).
@@ -305,14 +328,11 @@ We compare the approach to random walk, exhaustive search and a human searcher w
 
 % eval
 
-Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022},
-we report confidence metrics.
+Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
+We run all experiments across 3 different seeds.
+We use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}, namely\dots
 
-All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
-
-For each experiment, we report the mean return and episode length over time during training.
-As per \cite{agarwal_rlliable_2022}, we report results across multiple seeds.
-We also use their recommended\dots
+For each trained agent, we report the average return and episode length across all parallell environments. We train
 
 During testing, we increase the maximum episode length from 1000 time steps to 5000 time steps.
 This is to 
@@ -323,6 +343,10 @@ The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is i
 
 Proximal policy optimization was implemented following the official implementation by OpenAI.
 Some necessary modifications were made to allow for recurrent policies.
+
+All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
+
+
 % a little short...
 
 

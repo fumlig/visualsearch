@@ -1,5 +1,5 @@
 % should decide on a clear terminology,
-% target, distractor, region, view, move, etc...
+% target, distractor, region, view, move, etc.
 
 \chapter{Introduction}
 \label{cha:introduction}
@@ -67,21 +67,22 @@ It has been applied to a number of problems with sucess\dots
 
 % Pan-Tilt-Zoom setup
 
-% What is the underlying purpose of the thesis project?
+% What is the underlying purpose of the thesis project.
 
 The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
 Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
 Specifically, we consider scenarious where the agent can only observe a small portion of its environment at any given time.
 The agent has to actively choose where to look in order to gain new information about the environment.
 
-We are looking for the following properties:
+We postulate that an effective searcher
 
 \begin{itemize}
-  \item The agent should prioritize regions where the probability of finding a target is high according to previous experience.
-  \item The agnt should learn how the distribution of targets is correlated to the appearance of the environment.
-  \item The agent should utilize information from previously visited regions to decide where to move.
-  \item The agent should be able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
-  \item The agent should avoid looking at the same region twice. % test with revisit counters
+  \item prioritizes regions where the probability of finding a target is high according to previous experience,
+  \item is able to search the environment exhaustively,
+  \item avoids searching the same area twice unless,
+  \item learns how the distribution of targets is correlated to the appearance of the environment,
+  \item utilizes information from previously visited regions to decide where to look, and
+  \item is able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
 \end{itemize}
 
 Our contributions are as follows:

@@ -147,6 +147,9 @@ class CameraEnv(gym.Env):
 
         if action == self.Action.TRIGGER:
             for i in range(len(self.targets)):
+                print(i,                     print(i)
+)
+                
                 if self.hits[i]:
                     continue
                     
@@ -199,6 +202,8 @@ class CameraEnv(gym.Env):
         view = np.linalg.inv(camera_pose)
         position = proj @ view @ np.array([x, y, z, 1.0])
         p = position[:3] / position[3]
+
+        print(p)
 
         return np.all((p >= -1.0) & (p <= 1.0))
 

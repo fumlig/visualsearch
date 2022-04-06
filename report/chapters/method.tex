@@ -27,85 +27,30 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 \section{Problem Statement}
 \label{sec:problem}
 
+% Maybe keep the POMDP stuff in environment section
+
 We can now formally define the problem of searching for targets in unknown environments.
-Searched environment contains a scene with a set of targets.
-The scene is described by a Euclidean space.
-In the scene, there are \(N\) targets, each described by a subspace.
-At any given time the agent observes a subspace of the scene, which we call the view.
-This observation is given in the form of an image.
-Through a finite set of actions, the agent can transform its view.
-With a final trigger action, the agent can indicate that there is a target in the view.
-The goal of the agent is to bring all targets into the view and indicate that they have been found.
-This is to be done with a minimal number of actions.
-This corresponds to changing the field of perception.
 
 We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
+The state is defined by a (Euclidean) space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+At each timestep, the agent observes a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
+The actions in \(\mathcal{A}\) transform the view.
+In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
+With a final trigger action, the agent can indicate that there is one or more target in the view.
+The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
+The set of observations \(\Omega\) contains tuples \(o = \left\langle x, p \right\rangle\),
+where \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent.
+If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
-We focus on search in two dimensions, although all methods should scale to three dimensions.
+\section{Environments}
+\label{sec:environments}
 
-\section{Environment}
-\label{sec:environment}
-
-To train an test an agent for the problem, we use three environments of varying difficulty.
+To train an test an agent for the problem, we use three different environments.
+The three environments have different characteristics to test the applicability of the evaluated approaches.
 In each environment there is a scene with a background of distractors and a foreground of targets.
 The scenes are drawn from some unknown distribution.
 The background and foreground are assumed to be correlated.
 This means that by looking at the background, an agent should sometimes be able to deduce a suitable action.
-All scenes are assumed to be static in that the actions of the agent do not affect their appearance.
-
-% observations, actions and rewards
-The scenes of each environment are discretized into a grid.
-We use the same action space, reward signal for all environments.
-The action space is
-
-\[
-    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
-\]
-
-where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
-
-
-We experiment with two rewards signals. The first reward signal is defined as
-
-\[
-    \mathcal{R}_1(s_t, a_t) =
-    \begin{cases}
-        10 & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -1 & \text{otherwise.}
-    \end{cases}
-\]
-
-We argue that \(R_1\) provides a suitable inductive bias for the task at hand.
-Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible don't converge for large state spaces.
-The reward for finding a target speeds up training.
-Targets should be triggered when in view, but triggers when targets are out of view should be penalized.
-The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
-This reward signal is maximized when the targets are found as quickly as possible.
-
-The second reward signal, similar to that of \cite{caicedo_active_2015,...}, is defined as
-
-\[
-    \mathcal{R}_2(s_t, a_t) =
-    \begin{cases}
-        10 & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-         1 & \text{if \(a_t\) moves the view closer to the nearest target, and} \\
-        -1 & \text{otherwise.}
-    \end{cases}
-\]
-
-\(R_2\) uses the supervised distance between targets and the agent which is available during training time. % cite
-We hypothesize that this reward speeds up training time and may help the agent pick out correlations between scene and target probability quicker.
-However, it can never yield policies that search optimally nor exhaustively as these will not be rewarded.
-It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not 
-
-% reward inspired by Tabu Search?
-
-At each time step, the agent receives an observation that includes
-
-\begin{itemize}
-    \item an RGB image \(x_t \in \mathbb{R}^{3 \times W \times H}\) of the currently visible region of the scene, and
-    \item the current position of the agent \(p_t \in  \mathbb{R}^{W \times H}\). % call this something else, what is the internal state of the sensor called?
-\end{itemize}
 
 For the position, we assume the presense of some oracle.
 In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
@@ -113,24 +58,79 @@ If how each action moves the agent is well-defined, we do not need the position 
 We can use relative positions instead of absolute ones.
 Some of the baselines do not use the position.
 
-% Ego-centric neural map?
+The action space is the same in all environments:
 
-% cite something
-% reason about good inductive biases
-% would be interesting to see if the supervised distance reward generalizes worse
+\[
+    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
+\]
+
+\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
+% rotates in third environment though
+
+We experiment with three rewards signals.
+The first reward signal is defined as
+
+\[
+    \mathcal{R}(s_t, a_t) =
+    \begin{cases}
+        10h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -1  & \text{otherwise.}
+    \end{cases}
+\]
+
+with \(h = \left\lvert T \cap V \right\rvert\). 
+We argue that this reward provides a suitable inductive bias for the task at hand.
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
+The reward for finding a target speeds up training without deviating from the goal of the task -
+targets should be triggered when in view, but triggers when targets are out of view should be penalized.
+The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+
+In practice, early experiments show that even this reward might be too sparse.
+To speed up training, we experiment with two extensions to the reward:
+
+\[
+    \mathcal{R}'(s_t, a_t) =
+    \begin{cases}
+        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view closer to the nearest target, and} \\
+        \mathcal{R}(s_t, a_t) & \text{otherwise}.
+    \end{cases}
+\]
+
+\[
+    \mathcal{R}''(s_t, a_t) =
+    \begin{cases}
+        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view to a previously unseen subspace, and} \\
+        \mathcal{R}(s_t, a_t) & \text{otherwise}.
+    \end{cases}
+\]
+
+
+These three reward signals are interesting to compare for a few reasons.
+\(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
+It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
+\(R'\) uses the supervised distance between targets and the agents, which is available during training.
+This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_multi_scale_2019}.
+In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
+However, it can never yield policies that search exhaustively as such actions are never rewarded.
+It may therefore perform worse during testing where the reward is not available to the agent.
+It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
+\(R''\) strikes a balance between the two other signals by instead incentivizing exploration.
+This should cause the agent to learn to search the environment exhaustively.
+% tabu search
+% optimal paths
 
 The episode is terminated when all targets have been found, or when 1000 time steps have passed.
-Terminating episodes early this way is common to speed up training. % cite
+Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
 
-Averaged over all possible samples, the probability of targets should be uniform over the scene.
+% Averaged over all possible samples, the probability of targets should be uniform over the scene.
 % to make comparison with exhaustive search fair
+% I think?
 
 \subsection{Gaussian Environment}
 % environment 1: easy, understandable
 
 The first environment is the simplest environment. 
-The scene is a two-dimensional discrete Euclidean space.
-The appearance of the scene is given by a 256x256 RGB image.
+The scene is described by a 256x256 RGB image.
 The agent observes a 64x64 sub-image at each time step.
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
@@ -138,7 +138,8 @@ Targets are 1x1 pixels in the red channel.
 The locations of the targets are randomized weighted by the height of the Gaussian kernels.
 This means that the more intense the blue channel, the higher the probability of a target.
 The idea with this environment is to test that the method learns what we want it to learn.
-It is easy to determine whether the agent acts well in this environment.
+There is a clear correlation between observations and desirable actions.
+It is also easy to determine whether the agent acts well in this environment.
 Our feeling is that this is something that previous similar works has not done. % cite
 
 \begin{figure}
@@ -168,10 +169,11 @@ This environment simulates a UAV search-and-rescue scenario.
     \caption[Terrain environment]{Second environment. Terrain seen from above.}
 \end{figure}
 
-\subsection{Realistic Environment}
+\subsection{Camera Environment}
 % environment 3: hard, realistic
 
 The third environment is a three-dimensional version of the second one.
+The scene 
 
 \begin{figure}
     \centering
@@ -184,7 +186,9 @@ The third environment is a three-dimensional version of the second one.
 \section{Approach}
 \label{sec:approach}
 
-Due to the advantages described in Section \ref{theory on policy gradient}, we will limit our approaches to policy gradients.
+To tackle the problem, we draw inspiration from several previous works and adapt them to better suit this particular task.
+
+Due to time constraints and the advantages described in Section \ref{sec:policy-value}, we will limit our approaches to policy gradients.
 
 % should we rescale to 84x84 instead?
 
@@ -202,6 +206,8 @@ Due to the advantages described in Section \ref{theory on policy gradient}, we w
 
 % self-supervised pretraining?
 % https://arxiv.org/pdf/2003.14323.pdf
+
+
 
 We postulate that an effective searcher should be able to:
 
@@ -238,8 +244,6 @@ The agent is trained with reinforcement learning using Proximal Policy Optimizat
 % could be multiple channels for view as well
 % maybe call them "global" and "local"
 
-\subsection{Architectures}
-
 % resnets?
 % https://efficientdl.com/how-to-train-a-resnet-efficiently/
 
@@ -265,13 +269,16 @@ In order to be able to use the same extractor for all environments we resize the
 
 % we could give some pseudocode here
 
-
 \section{Baselines}
 \label{sec:baseline}
 
-We compare our architecture to three different baselines.
+We compare our approach to three different well-studied baselines.
+The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \dots.
+The agent receives only image observations, and \dots
+The second baseline is a recurrent version of that agent
 As \cite{mirowski_navigate_2017}, we use a 
 
+This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
 
 \section{Experiments}
 \label{sec:experiments}
@@ -297,6 +304,10 @@ This way, we can get a sense of how much data and simulation is required to use 
 We compare the approach to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
 
 % eval
+
+Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022},
+we report confidence metrics.
+
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 
 For each experiment, we report the mean return and episode length over time during training.

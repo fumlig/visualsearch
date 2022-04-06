@@ -1,3 +1,4 @@
+import os
 import gym
 import enum
 import numpy as np
@@ -9,6 +10,9 @@ from gym_search.utils import clamp
 from gym_search.shapes import Box
 from gym_search.generators import TerrainGenerator
 from gym_search.palette import BLUE_MARBLE
+
+
+os.environ["PYOPENGL_PLATFORM"] = "egl"
 
 
 class CameraEnv(gym.Env):
@@ -167,7 +171,8 @@ class CameraEnv(gym.Env):
         return obs, rew, done, {}
 
     def render(self, mode="rgb_array"):
-        color, _depth = self.renderer.render(self.scene)
+        flags = pyr.RenderFlags.NONE
+        color, _depth = self.renderer.render(self.scene, flags)
         return color
 
     def close(self):

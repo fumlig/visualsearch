@@ -112,8 +112,10 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     writer = SummaryWriter(f"logs/{args.name}")
-    agent = rl.agent(args.agent)(envs)
-    algorithm = rl.algorithm(args.algorithm)(**args.alg_kwargs)
+    agent = rl.agents.make(args.agent, envs=envs)
+    algorithm = rl.algorithms.make(args.algorithm, **args.alg_kwargs)
+
+    print("num_envs", NUM_ENVS, "alg_kwargs:", args.alg_kwargs, "device:", device)
 
     if args.model:
         agent = th.load(args.model)

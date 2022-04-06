@@ -151,7 +151,7 @@ In an MDP, the agent can perceive the state of the environment with full certain
 For many problems, including the one we consider here, this is not the case.
 The agent can only perceive a partial representation of the environment's state.
 Such a process is referred to as a partially observable Markov decision process (POMDP).
-A POMDP is formally defined as a 7-tuple \(\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O}, \gamma \rangle\), where
+A POMDP is formally defined as a 7-tuple \(\left\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O}, \gamma \right\rangle\), where
 
 \begin{itemize}
     \item \(\mathcal{S}\) is a finite set of states,
@@ -192,7 +192,7 @@ From here on we will use the belief state and the environment state \(s\) interc
 
 
 \subsubsection{Policies and Value Functions}
-\label{sec:policies-values}
+\label{sec:policy-value}
 
 The behaviour of the agent is described by its \textit{policy}.
 A policy \(\pi\) is a mapping from perceived environment states to actions.
@@ -354,13 +354,14 @@ LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied fr
 
 \section{Related Work}
 
-In this section, related work is presented.
+To our knowledge, there is no work that considers the exact problem we are looking at.
+In this section, we present work that considers similar tasks.
 
 \subsection{Deep Reinforcement Learning}
 
 % Mnih et al., Atari, DQN
 
-As mentioned in Section~\ref{sec:policies-values}, policies and value functions are often approximated.
+As mentioned in Section~\ref{sec:policy-value}, policies and value functions are often approximated.
 Neural networks have good properties for function approximation and have been used for RL with success.
 One early example is TD-Gammon~\cite{tesauro1995tdgammon}, a neural network trained with RL that reached expert Backgammon performance in 1995.
 
@@ -532,7 +533,7 @@ Dhiman et al. (2019)~\cite{dhiman_critical_2019} critically investigate deep RL 
 They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
 However, when trained and tested on differen maps, it cannot do so succesfully.
-They further find that, with a single decision point whose correct.
+They further find that, with a single decision point whose correct\dots
 % could be due to their inductive biases
 % the agent does not have access to its location and can therefore not determine its location
 % their setup:
@@ -559,7 +560,7 @@ A similar work by Ye et al. (2018)~\cite{ye_active_2018} integrates an object re
 They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
 Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
 
-Several works in visual navigation have placed emphasis on memory representations.~\cite{savinov_topmem_2018} % cite more
+Several works in visual navigation have placed emphasis on memory representations.~\cite{savinov_topmem_2018,oh_minecraft_2016,parisotto_salakhutdinov_2017,chen_memory_2017} % cite more
 
 \subsection{Memory Architectures for Deep Reinforcement Learning}
 
@@ -597,6 +598,7 @@ The nature of the internal representation is central to the study of embodied na
 \begin{itemize}
     \item What is contained in an environment (represents a Markov Decision Process).
     \item What is a good benchmarking environment
+    \item Should list some common environments and explain why they are not satistfactory
 \end{itemize}
 
 \subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}

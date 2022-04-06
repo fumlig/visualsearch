@@ -10,7 +10,6 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from collections import deque
 
-
 class Algorithm:
     def learn(tot_timesteps, agent, envs, device, writer):
         raise NotImplementedError
@@ -425,3 +424,12 @@ class ProximalPolicyOptimization(Algorithm):
                 avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
                 pbar.set_description(f"ret {round(avg_ret)}, len {round(avg_len)}")
 
+
+ALGORITHMS = {
+    "ppo": ProximalPolicyOptimization,
+    "dqn": DeepQNetworks
+}
+
+
+def make(id, **kwargs):
+    return ALGORITHMS.get(id)(**kwargs)

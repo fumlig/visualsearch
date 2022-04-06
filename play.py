@@ -65,7 +65,7 @@ if __name__ == "__main__":
         env.seed(args.seed)
 
     if args.agent is not None:
-        agent = rl.agent(args.agent)(env)
+        agent = rl.agents.make(args.agent, envs=env)
 
     if args.model:
         print(f"loading {args.model}")

@@ -8,7 +8,7 @@ def simplex_noise_2d(x, y):
 
 def fractal_noise_2d(shape, periods=(1, 1), octaves=1, persistence=0.5, lacunarity=2, seed=None):
     if seed is not None:
-        opensimplex.seed(seed)
+        opensimplex.seed(int(seed))
 
     h, w = shape
     noise = np.zeros(shape)

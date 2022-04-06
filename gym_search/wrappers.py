@@ -24,25 +24,6 @@ class ObserveTime(gym.ObservationWrapper):
         return obs
 
 
-class ExplicitMemory(gym.ObservationWrapper):
-    def __init__(self, env, key="memory"):
-        super().__init__(env)
-        assert isinstance(env.observation_space, gym.spaces.Dict)
-        
-        self.key = key
-        self.observation_space = gym.spaces.Dict()
-
-        for key, space in self.env.observation_space.items():
-            self.observation_space[key] = space
-        
-        self.observation_space[self.key] = gym.spaces.Box(0, 1, (*self.scaled_shape, 3))
-
-    def observation(self, observation):
-        obs = observation.copy()
-        obs[self.key] = np.stack([self.visible, self.visited, self.triggered], axis=-1)
-        return obs
-
-
 class ResizeImage(gym.ObservationWrapper):
     def __init__(self, env, key="image", size=(64, 64)):
         super().__init__(env)
@@ -62,6 +43,7 @@ class ResizeImage(gym.ObservationWrapper):
         obs = observation.copy()
         obs[self.key] = cv.resize(obs[self.key], self.size, interpolation=cv.INTER_AREA)
         return obs
+
 
 class LastAction(gym.ObservationWrapper):
     def __init__(self, env, key="last_action"):
@@ -95,6 +77,7 @@ class LastAction(gym.ObservationWrapper):
         obs = observation.copy()
         obs[self.key] = self.last_action
         return obs
+
 
 class LastReward(gym.ObservationWrapper):
     def __init__(self, env, key="last_reward"):

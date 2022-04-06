@@ -64,7 +64,7 @@ class SearchEnv(gym.Env):
         self.visible[self.scaled_position] = True
 
         self.last_dist = euclidean_dist(self.view.center(), self.targets[0].center())
-        self.optimal_steps = int(travel_dist(map(self.normalize_position, [self.view.position] + [target.position for target in self.targets]))) + len(self.targets)
+        self.optimal_steps = 0 # int(travel_dist(map(self.normalize_position, [self.view.position] + [target.position for target in self.targets]))) + len(self.targets)
 
         self.counters = defaultdict(int)
 

@@ -167,7 +167,7 @@ class BaselineAgent(Agent):
     # https://arxiv.org/abs/1611.03673
 
 
-    def __init__(self, envs, num_layers=1):
+    def __init__(self, envs, num_layers=2):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
@@ -202,7 +202,7 @@ class BaselineAgent(Agent):
         return th.cat(xs, dim=1)
 
     def remember(self, hidden, state, done):
-        state = [s.transpose(0, 1) for s in state]
+        state = [s.transpose(0, 1).contiguous() for s in state]
         batch_size = state[0].shape[1]
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
@@ -224,3 +224,17 @@ class BaselineAgent(Agent):
         v = self.value(h)
 
         return pi, v, state
+
+
+
+AGENTS = {
+    "random": RandomAgent,
+    "image": ImageAgent,
+    "recurrent": RecurrentAgent,
+    "baseline": BaselineAgent,
+    "map": MapAgent
+}
+
+
+def make(id, **kwargs):
+    return AGENTS.get(id)(**kwargs)

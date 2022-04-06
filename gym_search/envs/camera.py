@@ -147,9 +147,6 @@ class CameraEnv(gym.Env):
 
         if action == self.Action.TRIGGER:
             for i in range(len(self.targets)):
-                print(i,                     print(i)
-)
-                
                 if self.hits[i]:
                     continue
                     

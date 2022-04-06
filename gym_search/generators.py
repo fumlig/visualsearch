@@ -9,6 +9,15 @@ from gym_search.shapes import Box
 
 
 class Generator:
+    def __init__(self, training_samples, test_samples):
+        pass
+
+    def training_sample(self):
+        raise NotImplementedError
+
+    def test_sample(self):
+        raise NotImplementedError
+
     def sample(self):
         raise NotImplementedError
 

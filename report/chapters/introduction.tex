@@ -53,14 +53,11 @@ How can you identify useful hints from the environment to guide covert attention
 Doing so manually can be labour intensive, especially if a searcing system should be deployed in many different environments.
 If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
-% Generalization
-% Pan-tilt-zoom
-
-Deep reinforcement learning is an approach for how to act.
-It has been applied to a number of problems with sucess\dots
-% ImageNet, deep learning revolution, Atari, Go
-
-% should probably get into why this is hard to solve with "manual" algorithms
+Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
+In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
+It has been used to master arcade games~\cite{mnih_human_2015}, board games~\cite{silver_alphago_2016}, and even complex real-time strategy games~\cite{vinyals_alphastar_2019}.
+Real-world tasks have also been tackled with deep reinforcement learning.
+Deep reinforcement learning could potentially be used to tackle the problem of searching for targets in new environments.
 
 \section{Aim}
 \label{sec:aim}
@@ -71,10 +68,7 @@ It has been applied to a number of problems with sucess\dots
 
 The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
 Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
-Specifically, we consider scenarious where the agent can only observe a small portion of its environment at any given time.
-The agent has to actively choose where to look in order to gain new information about the environment.
-
-We postulate that an effective searcher
+We postulate that an effective searcher 
 
 \begin{itemize}
   \item prioritizes regions where the probability of finding a target is high according to previous experience,
@@ -84,6 +78,10 @@ We postulate that an effective searcher
   \item utilizes information from previously visited regions to decide where to look, and
   \item is able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
 \end{itemize}
+
+We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criterias in mind.
+Specifically, we consider scenarious where the agent can only observe a small portion of its environment at any given time through a pan-tilt camera.
+The agent has to actively choose where to look in order to gain new information about the environment.
 
 Our contributions are as follows:
 

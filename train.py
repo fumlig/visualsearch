@@ -34,8 +34,8 @@ ALG_KWARGS = dict(
     learning_rate=5e-4,
     num_steps=256,
     num_minibatches=8,
-    num_epochs=4,
-    gamma=0.99,
+    num_epochs=3,
+    gamma=0.999,
     gae_lambda=0.95,
     norm_adv=True,
     clip_range=0.2,
@@ -69,8 +69,8 @@ def env_default(key, default=None):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str, **env_default("ENV_ID"))
-    parser.add_argument("algorithm", type=str, choices=rl.ALGORITHMS.keys())
-    parser.add_argument("agent", type=str, choices=rl.AGENTS.keys())
+    parser.add_argument("algorithm", type=str, choices=rl.algorithms.ALGORITHMS.keys())
+    parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
 
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)

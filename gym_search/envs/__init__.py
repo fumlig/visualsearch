@@ -35,7 +35,7 @@ gym.register(
     id="Terrain-v0",
     entry_point=SearchEnv,
     kwargs=dict(
-        generator=TerrainGenerator((1024, 1024), 10, 100, max_terrains=1024),
+        generator=TerrainGenerator((1024, 1024), 3, 100, max_terrains=1024),
         view_shape=(64, 64),
         step_size=64,
     )

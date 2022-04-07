@@ -42,49 +42,6 @@ class RandomAgent(Agent):
         return self.action_space.sample(), state
 
 
-class MapAgent(Agent):
-
-    def __init__(self, envs):
-        super().__init__(envs)
-        assert isinstance(self.observation_space, gym.spaces.Dict)
-        assert self.observation_space.get("image") is not None
-        assert self.observation_space.get("position") is not None
-
-        self.image_cnn = NatureCNN(self.observation_space["image"])        
-        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
-
-        self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
-
-    def initial(self, num_envs):
-        return [th.zeros((num_envs, *self.neural_map.shape))]
-
-    def forward(self, obs, state, done, **kwargs):
-        hidden = self.image_cnn(preprocess_image(obs["image"]))
-        index = obs["position"].long()
-    
-        state = state[0]
-        batch_size = state.shape[0]
-        hidden = hidden.reshape((-1, batch_size, self.neural_map.input_dim))
-        done = done.reshape((-1, batch_size))
-        index = index.reshape((-1, batch_size, 2))
-        new_hidden = []
-
-        for h, d, i in zip(hidden, done, index):
-            masked = (1.0 - d).view(-1, 1, 1, 1)*state
-            h, state = self.neural_map(h, masked, i)
-            new_hidden.append(h)
-
-        state = [state]
-        hidden = th.cat(new_hidden, dim=0)      
-
-        logits = self.policy(hidden)
-        pi = Categorical(logits=logits)
-        v = self.value(hidden)
-
-        return pi, v, state
-
-
 class ImageAgent(Agent):
     # Mnih et al., 2016 (https://arxiv.org/pdf/1602.01783.pdf)
 
@@ -227,6 +184,50 @@ class BaselineAgent(Agent):
 
 
 
+
+class MapAgent(Agent):
+
+    def __init__(self, envs):
+        super().__init__(envs)
+        assert isinstance(self.observation_space, gym.spaces.Dict)
+        assert self.observation_space.get("image") is not None
+        assert self.observation_space.get("position") is not None
+
+        self.image_cnn = NatureCNN(self.observation_space["image"], output_dim=128)        
+        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim, features_dim=16)
+
+        self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
+
+    def initial(self, num_envs):
+        return [th.zeros((num_envs, *self.neural_map.shape))]
+
+    def forward(self, obs, state, done, **kwargs):
+        hidden = self.image_cnn(preprocess_image(obs["image"]))
+        index = obs["position"].long()
+    
+        state = state[0]
+        batch_size = state.shape[0]
+        hidden = hidden.reshape((-1, batch_size, self.neural_map.input_dim))
+        done = done.reshape((-1, batch_size))
+        index = index.reshape((-1, batch_size, 2))
+        new_hidden = []
+
+        for h, d, i in zip(hidden, done, index):
+            masked = (1.0 - d).view(-1, 1, 1, 1)*state
+            h, state = self.neural_map(h, masked, i)
+            new_hidden.append(h)
+
+        state = [state]
+        hidden = th.cat(new_hidden, dim=0)      
+
+        logits = self.policy(hidden)
+        pi = Categorical(logits=logits)
+        v = self.value(hidden)
+
+        return pi, v, state
+
+
 AGENTS = {
     "random": RandomAgent,
     "image": ImageAgent,
@@ -236,5 +237,5 @@ AGENTS = {
 }
 
 
-def make(id, **kwargs):
-    return AGENTS.get(id)(**kwargs)
+def make(id, envs, **kwargs):
+    return AGENTS.get(id)(envs, **kwargs)

@@ -259,4 +259,4 @@ BLUE_MARBLE = [
     (255, 255, 255),
 ]
 
-EARTH_TOON = [BLUE_MARBLE[i] for i in range(25, len(BLUE_MARBLE), 25)]
+EARTH_TOON = [BLUE_MARBLE[i] for i in range(25, len(BLUE_MARBLE), 5)]

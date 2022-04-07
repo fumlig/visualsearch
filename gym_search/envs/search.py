@@ -105,8 +105,6 @@ class SearchEnv(gym.Env):
         
         if hits:
             rew = hits*10
-        elif not revisit:
-            rew = 0
         else:
             rew = -1
 

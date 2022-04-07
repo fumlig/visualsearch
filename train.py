@@ -31,7 +31,7 @@ SEED = 0
 TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64
 ALG_KWARGS = dict(
-    learning_rate=5e-4,
+    learning_rate=10e-4,#5e-4,
     num_steps=256,
     num_minibatches=8,
     num_epochs=3,
@@ -72,13 +72,16 @@ if __name__ == "__main__":
     parser.add_argument("algorithm", type=str, choices=rl.algorithms.ALGORITHMS.keys())
     parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
 
+    parser.add_argument("--env-kwargs", type=parse_kwargs, default={})
+    parser.add_argument("--alg-kwargs", type=parse_kwargs, default=ALG_KWARGS)
+    parser.add_argument("--agent-kwargs", type=parse_kwargs, default={})
+
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--tot-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
-    parser.add_argument("--alg-kwargs", type=parse_kwargs, default=ALG_KWARGS)
 
     args = parser.parse_args()
 
@@ -102,7 +105,7 @@ if __name__ == "__main__":
         #gym_search.wrappers.LastReward,
     ]
 
-    envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers)
+    envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
     envs = gym.wrappers.NormalizeReward(envs)
     
     envs.seed(args.seed)
@@ -112,15 +115,12 @@ if __name__ == "__main__":
 
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     writer = SummaryWriter(f"logs/{args.name}")
-    agent = rl.agents.make(args.agent, envs=envs)
-    algorithm = rl.algorithms.make(args.algorithm, **args.alg_kwargs)
-
-    print("num_envs", NUM_ENVS, "alg_kwargs:", args.alg_kwargs, "device:", device)
+    agent = rl.agents.make(args.agent, envs, **args.agent_kwargs)
 
     if args.model:
         agent = th.load(args.model)
 
-    algorithm.learn(args.tot_timesteps, envs, agent, device, writer)
+    rl.algorithms.learn(args.algorithm, args.tot_timesteps, envs, agent, device, writer, **args.alg_kwargs)
 
     envs.close()
     writer.close()

@@ -57,6 +57,8 @@ This chapter introduces background and related work.
 
 \section{Background}
 
+% covert/overt: reactionary/requires memory! 
+
 \subsection{Active Vision}
 
 % Marr?
@@ -388,6 +390,7 @@ It is found that the agent is able to integrate information over time and achiev
 \subsection{Proximal Policy Optimization}
 
 Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
+\todo{Expand on algorithm, advantages, practicalities, etc.}
 
 \begin{algorithm}
     \caption{Proximal Policy Optimization}
@@ -403,22 +406,20 @@ Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
     \end{algorithmic}
 \end{algorithm}
 
-\subsection{Object Detection}
+\subsection{Active Object Detection}
 
 % active object detection
 
 In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
 Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
-State of the art object detection uses deep learning techniques and usually involves a CNN~\cite{zhao_objectdetection_2019}.
-
-Although we do not focus on difficult recognition problems in this work, the task we consider bears resemblance to object localization.
+State of the art object detection use deep learning techniques and usually involve a deep convolutional architecture~\cite{zhao_objectdetection_2019}.
 Object detectors usually use region proposal networks that consider the whole image and return a set of bounding box candidates.
 The object recognizer is then run on each region proposal.
 
-
-Usually, images in object detection are passively sampled - they are drawn from some distribution and all are independent.
-In \textit{active object detection}, images are instead chosen so as to 
-
+Although we do not focus on difficult recognition problems in this work, the task we consider bears resemblance to object localization.
+The difference is that images in object detection are passively sampled - they are drawn from some distribution and all are independent.
+Furthermore, the whole scene that is searched for objects is visible in the image.
+In \textit{active object detection}, the analyzed images are instead chosen so as to help the detector perform its task better.
 
 Caicedo and Lazebnik~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
 An agent is trained to successively improve a bounding box using translating and scaling transformations.
@@ -429,9 +430,6 @@ When there is no action that improves the bounding box, the agent may select a t
 This way the agent may select additional bounding boxes.
 Each trigger modifies the environment by marking it so that the agent may learn to not select the same region twice. % inhibition-of-return mechanism, widely used in visual attention models ~\cite{itti_koch_2001}
 
-
-
-
 A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
 Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
 The agent sees a limited region of interest in an image, with its center representing the current position of the agent.
@@ -440,18 +438,14 @@ A reward is given to the agent that is equal to the supervised relative distance
 Three datasets of 891 anatomical images are used.
 The agent starts at random positions in the image close to the target landmark and is tasked with moving to the target location.
 While achieving strong results (90\% success rate), the scenes and targets are all drawn from a distribution with low variance.
-Most real-world search tasks exhibit larger variance than anatomical images of the human body.
+Most real-world search tasks exhibit larger variance than a population of anatomical images of the human body.
 
+% ghesu_multiscale_2019
 
-% not that relevant now that I read it
-% Uzkent et al.~\cite{uzkent_detection_2020} use deep RL to detect obects in large images.
-% A policy network is trained to select between high and low level of detail in images in order to reduce the computational requirements.
-% http://xviewdataset.org/ is used by Uzkent - looks promising
+Chen and Gupta~\cite{chen_memory_2017} use a spatial memory for context reasoning in object detection.
+They argue that object detection systems require memory to perform well,
+Furthermore, this memory should capture the spatial layout of the scene.
 
-% CT scan material: there is way less variance, otherwise similar. Big difference is that we look at more variance in many aspects?
-% CV material: different in that the object is assumed to be visible
-
-Chen and Gupta~\cite{chen_memory_2017} use a spatial memory for context reasoning in object detection\dots
 
 \subsection{Visual Attention}
 
@@ -559,6 +553,13 @@ They experiment with a set of reward functions and find that constant time penal
 Their experiments make the same assumptions as \cite{zhu_target_driven} - the scenes and targets used during testing have all been seen during training.
 
 Several works in visual navigation have placed emphasis on memory representations.~\cite{savinov_topmem_2018,oh_minecraft_2016,parisotto_salakhutdinov_2017,chen_memory_2017} % cite more
+
+
+%
+% this is where we briefly discuss the related work
+% emphasize the memories, problems in evaluation, generalization
+%
+
 
 \subsection{Memory Architectures for Deep Reinforcement Learning}
 

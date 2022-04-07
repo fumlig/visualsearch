@@ -2,6 +2,7 @@
 
 import random
 import json
+import yaml
 import os
 import datetime as dt
 import numpy as np
@@ -15,33 +16,17 @@ import gym_search
 import rl
 
 
-SEED = 0
+SEED = None
 TOT_TIMESTEPS = int(25e6)
-NUM_ENVS = 64
-ALG_KWARGS = dict(
-    learning_rate=5e-4,
-    num_steps=256,
-    num_minibatches=8,
-    num_epochs=3,
-    gamma=0.999,
-    gae_lambda=0.95,
-    norm_adv=True,
-    clip_range=0.2,
-    clip_vloss=True,
-    ent_coef=0.01,
-    vf_coef=0.5,
-    max_grad_norm=0.5,
-    target_kl=None,
-    norm_rew=True
-)
+NUM_ENVS = 4
 
 
 def parse_kwargs(s):
     if os.path.exists(s):
-        with open(s, "r") as f:
-            return json.load(f)
-    
-    return json.loads(s)
+        with open(s) as f:
+            return yaml.load(f, Loader=yaml.FullLoader)
+
+    return yaml.loads(s)
 
 def env_default(key, default=None):
     value = os.environ.get(key)
@@ -62,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
 
     parser.add_argument("--env-kwargs", type=parse_kwargs, default={})
-    parser.add_argument("--alg-kwargs", type=parse_kwargs, default=ALG_KWARGS)
+    parser.add_argument("--alg-kwargs", type=parse_kwargs, default={})
     parser.add_argument("--agent-kwargs", type=parse_kwargs, default={})
 
     parser.add_argument("--name", type=str)
@@ -100,7 +85,10 @@ if __name__ == "__main__":
 
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
     envs.seed(args.seed)
-    
+
+    envs = gym.wrappers.NormalizeReward(envs)
+    #envs = gym.wrappers.NormalizeObservation(envs)
+
     for env in envs.envs:
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)

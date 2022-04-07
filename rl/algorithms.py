@@ -30,7 +30,6 @@ def proximal_policy_optimization(
     vf_coef=0.5,
     max_grad_norm=0.5,
     target_kl=None,
-    norm_rew=True
 ):
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
@@ -55,7 +54,7 @@ def proximal_policy_optimization(
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
     pbar = tqdm(total=tot_timesteps)
-    ep_infos = deque(maxlen=100)
+    ep_infos = deque(maxlen=num_envs)
 
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
     acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
@@ -67,9 +66,6 @@ def proximal_policy_optimization(
     obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
     done = th.zeros(num_envs).to(device)
     state = [s.to(device) for s in agent.initial(num_envs)]
-
-    if norm_rew:
-        envs = gym.wrappers.NormalizeReward(envs)
 
     for _b in range(num_batches):
 

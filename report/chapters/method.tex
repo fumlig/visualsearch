@@ -319,12 +319,10 @@ We run all experiments across 3 different runs, and use the aggregate metrics pr
 % todo: list
 
 We train all agents with PPO~\cite{schulman_ppo_2017}.
-Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
-Furthermore, we use the same parameters as those outlines in ~\cite{cobbe_procgen_2020}.
-However, we increase the learning rate for our approach.
-This seems to be needed due to the increased number of parameters, which is in line with what is reported by \cite{andrychowicz_empirical_2020}.
-The hyperparameters are presented in Table~\ref{tab:hyperparameters}.
+Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
+Furthermore, we use the same hyperparameters as those outlined in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
 We find that using many parallel environments stabilizes the training.
+As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
 
 \begin{table}
     \centering

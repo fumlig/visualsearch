@@ -197,6 +197,7 @@ class MapAgent(Agent):
         self.image_cnn = NatureCNN(self.observation_space["image"])        
         self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
 
+        # mean zero, low std has big impact according to https://arxiv.org/pdf/2006.05990.pdf
         self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
 

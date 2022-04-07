@@ -64,7 +64,7 @@ class GaussianGenerator(Generator):
 
 
 class TerrainGenerator(Generator):
-    def __init__(self, shape, num_targets, num_distractors, max_terrains=1024):
+    def __init__(self, shape, num_targets, num_distractors, max_terrains=2**64-1):
         self.shape = shape
         self.num_targets = num_targets
         self.num_distractors = num_distractors

@@ -18,17 +18,13 @@ This chapter presents the motivation behind the project, the research questions 
 % the reader interested in the work and create an urge to
 % continue reading.
 
-The ability to visually search for things in an environment is fundamental to intelligent behaviour.
+The ability to visually search for things in an environment is fundamental to intelligent behavior.
 We humans are constantly looking for things, be it be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest.
 In many cases, it is important that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
-An intelligent searcher should be able to 
-
-Automating the task of searching is of great interest
-
 While searching for targets is often seemingly effortless to humans, it is a complex process.
-How humans and animals search for things has been extensively studied in neuroscience and neurobiology~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}.
+How humans and animals search for things has been extensively studied in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}.
 
 Applications such as helping robots and search and rescue mean that it is of great interest to automate visual search.
 In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}.
@@ -50,21 +46,18 @@ Manually creating search algorithms for such tasks is problematic.
 The appearance and distribution of targets in an environment varies greatly, and may be subtle.
 The visual richness of the environment itself is another problem.
 How can you identify useful hints from the environment to guide covert attention?
-Doing so manually can be labour intensive, especially if a searcing system should be deployed in many different environments.
+Doing so manually can be labour intensive, especially if a searching system should be deployed in many different environments.
 If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
 
 Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
 In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
 It has been used to master arcade games~\cite{mnih_human_2015}, board games~\cite{silver_alphago_2016}, and even complex real-time strategy games~\cite{vinyals_alphastar_2019}.
-Real-world tasks have also been tackled with deep reinforcement learning.
+Several works have also successfully applied reinforcement learning to 
+Among those 
 Deep reinforcement learning could potentially be used to tackle the problem of searching for targets in new environments.
 
 \section{Aim}
 \label{sec:aim}
-
-% Pan-Tilt-Zoom setup
-
-% What is the underlying purpose of the thesis project.
 
 The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
 Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
@@ -79,8 +72,8 @@ We postulate that an effective searcher
   \item is able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
 \end{itemize}
 
-We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criterias in mind.
-Specifically, we consider scenarious where the agent can only observe a small portion of its environment at any given time through a pan-tilt camera.
+We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criteria in mind.
+Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a pan-tilt camera.
 The agent has to actively choose where to look in order to gain new information about the environment.
 
 Our contributions are as follows:

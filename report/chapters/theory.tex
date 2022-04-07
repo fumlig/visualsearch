@@ -66,16 +66,16 @@ Images are passively sampled and perceived.
 Animal perception, however, is active.
 We do not only see things, but look for them.
 One might ask why this is the case, if there is any advantage that an active observer has over a passive one.
-Aloimonos and Weiss (1988)~\cite{aloimonos_active_1988} introduce the paradigm called \textit{active vision}, and prove that an active observer can solve several basic vision problems in a more efficient way than a passive one.
+Aloimonos and Weiss~\cite{aloimonos_active_1988} introduce the paradigm called \textit{active vision}, and prove that an active observer can solve several basic vision problems in a more efficient way than a passive one.
 
-Bajcsy (1988)~\cite{bajcsy_1988} defines active vision, and perception in general, as a problem of intelligent data acquisition.
+Bajcsy~\cite{bajcsy_1988} defines active vision, and perception in general, as a problem of intelligent data acquisition.
 An active observer needs to define and measure parameters and errors from its scene and feed then back to control the data acquisition process.
 Bajscy states that one of the difficulties of this problem is that they are scene and context dependent.
 A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.
 One view lacks information that may be present with multiple views.
 Multiple views also add the time dimension into the problem.
 
-In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\cite{bajcsy_aloimonos_tsotsos_2018} stress that despite recent successes in robotics, artificial intelligence and computer vision, an intelligent agent must include active perception:
+In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_aloimonos_tsotsos_2018} stress that despite recent successes in robotics, artificial intelligence and computer vision, an intelligent agent must include active perception:
 
 \begin{quote}
     An agent is an active perceiver if it knows why it wishes to sense, and then chooses what to perceive, and determines how, when and where to achieve that perception
@@ -90,20 +90,19 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos (2018)~\c
 \label{sec:visualsearch}
 
 % todo: should maybe remove the psychology and keep that in introduction only
-% "kuriosa"
 
 The perceptual task of searching for something in a visual environment is usually referred to as \textit{visual search}.
 The searched object or feature is the \textit{target}, and the other objects or features in the environment are the \textit{distractors}.
 This task has been studied extensively in psychology and neuroscience.
 % the reason for introducing this is to be able to use the same terminology later
 
-Wolfe (2021)~\cite{wolfe_guided_2021} describes a model of visual search
+Wolfe~\cite{wolfe_guided_2021} describes a model of visual search
 
 % general things
 % - foveated vision
 % - covert and overt attention
 
-Eckstein (2011)~\cite{eckstein_visual_2011} reviews efforts from various subfields and identifies a set of mechanisms used to achieve efficient visual search.
+Eckstein~\cite{eckstein_visual_2011} reviews efforts from various subfields and identifies a set of mechanisms used to achieve efficient visual search.
 Knowledge about the target, distractor, background statistical properties, location probabilities, contextual cues, rewards and target prevalence are all identified as useful.
 This is motivated with evidence from psychology as well as neural correlates.
 
@@ -113,7 +112,7 @@ This is in part due to processing: our visual system cannot process the entire v
 % saliency, center-surround organization
 % covert attention and eye movement
 
-Wolfe and Horowitz (2017)~\cite{wolfe_horowitz_2017} identify and measure a set of factors that guide attention in visual search.
+Wolfe and Horowitz~\cite{wolfe_horowitz_2017} identify and measure a set of factors that guide attention in visual search.
 One of these is bottom-up guidance, in which some visual properties of the scene draw more attention than others.
 Another is top-down guidance, which is user driven and directed to objects with known features of desired targets.
 Scene guidance is also identified, in which attributes of the scene guide attention to areas likely to contain targets. 
@@ -186,14 +185,14 @@ Planning in a POMDP is undecidable, and solving them is often computationally in
 Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_pomdp_1998} which is acts on.
 The belief state summarizes the agent's previous experience and is therefore dependent on the full \textit{history} of actions and observations.
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
-From here on we will use the belief state and the environment state \(s\) interchangably. 
+From here on we will use the belief state and the environment state \(s\) interchangeably. 
 % Sutton page 467 is better, contains latent state assumption
 
 
 \subsubsection{Policies and Value Functions}
 \label{sec:policy-value}
 
-The behaviour of the agent is described by its \textit{policy}.
+The behavior of the agent is described by its \textit{policy}.
 A policy \(\pi\) is a mapping from perceived environment states to actions.
 Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\).~\cite{sutton_reinforcement_2018}
 
@@ -244,12 +243,12 @@ It should also \textit{explore} in order to learn better actions to take in the 
 Agents that fail to both exploit and explore will lead to failure at the task.
 %Furthermore, striking a good balance between the two is non-trivial, and often requires care.~\cite{sutton}
 
-Another challenge is the design of reeward signals.
+Another challenge is the design of reward signals.
 For some tasks, like certain video games, the objective is simply to maximize the score obtained.
 In this case there is an inherent reward signal and the agent achieves its task simply by maximizing this inherent signal.
 Other times, we have a task we want the agent to solve and have to design a reward signal around that task.
 Designing rewards is not straight-forward and can often have unintended effects~\cite{sutton_reinforcement_2018}.
-Special care has to be taken to ensure that the reward incentivizes the desired behaviour.
+Special care has to be taken to ensure that the reward encourages the desired behavior.
 
 Here, the problem of \textit{sparse rewards} also comes into play.
 The agent has to be reward frequently enough to allow it to achieve its goal once.
@@ -289,7 +288,7 @@ We now describe three neural network architectures that will be used in this wor
 
 \subsubsection{Feedforward Neural Network}
 
-A feedforward neural network, also known as a multi-layer perceptron (MLP)~\cite{goodfellow_deep_2016}, only has connections in one direction.
+A feed-forward neural network, also known as a multi-layer perceptron (MLP)~\cite{goodfellow_deep_2016}, only has connections in one direction.
 Each node in the network receives inputs from its predecessors and outputs the result of a function of those inputs.
 The output \(y\) of each node is usually computed by taking the weighted sum of its inputs \(x\) and applying some non-linear function
 
@@ -304,7 +303,7 @@ The non-linearity ensures that a network with at least two layers can approximat
 
 \subsubsection{Convolutional Neural Network}
 
-Convolutional Neural Networks (CNNs) contain spatially local connections.
+Convolutional neural networks (CNNs) contain spatially local connections.
 They have patterns of weights, called \textit{kernels}, that are replicated across units in each layer.
 With some input vector \(\mathbf{x}\) of size \(n\) and a vector kernel \(\mathbf{k}\) of size \(l\), the (discrete) convolution operation \(\mathbf{z} = \mathbf{x} \ast \mathbf{k}\) is defined as
 
@@ -330,7 +329,7 @@ This property of CNNs is useful for images where similar features may be useful 
 
 \subsubsection{Recurrent Neural Network}
 
-Recurrent neural networks (RNNs) extend feedforward networks by allowing cycles in the computation graph.
+Recurrent neural networks (RNNs) extend feed-forward networks by allowing cycles in the computation graph.
 Each cycle has a delay so that some \textit{hidden state} from the previous computation is used as input to the current computation.
 A recurrent layer with input \(\mathbf{x}_t\), output \(\mathbf{y}_t\) and hidden state \(\mathbf{z}_t\) is defined by
 
@@ -342,7 +341,7 @@ A recurrent layer with input \(\mathbf{x}_t\), output \(\mathbf{y}_t\) and hidde
 \end{align}
 
 where \(f_\mathbf{w}\) is the update process for the hidden state and \(g_y\) is the activation function for the hidden layer.
-This model can be turned into a feedforward network over a sequence of input vectors \(\mathbf{x}_1, \dots \mathbf{x}_T\) and observed outputs \(\mathbf{y}_1, \dots, \mathbf{y}_T\) by \textit{unrolling} it for \(T\) steps. The weights are shared across all time steps. This means that RNNs can operate on inputs of arbitrary lengths.
+This model can be turned into a feed-forward network over a sequence of input vectors \(\mathbf{x}_1, \dots \mathbf{x}_T\) and observed outputs \(\mathbf{y}_1, \dots, \mathbf{y}_T\) by \textit{unrolling} it for \(T\) steps. The weights are shared across all time steps. This means that RNNs can operate on inputs of arbitrary lengths.
 The hidden state is used as a summary of all previous items in the sequence.
 Thus, RNNs make a Markov assumption.~\cite{russell_artificial_2021}
 
@@ -382,7 +381,7 @@ The output layer has one output for each valid action.
 %\cite{arulkumaran_survey_2017}
 
 The DQN architecture sparked great interest and several modifications.
-Hausknecht and Stone (2017)~\cite{hausknecht_stone_2017} investigate the effects of adding a recurrent step to DQN in order to tackle POMDPs.
+Hausknecht and Stone~\cite{hausknecht_stone_2017} investigate the effects of adding a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 
@@ -395,10 +394,10 @@ Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
     \begin{algorithmic}
         \For{\(\text{iteration} = 1,2,\dots\)}
             \For{\(\text{actor} = 1,2,\dots,N\)}
-                \State \(\text{Run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ timesteps}\)
+                \State \(\text{Run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ time steps}\)
                 \State \(\text{Compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
             \EndFor
-            \State \(\text{Optimize surrogate } L \text{ wrt } \theta, \text{ with } K \text{ epochs and minibatch size } M \leq NT\)
+            \State \(\text{Optimize surrogate } L \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
             \State \(\theta_{\text{old}} \leftarrow \theta\)
         \EndFor
     \end{algorithmic}
@@ -456,7 +455,7 @@ Chen and Gupta~\cite{chen_memory_2017} use a spatial memory for context reasonin
 
 \subsection{Visual Attention}
 
-Visual attention in humans is often split into two phasesis usually split into two phases
+Visual attention in humans is often split into two phases usually split into two phases
 
 ~\cite{itti_koch_2001}
 
@@ -475,7 +474,7 @@ Visual attention in humans is often split into two phasesis usually split into t
 
 Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
 
-Partially observable processes, such as the one we consider in this work, can be seens as hard attention problems.
+Partially observable processes, such as the one we consider in this work, can be seen as hard attention problems.
 By taking actions, the hard attention can be redirected.
 
 
@@ -517,7 +516,7 @@ The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM ce
 
 Mirowski et al.~\cite{mirowski_navigate_2017}...
 
-Henriques and Vedaldi (2018)~\cite{henriques_vedaldi_2018} use a spatial memory...
+Henriques and Vedaldi~\cite{henriques_vedaldi_2018} use a spatial memory...
 
 Gupta et al.~\cite{gupta_cognitive_2019} use a latent spatial memory.
 The 
@@ -531,7 +530,7 @@ Planning in this fashion s
 Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for navigation.
 They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
-However, when trained and tested on differen maps, it cannot do so succesfully.
+However, when trained and tested on different maps, it cannot do so successfully.
 They further find that, with a single decision point whose correct\dots
 % could be due to their inductive biases
 % the agent does not have access to its location and can therefore not determine its location
@@ -545,7 +544,7 @@ They further find that, with a single decision point whose correct\dots
 
 Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
 
-Zhu et al.~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indooor scenes with DRL.
+Zhu et al.~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indoor scenes with DRL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
 The agent moves forwards, backwards, and turns left and right at constant step lengths.
 They use a reward signal with a small time penalty to incentivize task completion in few steps.
@@ -583,7 +582,7 @@ Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a struct
 
 Anderson et al.~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations environments in navigation agents.
 Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
-Agumentations like reucrrent update mechanisms add more potential.
+Augmentations like recurrent update mechanisms add more potential.
 More advanced memory mechanisms can be important for better navigation.
 The nature of the internal representation is central to the study of embodied navigation.
 % more recommendations are there, are they relevant?
@@ -597,7 +596,7 @@ The nature of the internal representation is central to the study of embodied na
 \begin{itemize}
     \item What is contained in an environment (represents a Markov Decision Process).
     \item What is a good benchmarking environment
-    \item Should list some common environments and explain why they are not satistfactory
+    \item Should list some common environments and explain why they are not satisfactory
 \end{itemize}
 
 \subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
@@ -671,7 +670,7 @@ The authors attribute this to the implicit curriculum of the distribution of lev
 
 A problem in state-of-the art RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
-Furthermore, many methods have intrincic variance which can make published results difficult to interpret.
+Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
 This has meant that reproducing state-of-the-art deep RL results is difficult.
 
 Henderson et al.~\cite{henderson_matters_2018} discuss this problem from multiple perspectives.
@@ -684,10 +683,10 @@ Through experimental analysis, they show that:
     \item Rescaling rewards can have a large effect, although it is difficult to predict how.
     \item Variance between random seeds in stochastic environments affects performance of algorithms, and give learning curves that do not fall within the same distribution.
     This suggests that selecting the top \(N\) trials or average over a small number of trials \(N\) can be misleading. They suggest to compare performance over many different random seeds.
-    \item For certain environments, learning curves can indicate successful optimization but the learned behaviour may not be satisfactory.
+    \item For certain environments, learning curves can indicate successful optimization but the learned behavior may not be satisfactory.
     It is therefore important to not only show returns, but also demonstrations of the learned policy in action.
     \item Implementation differences that are not reflected in publications can have a dramatic impact on performance.
-    It is therefore necessary to enumerate implementation details and package codebases with publications.
+    It is therefore necessary to enumerate implementation details and package code bases with publications.
     Performance of baseline experiments should also match original baseline publication code.
 \end{itemize}
 
@@ -700,7 +699,7 @@ Finally, \cite{henderson_matters_2018} make the point that more emphasis should 
 Benchmarks environments like ALE~\cite{arcade} often have no clear winner.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
 
-A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticises the heavy use of point estimates of aggregate performance.
+A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.
 They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis. 
 The popularity of more challenging benchmarks has lead to longer training times.
 This has made it less feasible to measure performance over many training runs,

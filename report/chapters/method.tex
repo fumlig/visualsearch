@@ -81,7 +81,7 @@ The first reward signal is defined as
 
 with \(h = \left\lvert T \cap V \right\rvert\). 
 We argue that this reward provides a suitable inductive bias for the task at hand.
-Early experiments show that a constant reward of \(r_t = -1\) that simply incentivizes the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
 The reward for finding a target speeds up training without deviating from the goal of the task -
 targets should be triggered when in view, but triggers when targets are out of view should be penalized.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
@@ -114,7 +114,7 @@ In addition to speeding up learning, we hypothesize that this reward may help th
 However, it can never yield policies that search exhaustively as such actions are never rewarded.
 It may therefore perform worse during testing where the reward is not available to the agent.
 It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
-\(R''\) strikes a balance between the two other signals by instead incentivizing exploration.
+\(R''\) strikes a balance between the two other signals by instead encouraging exploration.
 This should cause the agent to learn to search the environment exhaustively.
 % tabu search
 % optimal paths
@@ -214,7 +214,7 @@ The network is trained with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
 Furthermore, we use the same parameters as those outlines in ~\cite{cobbe_procgen_2020}.
 These are presented in Table~\ref{tab:hyperparameters}.
-We find that using many parallell environments stabilizes the training.
+We find that using many parallel environments stabilizes the training.
 
 \begin{table}
     \centering
@@ -225,15 +225,15 @@ We find that using many parallell environments stabilizes the training.
         \midrule
         \(\gamma\) & .999 \\
         \(\lambda\) & .95 \\
-        \(\text{timesteps per rollout}\) & 256 \\
+        \(\text{time steps per rollout}\) & 256 \\
         \(\text{epochs per rollout}\) & 3 \\
-        \(\text{minibatches per epoch}\) & 8 \\
+        \(\text{mini-batches per epoch}\) & 8 \\
         \(\text{entropy bonus}\) & 0.01 \\
         \(\text{clip range}\) & .2 \\
         \(\text{reward normalization}\) & yes \\
         \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
-        \(\text{parallell environments}\) & 64 \\
-        \(\text{total timesteps}\) & \(25 \times 10^6\) \\
+        \(\text{parallel environments}\) & 64 \\
+        \(\text{total time steps}\) & \(25 \times 10^6\) \\
         \bottomrule
     \end{tabular}
     \label{tab:hyperparameters}

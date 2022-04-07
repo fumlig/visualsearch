@@ -29,7 +29,8 @@ def proximal_policy_optimization(
     ent_coef=0.01,
     vf_coef=0.5,
     max_grad_norm=0.5,
-    target_kl=None
+    target_kl=None,
+    norm_rew=True
 ):
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
@@ -66,6 +67,9 @@ def proximal_policy_optimization(
     obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
     done = th.zeros(num_envs).to(device)
     state = [s.to(device) for s in agent.initial(num_envs)]
+
+    if norm_rew:
+        envs = gym.wrappers.NormalizeReward(envs)
 
     for _b in range(num_batches):
 

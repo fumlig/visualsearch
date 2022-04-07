@@ -77,8 +77,8 @@ class ImpalaCNN(nn.Module):
     class ResidualBlock(nn.Module):
         def __init__(self, channels):
             super().__init__()
-            self.conv0 = nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1)
-            self.conv1 = nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1)
+            self.conv0 = init_weights(nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1))
+            self.conv1 = init_weights(nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=3, padding=1))
         
         def forward(self, x):
             y = x
@@ -94,7 +94,7 @@ class ImpalaCNN(nn.Module):
             self.input_shape = input_shape
             self.out_channels = out_channels
 
-            self.conv = nn.Conv2d(in_channels=self.input_shape[0], out_channels=self.out_channels, kernel_size=3, padding=1)
+            self.conv = init_weights(nn.Conv2d(in_channels=self.input_shape[0], out_channels=self.out_channels, kernel_size=3, padding=1))
             
             self.res_block0 = ImpalaCNN.ResidualBlock(self.out_channels)
             self.res_block1 = ImpalaCNN.ResidualBlock(self.out_channels)
@@ -131,7 +131,7 @@ class ImpalaCNN(nn.Module):
         )
 
         self.linear = nn.Sequential(
-            nn.Linear(shape[0]*shape[1]*shape[2], output_dim),
+            init_weights(nn.Linear(shape[0]*shape[1]*shape[2], output_dim)),
             nn.ReLU()
         )
 

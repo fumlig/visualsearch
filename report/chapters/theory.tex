@@ -62,7 +62,7 @@ This chapter introduces background and related work.
 \subsection{Active Vision}
 
 % Marr?
-
+~\cite{zeng_survey_2020}
 Much of past and present research in machine perception involves a passive observer.
 Images are passively sampled and perceived.
 Animal perception, however, is active.
@@ -389,6 +389,8 @@ It is found that the agent is able to integrate information over time and achiev
 
 \subsection{Proximal Policy Optimization}
 
+% ~\cite{zeng_survey_2020} has a concise overview of algorithms
+
 Proximal policy optimization algorithms\dots~\cite{schulman_ppo_2017}.
 \todo{Expand on algorithm, advantages, practicalities, etc.}
 
@@ -444,8 +446,10 @@ Most real-world search tasks exhibit larger variance than a population of anatom
 
 Chen and Gupta~\cite{chen_memory_2017} use a spatial memory for context reasoning in object detection.
 They argue that object detection systems require memory to perform well,
-Furthermore, this memory should capture the spatial layout of the scene.
-
+Furthermore, they pose that this memory should capture the spatial layout of the scene in order to model object-object relationships.
+A spatial memory network is proposed, which remembers features and locations of past detections in an image and uses this to improve future ones.
+A CNN is used to extract features from the memory and used together with the original image as input to a standard region proposal network.
+The approach gives a small improvement over the standalone region proposal network.
 
 \subsection{Visual Attention}
 
@@ -471,7 +475,6 @@ Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
 Partially observable processes, such as the one we consider in this work, can be seen as hard attention problems.
 By taking actions, the hard attention can be redirected.
 
-
 \subsection{Coverage Path Planning}
 
 % could be a smaller section in background, under visual search
@@ -491,7 +494,27 @@ Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is sui
 
 \subsection{Visual Navigation}
 
-The task we consider bears resemblance to visual navigation~\cite{zeng_survey_2020}. % or is an instance of?
+The task we consider is perhaps most similar to visual navigation~\cite{bonin-font_visnav_2008}.
+Visual navigation is the process of determining a suitable path between a start point and destination point using visual input.
+Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles.
+
+Bonin et al.~\cite{bonin-font_visnav_2008} divide visual navigation in map-building and map-less systems.
+Appearance-
+
+Navigation can be divided into map-building and map-less navigation.
+Map-less techniques are reactive, and typically do not need 
+
+Traditionally, visual navigation is divided into indoor navigation and outdoor navigation. Outdoor navigation is subdivided in structured and unstructured environments. Indoor navigation is subdivided in map-building and map-less navigation  
+
+Navigational systems that don't have previous knowledge of their environment have to perceive their environment while navigating through it.
+Such systems often build an internal map and thus require some form of memory.
+
+
+
+The field is gaining popularity and 
+
+% most involve showing
+
 
 % Point navigation / Object Navigation
 
@@ -561,7 +584,17 @@ Several works in visual navigation have placed emphasis on memory representation
 %
 
 
-\subsection{Memory Architectures for Deep Reinforcement Learning}
+\subsection{Memory Architectures}
+
+A recurring theme in the related work above is the use of memory architectures.
+In most cases where active sensing is involved, memory is a requirement for good performance.
+Works that don't use memory rely on either full observability, like \cite{caicedo_active_2015}, or low variance so that scenes can be remembered, like \cite{ghesu_artificial_2016}.
+
+Simple memory mechanisms, like the frame stacking used in \cite{mnih_human_2015} can model velocity and work well in certain environments where reactive action is sufficient.
+Once a task requires integration of features over longer time, more advanced memory is required.
+RNNs provide a suitable memory architecture for many such tasks, and is used which success in works like \cite{mnih_attention_2014}, \cite{mnih_asynchronous_2016}, \cite{...}.
+
+% advanced memory, spatial memory, etc.
 
 \begin{enumerate}
     \item Frame stacking
@@ -591,16 +624,16 @@ The nature of the internal representation is central to the study of embodied na
 % \cite{gupta_cognitive_2019}
 % 
 
-
 \subsection{Benchmarking Environments}
 
 \begin{itemize}
     \item What is contained in an environment (represents a Markov Decision Process).
     \item What is a good benchmarking environment
     \item Should list some common environments and explain why they are not satisfactory
+    \item Motivate why we create our own (higher variance, agent's can not rely on memorizing environments)
 \end{itemize}
 
-\subsection{Inductive Biases, Overfitting and Generalization in Deep Reinforcement Learning}
+\subsection{Inductive Biases, Overfitting and Generalization}
 
 % first introduce the reason why generalization is important
 % reality is dynamic
@@ -667,7 +700,7 @@ Agents strongly overfit to small training sets and need many samples to generali
 Interestingly, training performance improves as the training set grows past a certain threshold.
 The authors attribute this to the implicit curriculum of the distribution of levels.
 
-\subsection{Evaluation of Deep Reinforcement Learning Agents}
+\subsection{Evaluation of Agents}
 
 A problem in state-of-the art RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
@@ -694,8 +727,6 @@ Through experimental analysis, they show that:
 Due to the unstable nature of RL algorithms, it is often inadequate to just report average return.
 \cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
 Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
-Various other significance tests\dots
-
 Finally, \cite{henderson_matters_2018} make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
 Benchmarks environments like ALE~\cite{arcade} often have no clear winner.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.

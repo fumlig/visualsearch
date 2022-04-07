@@ -180,7 +180,10 @@ We use this environment for evaluating the generalization capabilities of agents
 % environment 3: hard, realistic
 
 The third environment is a three-dimensional version of the second one.
-The scene 
+The heightmap is turned into a three-dimensional mesh, and the agent is placed at its center.
+The agent observes the scene through a perspective projection pan-tilt camera.
+Targets are, as before, placed along island edges.
+The agent is therefore expected to avoid searching the skies and oceans.
 
 This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
 
@@ -209,38 +212,6 @@ The recurrent network is in turn is connected to an actor network head and a cri
 
 The architecture of the neural network is presented in Figure X.
 \todo{Describe approach once it is fully decided. Will be a memory.}
-
-The network is trained with PPO~\cite{schulman_ppo_2017}.
-Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
-Furthermore, we use the same parameters as those outlines in ~\cite{cobbe_procgen_2020}.
-These are presented in Table~\ref{tab:hyperparameters}.
-We find that using many parallel environments stabilizes the training.
-
-\begin{table}
-    \centering
-    \caption{Hyperparameters used during training.}
-    \begin{tabular}{lcc}
-        \toprule
-        \textbf{Parameter} & \textbf{Value} \\
-        \midrule
-        \(\gamma\) & .999 \\
-        \(\lambda\) & .95 \\
-        \(\text{time steps per rollout}\) & 256 \\
-        \(\text{epochs per rollout}\) & 3 \\
-        \(\text{mini-batches per epoch}\) & 8 \\
-        \(\text{entropy bonus}\) & 0.01 \\
-        \(\text{clip range}\) & .2 \\
-        \(\text{reward normalization}\) & yes \\
-        \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
-        \(\text{parallel environments}\) & 64 \\
-        \(\text{total time steps}\) & \(25 \times 10^6\) \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:hyperparameters}
-\end{table}
-
-\cite{andrychowicz_empirical_2020}
-
 
 % should we rescale to 84x84 instead?
 
@@ -315,9 +286,6 @@ As \cite{mirowski_navigate_2017}, we use a
 
 This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
 
-We train the baselines with the same algorithm as our approach.
-We also use the same hyperparameters.
-
 \section{Experiments}
 \label{sec:experiments}
 
@@ -349,6 +317,39 @@ Once again, we compare all three reward signals.
 Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
 We run all experiments across 3 different runs, and use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}.
 % todo: list
+
+We train all agents with PPO~\cite{schulman_ppo_2017}.
+Early experiments show that PPO gives stable learning curves and good sample efficiency, which is in line with results reported by ~\cite{}.
+Furthermore, we use the same parameters as those outlines in ~\cite{cobbe_procgen_2020}.
+However, we increase the learning rate for our approach.
+This seems to be needed due to the increased number of parameters, which is in line with what is reported by \cite{andrychowicz_empirical_2020}.
+The hyperparameters are presented in Table~\ref{tab:hyperparameters}.
+We find that using many parallel environments stabilizes the training.
+
+\begin{table}
+    \centering
+    \caption{Hyperparameters used during training.}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Parameter} & \textbf{Value} \\
+        \midrule
+        \(\gamma\) & .999 \\
+        \(\lambda\) & .95 \\
+        \(\text{time steps per rollout}\) & 256 \\
+        \(\text{epochs per rollout}\) & 3 \\
+        \(\text{mini-batches per epoch}\) & 8 \\
+        \(\text{entropy bonus}\) & 0.01 \\
+        \(\text{clip range}\) & .2 \\
+        \(\text{reward normalization}\) & yes \\
+        \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
+        \(\text{parallel environments}\) & 64 \\
+        \(\text{total time steps}\) & \(25 \times 10^6\) \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:hyperparameters}
+\end{table}
+
+% discuss hyperparameter tuning in discussion
 
 \section{Implementation}
 

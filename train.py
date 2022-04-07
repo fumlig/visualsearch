@@ -15,23 +15,11 @@ import gym_search
 import rl
 
 
-"""
-todo:
-fix hparams (defaults and all that, if we set to {} they are not visible in tensorboard)
-fix dict observations
-add checkpoints
-add video recording
-add pretty plotting (yield info from learn?)
-"""
-
-
-# these are from procgen!
-
 SEED = 0
 TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 64
 ALG_KWARGS = dict(
-    learning_rate=10e-4,#5e-4,
+    learning_rate=5e-4,
     num_steps=256,
     num_minibatches=8,
     num_epochs=3,
@@ -43,7 +31,8 @@ ALG_KWARGS = dict(
     ent_coef=0.01,
     vf_coef=0.5,
     max_grad_norm=0.5,
-    target_kl=None
+    target_kl=None,
+    norm_rew=True
 )
 
 
@@ -98,27 +87,33 @@ if __name__ == "__main__":
         #th.backends.cudnn.benchmark = False
         #th.backends.cudnn.deterministic = True
 
+    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    writer = SummaryWriter(f"logs/{args.name}")
+
+    # environment
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
-        #gym_search.wrappers.LastAction,
+        gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
 
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
-    envs = gym.wrappers.NormalizeReward(envs)
-    
     envs.seed(args.seed)
+    
     for env in envs.envs:
         env.action_space.seed(args.seed)
         env.observation_space.seed(args.seed)
 
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
-    writer = SummaryWriter(f"logs/{args.name}")
-    agent = rl.agents.make(args.agent, envs, **args.agent_kwargs)
+    # agent
+    agent = th.load(args.model) if args.model else rl.agents.make(args.agent, envs, **args.agent_kwargs)
 
-    if args.model:
-        agent = th.load(args.model)
+    # train
+    writer.add_text(
+        "agent/hyperparameters",
+        "|parameter|value|\n"
+        f"|test|42|"
+    )
 
     rl.algorithms.learn(args.algorithm, args.tot_timesteps, envs, agent, device, writer, **args.alg_kwargs)
 

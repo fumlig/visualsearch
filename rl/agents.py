@@ -192,9 +192,10 @@ class MapAgent(Agent):
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
+        assert self.observation_space.get("last_action") is not None
 
-        self.image_cnn = NatureCNN(self.observation_space["image"], output_dim=128)        
-        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim, features_dim=16)
+        self.image_cnn = NatureCNN(self.observation_space["image"])        
+        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
 
         self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
@@ -203,7 +204,10 @@ class MapAgent(Agent):
         return [th.zeros((num_envs, *self.neural_map.shape))]
 
     def forward(self, obs, state, done, **kwargs):
-        hidden = self.image_cnn(preprocess_image(obs["image"]))
+        hidden = th.cat([
+            self.image_cnn(preprocess_image(obs["image"])),
+            F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n)
+        ], dim=1)
         index = obs["position"].long()
     
         state = state[0]

@@ -1,6 +1,5 @@
 import numpy as np
 from skimage import draw
-from functools import lru_cache
 
 from gym_search.utils import gaussian_kernel, normalize, clamp, sample_coords
 from gym_search.palette import pick_color, EARTH_TOON, BLUE_MARBLE
@@ -64,7 +63,7 @@ class GaussianGenerator(Generator):
 
 
 class TerrainGenerator(Generator):
-    def __init__(self, shape, num_targets, num_distractors, max_terrains=2**64-1):
+    def __init__(self, shape, num_targets, num_distractors, max_terrains=2**63-1):
         self.shape = shape
         self.num_targets = num_targets
         self.num_distractors = num_distractors
@@ -78,8 +77,7 @@ class TerrainGenerator(Generator):
         # http://devmag.org.za/2009/05/03/poisson-disk-sampling/
         
         height, width = self.shape
-        seed = self.random.integers(self.max_terrains)
-        terrain = self.terrain(seed)
+        terrain = self.terrain()
         image = self.image(terrain)
 
         for y, x in self.distractors(terrain):
@@ -100,8 +98,8 @@ class TerrainGenerator(Generator):
 
         return image, targets
 
-    @lru_cache(maxsize=1024)
-    def terrain(self, seed):
+    def terrain(self):
+        seed = self.random.integers(low=0, high=self.max_terrains)
         exp = self.random.uniform(0.5, 5)
         noise = fractal_noise_2d(self.shape, periods=(4, 4), octaves=4, seed=seed)
         terrain = normalize(noise)**exp

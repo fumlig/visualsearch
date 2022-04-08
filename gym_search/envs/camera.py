@@ -70,7 +70,7 @@ class CameraEnv(gym.Env):
         self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
 
         # terrain
-        terrain = self.generator.terrain(int(self.random.integers(self.generator.max_terrains)))
+        terrain = self.generator.terrain()
         image = self.generator.image(terrain, palette=BLUE_MARBLE)
         targets = self.generator.targets(terrain)
 

@@ -42,161 +42,11 @@ The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rang
 where \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent.
 If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
-\section{Environments}
-\label{sec:environments}
-
-To train an test an agent for the problem, we use three different environments.
-The three environments have different characteristics to test the applicability of the evaluated approaches.
-In each environment there is a scene with a background of distractors and a foreground of targets.
-As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
-The scenes are drawn from some unknown distribution.
-The appearance of the scenes and the location of targets have some correlation in all environments.
-This means that the agent should be able to search more efficiently using knowledge from the scene.
-
-For the position part of the observations, we assume the presense of some oracle.
-In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, we do not need the position at all.
-We can use relative positions instead of absolute ones.
-Some of the baselines do not use the position.
-
-The action space is the same in all environments:
-
-\[
-    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
-\]
-
-\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
-% rotates in third environment though
-
-We experiment with three rewards signals.
-The first reward signal is defined as
-
-\[
-    \mathcal{R}(s_t, a_t) =
-    \begin{cases}
-        10h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -1  & \text{otherwise.}
-    \end{cases}
-\]
-
-with \(h = \left\lvert T \cap V \right\rvert\). 
-We argue that this reward provides a suitable inductive bias for the task at hand.
-Early experiments show that a constant reward of \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
-The reward for finding a target speeds up training without deviating from the goal of the task -
-targets should be triggered when in view, but triggers when targets are out of view should be penalized.
-The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
-
-In practice, early experiments show that even this reward might be too sparse.
-To speed up training, we experiment with two extensions to the reward:
-
-\[
-    \mathcal{R}'(s_t, a_t) =
-    \begin{cases}
-        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view closer to the nearest target, and} \\
-        \mathcal{R}(s_t, a_t) & \text{otherwise}.
-    \end{cases}
-\]
-
-\[
-    \mathcal{R}''(s_t, a_t) =
-    \begin{cases}
-        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view to a previously unseen subspace, and} \\
-        \mathcal{R}(s_t, a_t) & \text{otherwise}.
-    \end{cases}
-\]
-
-These three reward signals are interesting to compare for a few reasons.
-\(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
-It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
-\(R'\) uses the supervised distance between targets and the agents, which is available during training.
-This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_multi_scale_2019}.
-In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
-However, it can never yield policies that search exhaustively as such actions are never rewarded.
-It may therefore perform worse during testing where the reward is not available to the agent.
-It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
-\(R''\) strikes a balance between the two other signals by instead encouraging exploration.
-This should cause the agent to learn to search the environment exhaustively.
-% tabu search
-% optimal paths
-
-The episode is terminated when all targets have been found, or when 1000 time steps have passed.
-Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
-
-% Averaged over all possible samples, the probability of targets should be uniform over the scene.
-% to make comparison with exhaustive search fair
-% I think?
-
-\subsection{Gaussian Environment}
-% environment 1: easy, understandable
-
-The first environment is the simplest environment. 
-The scene is described by a 256x256 RGB image.
-The agent observes a 64x64 sub-image at each time step.
-In the image there are three Gaussian kernels with random positions.
-The height of the kernel is indicated by a higher intensity in the blue channel.
-Targets are 1x1 pixels in the red channel.
-The locations of the targets are randomized weighted by the height of the Gaussian kernels.
-This means that the more intense the blue channel, the higher the probability of a target.
-The idea with this environment is to test that the method learns what we want it to learn.
-There is a clear correlation between observations and desirable actions.
-It is also easy to determine whether the agent acts well in this environment.
-Our feeling is that this is something that previous similar works has not done. % cite
-
-\begin{figure}
-    \centering
-    \input{figures/gaussian.pgf}
-    \label{fig:gaussian}
-    %\vspace*{-1cm}
-    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
-\end{figure}
-
-\subsection{Terrain Environment}
-% environment 2: medium, procedural and configurable
-
-The second environment is intended to look like realistic terrain.
-The scene's appearance is given by a 512x512 RGB image.
-The agent's view is a 64x64 sub-image.
-Gradient noise is generated and used as a height map.
-The height map determines the color of the terrain.
-The height also correlates to the probability of targets.
-Specifically, targets are located between shores and mountain bases.
-There are 10 targets in each scene.
-
-The environment roughly corresponds to a UAV search-and-rescue scenario.
-It is desirable that a searching agent should learn to not search oceans and lakes.
-The agent should prioritize searching along the edges of land masses.
-The appearance of the environment is highly configurable and has high variance.
-We use this environment for evaluating the generalization capabilities of agents.
-
-\begin{figure}
-    \centering
-    \input{figures/terrain.pgf}
-    \label{fig:terrain}
-    %\vspace*{-1cm}
-    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges. The white border indicates the agent's current view.}
-\end{figure}
-
-\subsection{Camera Environment}
-% environment 3: hard, realistic
-
-The third environment is a three-dimensional version of the second one.
-The heightmap is turned into a three-dimensional mesh, and the agent is placed at its center.
-The agent observes the scene through a perspective projection pan-tilt camera.
-Targets are, as before, placed along island edges.
-The agent is therefore expected to avoid searching the skies and oceans.
-
-This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
-
-\begin{figure}
-    \centering
-    \input{figures/camera.pgf}
-    \label{fig:camera}
-    %\vspace*{-1cm}
-    \caption[Camera environment]{Three samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
-\end{figure}
-
 \section{Approach}
 \label{sec:approach}
+
+% discretize the problem
+% environment description after
 
 % this should maybe not be specificed yet...
 
@@ -285,6 +135,159 @@ The second baseline is a recurrent version of that agent
 As \cite{mirowski_navigate_2017}, we use a 
 
 This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
+
+\section{Environments}
+\label{sec:environments}
+
+To train an test an agent for the problem, we use three different environments.
+The three environments have different characteristics to test the applicability of the evaluated approaches to different search problems.
+In each environment there is a scene with a background of distractors and a foreground of targets.
+As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
+The scenes are drawn from some unknown distribution.
+The appearance of the scenes and the location of targets have some correlation in all environments.
+This means that the agent should be able to search more efficiently using knowledge from the scene.
+
+For the position part of the observations, we assume the presense of some oracle.
+In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
+If how each action moves the agent is well-defined, we do not need the position at all.
+We can use relative positions instead of absolute ones.
+Some of the baselines do not use the position.
+
+The action space is the same in all environments:
+
+\[
+    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
+\]
+
+\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
+% rotates in third environment though
+
+We experiment with three rewards signals.
+The first reward signal is defined as
+
+\[
+    \mathcal{R}(s_t, a_t) =
+    \begin{cases}
+        10h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -1  & \text{otherwise.}
+    \end{cases}
+\]
+
+with \(h = \left\lvert T \cap V \right\rvert\). 
+We argue that this reward provides a suitable inductive bias for the task at hand.
+Early experiments show that a constant reward of \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
+The reward for finding a target speeds up training without deviating from the goal of the task -
+targets should be triggered when in view, but triggers when targets are out of view should be penalized.
+The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+
+In practice, early experiments show that even this reward might be too sparse.
+To speed up training, we experiment with two extensions to the reward:
+
+\[
+    \mathcal{R}'(s_t, a_t) =
+    \begin{cases}
+        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view closer to the nearest target, and} \\
+        \mathcal{R}(s_t, a_t) & \text{otherwise}.
+    \end{cases}
+\]
+
+\[
+    \mathcal{R}''(s_t, a_t) =
+    \begin{cases}
+        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view to a previously unseen subspace, and} \\
+        \mathcal{R}(s_t, a_t) & \text{otherwise}.
+    \end{cases}
+\]
+
+These three reward signals are interesting to compare for a few reasons.
+\(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
+It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
+\(R'\) uses the supervised distance between targets and the agents, which is available during training.
+This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_multi_scale_2019}.
+In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
+However, it can never yield policies that search exhaustively as such actions are never rewarded.
+It may therefore perform worse during testing where the reward is not available to the agent.
+It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
+\(R''\) strikes a balance between the two other signals by instead encouraging exploration.
+This should cause the agent to learn to search the environment exhaustively.
+% tabu search
+% optimal paths
+
+The episode is terminated when all targets have been found, or when 1000 time steps have passed.
+Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
+
+% Averaged over all possible samples, the probability of targets should be uniform over the scene.
+% to make comparison with exhaustive search fair
+% I think?
+
+\subsection{Gaussian Environment}
+% environment 1: easy, understandable
+
+The first environment is the simplest environment. 
+The scene is described by a \(256 \times 256\) RGB image.
+The agent observes a \(64 \times 64\) sub-image at each time step.
+In the image there are three Gaussian kernels with random positions.
+The height of the kernel is indicated by a higher intensity in the blue channel.
+Targets are \(1 \times 1\) pixels in the red channel.
+The locations of the targets are randomized weighted by the height of the Gaussian kernels.
+This means that the more intense the blue channel, the higher the probability of a target.
+The idea with this environment is to test that the method learns what we want it to learn.
+There is a clear correlation between observations and desirable actions.
+It is also easy to determine whether the agent acts well in this environment.
+Our feeling is that this is something that previous similar works has not done. % cite
+
+\begin{figure}
+    \centering
+    \input{figures/gaussian.pgf}
+    \label{fig:gaussian}
+    %\vspace*{-1cm}
+    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
+\end{figure}
+
+\subsection{Terrain Environment}
+% environment 2: medium, procedural and configurable
+
+The second environment is intended to look like realistic terrain.
+The scene's appearance is given by a \(512 \times 512\) RGB image.
+The agent's view is a \(64 \times 64\) sub-image.
+Gradient noise is generated and used as a height map.
+The height map determines the color of the terrain.
+The height also correlates to the probability of targets.
+Specifically, targets are located between shores and mountain bases.
+There are 10 targets in each scene.
+
+The environment roughly corresponds to a UAV search-and-rescue scenario.
+It is desirable that a searching agent should learn to not search oceans and lakes.
+The agent should prioritize searching along the edges of land masses.
+The appearance of the environment is highly configurable and has high variance.
+We use this environment for evaluating the generalization capabilities of agents.
+
+\begin{figure}
+    \centering
+    \input{figures/terrain.pgf}
+    \label{fig:terrain}
+    %\vspace*{-1cm}
+    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges. The white border indicates the agent's current view.}
+\end{figure}
+
+\subsection{Camera Environment}
+% environment 3: hard, realistic
+
+The third environment is a three-dimensional version of the second one.
+The heightmap is turned into a three-dimensional mesh, and the agent is placed at its center.
+The agent observes the scene through a perspective projection pan-tilt camera.
+Targets are, as before, placed along island edges.
+The agent is therefore expected to avoid searching the skies and oceans.
+
+This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+
+\begin{figure}
+    \centering
+    \input{figures/camera.pgf}
+    \label{fig:camera}
+    %\vspace*{-1cm}
+    \caption[Camera environment]{Three samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
+\end{figure}
 
 \section{Experiments}
 \label{sec:experiments}

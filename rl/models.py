@@ -214,11 +214,11 @@ class NeuralMap(nn.Module):
         return w
 
     def forward(self, x, state, index):
-        b = x.shape[0]
         r = self.read(state)
         c = self.context(x, r, state)
         w = self.write(x, r, c, state, index)
 
+        b = x.shape[0]
         new_state = state.clone()
         new_state[th.arange(b),:,index[:,0],index[:,1]] = w
 

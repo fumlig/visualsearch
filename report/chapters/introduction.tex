@@ -23,39 +23,33 @@ We humans are constantly looking for things, be it be it the right book in the b
 In many cases, it is important that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
-While searching for targets is often seemingly effortless to humans, it is a complex process.
-How humans and animals search for things has been extensively studied in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,wolfe_guided_2021}.
+Automating visual search is of great interest for several reasons.
+Visual search is crucial for applications such as search and rescue, surveillance, fire detection, etc.
+Autonomous vehicles can both reduce risk and potentially exhibit more intelligent searching behavior than human-controlled ones.
 
-Automating visual search is of interest for several reasons.
-Applications include search and rescue, outdoor and indoor building inspection, surveillance, and fire detection.
-In the computer vision field, there has been several attempts to mimic the way humans search in machines~\cite{}.
-Most attempts focus on fully observable scenes where the target is in view and the task is to localize it (object localization).
-However, in many real-world visual search scenarios the field-of-view is limited.
-This means that the search process is split into two steps: directing the field of view (covert attention), and locating targets within the view (overt attention).
-Much work has been focused on latter, locating targets within the field of view~\cite{}.
+However, while visual search is often seemingly effortless to us humans, it is a complex process.
+At the root of the visual search problem is partial observability.
+A searcher can only perceive, or pay attention to, a limited region of the searched environment at once.
+Therefore which regions to observe and in what order becomes an important decision. 
 
-When only a fraction of the environment is visible, where to move the field of view becomes an important decision.
-The characteristics of the searched environment can often be used to find targets quicker.
-For example, if one is foraging for blueberries it makes sense to search the ground rather than the trees.
-Similarly, if one is searching a satellite image for boats it is reasonable to focus on ocean shores.
-If you see a railroad track or the wake of a boat you can usually follow it to find a vehicle.
-The exact characteristics of the environment need not be constant - forests with blueberries can vary greatly in appearance and boats can be found in all of the seven seas.
-In many cases, the environment is familiar in that it has characteristics that are similar to previously seen environments.
-Humans are able to generalize in such cases.
+How humans and animals search for things has been extensively studied in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,nakayama_situating_2011}.
+When we search, we use features of the environment to guide our attention~\cite{wolfe_five_2017}.
+For example, we know to look for berries at the forest floor, and not to look for boats on land.
+Furthermore, search is not purely reactive but involves the use of memory.
+We take the history of the search into account in order to select where to move our attention~\cite{wolfe_five_2017}.
 
-Manually creating search algorithms for such tasks is problematic.
-The appearance and distribution of targets in an environment varies greatly, and may be subtle.
-The visual richness of the environment itself is another problem.
-How can you identify useful hints from the environment to guide covert attention?
+Such features can in some cases be quite subtle and difficult to pick up, even for humans.
+Manually engineering guidance in accordance with these features can be difficult,
+especially if a searching system should be deployed in many different environments.
 Doing so manually can be labour intensive, especially if a searching system should be deployed in many different environments.
-If one could instead learn the underlying from a limited set of sample environments and generalize to unseen similar environments this problem would be circumvented.
+If one could instead learn the a good searching strategy from a limited set of sample environments this would be circumvented.
+Such a system could be taught to search in arbitrary environments without the use of environment-specific rules.
 
 Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
 In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
 It has been used to master arcade games~\cite{mnih_human_2015}, board games~\cite{silver_alphago_2016}, and even complex real-time strategy games~\cite{vinyals_alphastar_2019}.
-Several works have also successfully applied reinforcement learning to 
-Among those 
-Deep reinforcement learning could potentially be used to tackle the problem of searching for targets in new environments.
+Several works have also applied reinforcement learning to tasks involving embodied agents with visual input~\cite{minut_mahadevan_2001,mnih_attention_2014,zhu_target_driven_2016,mirowski_navigate_2017}.
+This makes it interesting to see if deep reinforcement learning can also be applied to visual search.
 
 \section{Aim}
 \label{sec:aim}
@@ -74,9 +68,11 @@ We postulate that an effective searcher
 \end{itemize}
 
 We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criteria in mind.
-Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a pan-tilt camera.
+Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a fixed pan-tilt camera.
 The agent has to actively choose where to look in order to gain new information about the environment.
+The goal of the agent is to actively locate a set of targets in its environment.
 
+While similar problems have been addressed in the past~\cite{minut_mahadevan_2001}, our impression is that this is the first work to address intelligent search for multiple targets in unseen environments.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -85,6 +81,7 @@ Our contributions are as follows:
   \item We provide a set of environments to evaluate visual search agents.
   \item We propose a method for solving the visual search task with reinforcement learning.
   \item We compare the method to a set of common baseline agents.
+  \item We evaluate how well learning agents are able to generalize to unseen environments.
 \end{itemize}
 
 \section{Research questions}
@@ -151,7 +148,7 @@ This thesis will address the following questions:
 % normal case, the delimitations need not be justified.
 
 This thesis will be focused on the behavioral aspects of the presented problem.
-We do not focus on difficult detection problems, but rather efficient actions.
+We do not focus on difficult detection problems, but rather strategic actions.
 For this reason, targets will deliberately be made easy to detect.
 For simplicity, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.

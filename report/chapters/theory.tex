@@ -494,34 +494,33 @@ Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is sui
 
 \subsection{Visual Navigation}
 
+% when finishing this,
+% it should be clear that
+% - there are differences between the tasks
+% - the existing environments can not test what we are looking for
+% - we can draw inspiration from several approaches
+% - memory is important and interesting
+
+% - they only test indoor scenarios
+% - in reality they are too ambitious for me 
+
 The task we consider is perhaps most similar to visual navigation.
 Visual navigation is the process of determining a suitable path between a start point and destination point using visual input~\cite{bonin-font_visnav_2008}.
 Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles.
 
-Bonin et al.~\cite{bonin-font_visnav_2008} divide visual navigation in map-building and map-less systems.
-They further subdivide map-less navigation systems into optical flow-based systems, appearance-based systems, 
+Bonin-Font et al.~\cite{bonin-font_visnav_2008} divide visual navigation in map-based and map-less systems.
+Map-based systems may explore and build a map of their environment
+They further subdivide map-based systems into map-less navigation systems into optical flow-based systems, appearance-based systems, 
 
-More recently, deep RL has begun making its way into navigation as well~\cite{zeng_survey_2020}.
+More recently, deep RL seen use for visual navigation as well~\cite{zeng_survey_2020}.
 The difficulty of hand-engineering 
+In particular, two tasks have been of interest: object (goal) navigation and point (goal) navigation.
 
-Navigation can be divided into map-building and map-less navigation.
-Map-less techniques are reactive, and typically do not need 
+In point navigation, the agent starts at a random position in an unseen environment.
+The goal of the agent is to navigate to a set of target coordinates, specified relative to the agent's current location.
 
-Traditionally, visual navigation is divided into indoor navigation and outdoor navigation. Outdoor navigation is subdivided in structured and unstructured environments. Indoor navigation is subdivided in map-building and map-less navigation  
-
-Navigational systems that don't have previous knowledge of their environment have to perceive their environment while navigating through it.
-Such systems often build an internal map and thus require some form of memory.
-
-
-
-The field is gaining popularity and 
-
-% most involve showing
-
-
-% Point navigation / Object Navigation
-
-
+In object navigation the agent is initialized at a random position in an unseen environment.
+Its goal is to find an instance of an object category, which it is given as input.
 
 
 Mnih et al.~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
@@ -585,6 +584,8 @@ Several works in visual navigation have placed emphasis on memory representation
 % this is where we briefly discuss the related work
 % emphasize the memories, problems in evaluation, generalization
 %
+
+Common for all these is that they involve a limited set of training scenes and test scenes.
 
 
 \subsection{Memory Architectures}

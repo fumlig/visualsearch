@@ -69,11 +69,13 @@ We postulate that an effective searcher
 \end{itemize}
 
 We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criteria in mind.
+The goal of the agent is to actively locate a set of targets in its environment.
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a fixed pan-tilt camera.
 The agent has to actively choose where to look in order to gain new information about the environment.
-The goal of the agent is to actively locate a set of targets in its environment.
 
-While similar problems have been addressed in the past~\cite{minut_mahadevan_2001}, our impression is that this is the first work to address intelligent search for multiple targets in unseen environments.
+If such a system is to be trained and deployed for a real-world task, there is realistically a limited set of samples to learn from.
+Therefore it is also of interest to determine how many samples are required to infer how to effectively search in similar environments.
+While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017}, our impression is that this is the first work to address intelligent search for multiple targets in unseen environments.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -135,7 +137,7 @@ Our contributions are as follows:
 This thesis will address the following questions:
 
 \begin{enumerate}
-  \item \label{itm:rq1} How can a learning agent that learns to intelligently search for targets be implemented?
+  \item \label{itm:rq1} How can a learning agent that learns to intelligently search for targets be implemented with reinforcement learning?
   \item What is a suitable memory architecture for a visual search agent?
   \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
   \item \label{itm:rq3} How many training samples are needed for the agent to generalize to unseen in-distribution environments?

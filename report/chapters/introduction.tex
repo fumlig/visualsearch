@@ -28,15 +28,16 @@ Visual search is crucial for applications such as search and rescue, surveillanc
 Autonomous vehicles can both reduce risk and potentially exhibit more intelligent searching behavior than human-controlled ones.
 
 However, while visual search is often seemingly effortless to us humans, it is a complex process.
+Attempts to understand and recreate human visual search in machines has been a big challenge~\cite{eckstein_visual_2011}.
 At the root of the visual search problem is partial observability.
 A searcher can only perceive, or pay attention to, a limited region of the searched environment at once.
 Therefore which regions to observe and in what order becomes an important decision. 
 
 How humans and animals search for things has been extensively studied in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,nakayama_situating_2011}.
-When we search, we use features of the environment to guide our attention~\cite{wolfe_five_2017}.
+When we search, we use features of the environment to guide our attention~\cite{wolfe_five_2017,eckstein_visual_2011}.
 For example, we know to look for berries at the forest floor, and not to look for boats on land.
 Furthermore, search is not purely reactive but involves the use of memory.
-We take the history of the search into account in order to select where to move our attention~\cite{wolfe_five_2017}.
+We also use memory to take the history of the search into account when deciding where to move our attention~\cite{wolfe_five_2017}.
 
 Such features can in some cases be quite subtle and difficult to pick up, even for humans.
 Manually engineering guidance in accordance with these features can be difficult,
@@ -135,8 +136,9 @@ This thesis will address the following questions:
 
 \begin{enumerate}
   \item \label{itm:rq1} How can a learning agent that learns to intelligently search for targets be implemented?
+  \item What is a suitable memory architecture for a visual search agent?
   \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
-  \item \label{itm:rq3} How well does the learning agent generalize to unseen but familiar environments?
+  \item \label{itm:rq3} How many training samples are needed for the agent to generalize to unseen in-distribution environments?
 \end{enumerate}
 
 \section{Delimitations}

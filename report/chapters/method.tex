@@ -63,6 +63,10 @@ The recurrent network is in turn is connected to an actor network head and a cri
 The architecture of the neural network is presented in Figure X.
 \todo{Describe approach once it is fully decided. Will be a memory.}
 
+% inhibition of return could be done programmatically, but there are advantages to learning it:
+% in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
+% cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies)
+
 % should we rescale to 84x84 instead?
 
 % https://www.reddit.com/r/reinforcementlearning/comments/ogwct6/how_to_deal_with_catastrophic_forgetting/

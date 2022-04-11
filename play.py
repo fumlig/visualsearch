@@ -48,6 +48,7 @@ if __name__ == "__main__":
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
         gym_search.wrappers.ResizeImage,
+        gym_search.wrappers.LastAction
     ]
 
     env = gym.make(args.environment)

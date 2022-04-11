@@ -21,13 +21,13 @@ class SearchEnv(gym.Env):
         SOUTH = 4
         WEST = 5
 
-    def __init__(self, generator, view_shape=(32, 32), step_size=1):
+    def __init__(self, generator, view_shape=(32, 32), step_size=1, max_steps=1000):
         self.generator = generator
         self.shape = generator.shape
         self.view = Box(0, 0, view_shape[0], view_shape[1])
         self.step_size = step_size
 
-        self.train_steps = 1000
+        self.train_steps = max_steps
         self.test_steps = 5000
 
         self.reward_range = (-np.inf, np.inf)
@@ -56,7 +56,6 @@ class SearchEnv(gym.Env):
         self.visible[self.scaled_position] = True
 
         self.last_dist = euclidean_dist(self.view.center(), self.targets[0].center())
-        self.optimal_steps = 0 # int(travel_dist(map(self.normalize_position, [self.view.position] + [target.position for target in self.targets]))) + len(self.targets)
 
         self.counters = defaultdict(int)
 
@@ -79,7 +78,6 @@ class SearchEnv(gym.Env):
         self.path.append(self.view.position)
 
         revisit = self.visited[self.scaled_position]
-        retrigger = self.triggered[self.scaled_position] and action == self.Action.TRIGGER
 
         self.visible = np.full(self.scaled_shape, False)
         self.visited[self.scaled_position] = True
@@ -111,9 +109,8 @@ class SearchEnv(gym.Env):
         self.last_dist = dist
         self.num_steps += 1
 
+        self.counters["triggers"] += action == self.Action.TRIGGER
         self.counters["revisits"] += revisit
-        self.counters["retriggers"] += retrigger
-        self.counters["redundant_steps"] += self.num_steps > self.optimal_steps
 
         obs = self.observation()
         done = all(self.hits) or self.num_steps == self.max_steps
@@ -121,7 +118,6 @@ class SearchEnv(gym.Env):
             counters=self.counters,
             path=self.path,
             success=all(self.hits),
-            shortest=self.optimal_steps
         )
 
 

@@ -41,6 +41,28 @@ gym.register(
     )
 )
 
+gym.register(
+    id="Terrain-v1",
+    entry_point=SearchEnv,
+    kwargs=dict(
+        generator=TerrainGenerator((512, 512), 3, 100, max_terrains=1024),
+        view_shape=(64, 64),
+        step_size=64,
+    )
+)
+
+gym.register(
+    id="Terrain-v2",
+    entry_point=SearchEnv,
+    kwargs=dict(
+        generator=TerrainGenerator((1024, 1024), 3, 100, max_terrains=1024),
+        view_shape=(64, 64),
+        step_size=64,
+        max_steps=2500
+    )
+)
+
+
 #if os.path.exists("data/xview"):
 #    gym.register(
 #        id="XView-v0",

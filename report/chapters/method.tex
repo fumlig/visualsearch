@@ -61,7 +61,7 @@ A feature extraction network is connected to a recurrent network.
 The recurrent network is in turn is connected to an actor network head and a critic network head, which approximate the policy and value function respectively.
 
 The architecture of the neural network is presented in Figure X.
-\todo{Describe approach once it is fully decided. Will be a memory.}
+\todo{Describe approach once it is fully decided. Will be a (spatial) memory that allows for reasoning over the whole explored scene.}
 
 % inhibition of return could be done programmatically, but there are advantages to learning it:
 % in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
@@ -132,13 +132,18 @@ The architecture of the neural network is presented in Figure X.
 \section{Baselines}
 \label{sec:baseline}
 
-We compare our approach to three different well-studied baselines.
-The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \dots.
-The agent receives only image observations, and \dots
-The second baseline is a recurrent version of that agent
-As \cite{mirowski_navigate_2017}, we use a 
+We compare our approach to three different baselines.
+The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \cite{mirowski_navigate_2017} and \dots.
+The agent receives only image observations, and uses a convolutional neural network with three layers for feature extraction.
 
-This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
+The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017},and \cite{gupta_cognitive_2019}.
+After the initial CNN there is an LSTM layer with 256 cells.
+
+The third baseline also uses the position of the agent, which is encoded as one one-hot vector per dimension. 
+The encoded positions are concatenated together with the output of the CNN and used as input to the LSTM layer.
+Including position should help the agent avoid revisiting previous locations and understand which parts of the scene are yet to be explored. 
+
+With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
 \section{Environments}
 \label{sec:environments}
@@ -150,6 +155,12 @@ As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural gene
 The scenes are drawn from some unknown distribution.
 The appearance of the scenes and the location of targets have some correlation in all environments.
 This means that the agent should be able to search more efficiently using knowledge from the scene.
+
+The observations are
+
+\[
+    o = \left\langle x, p \right\rangle \in \Omega, x \in \mathbb{R}^{3 \times 64 \times 64}, p \in \mathbb{N}^2
+\]
 
 For the position part of the observations, we assume the presense of some oracle.
 In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
@@ -207,7 +218,7 @@ These three reward signals are interesting to compare for a few reasons.
 \(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
 It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
 \(R'\) uses the supervised distance between targets and the agents, which is available during training.
-This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_multi_scale_2019}.
+This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_artificial_2016}.
 In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
 However, it can never yield policies that search exhaustively as such actions are never rewarded.
 It may therefore perform worse during testing where the reward is not available to the agent.
@@ -217,7 +228,8 @@ This should cause the agent to learn to search the environment exhaustively.
 % tabu search
 % optimal paths
 
-The episode is terminated when all targets have been found, or when 1000 time steps have passed.
+The episode is terminated when all targets have been found, or when a certain number of time steps have passed.
+This number of time steps is set so that the agent can reasonably find the targets with random search, and then gradually improve its policy from there.
 Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
 
 % Averaged over all possible samples, the probability of targets should be uniform over the scene.
@@ -230,6 +242,7 @@ Terminating episodes early this way is common to speed up training~\cite{pardo_t
 The first environment is the simplest environment. 
 The scene is described by a \(256 \times 256\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
+
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
 Targets are \(1 \times 1\) pixels in the red channel.
@@ -278,7 +291,7 @@ We use this environment for evaluating the generalization capabilities of agents
 % environment 3: hard, realistic
 
 The third environment is a three-dimensional version of the second one.
-The heightmap is turned into a three-dimensional mesh, and the agent is placed at its center.
+The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
 The agent observes the scene through a perspective projection pan-tilt camera.
 Targets are, as before, placed along island edges.
 The agent is therefore expected to avoid searching the skies and oceans.
@@ -360,24 +373,17 @@ As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy out
 
 The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
 
-Proximal policy optimization was implemented following the official implementation by OpenAI.
+Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI.
 Some necessary modifications were made to allow for recurrent policies.
 
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 
-
-% a little short...
+The source code for environments, agents and RL algorithms is available at \dots
+\todo{Add link.}
 
 
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights
-
-% detailed
-% replicability
-
-% pre-study
-% implementation
-% evaluation
 
 % discuss state representation
 % need more than the image
@@ -389,27 +395,6 @@ All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeFor
 
 % also same configuration possibly?
 % more parallel environments seem to lead to stable training (relatively slow increase in reward though...)
-
-% would be nice to have a varying number of targets
-% also a done action
-% measure false positives, false negatives etc.
-% good replacement for zoom?
-% relates to visual search literature
-% the current setup is also the most natural for a computer vision system
-% foveated vision is not very reasonable
-
-
-% select one algorithm and clearly motivate why!
-% probably PPO, but why?
-
-
-% time to find targets could be measured in terms of execution time, 
-% and number of timesteps. this way, it could be easier to incorporate 
-% visual attention if it is deemed reasonable.
-
-% how do we handle appearance of targets:
-% can an agent learn to recognize anything out of the ordinary?
-% maybe not the focus, but just the search
 
 % an interesting question is how large search windows we can handle
 % could be an alternative to zoom

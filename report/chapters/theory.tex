@@ -110,7 +110,7 @@ In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos~\cite{baj
 
 \begin{quote}
     An agent is an active perceiver if it knows why it wishes to sense, and then chooses what to perceive, and determines how, when and where to achieve that perception.
-\end{quote}~\cite{bajcsy_aloimonos_tsotsos_2018}
+\end{quote}~\cite{bajcsy_revisiting_2018}
 
 % surveillance section
 Active perception in general relates to the idea of moving a sensor to constrain the interpretation of the environment.
@@ -475,8 +475,6 @@ This is attributed to its ability to focus its attention on important regions.
  
 Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
 
-
-
 \subsection{Coverage Path Planning}
 
 % could be a smaller section in background, under visual search
@@ -654,7 +652,6 @@ Through experimentation with common reward sculpting techniques, they find that 
 Learned solutions also seem to be better at generalizing to unseen domains.
 For this reason, they argue for removing biases determined with domain knowledge in future research.
 
-
 % what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
 % it is essentially reward shaping.
 % they introduce human bias into the possible policies.
@@ -702,10 +699,9 @@ Through experimental analysis, they show that:
 \end{itemize}
 
 Due to the unstable nature of RL algorithms, it is often inadequate to just report average return.
-\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
+Henderson et al.~\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
 Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
 Finally, \cite{henderson_matters_2018} make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
-Benchmarks environments like ALE~\cite{arcade} often have no clear winner.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
 
 A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.

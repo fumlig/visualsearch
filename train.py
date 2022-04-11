@@ -86,7 +86,8 @@ if __name__ == "__main__":
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
     envs.seed(args.seed)
 
-    envs = gym.wrappers.NormalizeReward(envs)
+    # todo
+    #envs = gym.wrappers.NormalizeReward(envs)
     #envs = gym.wrappers.NormalizeObservation(envs)
 
     for env in envs.envs:

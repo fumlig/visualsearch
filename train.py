@@ -16,7 +16,7 @@ import gym_search
 import rl
 
 
-SEED = None
+SEED = 0
 TOT_TIMESTEPS = int(25e6)
 NUM_ENVS = 4
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.name is None:
-        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
+        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{args.seed}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
 
     if args.seed is not None:
         random.seed(args.seed)

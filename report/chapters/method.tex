@@ -31,16 +31,18 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 
 We can now formally define the problem of searching for targets in unknown environments.
 
-We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
+Let the task be \(\left\langle \mathcal{M}, \mathcal{T}_0 \right\rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
 The state is defined by a (Euclidean) space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
 At each timestep, the agent observes a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
 The actions in \(\mathcal{A}\) transform the view.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
+If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
+
 With a final trigger action, the agent can indicate that there is one or more target in the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
+
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
 Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
-If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
 \section{Approach}
 \label{sec:approach}
@@ -94,19 +96,26 @@ With these three baselines, we can clearly see what role the observations and me
 To train an test an agent for the problem, we use three different environments.
 The three environments have different characteristics to test the applicability of the evaluated approaches to different search problems.
 In each environment there is a scene with a background of distractors and a foreground of targets.
+
+The first two environments approximate the problem of searching with a pan-tilt camera with a 2D environment.
+The third environment uses a simulated 3D environment with a perspective projection camera. 
+
 As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
-The scenes are drawn from some unknown distribution.
-The appearance of the scenes and the location of targets have some correlation in all environments.
+The initial states are drawn from \(\mathcal{T}_0(p)\), where \(p\) is a \textit{random seed}.
+The seed determines the appearance of the scene, the location of the targets and the initial position of the agent.
+
+Furthermore, the appearance of the scenes and the location of targets have some correlation in all environments.
 This means that the agent should be able to search more efficiently using knowledge from the scene.
 
 The observations are
 
 \[
-    o = \left\langle x, p \right\rangle \in \Omega, x \in \mathbb{R}^{3 \times 64 \times 64}, p \in \mathbb{N}^2
+    o = \left\langle x, p \right\rangle \in \Omega, x \in \mathbb{R}^{3 \times 64 \times 64}, p \in {0, \dots, 15}^2
 \]
 
-For the position part of the observations, we assume the presense of some oracle.
-In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
+The agent always moves in a \(16 \times 16\) grid.
+For the position part of the observations, we assume the presence of some oracle.
+In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
 If how each action moves the agent is well-defined, we do not need the position at all.
 We can use relative positions instead of absolute ones.
 Some of the baselines do not use the position.
@@ -117,8 +126,8 @@ The action space is the same in all environments:
     \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
 \]
 
-\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
-% rotates in third environment though
+\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
+The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view.
 
 We experiment with three rewards signals.
 The first reward signal is defined as
@@ -183,7 +192,7 @@ Terminating episodes early this way is common to speed up training~\cite{pardo_t
 % environment 1: easy, understandable
 
 The first environment is the simplest environment. 
-The scene is described by a \(256 \times 256\) RGB image.
+The scene's appearance is given by a \(1024 \times 1024\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
 
 In the image there are three Gaussian kernels with random positions.
@@ -208,10 +217,12 @@ Our feeling is that this is something that previous similar works has not done. 
 % environment 2: medium, procedural and configurable
 
 The second environment is intended to look like realistic terrain.
-The scene's appearance is given by a \(512 \times 512\) RGB image.
-The agent's view is a \(64 \times 64\) sub-image.
+As for the gaussian environment, scene's appearance is given by a \(1024 \times 1024\) RGB image and the agent views a \(64 \times 64\) sub-image which is translated by the actions.
+
+The scene is generated as follows.
 Gradient noise is generated and used as a height map.
-The height map determines the color of the terrain.
+The height map determines the color of the terrain,
+which is picked to resemble water, sand, grass and rock.
 The height also correlates to the probability of targets.
 Specifically, targets are located between shores and mountain bases.
 There are 10 targets in each scene.
@@ -231,7 +242,7 @@ We use this environment for evaluating the generalization capabilities of agents
 \end{figure}
 
 \subsection{Camera Environment}
-% environment 3: hard, realistic
+% environment 3: hard, realistic, zoom?
 
 The third environment is a three-dimensional version of the second one.
 The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
@@ -240,6 +251,9 @@ Targets are, as before, placed along island edges.
 The agent is therefore expected to avoid searching the skies and oceans.
 
 This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+
+The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera,
+while \texttt{DOWN} and \texttt{UP} control its pitch.
 
 \begin{figure}
     \centering
@@ -270,8 +284,7 @@ This is to give more accurate metrics for episodes that do not terminate within 
 Additionally, we conduct experiments to measure the generalization capabilities of the agents.
 For this, we use the terrain environment only.
 We test on the same held out levels as before, but vary the number of samples seen during training.
-The training set size is varied from 100, 1000, 10 000, and 100 000 samples.
-This is done by limiting the seed pool used to generate the environments.
+The training set size is varied from 100, 1000, 10 000, and 100 000 samples by limiting the seed pool used to generate the environments.
 This way, we can get a sense of how much data and simulation is required to apply the approach to real-world tasks.
 For each training set size, we train the agents until convergence.
 This is the same approach as in \cite{cobbe_procgen_2020}.
@@ -282,9 +295,12 @@ We run all experiments across 3 different runs, and use the aggregate metrics pr
 
 We train all agents with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
-Furthermore, we use the same hyperparameters as those outlined in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
+Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
 We find that using many parallel environments stabilizes the training.
+Furthermore, we reduce the number of steps per rollout to be much less than the episode length.
+This is recommended by \cite{schulman_ppo_2017}. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
+The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 
 \begin{table}
     \centering
@@ -319,12 +335,8 @@ They use reward clipping instead which diminishes the meaning of reward magnitud
 \section{Implementation}
 
 The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
-
 Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI.
-Some necessary modifications were made to allow for recurrent policies.
-
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
-
 The source code for environments, agents and RL algorithms is available at \dots
 \todo{Add link.}
 

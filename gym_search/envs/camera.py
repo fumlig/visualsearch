@@ -32,7 +32,7 @@ class CameraEnv(gym.Env):
     def __init__(
         self,
         view_size=(64, 64),
-        view_steps=64,
+        view_steps=16,
         terrain_size=256,
         terrain_height=16,
         num_targets=10,

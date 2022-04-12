@@ -1,0 +1,56 @@
+
+\section{Introduction}
+
+\subsection{Problem Description}
+
+\begin{frame}
+    \frametitle{Problem Description}
+    
+    Autonomous search for a set of targets in an environment with a fixed camera.
+    
+    \begin{itemize}
+        \item Agent observes a limited region of the environment. 
+        \item Can direct its gaze and indicate when a target is in view through actions.
+        \item Should locate all targets while minimizing the number of actions.
+        \item Applications in search and rescue, fire detection, surveillance, etc.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \begin{itemize}
+        \item In a random environment with uniformly distributed targets, random search is sufficient.
+        \item Most real-world search tasks are not random, but exhibit structure.
+        \item Cues in the searched scene can be used to find targets quicker.
+        \begin{itemize}
+            \item Books are in bookshelves.
+            \item Cars can be found on roads.
+            \item Some targets spread out
+            \item Some are close together.
+        \end{itemize}
+        \item Patterns and cues may be subtle and difficult to pick up.
+        \item Manually engineering a searching system with rules can be difficult and costly.
+        \item Can a system learn to search intelligently from a set of samples and generalize to similar search tasks?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Challenges}
+
+    \begin{itemize}
+        \item Prioritize regions with high probability of targets based on previous experience.
+        \item Find multiple targets while minimizing path length.
+        \item Search exhaustively while avoiding searching the same region twice.
+    \end{itemize}
+\end{frame}
+
+\subsection{Research Questions}
+
+\begin{frame}
+    \frametitle{Research Questions}
+    \begin{enumerate}
+        \item How can an agent that learns to intelligently search for targets be implemented with reinforcement learning?
+        \item What is a suitable memory architecture for a visual search agent?
+        \item How does the learning agent compare to random walk, exhaustive search and a human searcher with prior knowledge of the searched scene?
+        \item How does the agent's ability to generalize to unseen in-distribution environments depend on the number of training samples?
+    \end{enumerate}    
+\end{frame}

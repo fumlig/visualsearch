@@ -1,7 +1,7 @@
 gamma: 0.999
 gae_lambda: 0.95
 num_steps: 256
-num_epochs: 3
+num_epochs: 10
 num_minibatches: 8
 ent_coef: 0.01
 clip_range: 0.2

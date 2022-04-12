@@ -263,7 +263,7 @@ At each time step \(t\), the goal of the agent is to select the action that maxi
 \]
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
-Planning in a POMDP is undecidable, and solving them is often computationally intractable.
+Planning in a POMDP is undecidable, and solving one is often computationally intractable.
 Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_pomdp_1998} which is acts on.
 The belief state summarizes the agent's previous experience and is therefore dependent on the full \textit{history} of actions and observations.
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
@@ -451,8 +451,11 @@ Despite being limited to a single environment, this is an
 
 % This means that the search process is split into two steps: directing the field of view (covert attention), and locating targets within the view (overt attention).
 
-Shubina and Tsotsos~\cite{shubina_visualsearch_2010} consider the problem of visual search in 3D environments with a mobile robot.
-They use 
+Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
+
+
+A similar work by Shubina and Tsotsos~\cite{shubina_visualsearch_2010} consider the problem of visual search in 3D environments with a mobile robot.
+They use\dots 
 
 Partially observable processes, such as the one we consider in this work, can be seen as hard attention problems.
 By taking actions, the hard attention can be redirected

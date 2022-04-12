@@ -40,12 +40,14 @@ class GaussianGenerator(Generator):
     def sample(self):
         h, w = self.shape
         kernel = gaussian_kernel(self.kernel_size, sigma=self.sigma)
-        terrain = np.zeros(self.shape)
+        canvas = np.zeros((h + 2*self.kernel_size, w + 2*self.kernel_size))
+        padding = self.kernel_size//2
 
         for _ in range(self.num_kernels):
-            y, x = self.random.integers(0, h-self.kernel_size), self.random.integers(0, w-self.kernel_size)
-            terrain[y:y+self.kernel_size,x:x+self.kernel_size] += kernel
+            y, x = self.random.integers(padding, h + self.kernel_size - padding), self.random.integers(padding, w + self.kernel_size - padding)
+            canvas[y:y+self.kernel_size,x:x+self.kernel_size] += kernel
 
+        terrain = canvas[self.kernel_size:-self.kernel_size,self.kernel_size:-self.kernel_size]
         terrain = normalize(terrain)
         prob = terrain/terrain.sum()
         targets = sample_coords(self.shape, self.num_targets, prob, random=self.random)

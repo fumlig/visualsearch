@@ -28,6 +28,7 @@ gym.register(
         generator=GaussianGenerator((256, 256), 3, 4, 3, 128, sigma=24),
         view_shape=(16, 16),
         step_size=16,
+        max_steps=256,
     )
 )
 

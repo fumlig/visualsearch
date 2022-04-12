@@ -87,7 +87,7 @@ if __name__ == "__main__":
     envs.seed(args.seed)
 
     # todo
-    envs = gym.wrappers.NormalizeReward(envs)
+    #envs = gym.wrappers.NormalizeReward(envs)
     #envs = gym.wrappers.NormalizeObservation(envs)
 
     for env in envs.envs:

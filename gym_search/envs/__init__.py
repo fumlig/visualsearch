@@ -6,15 +6,6 @@ from gym_search.envs.camera import CameraEnv
 from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
 from gym_search.datasets import XViewDataset
 
-gym.register(
-    id="Search-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=GaussianGenerator((4, 4), 1, 1, 1, 1),
-        view_shape=(1, 1),
-        step_size=1
-    )
-)
 
 gym.register(
     id="Camera-v0",

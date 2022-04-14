@@ -86,12 +86,9 @@ class CameraEnv(SearchEnv):
         self.scene.camera_target = self.scene.camera_position + front
 
         self.scene.render()
-        img = self.scene.frame
+        img = self.scene.frame[:,:,:3]
 
         return img
-
-    def close(self):
-        self.renderer.delete()
 
     def observation(self):
         return dict(

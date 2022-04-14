@@ -63,7 +63,6 @@ if __name__ == "__main__":
         random.seed(args.seed)
         np.random.seed(args.seed)
         th.manual_seed(args.seed)
-        env.seed(args.seed)
 
     if args.agent is not None:
         agent = rl.agents.make(args.agent, envs=env)
@@ -76,12 +75,15 @@ if __name__ == "__main__":
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
+    env.test()
+
     cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
 
     for ep in range(args.episodes):
 
         done = False
-        obs = env.reset()
+        seed = args.seed if ep == 0 else None
+        obs = env.reset(seed=seed)
 
         if agent is not None:
             state = [s.to(device) for s in agent.initial(1)]

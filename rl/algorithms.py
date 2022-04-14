@@ -17,6 +17,7 @@ def proximal_policy_optimization(
     agent,
     device,
     writer,
+    seed=None,
     learning_rate=2.5e-4,
     num_steps=128,
     gamma=0.99,
@@ -63,7 +64,7 @@ def proximal_policy_optimization(
     logprobs = th.zeros((num_steps, num_envs)).to(device)
     vals = th.zeros((num_steps, num_envs)).to(device)
 
-    obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset().items()}
+    obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset(seed=seed).items()}
     done = th.zeros(num_envs).to(device)
     state = [s.to(device) for s in agent.initial(num_envs)]
 
@@ -221,6 +222,8 @@ def proximal_policy_optimization(
             avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
             pbar.set_description(f"ret {round(avg_ret)}, len {round(avg_len)}")
 
+
+    return avg_ret, avg_len
 
 
 def deep_q_network(

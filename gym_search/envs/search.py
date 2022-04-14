@@ -52,10 +52,13 @@ class SearchEnv(gym.Env):
             self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         if self.training:
-            self.scene, self.targets = self.generate(self.np_random.integers(self.test_samples, self.test_samples + self.train_samples))
+            seed = self.np_random.integers(self.test_samples, self.test_samples + self.train_samples)
         else:
-            self.scene, self.targets = self.generate(self.np_random.integers(0, self.test_samples))
+            seed = self.np_random.integers(0, self.test_samples)
 
+        print(seed)
+
+        self.scene, self.targets = self.generate(seed)
         self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
         self.hits = [False for _ in range(len(self.targets))]
         self.path = [self.position]
@@ -128,9 +131,6 @@ class SearchEnv(gym.Env):
 
     def visible(self, target):
         return Box(*self.scale(self.position), *self.scale(self.view)).overlap(target) > 0
-
-
-
 
     def generate(self, seed):
         raise NotImplementedError

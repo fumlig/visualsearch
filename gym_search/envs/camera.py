@@ -1,219 +1,114 @@
-import os
-import gym
-import enum
 import numpy as np
-import trimesh as tri
-import pyrender as pyr
+import moderngl as gl
+import pyrr as pr
+import simple_3dviz as viz
 import pymartini as martini
 
-from gym_search.utils import clamp
-from gym_search.shapes import Box
-from gym_search.generators import TerrainGenerator
-from gym_search.palette import BLUE_MARBLE
+from gym_search.utils import sample_coords, fractal_noise_2d, normalize
+from gym_search.palette import EARTH_TOON, pick_color
+from gym_search.envs.search import SearchEnv
 
 
-os.environ["PYOPENGL_PLATFORM"] = "egl"
-
-
-class CameraEnv(gym.Env):
+class CameraEnv(SearchEnv):
 
     metadata = {"render.modes": ["rgb_array"]}
 
-    class Action(enum.IntEnum):
-        NONE = 0
-        TRIGGER = 1
-        LEFT = 2
-        RIGHT = 3
-        DOWN = 4
-        UP = 5
-        IN = 6
-        OUT = 7
-
     def __init__(
         self,
-        view_size=(64, 64),
-        view_steps=16,
+        shape=(16, 16),
+        view=(64, 64),
         terrain_size=256,
         terrain_height=16,
         num_targets=10,
         num_distractors=100,
     ):
-        self.view_size = view_size
-        self.view_steps = view_steps
+        super().__init__(shape, view, True)
+
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
         self.num_targets = num_targets
-
-        self.camera_zoom_in = 2*np.pi/view_steps
-        self.camera_zoom_out = self.camera_zoom_in*4
-        self.camera_yaw = 0
-        self.camera_pitch = 0
-        self.camera_step = self.camera_zoom_in
-
-        self.max_steps = 1000
-
-        self.renderer = pyr.OffscreenRenderer(*self.view_size)
+        self.num_distractors = num_distractors
+ 
         self.martini = martini.Martini(self.terrain_size+1)
-        self.generator = TerrainGenerator((self.terrain_size+1, self.terrain_size+1), num_targets, num_distractors)
 
-        self.seed()
 
-        self.reward_range = (-np.inf, np.inf)
-        self.action_space = gym.spaces.Discrete(len(self.Action))
-        self.observation_space = gym.spaces.Dict(dict(
-            image=gym.spaces.Box(0, 255, (*self.view_size, 3), dtype=np.uint8),
-            position=gym.spaces.MultiDiscrete((self.view_steps, self.view_steps))
-        ))
-
-    def reset(self):
-        self.num_steps = 0
-        self.scene = pyr.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[135, 206, 235])
+    def generate(self, seed):
+        random = np.random.default_rng(seed)
+        scene = viz.Scene(background=(0.0, 0.0, 0.0, 1.0), size=self.view)
 
         # terrain
-        terrain = self.generator.terrain()
-        image = self.generator.image(terrain, palette=BLUE_MARBLE)
-        targets = self.generator.targets(terrain)
+        exp = random.uniform(0.5, 5)
+        noise = fractal_noise_2d((self.terrain_size+1, self.terrain_size+1), periods=(4, 4), octaves=4, seed=seed)
+        terrain = normalize(noise)**exp
+        image = pick_color(terrain, EARTH_TOON)
 
         self.terrain = terrain*self.terrain_height
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
-        vertices, indices = tile.get_mesh(0.5)
+        vertices, faces = tile.get_mesh(0.5)
         vertices = martini.rescale_positions(vertices, self.terrain)
         vertices = vertices[:,[0,2,1]]
-        indices = indices.reshape(-1, 3)
+        faces = faces.reshape(-1, 3)
+        colors = np.array([image[round(x), round(z)] for x, _, z in vertices]).astype(float)/255.0
 
-        uv = np.array([(x/self.terrain_size+1, (1-z)/self.terrain_size+1) for x, _, z in vertices])
-        visual = tri.visual.TextureVisuals(uv=uv, image=image)
-        mesh = pyr.Mesh.from_trimesh(tri.Trimesh(vertices=vertices, faces=indices, visual=visual))
-
-        self.scene.add(mesh, pose=np.eye(4))
+        mesh = viz.Mesh.from_faces(vertices, faces, colors)
+        scene.add(mesh)
 
         # targets
-        self.targets = []
-        self.hits = []
-        for z, x in targets:
-            side = 1
-            y = self.height(x, z)+side
-            t = tri.creation.box((side, side, side))
-            t.visual = tri.visual.color.ColorVisuals(vertex_colors=[(255, 0, 0) for _ in t.vertices])
-            m = pyr.Mesh.from_trimesh(t)
-            self.scene.add(m, pose=tri.transformations.translation_matrix((x, y, z)))
+        targets = []
+        tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
+        target_prob = tree_line.astype(float)/tree_line.sum()
 
-            self.targets.append((x, y, z))
-            self.hits.append(False)
+        side = 1
+
+        for z, x in sample_coords((self.terrain_size+1, self.terrain_size+1), self.num_targets, target_prob, random=random):
+            y = self.height(x, z)+side
+            targets.append((x, y, z))
+        
+        meshes = viz.Mesh.from_boxes(targets, [[side/2]*3]*len(targets), [[255, 0, 0]]*len(targets))
+        scene.add(meshes)
 
         # camera
-        
         x = self.terrain_size//2
         z = self.terrain_size//2
         y = self.terrain_height # self.height(x, z)
 
-        self.camera = pyr.PerspectiveCamera(yfov=self.camera_zoom_out, aspectRatio=self.view_size[1]/self.view_size[0])
-        self.yaw_node = pyr.Node(matrix=tri.transformations.translation_matrix((x, y, z)))
-        self.pitch_node = pyr.Node(matrix=np.eye(4), camera=self.camera)
+        scene.camera_position = (x, y, z)
+        scene.up_vector = (0, 1, 0)
 
-        # debug
-        #self.yaw_node.matrix = tri.transformations.rotation_matrix(-np.pi/2, (1, 0, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
-        #self.yaw_node.matrix = tri.transformations.translation_matrix((0, 256, 0)) @ self.yaw_node.matrix
+        return scene, targets
 
-        self.scene.add_node(self.yaw_node)
-        self.scene.add_node(self.pitch_node, parent_node=self.yaw_node)
-
-        return self.observation()
-
-
-    def step(self, action):
-        if action == self.Action.LEFT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
-            self.camera_yaw -= 1
-            self.camera_yaw %= self.view_steps
-        elif action == self.Action.RIGHT:
-            self.yaw_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (0, 1, 0), point=self.yaw_node.translation) @ self.yaw_node.matrix
-            self.camera_yaw += 1
-            self.camera_yaw %= self.view_steps
-        elif action == self.Action.DOWN:
-            self.pitch_node.matrix = tri.transformations.rotation_matrix(-self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
-            self.camera_pitch -= 1
-            self.camera_pitch %= self.view_steps
-        elif action == self.Action.UP:
-            self.pitch_node.matrix = tri.transformations.rotation_matrix(self.camera_step, (1, 0, 0)) @ self.pitch_node.matrix
-            self.camera_pitch += 1
-            self.camera_pitch %= self.view_steps
-        elif action == self.Action.IN:
-            self.camera.yfov = self.camera_zoom_in
-        elif action == self.Action.OUT:
-            self.camera.yfov = self.camera_zoom_out
-
-        hits = 0
-
-        if action == self.Action.TRIGGER:
-            for i in range(len(self.targets)):
-                if self.hits[i]:
-                    continue
-                    
-                x, y, z = self.targets[i]
-
-                if self.is_visible(x, y, z):
-                    self.hits[i] = True
-                    hits += 1
-
-        self.num_steps += 1
-
-        obs = self.observation()
-
-        if hits:
-            rew = hits*10
-        else:
-            rew = -1
-
-        done = all(self.hits) or self.num_steps == self.max_steps
-
-
-        return obs, rew, done, {}
 
     def render(self, mode="rgb_array"):
-        flags = pyr.RenderFlags.NONE
-        color, _depth = self.renderer.render(self.scene, flags)
-        return color
+        pitch, yaw = 2*np.pi*self.position/self.shape
+        pitch = (pitch+np.pi)/2
+        direction = pr.Vector3((np.cos(yaw)*np.cos(pitch), np.sin(pitch), np.sin(yaw)*np.cos(pitch)))
+        front = direction.normalized
+        self.scene.camera_target = self.scene.camera_position + front
+
+        self.scene.render()
+        img = self.scene.frame
+
+        return img
 
     def close(self):
         self.renderer.delete()
 
-    def seed(self, seed=None):
-        self.random = np.random.default_rng(seed)
-        return [seed]
-
     def observation(self):
         return dict(
             image=self.render(),
-            position=(self.camera_yaw, self.camera_pitch)
+            position=self.position
         )
 
     def height(self, x, z):
         return self.terrain[round(x), round(z)]
 
-    def is_visible(self, x, y, z):
-        camera_node = self.scene.main_camera_node
-        camera_pose = self.scene.get_pose(camera_node)
-        
-        proj = camera_node.camera.get_projection_matrix(*self.view_size)
-        view = np.linalg.inv(camera_pose)
-        position = proj @ view @ np.array([x, y, z, 1.0])
-        p = position[:3] / position[3]
+    def visible(self, target):
+        x, y, z = target
 
-        print(p)
+        proj = self.scene.camera_matrix
+        view = self.scene.mv
+    
+        position = proj * view * pr.Vector4([x, y, z, 1.0])    
+        p = np.array(position[:3]) / position[3]
 
         return np.all((p >= -1.0) & (p <= 1.0))
-
-    def get_action_meanings(self):
-        return [a.name for a in self.Action]
-    
-    def get_keys_to_action(self):
-        return {
-            (ord(" "),): self.Action.TRIGGER,
-            (ord("a"),): self.Action.LEFT,
-            (ord("d"),): self.Action.RIGHT,
-            (ord("s"),): self.Action.DOWN,
-            (ord("w"),): self.Action.UP,
-            (ord("q"),): self.Action.OUT,
-            (ord("e"),): self.Action.IN,
-        }

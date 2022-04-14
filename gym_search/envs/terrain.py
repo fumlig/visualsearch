@@ -12,7 +12,7 @@ class TerrainEnv(SearchEnv):
     def __init__(
         self,
         shape=(16, 16),
-        view=(16, 16),
+        view=(64, 64),
         num_targets=3,
         target_size=4,
         num_distractors=50,

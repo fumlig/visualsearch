@@ -5,7 +5,7 @@ from gym_search.envs.dataset import DatasetEnv
 
 from gym_search.envs.gaussian import GaussianEnv
 from gym_search.envs.terrain import TerrainEnv
-#from gym_search.envs.camera import CameraEnv
+from gym_search.envs.camera import CameraEnv
 from gym_search.datasets import XViewDataset
 
 gym.register(
@@ -20,10 +20,10 @@ gym.register(
     kwargs=dict()
 )
 
-#gym.register(
-#    id="Camera-v0",
-#    entry_point=CameraEnv
-#)
+gym.register(
+    id="Camera-v0",
+    entry_point=CameraEnv
+)
 
 
 if os.path.exists("data/xview"):

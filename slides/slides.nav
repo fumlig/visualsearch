@@ -9,36 +9,49 @@
 \headcommand {\beamer@subsectionentry {0}{1}{1}{3}{Problem Description}}
 \headcommand {\slideentry {1}{1}{1}{3/3}{Problem Description}{0}}
 \headcommand {\beamer@framepages {3}{3}}
-\headcommand {\beamer@subsectionpages {3}{3}}
-\headcommand {\beamer@subsectionentry {0}{1}{2}{4}{Research Questions}}
-\headcommand {\slideentry {1}{2}{1}{4/4}{Research Questions}{0}}
+\headcommand {\slideentry {1}{1}{2}{4/4}{Problem Description}{0}}
 \headcommand {\beamer@framepages {4}{4}}
-\headcommand {\beamer@sectionpages {3}{4}}
-\headcommand {\beamer@subsectionpages {4}{4}}
-\headcommand {\sectionentry {2}{Theory}{5}{Theory}{0}}
-\headcommand {\beamer@sectionpages {5}{4}}
-\headcommand {\beamer@subsectionpages {5}{4}}
-\headcommand {\sectionentry {3}{Related Work}{5}{Related Work}{0}}
-\headcommand {\slideentry {3}{0}{0}{5/5}{}{0}}
+\headcommand {\slideentry {1}{1}{3}{5/5}{Problem Description}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\beamer@sectionpages {5}{5}}
-\headcommand {\beamer@subsectionpages {5}{5}}
-\headcommand {\sectionentry {4}{Method}{6}{Method}{0}}
-\headcommand {\slideentry {4}{0}{1}{6/6}{}{0}}
+\headcommand {\beamer@subsectionpages {3}{5}}
+\headcommand {\beamer@subsectionentry {0}{1}{2}{6}{Research Questions}}
+\headcommand {\slideentry {1}{2}{1}{6/6}{Research Questions}{0}}
 \headcommand {\beamer@framepages {6}{6}}
-\headcommand {\slideentry {4}{0}{2}{7/7}{}{0}}
+\headcommand {\beamer@sectionpages {3}{6}}
+\headcommand {\beamer@subsectionpages {6}{6}}
+\headcommand {\sectionentry {2}{Theory}{7}{Theory}{0}}
+\headcommand {\beamer@subsectionpages {7}{6}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{7}{Background}}
+\headcommand {\slideentry {2}{1}{1}{7/7}{Background}{0}}
 \headcommand {\beamer@framepages {7}{7}}
-\headcommand {\slideentry {4}{0}{3}{8/8}{}{0}}
+\headcommand {\beamer@subsectionpages {7}{7}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{8}{Related Work}}
+\headcommand {\beamer@sectionpages {7}{7}}
+\headcommand {\beamer@subsectionpages {8}{7}}
+\headcommand {\sectionentry {3}{Method}{8}{Method}{0}}
+\headcommand {\slideentry {3}{0}{1}{8/8}{}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\beamer@sectionpages {6}{8}}
-\headcommand {\beamer@subsectionpages {6}{8}}
-\headcommand {\sectionentry {5}{Results}{9}{Results}{0}}
-\headcommand {\slideentry {5}{0}{1}{9/9}{}{0}}
+\headcommand {\beamer@subsectionpages {8}{8}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{9}{Environments}}
+\headcommand {\slideentry {3}{1}{1}{9/9}{Environments}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\slideentry {5}{0}{2}{10/10}{}{0}}
+\headcommand {\slideentry {3}{1}{2}{10/10}{Environments}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\beamer@partpages {1}{10}}
-\headcommand {\beamer@subsectionpages {9}{10}}
-\headcommand {\beamer@sectionpages {9}{10}}
-\headcommand {\beamer@documentpages {10}}
-\headcommand {\gdef \inserttotalframenumber {10}}
+\headcommand {\slideentry {3}{1}{3}{11/11}{Environments}{0}}
+\headcommand {\beamer@framepages {11}{11}}
+\headcommand {\beamer@subsectionpages {9}{11}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{12}{Implementation}}
+\headcommand {\slideentry {3}{2}{1}{12/12}{Implementation}{0}}
+\headcommand {\beamer@framepages {12}{12}}
+\headcommand {\beamer@sectionpages {8}{12}}
+\headcommand {\beamer@subsectionpages {12}{12}}
+\headcommand {\sectionentry {4}{Results}{13}{Results}{0}}
+\headcommand {\slideentry {4}{0}{1}{13/13}{}{0}}
+\headcommand {\beamer@framepages {13}{13}}
+\headcommand {\slideentry {4}{0}{2}{14/14}{}{0}}
+\headcommand {\beamer@framepages {14}{14}}
+\headcommand {\beamer@partpages {1}{14}}
+\headcommand {\beamer@subsectionpages {13}{14}}
+\headcommand {\beamer@sectionpages {13}{14}}
+\headcommand {\beamer@documentpages {14}}
+\headcommand {\gdef \inserttotalframenumber {14}}

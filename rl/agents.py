@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from rl.models import MLP, NatureCNN, NeuralMap
+from rl.models import MLP, NatureCNN, NeuralMap, SimpleMap
 from rl.utils import preprocess_image, init_lstm
 
 
@@ -195,14 +195,15 @@ class MapAgent(Agent):
         assert self.observation_space.get("last_action") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])        
-        self.neural_map = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
+        #self.map_net = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
+        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
 
         # mean zero, low std has big impact according to https://arxiv.org/pdf/2006.05990.pdf
-        self.policy = MLP(self.neural_map.output_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.neural_map.output_dim, 1, out_gain=1.0)
+        self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
 
     def initial(self, num_envs):
-        return [th.zeros((num_envs, *self.neural_map.shape))]
+        return [th.zeros((num_envs, *self.map_net.shape))]
 
     def forward(self, obs, state, done, **kwargs):
         hidden = th.cat([
@@ -213,14 +214,14 @@ class MapAgent(Agent):
     
         state = state[0]
         batch_size = state.shape[0]
-        hidden = hidden.reshape((-1, batch_size, self.neural_map.input_dim))
+        hidden = hidden.reshape((-1, batch_size, self.map_net.input_dim))
         done = done.reshape((-1, batch_size))
         index = index.reshape((-1, batch_size, 2))
         new_hidden = []
 
         for h, d, i in zip(hidden, done, index):
             masked = (1.0 - d).view(-1, 1, 1, 1)*state
-            h, state = self.neural_map(h, masked, i)
+            h, state = self.map_net(h, masked, i)
             new_hidden.append(h)
 
         state = [state]

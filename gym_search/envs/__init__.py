@@ -1,44 +1,38 @@
 import os
 import gym
+from gym_search.envs.dataset import DatasetEnv
 
-from gym_search.envs.search import SearchEnv
-from gym_search.envs.camera import CameraEnv
-from gym_search.generators import GaussianGenerator, TerrainGenerator, DatasetGenerator
+
+from gym_search.envs.gaussian import GaussianEnv
+from gym_search.envs.terrain import TerrainEnv
+#from gym_search.envs.camera import CameraEnv
 from gym_search.datasets import XViewDataset
-
-
-gym.register(
-    id="Camera-v0",
-    entry_point=CameraEnv
-)
 
 gym.register(
     id="Gaussian-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=GaussianGenerator((256, 256), 3, 4, 3, 128, sigma=24),
-        view_shape=(16, 16),
-        step_size=16,
-    )
+    entry_point=GaussianEnv,
+    kwargs=dict()
 )
 
 gym.register(
     id="Terrain-v0",
-    entry_point=SearchEnv,
-    kwargs=dict(
-        generator=TerrainGenerator((1024, 1024), 3, 100, max_terrains=1024),
-        view_shape=(64, 64),
-        step_size=64,
-    )
+    entry_point=TerrainEnv,
+    kwargs=dict()
 )
 
-#if os.path.exists("data/xview"):
-#    gym.register(
-#        id="XView-v0",
-#        entry_point=SearchEnv,
-#        kwargs=dict(
-#            generator=DatasetGenerator(XViewDataset("data/xview")),
-#            view_shape=(128, 128),
-#            step_size=128
-#        )
-#    )
+#gym.register(
+#    id="Camera-v0",
+#    entry_point=CameraEnv
+#)
+
+
+if os.path.exists("data/xview"):
+    gym.register(
+        id="XView-v0",
+        entry_point=DatasetEnv,
+        kwargs=dict(
+            dataset=XViewDataset("data/xview"),
+            shape=(16, 16),
+            view=(128, 128),
+        )
+    )

@@ -31,16 +31,18 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 
 We can now formally define the problem of searching for targets in unknown environments.
 
-We denote the task by \(\langle \mathcal{M}, \mathcal{T}_0 \rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
+Let the task be \(\left\langle \mathcal{M}, \mathcal{T}_0 \right\rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
 The state is defined by a (Euclidean) space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
 At each timestep, the agent observes a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
 The actions in \(\mathcal{A}\) transform the view.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
+If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
+
 With a final trigger action, the agent can indicate that there is one or more target in the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
-The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\),
-where \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent.
-If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
+
+The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
+Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 
 \section{Approach}
 \label{sec:approach}
@@ -51,7 +53,19 @@ If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rve
 % this should maybe not be specificed yet...
 
 To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
-Considering 
+The final agent should be able to recognize targets, regardless of where they appear in view.
+It should also be able to integrate features over time in order to remember which locations have been visited.
+Remembering features of of these locations may also be of importance,
+as it can provide clues for what is in their proximity. 
+
+With this in mind, we use an episodic spatial memory that stores the agent's belief state.
+The architecture of the neural network is presented in Figure X.
+\todo{Describe approach once it is fully decided. Will be a (spatial) memory that allows for reasoning over the whole explored scene.}
+
+%This memory acts as an inhibition-of-return mechanism.
+% inhibition of return could be done programmatically, but there are advantages to learning it:
+% in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
+% cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies)
 
 Due to time constraints and the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradients.
 Specifically, we use an actor-critic method.
@@ -60,85 +74,21 @@ The neural network of the agent is split into four parts:
 A feature extraction network is connected to a recurrent network.
 The recurrent network is in turn is connected to an actor network head and a critic network head, which approximate the policy and value function respectively.
 
-The architecture of the neural network is presented in Figure X.
-\todo{Describe approach once it is fully decided. Will be a memory.}
-
-% inhibition of return could be done programmatically, but there are advantages to learning it:
-% in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
-% cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies)
-
-% should we rescale to 84x84 instead?
-
-% https://www.reddit.com/r/reinforcementlearning/comments/ogwct6/how_to_deal_with_catastrophic_forgetting/
-% hopefully reward normalization fixes it
-% someone here does not recommend to clip value loss 
-
-% https://arxiv.org/pdf/2006.05990.pdf
-% cite this one...
-
-
-% save latent representation of map?
-% As in "Cognitive Mapping and Planning for Visual Navigation"
-
-% self-supervised pretraining?
-% https://arxiv.org/pdf/2003.14323.pdf
-
-
-% section 17.4 in sutton is good!
-
-% https://xbpeng.github.io/projects/DeepMimic/index.html
-
-% reward shaping: change reward signal as agent progresses
-% could also shape the environment itself, make it more and more difficult
-% each modification should be made so that the agent frequently receives reward with its current policy
-% this is what we do when we train animals! ie give treats to dogs
-% why isn't this working...
-
-% reward normalization: 
-% reward clipping: done in "playing atari with deep reinforcement learning": they state that since the scale of scores varies from game to game they fix all positive rewards to be one and negative to be -1. 0 rewards are left unchanged. this limits the scale of the error derivatives and makes it easier to use the same learning rate across multiple games. could also affect agent's performance as it cannot distinguish between rewards of different magnitudes.
-% could be important for us if the number of targets and the reward varies a lot
-
-% "explicit episodic (semantic) memory"
-% visible region, visited regions
-% other semantic information if available
-% feature extraction with convolutions
-% split the scene into discrete grid
-% C channels with different features
-% can even be applied to dynamic scenes with a last-seen mask
-
-% could be multiple channels for view as well
-% maybe call them "global" and "local"
-
-% resnets?
-% https://efficientdl.com/how-to-train-a-resnet-efficiently/
-
-% should use a constant network architecture
-
-% Actor critic
-
-% Feature extraction
-% Shared Network
-% Policy Head
-% Value Head
-
-% we should clearly explain the thought process
-% connect back to local search problems
-% we need a good feature extraction
-% and then something for a belief state
-% finally, what is the idea behind policy and value (should be in theory instead)
-
-% we could give some pseudocode here
-
 \section{Baselines}
 \label{sec:baseline}
 
-We compare our approach to three different well-studied baselines.
-The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \dots.
-The agent receives only image observations, and \dots
-The second baseline is a recurrent version of that agent
-As \cite{mirowski_navigate_2017}, we use a 
+We compare our approach to three different baselines.
+The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \cite{mirowski_navigate_2017} and \dots.
+The agent receives only image observations, and uses a convolutional neural network with three layers for feature extraction.
 
-This way, we can clearly see the effect memory, image observations and position observations have on performance for the tasks.
+The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017},and \cite{gupta_cognitive_2019}.
+After the initial CNN there is an LSTM layer with 256 cells.
+
+The third baseline also uses the position of the agent, which is encoded as one one-hot vector per dimension. 
+The encoded positions are concatenated together with the output of the CNN and used as input to the LSTM layer.
+Including position should help the agent avoid revisiting previous locations and understand which parts of the scene are yet to be explored. 
+
+With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
 \section{Environments}
 \label{sec:environments}
@@ -146,13 +96,26 @@ This way, we can clearly see the effect memory, image observations and position 
 To train an test an agent for the problem, we use three different environments.
 The three environments have different characteristics to test the applicability of the evaluated approaches to different search problems.
 In each environment there is a scene with a background of distractors and a foreground of targets.
+
+The first two environments approximate the problem of searching with a pan-tilt camera with a 2D environment.
+The third environment uses a simulated 3D environment with a perspective projection camera. 
+
 As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
-The scenes are drawn from some unknown distribution.
-The appearance of the scenes and the location of targets have some correlation in all environments.
+The initial states are drawn from \(\mathcal{T}_0(p)\), where \(p\) is a \textit{random seed}.
+The seed determines the appearance of the scene, the location of the targets and the initial position of the agent.
+
+Furthermore, the appearance of the scenes and the location of targets have some correlation in all environments.
 This means that the agent should be able to search more efficiently using knowledge from the scene.
 
-For the position part of the observations, we assume the presense of some oracle.
-In many realistic scenarios this is the case (GPS, pan/tilt, etc.).
+The observations are
+
+\[
+    o = \left\langle x, p \right\rangle \in \Omega, x \in \mathbb{R}^{3 \times 64 \times 64}, p \in {0, \dots, 15}^2
+\]
+
+The agent always moves in a \(16 \times 16\) grid.
+For the position part of the observations, we assume the presence of some oracle.
+In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
 If how each action moves the agent is well-defined, we do not need the position at all.
 We can use relative positions instead of absolute ones.
 Some of the baselines do not use the position.
@@ -163,8 +126,10 @@ The action space is the same in all environments:
     \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
 \]
 
-\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) translate the view and \(\mathtt{TRIGGER}\) indicates that a target is in view.
-% rotates in third environment though
+\(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
+The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view.
+
+% https://www.reddit.com/r/reinforcementlearning/comments/ggkhwq/d_does_a_constant_penalty_incite_the_agent_to/
 
 We experiment with three rewards signals.
 The first reward signal is defined as
@@ -207,7 +172,7 @@ These three reward signals are interesting to compare for a few reasons.
 \(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
 It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
 \(R'\) uses the supervised distance between targets and the agents, which is available during training.
-This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_multi_scale_2019}.
+This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_artificial_2016}.
 In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
 However, it can never yield policies that search exhaustively as such actions are never rewarded.
 It may therefore perform worse during testing where the reward is not available to the agent.
@@ -217,7 +182,8 @@ This should cause the agent to learn to search the environment exhaustively.
 % tabu search
 % optimal paths
 
-The episode is terminated when all targets have been found, or when 1000 time steps have passed.
+The episode is terminated when all targets have been found, or when a certain number of time steps have passed.
+This number of time steps is set so that the agent can reasonably find the targets with random search, and then gradually improve its policy from there.
 Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
 
 % Averaged over all possible samples, the probability of targets should be uniform over the scene.
@@ -228,8 +194,9 @@ Terminating episodes early this way is common to speed up training~\cite{pardo_t
 % environment 1: easy, understandable
 
 The first environment is the simplest environment. 
-The scene is described by a \(256 \times 256\) RGB image.
+The scene's appearance is given by a \(1024 \times 1024\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
+
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
 Targets are \(1 \times 1\) pixels in the red channel.
@@ -252,10 +219,12 @@ Our feeling is that this is something that previous similar works has not done. 
 % environment 2: medium, procedural and configurable
 
 The second environment is intended to look like realistic terrain.
-The scene's appearance is given by a \(512 \times 512\) RGB image.
-The agent's view is a \(64 \times 64\) sub-image.
+As for the gaussian environment, scene's appearance is given by a \(1024 \times 1024\) RGB image and the agent views a \(64 \times 64\) sub-image which is translated by the actions.
+
+The scene is generated as follows.
 Gradient noise is generated and used as a height map.
-The height map determines the color of the terrain.
+The height map determines the color of the terrain,
+which is picked to resemble water, sand, grass and rock.
 The height also correlates to the probability of targets.
 Specifically, targets are located between shores and mountain bases.
 There are 10 targets in each scene.
@@ -275,15 +244,18 @@ We use this environment for evaluating the generalization capabilities of agents
 \end{figure}
 
 \subsection{Camera Environment}
-% environment 3: hard, realistic
+% environment 3: hard, realistic, zoom?
 
 The third environment is a three-dimensional version of the second one.
-The heightmap is turned into a three-dimensional mesh, and the agent is placed at its center.
+The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
 The agent observes the scene through a perspective projection pan-tilt camera.
 Targets are, as before, placed along island edges.
 The agent is therefore expected to avoid searching the skies and oceans.
 
 This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+
+The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera,
+while \texttt{DOWN} and \texttt{UP} control its pitch.
 
 \begin{figure}
     \centering
@@ -314,8 +286,7 @@ This is to give more accurate metrics for episodes that do not terminate within 
 Additionally, we conduct experiments to measure the generalization capabilities of the agents.
 For this, we use the terrain environment only.
 We test on the same held out levels as before, but vary the number of samples seen during training.
-The training set size is varied from 100, 1000, 10 000, and 100 000 samples.
-This is done by limiting the seed pool used to generate the environments.
+The training set size is varied from 100, 1000, 10 000, and 100 000 samples by limiting the seed pool used to generate the environments.
 This way, we can get a sense of how much data and simulation is required to apply the approach to real-world tasks.
 For each training set size, we train the agents until convergence.
 This is the same approach as in \cite{cobbe_procgen_2020}.
@@ -323,13 +294,15 @@ Once again, we compare all three reward signals.
 
 Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
 We run all experiments across 3 different runs, and use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}.
-% todo: list
 
 We train all agents with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
-Furthermore, we use the same hyperparameters as those outlined in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
+Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
 We find that using many parallel environments stabilizes the training.
+Furthermore, we reduce the number of steps per rollout to be much less than the episode length.
+This is recommended by \cite{schulman_ppo_2017}. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
+The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 
 \begin{table}
     \centering
@@ -354,62 +327,30 @@ As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy out
     \label{tab:hyperparameters}
 \end{table}
 
-% discuss hyperparameter tuning in discussion
+We normalize the reward to limit the scale of the error derivatives.
+Early experiments show that this stabilizes training.
+Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
+They use reward clipping instead which diminishes the meaning of reward magnitude.
+
+% discuss tuning in discussion
 
 \section{Implementation}
 
 The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
-
-Proximal policy optimization was implemented following the official implementation by OpenAI.
-Some necessary modifications were made to allow for recurrent policies.
-
+Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
-
-
-% a little short...
-
+The source code for environments, agents and RL algorithms is available at \dots
+\todo{Add link.}
 
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights
-
-% detailed
-% replicability
-
-% pre-study
-% implementation
-% evaluation
 
 % discuss state representation
 % need more than the image
 % - either memory or position or both
 
-% seed + 1000 levels training
-% >= s + ... for test
-% do the same as procgen
-
 % also same configuration possibly?
 % more parallel environments seem to lead to stable training (relatively slow increase in reward though...)
-
-% would be nice to have a varying number of targets
-% also a done action
-% measure false positives, false negatives etc.
-% good replacement for zoom?
-% relates to visual search literature
-% the current setup is also the most natural for a computer vision system
-% foveated vision is not very reasonable
-
-
-% select one algorithm and clearly motivate why!
-% probably PPO, but why?
-
-
-% time to find targets could be measured in terms of execution time, 
-% and number of timesteps. this way, it could be easier to incorporate 
-% visual attention if it is deemed reasonable.
-
-% how do we handle appearance of targets:
-% can an agent learn to recognize anything out of the ordinary?
-% maybe not the focus, but just the search
 
 % an interesting question is how large search windows we can handle
 % could be an alternative to zoom

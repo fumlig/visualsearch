@@ -62,7 +62,7 @@ We postulate that an effective searcher
 \begin{itemize}
   \item prioritizes regions where the probability of finding a target is high according to previous experience,
   \item is able to search the environment exhaustively,
-  \item avoids searching the same area twice unless,
+  \item avoids searching the same area twice,
   \item learns how the distribution of targets is correlated to the appearance of the environment,
   \item utilizes information from previously visited regions to decide where to look, and
   \item is able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
@@ -71,11 +71,13 @@ We postulate that an effective searcher
 We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criteria in mind.
 The goal of the agent is to actively locate a set of targets in its environment.
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a fixed pan-tilt camera.
+This means that there are no restrictions in movement.
 The agent has to actively choose where to look in order to gain new information about the environment.
 
 If such a system is to be trained and deployed for a real-world task, there is realistically a limited set of samples to learn from.
 Therefore it is also of interest to determine how many samples are required to infer how to effectively search in similar environments.
-While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017}, our impression is that this is the first work to address intelligent search for multiple targets in unseen environments.
+While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017}, 
+our impression is that this is the first work to address for multiple targets in unseen environments where emphasis is placed on how environment cues can guide search.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -137,7 +139,7 @@ Our contributions are as follows:
 This thesis will address the following questions:
 
 \begin{enumerate}
-  \item \label{itm:rq1} How can a learning agent that learns to intelligently search for targets be implemented with reinforcement learning?
+  \item \label{itm:rq1} How can an agent that learns to intelligently search for targets be implemented with reinforcement learning?
   \item What is a suitable memory architecture for a visual search agent?
   \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
   \item \label{itm:rq3} How many training samples are needed for the agent to generalize to unseen in-distribution environments?

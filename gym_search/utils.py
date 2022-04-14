@@ -1,5 +1,7 @@
 import numpy as np
 import itertools
+import opensimplex
+
 
 
 def to_point(i, w):
@@ -89,3 +91,26 @@ def travel_dist(points, dist_func=manhattan_dist):
         min_dist = min(dist, min_dist)
 
     return min_dist
+
+
+def simplex_noise_2d(x, y):
+    return opensimplex.noise2array(x, y)
+
+
+def fractal_noise_2d(shape, periods=(1, 1), octaves=1, persistence=0.5, lacunarity=2, seed=None):
+    if seed is not None:
+        opensimplex.seed(int(seed))
+
+    h, w = shape
+    noise = np.zeros(shape)
+    frequency = 1
+    amplitude = 1
+
+    for _ in range(octaves):
+        y, x = np.arange(h)*frequency*periods[0]/h, np.arange(w)*frequency*periods[1]/w
+        noise += amplitude * simplex_noise_2d(x, y)
+        frequency *= lacunarity
+        amplitude *= persistence
+    return noise
+
+    # todo: can we do a sum reduce? if it seems necessary...

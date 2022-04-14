@@ -3,6 +3,9 @@ import enum
 import numpy as np
 
 from collections import defaultdict
+from gym_search.shapes import Box
+from gym_search.palette import add_with_alpha
+from skimage import draw
 
 
 class Action(enum.IntEnum):
@@ -40,7 +43,7 @@ class SearchEnv(gym.Env):
         self.training = True
 
         self.reward_range = (-np.inf, np.inf)
-        self.action_space = gym.spaces.Discrete(len(self.Action))
+        self.action_space = gym.spaces.Discrete(len(Action))
         self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view, 3), dtype=np.uint8), position=gym.spaces.MultiDiscrete(self.shape)))
 
 
@@ -49,14 +52,14 @@ class SearchEnv(gym.Env):
             self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         if self.training:
-            targets = self.generate(self.np_random.integers(self.test_samples, self.test_samples + self.train_samples))
+            self.scene, self.targets = self.generate(self.np_random.integers(self.test_samples, self.test_samples + self.train_samples))
         else:
-            targets = self.generate(self.np_random.integers(0, self.test_samples))
+            self.scene, self.targets = self.generate(self.np_random.integers(0, self.test_samples))
 
         self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
-        self.targets = targets
         self.hits = [False for _ in range(len(self.targets))]
         self.path = [self.position]
+        self.visited = np.full(self.shape, False)
         self.num_steps = 0
         self.counters = defaultdict(int)
 
@@ -64,17 +67,17 @@ class SearchEnv(gym.Env):
 
     def step(self, action):
 
-        if action != Action.TRIGGER:
-            step = self.get_action_step(action)
-            self.position += step
+        step = self.get_action_step(action)
+        self.position += step
 
-            if self.wrap:
-                self.position %= self.shape
-            else:
-                self.position = np.clip(self.position, (0, 0), self.shape)
+        if self.wrap:
+            self.position %= self.shape
         else:
-            hits = 0
+            self.position = np.clip(self.position, (0, 0), np.array(self.shape) - (1, 1))
+    
+        hits = 0
 
+        if action == Action.TRIGGER:
             for i in range(len(self.targets)):
                 if self.hits[i]:
                     continue
@@ -84,6 +87,10 @@ class SearchEnv(gym.Env):
                     hits += 1
 
         self.num_steps += 1
+        self.counters["triggers"] += action == Action.TRIGGER
+        self.counters["revisits"] += self.visited[self.position]
+        self.path.append(self.position)
+        self.visited[self.position] = True
 
         obs = self.observation()
         rew = hits*10 if hits else -1
@@ -98,16 +105,34 @@ class SearchEnv(gym.Env):
 
         return obs, rew, done, info
 
+
     def render(self, mode="rgb_array"):
-        raise NotImplementedError
+        image = self.scene.copy()
+
+        for i in range(len(self.targets)):
+            if self.hits[i]:
+                coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
+                image[coords] = add_with_alpha(image[coords], (0, 255, 0), 0.5)
+
+        coords = tuple(draw.rectangle_perimeter(self.scale(self.position), extent=self.view, shape=self.scale(self.shape)))
+        image[coords] = (255, 255, 255)
+        image = image.astype(np.uint8)
+        
+        return image
 
     def observation(self):
-        raise NotImplementedError
+        y0, x0 = np.array(self.position)*self.view
+        y1, x1 = y0 + self.view[0], x0 + self.view[1]
+        obs = self.scene[y0:y1,x0:x1]
+        return dict(image=obs, position=self.position)
 
     def visible(self, target):
-        raise NotImplementedError
+        return Box(*self.scale(self.position), *self.scale(self.view)).overlap(target) > 0
 
-    def sample(self, seed):
+
+
+
+    def generate(self, seed):
         raise NotImplementedError
 
 
@@ -116,6 +141,18 @@ class SearchEnv(gym.Env):
     
     def test(self):
         self.train(False)
+
+
+    @property
+    def max_steps(self):
+        if self.training:
+            return self.train_steps
+        else:
+            return self.test_steps
+
+
+    def scale(self, position):
+        return np.array(position)*self.view
 
 
     def get_action_meanings(self):

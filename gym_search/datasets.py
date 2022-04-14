@@ -31,6 +31,15 @@ if os.path.exists("data/airbus-oil"):
     )
 """
 
+"""
+def dataset_generator(seed, dataset):
+    shape = dataset[0][0].shape[:2]
+    random = np.random.default_rng(seed)
+    idx = random.choice(len(dataset))
+    image, targets = dataset[idx]
+    return image, [Box(*pos, *shape) for pos, shape in targets]
+"""
+
 
 def generate_dataset(root, generator, num_train, num_test, seed=0):    
     generator.seed(seed)

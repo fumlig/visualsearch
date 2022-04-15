@@ -132,32 +132,32 @@ If how each action moves the agent is well-defined, the relative position can be
 
 The action space is the same in all environments:
 
-\[
+\begin{equation*}
     \mathcal{A} = \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \right\rbrace,
-\]
+\end{equation*}
 
 \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
 This action space is realistic for many real-world search tasks,
 such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
 and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
-The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
+\(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
 % https://www.reddit.com/r/reinforcementlearning/comments/ggkhwq/d_does_a_constant_penalty_incite_the_agent_to/
 
 We experiment with three rewards signals.
 The first reward signal is defined as
 
-\[
+\begin{equation*}
     \mathcal{R}(s_t, a_t) =
     \begin{cases}
         10h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
         -1  & \text{otherwise.}
     \end{cases}
-\]
+\end{equation*}
 
 with \(h = \left\lvert T \cap V \right\rvert\). 
-We argue that this reward provides a suitable inductive bias for the task at hand.
-Early experiments show that a constant reward of \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible converge too slowly for large state spaces.
+Optimizing for this reward will lead to desirable behavior as the agent is rewarded for finding all targets quickly.
+Early experiments show that a constant penalty \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible is too slow to train for moderately large scenes.
 The reward for finding a target speeds up training without deviating from the goal of the task -
 targets should be triggered when in view, but triggers when targets are out of view should be penalized.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
@@ -165,41 +165,36 @@ The constant penalty of \(-1\) in all other cases assures that the agent is rewa
 In practice, early experiments show that even this reward might be too sparse.
 To speed up training, we experiment with two extensions to the reward:
 
-\[
+\begin{equation*}
     \mathcal{R}'(s_t, a_t) =
     \begin{cases}
         1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view closer to the nearest target, and} \\
         \mathcal{R}(s_t, a_t) & \text{otherwise}.
     \end{cases}
-\]
+\end{equation*}
 
-\[
+\begin{equation*}
     \mathcal{R}''(s_t, a_t) =
     \begin{cases}
         1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view to a previously unseen subspace, and} \\
         \mathcal{R}(s_t, a_t) & \text{otherwise}.
     \end{cases}
-\]
+\end{equation*}
 
 These three reward signals are interesting to compare for a few reasons.
 \(R\) does not clearly mediate to the agent what actions are desireable until a target is found.
 It may therefore lead to slow learning, but it also does not steer away from the goal of finding targets quickly.
 \(R'\) uses the supervised distance between targets and the agents, which is available during training.
 This is similar to the reward used by \cite{caicedo_active_2015} and \cite{ghesu_artificial_2016}.
-In addition to speeding up learning, we hypothesize that this reward may help the agent pick up correlations between scene appearance and target probability.
+In addition to speeding up learning, this reward may help the agent pick up correlations between scene appearance and target probability.
 However, it can never yield policies that search exhaustively as such actions are never rewarded.
 It may therefore perform worse during testing where the reward is not available to the agent.
 It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
 \(R''\) strikes a balance between the two other signals by instead encouraging exploration.
 This should cause the agent to learn to search the environment exhaustively.
 
-The episode is terminated when all targets have been found, or when a certain number of time steps have passed.
-This number of time steps is set so that the agent can reasonably find the targets with random search, and then gradually improve its policy from there.
+Each episode is terminated when all targets have been found, or after 1000 time steps
 Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
-
-% Averaged over all possible samples, the probability of targets should be uniform over the scene.
-% to make comparison with exhaustive search fair
-% I think?
 
 \subsection{Gaussian Environment}
 
@@ -207,6 +202,7 @@ The first environment is the simplest environment.
 The scene's appearance is given by a \(1024 \times 1024\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
 Which sub-image is viewed is determined by the position of the agent.
+Each non-trigger action move the agent one step in the corresponding cardinal direction.
 
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
@@ -231,25 +227,20 @@ It is also easy to determine whether the agent acts well in this environment.
 
 \subsection{Terrain Environment}
 
-The second environment is intended to look like realistic terrain.
-As for the gaussian environment, scene's appearance is given by a \(1024 \times 1024\) RGB image and the agent views a \(64 \times 64\) sub-image which is translated by the actions.
-The environment roughly corresponds to a UAV search-and-rescue scenario.
-It is desirable that a searching agent should learn to not search oceans and lakes, and instead prioritize searching along the edges of land masses.
-
-The scene is generated as follows.
-Gradient noise is generated and used as a height map.
-The height map determines the color of the terrain,
-which is picked to resemble water, sand, grass and rock.
+The second environment is similar to the first one, but intended to look like realistic terrain.
+It roughly represents a UAV search-and-rescue scenario.
+To generate the image, gradient noise is generated and used as a height map.
+The height map determines the color of the image, which is picked to resemble water, sand, grass and rock.
 The height also correlates to the probability of targets.
-Specifically, targets are located between shores and mountain bases.
-There are three targets in each scene.
+Specifically, three targets are located with uniform probability between shores and mountain bases.
+It is desirable that a searching agent should learn to not search oceans and lakes, and instead prioritize searching along the edges of land masses.
 
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges.}
+    \caption[Terrain environment]{Four samples of the terrain environment. Terrain seen from above with red targets scattered along island edges.}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -259,18 +250,15 @@ The height map is turned into a three-dimensional mesh, and the agent is placed 
 The agent observes the scene through a pan-tilt perspective camera.
 Targets are, as before, placed along island edges.
 The agent is therefore expected to avoid searching the skies and oceans.
-
 This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
-
-The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera,
-while \texttt{DOWN} and \texttt{UP} control its pitch.
+The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, while \texttt{DOWN} and \texttt{UP} control its pitch.
 
 \begin{figure}
     \centering
     \input{figures/camera.pgf}
     \label{fig:camera}
     %\vspace*{-1cm}
-    \caption[Camera environment]{Three samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
+    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
 \end{figure}
 
 \section{Experiments}
@@ -302,7 +290,7 @@ Once again, we compare all three reward signals.
 Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
 We run all experiments across 3 different runs, and use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}.
 
-We train all agents with PPO~\cite{schulman_ppo_2017}.
+All agents are trained with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
 Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
 We find that using more parallel environments stabilizes the training.
@@ -342,7 +330,8 @@ Similar results have been reported by \cite{andrychowicz_empirical_2020} and \ci
 \section{Implementation}
 
 The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
-Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI.
+Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI,
+and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 The source code for environments, agents and RL algorithms is available at \dots
 \todo{Add link.}

@@ -48,7 +48,7 @@ class CameraEnv(SearchEnv):
         vertices = martini.rescale_positions(vertices, self.terrain)
         vertices = vertices[:,[0,2,1]]
         faces = faces.reshape(-1, 3)
-        colors = np.array([image[round(x), round(z)] for x, _, z in vertices]).astype(float)/255.0
+        colors = np.array([image[round(x), round(z)] for z, _, x in vertices]).astype(float)/255.0
 
         mesh = viz.Mesh.from_faces(vertices, faces, colors)
         scene.add(mesh)
@@ -74,13 +74,16 @@ class CameraEnv(SearchEnv):
 
         scene.camera_position = (x, y, z)
         scene.up_vector = (0, 1, 0)
+        scene.camera_target = (0, 0, -1)
 
         return scene, targets
 
 
     def render(self, mode="rgb_array"):
-        pitch, yaw = 2*np.pi*self.position/self.shape
-        pitch = (pitch+np.pi)/2
+        eps = 0.1
+        pitch, yaw = self.position/self.shape
+        yaw = 2*np.pi*yaw - np.pi/2
+        pitch = np.clip(np.pi*(0.5-pitch), -np.pi/2+eps, np.pi/2-eps)
         direction = pr.Vector3((np.cos(yaw)*np.cos(pitch), np.sin(pitch), np.sin(yaw)*np.cos(pitch)))
         front = direction.normalized
         self.scene.camera_target = self.scene.camera_position + front

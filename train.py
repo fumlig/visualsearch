@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     print(args.alg_kwargs)
 
-    rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, args.seed, **args.alg_kwargs)
+    rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, seed=args.seed, **args.alg_kwargs)
 
     envs.close()
     writer.close()

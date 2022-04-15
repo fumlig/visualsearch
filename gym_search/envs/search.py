@@ -56,8 +56,6 @@ class SearchEnv(gym.Env):
         else:
             seed = self.np_random.integers(0, self.test_samples)
 
-        print(seed)
-
         self.scene, self.targets = self.generate(seed)
         self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
         self.hits = [False for _ in range(len(self.targets))]

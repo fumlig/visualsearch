@@ -99,8 +99,6 @@ class RecurrentAgent(Agent):
             h, state = self.lstm(h.unsqueeze(0), ((1.0 - d).view(1, -1, 1) * state[0], (1.0 - d).view(1, -1, 1) * state[1]))
             new_hidden += [h]
 
-        breakpoint()
-
         new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
         state = [s.transpose(0, 1) for s in state]
 

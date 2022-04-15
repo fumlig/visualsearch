@@ -42,32 +42,14 @@ If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rve
 With a final trigger action, the agent can indicate that there is one or more target in the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
 
+\todo{Could reformalize so that targets are volumes instead.}
+
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
 Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 The seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
 
 \section{Approach}
 \label{sec:approach}
-
-% discretize the problem
-% environment description after
-
-% this should maybe not be specificed yet...
-
-To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
-The final agent should be able to recognize targets, regardless of where they appear in view.
-It should also be able to integrate features over time in order to remember which locations have been visited.
-Remembering features of of these locations may also be of importance,
-as it can provide clues for what is in their proximity. 
-
-With this in mind, we use an episodic spatial memory that stores the agent's belief state.
-The architecture of the neural network is presented in Figure X.
-\todo{Describe approach once it is fully decided. Will be a (spatial) memory that allows for reasoning over the whole explored scene.}
-
-%This memory acts as an inhibition-of-return mechanism.
-% inhibition of return could be done programmatically, but there are advantages to learning it:
-% in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
-% cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies)
 
 Due to time constraints and the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradients.
 Specifically, we use an actor-critic method.
@@ -76,22 +58,50 @@ The neural network of the agent is split into four parts:
 A feature extraction network is connected to a recurrent network.
 The recurrent network is in turn is connected to an actor network head and a critic network head, which approximate the policy and value function respectively.
 
+To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
+The final agent should be able to recognize targets, regardless of where they appear in view.
+It should also be able to integrate features over time in order to remember which locations have been visited.
+Remembering features of of these locations may also be of importance, as it can provide clues for what is in their proximity. 
+
+With this in mind, we use an episodic spatial memory that stores the agent's belief state.
+
+\begin{itemize}
+    \item One memory slot for each possible position \(p_t\).
+    \item The agent writes a representation of \(x_t\) and potentially other features like \(a_{t-1}\) to the memory at position \(p_t\).
+    \item The memory can be read with a CNN which creates a representation \(h_t\) of the whole memory that encodes spatial relations.
+    \item The representation is used to approximate the policy and value.
+    \item This way, the agent can associate information with visited.
+\end{itemize}
+
+The architecture of the neural network is presented in Figure X.
+
+\todo{Describe approach once it is fully decided. Will be a (spatial) memory that allows for reasoning over the whole explored scene.}
+
+% inhibition of return could be done programmatically, but there are advantages to learning it:
+% in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability
+% cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies)
+
 \section{Baselines}
 \label{sec:baseline}
 
 We compare our approach to three different baselines.
+All three baselines use the same architecture for the policy and value heads as our approach.
+
 The first baseline is the agent from \cite{mnih_human_2015}, modified to be trainable with an actor-critic algorithm.
 This has previously been used as a baseline in \cite{mirowski_navigate_2017} and \cite{cobbe_procgen_2020}.
-The agent receives only image observations, and uses a convolutional neural network with three layers for feature extraction.
+The agent receives only image observations, and uses a CNN with three layers for feature extraction.
 
 The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017},and \cite{gupta_cognitive_2019}.
-After the initial CNN there is an LSTM layer with 256 cells.
+After the initial CNN there is an LSTM layer with 256 cells,
+which lets the agent integrate visual information over time.
 
 The third baseline also uses the position of the agent, which is encoded as one one-hot vector per dimension. 
 The encoded positions are concatenated together with the output of the CNN and used as input to the LSTM layer.
 Including position should help the agent avoid revisiting previous locations and understand which parts of the scene are yet to be explored. 
 
-All three baselines use the same architecture for the policy and value heads as our approach.
+For large scenes, the position is likely to be needed as a way for the agent to orient itself.
+As scenes differ in appearance, the image is not enough to ground the agent.
+This could make it difficult for the agent to search exhaustively.
 With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
 \section{Environments}
@@ -128,7 +138,7 @@ The action space is the same in all environments:
 \]
 
 \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
-The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view.
+The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
 % https://www.reddit.com/r/reinforcementlearning/comments/ggkhwq/d_does_a_constant_penalty_incite_the_agent_to/
 
@@ -205,6 +215,9 @@ The idea with this environment is to test that the method learns what we want it
 There is a clear correlation between observations and desirable actions.
 It is also easy to determine whether the agent acts well in this environment.
 % Our feeling is that this is something that previous similar works has not done. % cite
+
+%To investigate the effect the scene size has on the agent's ability to learn a good policy,
+%we use three different versions of the environment.
 
 \begin{figure}
     \centering

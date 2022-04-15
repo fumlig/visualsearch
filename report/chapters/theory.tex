@@ -54,7 +54,7 @@ This chapter introduces background and related work.
 
 \section{Background}
 
-\subsection{Visual Search}
+\subsection{Visual Search and Attention}
 \label{sec:visualsearch}
 
 The perceptual task of searching for something in a visual environment is usually referred to as \textit{visual search}~\cite{wolfe_visual_2010}.
@@ -78,6 +78,7 @@ This is in general not true for computer vision systems: cameras are more often
 
 If the searched environment is a random field, visual search is akin to a random process~\cite{nakayama_situating_2011}.
 Experiments in humans have shown that search in featureless environments is consistent with random walk with no memory.
+Optimal search algorithms in such environments would be exhaustive, such as those found in coverage path planning~\cite{galceran_carreras_2013}.
 Humans have also been shown to use the history of observations to improve visual search efficiency. 
 Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_koch_2001} that prevents searching visited locations twice, improve search time in random fields considerably.
 
@@ -87,40 +88,24 @@ Such regularities can learned and used during future searches.
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011}.
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011}.
 
-\todo{\cite{wolfe_five_2017}}
-
-\subsection{Active Vision} 
+\subsection{Active Vision and Perception} 
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
-Animal perception, however, is active.
-We do not only see things, but look for them.
-One might ask why this is the case, if there is any advantage that an active observer has over a passive one.
-
+Animal perception, in contrast, is active - we do not only see things, but look for them.
 Aloimonos et al.~\cite{aloimonos_active_1988} introduce the \textit{active vision} paradigm.
-An active vision is defined as a system that involves an observer that has some control over its sensory input.
-They prove that an active observer can solve several basic vision problems in a more efficient way than a passive one.
-When the transformation of the observer's view is known, it can uniquely compute shape and motion.
+An active observer systm is defined as a one that has some control over its sensory input.
 
-Bajcsy~\cite{bajcsy_1988} defines active vision, and perception in general, as a problem of intelligent data acquisition.
+Bajcsy~\cite{bajcsy_active_1988} defines active vision, and perception in general, as a problem of intelligent data acquisition.
 An active observer needs to define and measure parameters and errors from its scene and feed then back to control the data acquisition process.
 Bajscy states that one of the difficulties of this problem is that they are scene and context dependent.
 A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.
 
-In a re-visitation of active perception, Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} stress that despite recent successes in robotics, artificial intelligence and computer vision, an intelligent agent must include active perception:
-
-\begin{quote}
-    An agent is an active perceiver if it knows why it wishes to sense, and then chooses what to perceive, and determines how, when and where to achieve that perception.
-\end{quote}~\cite{bajcsy_revisiting_2018}
-
-% surveillance section
 Active perception in general relates to the idea of moving a sensor to constrain the interpretation of the environment.
 Chen et al.\cite{chen_activevisionsurvey_2011} survey recent developments in active vision.
 They refer to the task of finding a given object in a known or unknown environment as object search.
 This task involves object recognition, localization, sensing control, environment modelling and path planning.
 Viewpoint selection in object search is similar to that of data acquisition.
 Visual matching has been shown to be NP complete, with exponential time complexity relative to the size of the image.
-
-% tsotsos is probably a good reference
 
 \subsection{Deep Learning}
 
@@ -403,7 +388,7 @@ PPO algorithms have turned out to strike a good balance between simplicity, stab
 To our knowledge, there is no work that considers the exact problem we are looking at.
 In this section we present work that considers similar tasks, focusing on RL methods.
 
-\subsection{Object Detection}
+\subsection{Active Object Detection}
 
 % active object detection
 
@@ -444,7 +429,7 @@ A spatial memory network is proposed, which remembers features and locations of 
 A CNN is used to extract features from the memory and used together with the original image as input to a standard region proposal network.
 The approach gives a small improvement over the standalone region proposal network.
 
-\subsection{Visual Search and Attention}
+\subsection{Visual Search in Robotics}
 
 Minut and Mahadevan\cite{minut_mahadevan_2001} propose an sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
@@ -518,7 +503,7 @@ More recently, deep RL seen use for visual navigation as well~\cite{zeng_survey_
 The difficulty of hand-engineering 
 In particular, two tasks have been of interest: object (goal) navigation and point (goal) navigation.
 
-Zhu et al.~\cite{zhu_target_driven_2016} create a model for target-driven visual navigation in indoor scenes with DRL.
+Zhu et al.~\cite{zhu_target_2016} create a model for target-driven visual navigation in indoor scenes with DRL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
 The agent moves forwards, backwards, and turns left and right at constant step lengths.
 They use a reward signal with a small time penalty to incentivize task completion in few steps.
@@ -535,7 +520,7 @@ At each episode, a maze is randomly generated with objects that give rewards the
 They train the agent using an actor-critic approach and manage to get the agent to successfully navigate in unseen but similar environments.
 
 Mirowski et al.~\cite{mirowski_navigate_2017} propose a new approach to tackle a similar maze navigation problem as \cite{mnih_asynchronous_2016}.
-They propose a new architecture, that in addition to an image, also observes the reward, velocity and the action from the previous time step.
+They introduce a new architecture, that in addition to an image, also observes the reward, velocity and the action from the previous time step.
 Observing the reward may help the agent learn features of desirable frames, but also limits the set of possible reward signals as the reward has to be present during testing.
 As in \cite{mnih_asynchronous_2016}, the agent has a recurrent LSTM layer. 
 The architecture is trained using an auxiliary depth prediction objective.
@@ -567,7 +552,7 @@ Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit mem
 
 A recurring theme in the related work above is the use of memory architectures.
 In most cases where active sensing is involved, memory is a requirement for good performance.
-As mentioned in Section \ref{sec:pomdp}, effective behaviour in partially observable processes usually requires some form of memory.
+As mentioned in Section \ref{sec:pomdp}, effective behavior in partially observable processes usually requires some form of memory.
 Works that don't use memory rely on either full observability, like \cite{caicedo_active_2015}, or low variance so that search can be done reactively, like \cite{ghesu_artificial_2016}.
 For the visual search task we consider here, memory is likely to be important.
 It is likely that integrating features over time helps with finding targets quicker.
@@ -606,14 +591,6 @@ Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a struct
 % see citations [12, 13, 22, 23, 27] on memory mechanisms
 % \cite{gupta_cognitive_2019}
 
-\subsection{Benchmarking Environments}
-
-\begin{itemize}
-    \item What is contained in an environment (represents a Markov Decision Process).
-    \item What is a good benchmarking environment
-    \item Should list some common environments and explain why they are not satisfactory
-    \item Motivate why we create our own (higher variance, agent's can not rely on memorizing environments)
-\end{itemize}
 
 \subsection{Generalization and Inductive Bias}
 
@@ -686,8 +663,12 @@ They propose a formalism for collections of problems called contextual CMDPs.
 A CMDP which is an MDP \(\mathcal{M}\) (or POMDP) where the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
 where \(s \in \mathcal{S}\) is the underlying state and \(c \in \mathcal{C}\) is the \textit{context}.
 The context takes the role of a seed and determines the sample drawn from the underlying distribution of task instances.
-In a CMDP, separate train and test tasks can be defined by creating \(\mathcal{C}_\text{train} \subset \mathcal{C}\) and \(\mathcal{C}_\text{test} \subset \mathcal{C}\) such that \(\mathcal{C}_\text{train} \cap \mathcal{C}_\text{test} = \varnothing\).
-They conclude that strong generalization requires 
+In a CMDP, separate train and test tasks can be defined by creating \(\mathcal{C}_\text{train} \subseteq \mathcal{C}\) and \(\mathcal{C}_\text{test} \subseteq \mathcal{C}\) such that \(\mathcal{C}_\text{train} \cap \mathcal{C}_\text{test} = \varnothing\).
+It is argued that the only choice when evaluating generalization with procedurally generated environments is the training set size.
+Evaluation has to be performed on the full distribution of (held out) contexts.
+They conclude that the an agent's policy should rely only on features which will behave similarly in the training and testing context.
+If the similarities between training and testing contexts are known,
+they can be encoded as inductive bias for stronger generalization.
 
 \subsection{Evaluation of Agents}
 

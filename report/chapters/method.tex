@@ -91,7 +91,7 @@ The first baseline is the agent from \cite{mnih_human_2015}, modified to be trai
 This has previously been used as a baseline in \cite{mirowski_navigate_2017} and \cite{cobbe_procgen_2020}.
 The agent receives only image observations, and uses a CNN with three layers for feature extraction.
 
-The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017},and \cite{gupta_cognitive_2019}.
+The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017}, and \cite{gupta_cognitive_2019}.
 After the initial CNN there is an LSTM layer with 256 cells,
 which lets the agent integrate visual information over time.
 
@@ -99,8 +99,8 @@ The third baseline also uses the position of the agent, which is encoded as one 
 The encoded positions are concatenated together with the output of the CNN and used as input to the LSTM layer.
 Including position should help the agent avoid revisiting previous locations and understand which parts of the scene are yet to be explored. 
 
-For large scenes, the position is likely to be needed as a way for the agent to orient itself.
 As scenes differ in appearance, the image is not enough to ground the agent.
+For large scenes, the position is likely to be needed as a way for the agent to orient itself.
 This could make it difficult for the agent to search exhaustively.
 With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
@@ -118,18 +118,17 @@ The seed determines the appearance of the scene, the location of the targets and
 Furthermore, the appearance of the scenes and the location of targets are correlated to some degree in all environments.
 This means that the agent should be able to search more efficiently using knowledge from the scene.
 
-The observations are
+The position and image observations are
 
-\[
-    o = \left\langle x, p \right\rangle \in \Omega, x \in \mathbb{R}^{3 \times 64 \times 64}, p \in {0, \dots, 15}^2
-\]
+\begin{align*}
+    x & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
+    p & \in \{0, \dots, 15\} \times \{0, \dots, 15\}
+\end{align*}
 
 The agent always moves in a \(16 \times 16\) grid.
 For the position part of the observations, we assume the presence of some oracle.
 In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, we do not need the position at all.
-We can use relative positions instead of absolute ones.
-Some of the baselines do not use the position.
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
 
 The action space is the same in all environments:
 
@@ -138,6 +137,9 @@ The action space is the same in all environments:
 \]
 
 \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
+This action space is realistic for many real-world search tasks,
+such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
+and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
 The \(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
 % https://www.reddit.com/r/reinforcementlearning/comments/ggkhwq/d_does_a_constant_penalty_incite_the_agent_to/
@@ -251,7 +253,6 @@ There are three targets in each scene.
 \end{figure}
 
 \subsection{Camera Environment}
-% environment 3: hard, realistic, zoom?
 
 The third environment is a three-dimensional version of the second one.
 The height map is turned into a three-dimensional mesh, and the agent is placed at its center.

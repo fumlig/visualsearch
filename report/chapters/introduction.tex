@@ -4,8 +4,6 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-% ~3p
-
 In this thesis project, the problem of searching for targets in unknown but familiar environments is addressed.
 This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
 
@@ -33,18 +31,17 @@ At the root of the visual search problem is partial observability.
 A searcher can only perceive, or pay attention to, a limited region of the searched environment at once.
 Therefore which regions to observe and in what order becomes an important decision. 
 
-How humans and animals search for things has been extensively studied in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,nakayama_situating_2011}.
+How humans and animals search for things has been studied extensively in neuroscience~\cite{eckstein_visual_2011,wolfe_visual_2010,nakayama_situating_2011}.
 When we search, we use features of the environment to guide our attention~\cite{wolfe_five_2017,eckstein_visual_2011}.
 For example, we know to look for berries at the forest floor, and not to look for boats on land.
 Furthermore, search is not purely reactive but involves the use of memory.
 We also use memory to take the history of the search into account when deciding where to move our attention~\cite{wolfe_five_2017}.
 
 Such features can in some cases be quite subtle and difficult to pick up, even for humans.
-Manually engineering guidance in accordance with these features can be difficult,
+Manually engineering guidance in accordance with these features can be expensive,
 especially if a searching system should be deployed in many different environments.
-Doing so manually can be labour intensive, especially if a searching system should be deployed in many different environments.
-If one could instead learn the a good searching strategy from a limited set of sample environments this would be circumvented.
-Such a system could be taught to search in arbitrary environments without the use of environment-specific rules.
+If one could instead learn a good searching strategy from a limited set of sample environments this would be circumvented.
+Such a system could be taught to search in arbitrary environments without the use of manually encoded environment-specific rules.
 
 Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
 In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
@@ -56,22 +53,20 @@ This makes it interesting to see if deep reinforcement learning can also be appl
 \label{sec:aim}
 
 The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
-Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
-The goal of the agent is to actively locate a set of targets in its environment.
-Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a fixed pan-tilt camera.
-This means that there are no restrictions in movement.
+Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to search strategically in unseen environments.
+Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through an camera whose movements are unrestricted.
 The agent has to actively choose where to look in order to gain new information about the environment.
 
 We postulate that an effective searcher learns how the distribution of targets and prioritizes regions where they are more likely according to previous experience.
 The distribution of targets may be correlated with the appearance of the searched scene.
 A good searcher should integrate information over time to build an internal representation of the environment and use it to make informed decisions.
 The agent should be able to search the environment exhaustively while avoiding visiting the same region twice.
-Finally, the agent should be able to locate multiple targets while minimizing its path length.
+Finally, the agent should be able to locate multiple targets while minimizing the number of steps taken.
 
-If such a system is to be trained and deployed for a real-world task, there is realistically a limited set of samples to learn from.
-Therefore it is also of interest to determine how many samples are required to infer how to effectively search in similar environments.
-While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017}, 
-our impression is that this is the first work to address for multiple targets in unseen environments where emphasis is placed on how environment cues can guide search.
+If such a system is to be trained and deployed for a real-world task, there is likely a limited set of samples to learn from.
+Therefore it is also of interest to investigate how many samples are required to infer how to effectively search in similar environments.
+While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017,ghesu_artificial_2016,caicedo_active_2015}, 
+our impression is that this is the first work to address search for multiple targets in unseen environments where emphasis is placed on how environment cues can guide search.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -148,6 +143,6 @@ This thesis will address the following questions:
 % normal case, the delimitations need not be justified.
 
 We focus on the behavioral and decision-making aspects of the presented problem, and delimit ourselves from difficult detection problems.
-For this reason, targets will deliberately be made easy to detect.
+For this reason, targets will deliberately be made easy to detect once visible.
 Furthermore, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.

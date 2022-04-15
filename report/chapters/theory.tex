@@ -73,8 +73,10 @@ While covert attention tends to be reactionary, overt attention usually integrat
 In this work we focus specifically on the former, moving the gaze to bring targets into view.
 
 Humans control overt attention through both eye movements and head movements.
-Eye movement is \textit{saccadic} - rapid and almost instant between locations.
-This is in general not true for computer vision systems: cameras are more often  
+Eye movement is \textit{saccadic} - rapid and almost instant between locations, at a constant cost.
+This is not true for head movements, and in general not true for computer vision systems:
+movements induced by motors tend to have a cost in time and energy that is proportional to the distance moved.
+This means that such movements need to be more strategic.
 
 If the searched environment is a random field, visual search is akin to a random process~\cite{nakayama_situating_2011}.
 Experiments in humans have shown that search in featureless environments is consistent with random walk with no memory.
@@ -82,11 +84,11 @@ Optimal search algorithms in such environments would be exhaustive, such as thos
 Humans have also been shown to use the history of observations to improve visual search efficiency. 
 Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_koch_2001} that prevents searching visited locations twice, improve search time in random fields considerably.
 
-Natural environments are in fact seldom completely random, and exhibit some structure.
-When finding targets, there tends to be something that can be learned from previous experience to improve performance.
-Such regularities can learned and used during future searches.
-Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011}.
-Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011}.
+Natural environments are in fact seldom completely random, but instead tend to exhibit some structure.
+When finding targets, there is usually to be something about this structure that can be used to improve search performance.
+Such regularities can learned  from past experience and used during future searches.
+Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
+Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
 \subsection{Active Vision and Perception} 
 
@@ -450,7 +452,7 @@ Partially observable processes, such as the one we consider in this work, can be
 By taking actions, the hard attention can be redirected
 
 Attention has been modelled in machines with success for both language~\cite{bahdanau_attention_2016} and vision tasks.
-While overt attention is hard attention, it is also interesting to take inspiration from soft attention, which more closely resemble covert attention.
+While overt attention is hard attention, it is also interesting to take inspiration from soft attention, which more closely resembles covert attention.
 
 Mnih et al.~\cite{mnih_attention_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
 Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of images pixels.

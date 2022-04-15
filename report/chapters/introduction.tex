@@ -49,7 +49,7 @@ Such a system could be taught to search in arbitrary environments without the us
 Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
 In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
 It has been used to master arcade games~\cite{mnih_human_2015}, board games~\cite{silver_alphago_2016}, and even complex real-time strategy games~\cite{vinyals_alphastar_2019}.
-Several works have also applied reinforcement learning to tasks involving embodied agents with visual input~\cite{minut_mahadevan_2001,mnih_attention_2014,zhu_target_driven_2016,mirowski_navigate_2017}.
+Several works have also applied reinforcement learning to tasks involving embodied agents with visual input~\cite{minut_mahadevan_2001,mnih_attention_2014,zhu_target_2016,mirowski_navigate_2017}.
 This makes it interesting to see if deep reinforcement learning can also be applied to visual search.
 
 \section{Aim}
@@ -57,22 +57,16 @@ This makes it interesting to see if deep reinforcement learning can also be appl
 
 The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
 Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to effectively search for targets in unseen environments.
-We postulate that an effective searcher 
-
-\begin{itemize}
-  \item prioritizes regions where the probability of finding a target is high according to previous experience,
-  \item is able to search the environment exhaustively,
-  \item avoids searching the same area twice,
-  \item learns how the distribution of targets is correlated to the appearance of the environment,
-  \item utilizes information from previously visited regions to decide where to look, and
-  \item is able to find multiple targets while minimizing its path length. % test by comparing to optimal travel cost
-\end{itemize}
-
-We ask ourselves how an intelligent agent can be trained with reinforcement learning to search with these criteria in mind.
 The goal of the agent is to actively locate a set of targets in its environment.
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a fixed pan-tilt camera.
 This means that there are no restrictions in movement.
 The agent has to actively choose where to look in order to gain new information about the environment.
+
+We postulate that an effective searcher learns how the distribution of targets and prioritizes regions where they are more likely according to previous experience.
+The distribution of targets may be correlated with the appearance of the searched scene.
+A good searcher should integrate information over time to build an internal representation of the environment and use it to make informed decisions.
+The agent should be able to search the environment exhaustively while avoiding visiting the same region twice.
+Finally, the agent should be able to locate multiple targets while minimizing its path length.
 
 If such a system is to be trained and deployed for a real-world task, there is realistically a limited set of samples to learn from.
 Therefore it is also of interest to determine how many samples are required to infer how to effectively search in similar environments.
@@ -83,10 +77,10 @@ Our contributions are as follows:
 \begin{itemize}
   %\item We formally introduce the visual search problem for reinforcement learning.
   %\item We discuss the problem from several angles.
-  \item We provide a set of environments to evaluate visual search agents.
+  \item We provide a set of environments to train and evaluate visual search agents.
   \item We propose a method for solving the visual search task with reinforcement learning.
   \item We compare the method to a set of common baseline agents.
-  \item We evaluate how well learning agents are able to generalize to unseen environments.
+  \item We investigate how well each agent is able to generalize to unseen environments.
 \end{itemize}
 
 \section{Research questions}
@@ -141,7 +135,7 @@ This thesis will address the following questions:
 \begin{enumerate}
   \item \label{itm:rq1} How can an agent that learns to intelligently search for targets be implemented with reinforcement learning?
   \item What is a suitable memory architecture for a visual search agent?
-  \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher?
+  \item \label{itm:rq2} How does the learning agent compare to random walk, exhaustive search, a human searcher with prior knowledge of the searched environment?
   \item \label{itm:rq3} How many training samples are needed for the agent to generalize to unseen in-distribution environments?
 \end{enumerate}
 
@@ -153,8 +147,7 @@ This thesis will address the following questions:
 % specific application domain or target user group. In the
 % normal case, the delimitations need not be justified.
 
-This thesis will be focused on the behavioral aspects of the presented problem.
-We do not focus on difficult detection problems, but rather strategic actions.
+We focus on the behavioral and decision-making aspects of the presented problem, and delimit ourselves from difficult detection problems.
 For this reason, targets will deliberately be made easy to detect.
-For simplicity, we make the assumption that the searched environment is static.
+Furthermore, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.

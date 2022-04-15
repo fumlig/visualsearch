@@ -29,20 +29,22 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 
 % Maybe keep the POMDP stuff in environment section
 
-We can now formally define the problem of searching for targets in unknown environments.
+We can now formally define the problem of searching for targets in unknown environments,
+adopting the CMDP formalism \cite{kirk_survey_2022}.
 
-Let the task be \(\left\langle \mathcal{M}, \mathcal{T}_0 \right\rangle\), where \(\mathcal{M}\) is a POMDP and \(\mathcal{T}_0\) is the probability distribution on the initial states.
-The state is defined by a (Euclidean) space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
-At each timestep, the agent observes a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
-The actions in \(\mathcal{A}\) transform the view.
+Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the context \(c\), which we refer to as the \textit{seed}.
+The state includes a space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+At each timestep, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
+
+The actions in \(\mathcal{A}\) transform the view into a different subset of the scene.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
 If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
-
 With a final trigger action, the agent can indicate that there is one or more target in the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
 
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
 Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
+The seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
 
 \section{Approach}
 \label{sec:approach}
@@ -78,7 +80,8 @@ The recurrent network is in turn is connected to an actor network head and a cri
 \label{sec:baseline}
 
 We compare our approach to three different baselines.
-The first baseline is the agent from \cite{mnih_human_2015}, which has previously been used as a baseline in \cite{mirowski_navigate_2017} and \dots.
+The first baseline is the agent from \cite{mnih_human_2015}, modified to be trainable with an actor-critic algorithm.
+This has previously been used as a baseline in \cite{mirowski_navigate_2017} and \cite{cobbe_procgen_2020}.
 The agent receives only image observations, and uses a convolutional neural network with three layers for feature extraction.
 
 The second baseline is a recurrent version of the first baseline, the same architecture used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017},and \cite{gupta_cognitive_2019}.
@@ -88,6 +91,7 @@ The third baseline also uses the position of the agent, which is encoded as one 
 The encoded positions are concatenated together with the output of the CNN and used as input to the LSTM layer.
 Including position should help the agent avoid revisiting previous locations and understand which parts of the scene are yet to be explored. 
 
+All three baselines use the same architecture for the policy and value heads as our approach.
 With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
 \section{Environments}
@@ -96,15 +100,12 @@ With these three baselines, we can clearly see what role the observations and me
 To train an test an agent for the problem, we use three different environments.
 The three environments have different characteristics to test the applicability of the evaluated approaches to different search problems.
 In each environment there is a scene with a background of distractors and a foreground of targets.
-
 The first two environments approximate the problem of searching with a pan-tilt camera with a 2D environment.
 The third environment uses a simulated 3D environment with a perspective projection camera. 
 
 As \cite{cobbe_procgen_2020,mnih_asynchronous_2016}, we leverage procedural generation in all environments.
-The initial states are drawn from \(\mathcal{T}_0(p)\), where \(p\) is a \textit{random seed}.
 The seed determines the appearance of the scene, the location of the targets and the initial position of the agent.
-
-Furthermore, the appearance of the scenes and the location of targets have some correlation in all environments.
+Furthermore, the appearance of the scenes and the location of targets are correlated to some degree in all environments.
 This means that the agent should be able to search more efficiently using knowledge from the scene.
 
 The observations are
@@ -123,7 +124,7 @@ Some of the baselines do not use the position.
 The action space is the same in all environments:
 
 \[
-    \mathcal{A} = \lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \rbrace,
+    \mathcal{A} = \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \right\rbrace,
 \]
 
 \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
@@ -179,8 +180,6 @@ It may therefore perform worse during testing where the reward is not available 
 It will also not learn to take the shortest paths in the general case, as selecting waypoints greedily does not yield optimal paths.
 \(R''\) strikes a balance between the two other signals by instead encouraging exploration.
 This should cause the agent to learn to search the environment exhaustively.
-% tabu search
-% optimal paths
 
 The episode is terminated when all targets have been found, or when a certain number of time steps have passed.
 This number of time steps is set so that the agent can reasonably find the targets with random search, and then gradually improve its policy from there.
@@ -191,35 +190,36 @@ Terminating episodes early this way is common to speed up training~\cite{pardo_t
 % I think?
 
 \subsection{Gaussian Environment}
-% environment 1: easy, understandable
 
 The first environment is the simplest environment. 
 The scene's appearance is given by a \(1024 \times 1024\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
+Which sub-image is viewed is determined by the position of the agent.
 
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
-Targets are \(1 \times 1\) pixels in the red channel.
-The locations of the targets are randomized weighted by the height of the Gaussian kernels.
-This means that the more intense the blue channel, the higher the probability of a target.
+Three targets are scattered around the environment, visualized as red squares.
+The larger the sum of the gaussian kernels, the more likely it is that there is a target present.
+
 The idea with this environment is to test that the method learns what we want it to learn.
 There is a clear correlation between observations and desirable actions.
 It is also easy to determine whether the agent acts well in this environment.
-Our feeling is that this is something that previous similar works has not done. % cite
+% Our feeling is that this is something that previous similar works has not done. % cite
 
 \begin{figure}
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
     %\vspace*{-1cm}
-    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose height is visualized with the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels.}
+    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose heights are indicated by the intensity of the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels. The white border indicates the current view.}
 \end{figure}
 
 \subsection{Terrain Environment}
-% environment 2: medium, procedural and configurable
 
 The second environment is intended to look like realistic terrain.
 As for the gaussian environment, scene's appearance is given by a \(1024 \times 1024\) RGB image and the agent views a \(64 \times 64\) sub-image which is translated by the actions.
+The environment roughly corresponds to a UAV search-and-rescue scenario.
+It is desirable that a searching agent should learn to not search oceans and lakes, and instead prioritize searching along the edges of land masses.
 
 The scene is generated as follows.
 Gradient noise is generated and used as a height map.
@@ -227,20 +227,14 @@ The height map determines the color of the terrain,
 which is picked to resemble water, sand, grass and rock.
 The height also correlates to the probability of targets.
 Specifically, targets are located between shores and mountain bases.
-There are 10 targets in each scene.
-
-The environment roughly corresponds to a UAV search-and-rescue scenario.
-It is desirable that a searching agent should learn to not search oceans and lakes.
-The agent should prioritize searching along the edges of land masses.
-The appearance of the environment is highly configurable and has high variance.
-We use this environment for evaluating the generalization capabilities of agents.
+There are three targets in each scene.
 
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
     %\vspace*{-1cm}
-    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges. The white border indicates the agent's current view.}
+    \caption[Terrain environment]{Three samples of the terrain environment. Terrain seen from above with red targets scattered along island edges.}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -248,7 +242,7 @@ We use this environment for evaluating the generalization capabilities of agents
 
 The third environment is a three-dimensional version of the second one.
 The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
-The agent observes the scene through a perspective projection pan-tilt camera.
+The agent observes the scene through a pan-tilt perspective camera.
 Targets are, as before, placed along island edges.
 The agent is therefore expected to avoid searching the skies and oceans.
 
@@ -285,11 +279,10 @@ This is to give more accurate metrics for episodes that do not terminate within 
 
 Additionally, we conduct experiments to measure the generalization capabilities of the agents.
 For this, we use the terrain environment only.
-We test on the same held out levels as before, but vary the number of samples seen during training.
 The training set size is varied from 100, 1000, 10 000, and 100 000 samples by limiting the seed pool used to generate the environments.
+We test on held out samples from the full distribution, as done by \cite{cobbe_procgen_2020}.
 This way, we can get a sense of how much data and simulation is required to apply the approach to real-world tasks.
 For each training set size, we train the agents until convergence.
-This is the same approach as in \cite{cobbe_procgen_2020}.
 Once again, we compare all three reward signals.
 
 Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
@@ -298,9 +291,9 @@ We run all experiments across 3 different runs, and use the aggregate metrics pr
 We train all agents with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
 Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
-We find that using many parallel environments stabilizes the training.
-Furthermore, we reduce the number of steps per rollout to be much less than the episode length.
-This is recommended by \cite{schulman_ppo_2017}. 
+We find that using more parallel environments stabilizes the training.
+%Furthermore, we reduce the number of steps per rollout to be much smaller than the episode length.
+%This is recommended by \cite{schulman_ppo_2017}. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
 The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 
@@ -330,9 +323,7 @@ The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 We normalize the reward to limit the scale of the error derivatives.
 Early experiments show that this stabilizes training.
 Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
-They use reward clipping instead which diminishes the meaning of reward magnitude.
-
-% discuss tuning in discussion
+%They use reward clipping instead which diminishes the meaning of reward magnitude.
 
 \section{Implementation}
 
@@ -358,7 +349,6 @@ The source code for environments, agents and RL algorithms is available at \dots
 
 
 % memory is needed for (a) remembering previous locations, and (b) integrating features over time
-
 
 % PPO
 % PPG

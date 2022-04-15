@@ -130,7 +130,7 @@ class SearchEnv(gym.Env):
         return dict(image=obs, position=self.position)
 
     def visible(self, target):
-        return Box(*self.scale(self.position), *self.scale(self.view)).overlap(target) > 0
+        return Box(*self.scale(self.position), *self.view).overlap(target) > 0
 
     def generate(self, seed):
         raise NotImplementedError

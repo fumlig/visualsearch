@@ -12,7 +12,7 @@ from collections import deque
 
 
 def proximal_policy_optimization(
-    tot_timesteps,
+    num_timesteps,
     envs,
     agent,
     device,
@@ -35,7 +35,7 @@ def proximal_policy_optimization(
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
     minibatch_size = batch_size // num_minibatches
-    num_batches = tot_timesteps // batch_size
+    num_batches = num_timesteps // batch_size
 
     assert isinstance(envs.single_action_space, gym.spaces.Discrete)
     assert isinstance(envs.single_observation_space, gym.spaces.Dict)
@@ -54,7 +54,7 @@ def proximal_policy_optimization(
     timestep = 0
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
-    pbar = tqdm(total=tot_timesteps)
+    pbar = tqdm(total=num_timesteps)
     ep_infos = deque(maxlen=num_envs)
 
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
@@ -227,7 +227,7 @@ def proximal_policy_optimization(
 
 
 def deep_q_network(
-    tot_timesteps,
+    num_timesteps,
     envs,
     agent,
     device,
@@ -273,11 +273,11 @@ def deep_q_network(
     dones = th.zeros(num_envs).to(device)
     states = [s.to(device) for s in agent.initial(num_envs)]
 
-    for timestep in tqdm(range(tot_timesteps)):
+    for timestep in tqdm(range(num_timesteps)):
 
         initial_states = [s.clone() for s in states]
 
-        epsilon = linear_schedule(start_eps, end_eps, exploration_frac * tot_timesteps, timestep)
+        epsilon = linear_schedule(start_eps, end_eps, exploration_frac * num_timesteps, timestep)
         if random.random() < epsilon:
             actions = th.tensor([envs.single_action_space.sample() for _ in range(envs.num_envs)])
         else:
@@ -363,5 +363,5 @@ ALGORITHMS = {
 }
 
 
-def learn(id, tot_timesteps, envs, agent, device, writer, **kwargs):
-    return ALGORITHMS.get(id)(tot_timesteps, envs, agent, device, writer, **kwargs)
+def learn(id, num_timesteps, envs, agent, device, writer, **kwargs):
+    return ALGORITHMS.get(id)(num_timesteps, envs, agent, device, writer, **kwargs)

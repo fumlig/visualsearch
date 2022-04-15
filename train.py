@@ -53,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("--alg-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent-kwargs", type=parse_hparams, default={})
 
+    parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
@@ -74,12 +75,10 @@ if __name__ == "__main__":
         #th.backends.cudnn.benchmark = False
         #th.backends.cudnn.deterministic = True
 
+    #if args.tune:
+    #    gp_minimize(...)
 
-    if args.tune:
-        gp_minimize(...)
-
-
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
     writer = SummaryWriter(f"logs/{args.name}")
 
     # environment

@@ -80,7 +80,7 @@ class CameraEnv(SearchEnv):
 
 
     def render(self, mode="rgb_array"):
-        eps = 0.1
+        eps = 1e-5
         pitch, yaw = self.position/self.shape
         yaw = 2*np.pi*yaw - np.pi/2
         pitch = np.clip(np.pi*(0.5-pitch), -np.pi/2+eps, np.pi/2-eps)
@@ -94,7 +94,38 @@ class CameraEnv(SearchEnv):
         return img
 
     def plot(self, ax, overlay=True):
-        pass
+        img = self.render()
+        ax.imshow(img)
+        ax.set_yticks([0, self.view[0]-1])
+        ax.set_xticks([0, self.view[1]-1])
+
+        """
+        eps = 1e-5
+        obs = self.render()
+
+        _scene_camera_position = self.scene.camera_position
+        _scene_camera_target = self.scene.camera_target
+
+        self.scene.camera_position = np.array([self.terrain_size//2, self.terrain_height*16, self.terrain_size//2])
+        self.scene.camera_target = self.scene.camera_position + np.array([eps, -1+eps, 0])
+
+        self.scene.render()
+        img = self.scene.frame[:,:,:3]
+
+        self.scene.camera_target = _scene_camera_target
+        self.scene.camera_position = _scene_camera_position
+
+        ax.imshow(img)
+        ax.set_yticks([])
+        ax.set_xticks([])
+
+        if overlay:
+            axins = ax.inset_axes((0.1, 0.1, 0.25, 0.25))
+            axins.imshow(obs, origin="upper")
+            axins.set_yticks([0, self.view[0]-1])
+            axins.set_xticks([0, self.view[1]-1])
+            #ax.indicate_inset([*self.scale(self.position)[::-1], *self.view[::-1]], axins, edgecolor="black")
+        """
 
     def observation(self):
         return dict(

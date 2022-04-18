@@ -43,11 +43,11 @@ especially if a searching system should be deployed in many different environmen
 If one could instead learn a good searching strategy from a limited set of sample environments this would be circumvented.
 Such a system could be taught to search in arbitrary environments without the use of manually encoded environment-specific rules.
 
-Reinforcement learning~\cite{sutton_reinforcement_2018} is a paradigm that is suited for learning mappings from sensor values to actions.
-In recent years, reinforcement learning has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
+Reinforcement learning~\cite{sutton_reinforcement_2018} (RL) is a paradigm that is suited for learning mappings from sensor values to actions.
+In recent years, RL has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
 It has been used to master arcade games~\cite{mnih_human_2015}, board games~\cite{silver_alphago_2016}, and even complex real-time strategy games~\cite{vinyals_alphastar_2019}.
-Several works have also applied reinforcement learning to tasks involving embodied agents with visual input~\cite{minut_mahadevan_2001,mnih_attention_2014,zhu_target_2016,mirowski_navigate_2017}.
-This makes it interesting to see if deep reinforcement learning can also be applied to visual search.
+Several works have also applied RL to tasks involving embodied agents with visual input~\cite{minut_mahadevan_2001,mnih_attention_2014,zhu_target_2016,mirowski_navigate_2017}.
+This makes it interesting to see if RL can also be applied to visual search.
 
 \section{Aim}
 \label{sec:aim}
@@ -65,8 +65,8 @@ Finally, the agent should be able to locate multiple targets while minimizing th
 
 If such a system is to be trained and deployed for a real-world task, there is likely a limited set of samples to learn from.
 Therefore it is also of interest to investigate how many samples are required to infer how to effectively search in similar environments.
-While similar problems have been addressed in the past~\cite{minut_mahadevan_2001,mirowski_navigate_2017,ghesu_artificial_2016,caicedo_active_2015}, 
-our impression is that this is the first work to address search for multiple targets in unseen environments where emphasis is placed on how environment cues can guide search.
+While similar problems have been addressed in the past, both with learning agents~\cite{minut_mahadevan_2001,mirowski_navigate_2017,ghesu_artificial_2016,caicedo_active_2015} and non-learning agents~\cite{shubina_visualsearch_2010,forssen_visual_2008}, 
+our impression is that this is the first work to address learning to search in unseen environments where emphasis is placed on how environment cues can guide search.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -146,3 +146,5 @@ We focus on the behavioral and decision-making aspects of the presented problem,
 For this reason, targets will deliberately be made easy to detect once visible.
 Furthermore, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.
+Finally, we are specifically interested in deep reinforcement learning approaches.
+

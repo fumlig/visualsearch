@@ -40,7 +40,7 @@ The actions in \(\mathcal{A}\) transform the view into a different subset of the
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
 If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 With a final trigger action, the agent can indicate that there is one or more target in the view.
-The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of actions taken.
+The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of total steps.
 
 \todo{Could reformalize so that targets are volumes instead.}
 
@@ -275,6 +275,7 @@ For each agent, environment, and reward signal we report the average return and 
 During testing, we compare the learning agents to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
 We report the SPL metric for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
 The distance between two points is computed as the minimal number of actions to transform the view between the two.
+Although finding the optimal path is not realistic in partially observable environments, SPL can still be useful when compared to that of a human.
 
 During testing, we increase the maximum episode length from 1000 time steps to 5000 time steps.
 This is to give more accurate metrics for episodes that do not terminate within 1000 time steps. 

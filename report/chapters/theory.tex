@@ -54,6 +54,8 @@ This chapter introduces background and related work.
 
 \section{Background}
 
+%Sections \ref{sec:visualsearch} and \ref{sec:activevision} provide perspective from neuroscience and robotics respectively.
+
 \subsection{Visual Search and Attention}
 \label{sec:visualsearch}
 
@@ -62,21 +64,19 @@ The searched object or feature is the \textit{target}, and the other objects or 
 This task has been studied extensively in psychology and neuroscience.
 
 Two big limitations of performance in visual search are processing power, and limited observability.
-Vision in humans is foveated - we perceive with different resolutions at different parts of the retina.
-For computer vision systems, this is typically not a limitation in the sensors.
-However, processing large images might be too expensive, even for computer systems.
-In such cases, images have to be attended to one part at a time.
-
-Scanning an environment for targets involves the use of \textit{visual attention}.
+Processing high-dimensional images is expensive, and environments are too large and complex to view all at once.
+An observer that searches a scene for targets has to direct its \textit{visual attention} to one region at a time.
 Humans scan environments by directing their gaze (\textit{overt attention}) and shifts of attention in the current visible region (\textit{covert attention})~\cite{itti_koch_2001}.
 While covert attention tends to be reactionary, overt attention usually integrates more features over time.
 In this work we focus specifically on the former, moving the gaze to bring targets into view.
 
+% Saccadic and foveated vision
+
 Humans control overt attention through both eye movements and head movements.
-Eye movement is \textit{saccadic} - rapid and almost instant between locations, at a constant cost.
-This is not true for head movements, and in general not true for computer vision systems:
-movements induced by motors tend to have a cost in time and energy that is proportional to the distance moved.
-This means that such movements need to be more strategic.
+Eye movement is almost instant between locations, and the cost of directing attention with eye movements is constant regardless of distance.
+This is not true for head movements, and in general not true for robotic systems:
+movements induced by motors tend to come at a cost that is proportional to the distance moved, both in time and energy.
+The cost of directing attention increases the need for strategy.
 
 If the searched environment is a random field, visual search is akin to a random process~\cite{nakayama_situating_2011}.
 Experiments in humans have shown that search in featureless environments is consistent with random walk with no memory.
@@ -91,23 +91,27 @@ Improvements in human search performance have been measured when certain locatio
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
 \subsection{Active Vision and Perception} 
+\label{sec:activevision}
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
-Animal perception, in contrast, is active - we do not only see things, but look for them.
-Aloimonos et al.~\cite{aloimonos_active_1988} introduce the \textit{active vision} paradigm.
-An active observer systm is defined as a one that has some control over its sensory input.
+Animal perception, in contrast, is active - we do not only see, but also decide where to look.
+In the \textit{active vision} paradigm, an the observer has some control of its sensory input.~\cite{aloimonos_active_1988}
 
-Bajcsy~\cite{bajcsy_active_1988} defines active vision, and perception in general, as a problem of intelligent data acquisition.
-An active observer needs to define and measure parameters and errors from its scene and feed then back to control the data acquisition process.
-Bajscy states that one of the difficulties of this problem is that they are scene and context dependent.
-A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.
+Active vision, and \textit{active perception} in general, is a problem of intelligent data acquisition.
+An active observer must control its sensory inputs to constrain the interpretation of its environment.
+One of the difficulties of active perception problems is that they are scene and context dependent.
+A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.~\cite{bajcsy_active_1988}
 
-Active perception in general relates to the idea of moving a sensor to constrain the interpretation of the environment.
-Chen et al.\cite{chen_activevisionsurvey_2011} survey recent developments in active vision.
-They refer to the task of finding a given object in a known or unknown environment as object search.
-This task involves object recognition, localization, sensing control, environment modelling and path planning.
-Viewpoint selection in object search is similar to that of data acquisition.
-Visual matching has been shown to be NP complete, with exponential time complexity relative to the size of the image.
+Although looking for targets in an unknown environment is inherently an active vision task,
+there is an argument to be made that active vision is a means to solve the task more effectively.
+Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
+Furthermore, an active learning system can select more informative samples to learn from than a passive one.
+
+% Samples that have already been learnt from risk being overused,
+% and there might be samples that an incremental on-policy algorithm can not yet understand.
+
+While reinforcement learning is not among the more traditional solution methods for active vision tasks~\cite{chen_activevisionsurvey_2011},
+it would seem like a fitting framework for learning to search.
 
 \subsection{Deep Learning}
 
@@ -387,12 +391,66 @@ PPO algorithms have turned out to strike a good balance between simplicity, stab
 
 \section{Related Work}
 
-To our knowledge, there is no work that considers the exact problem we are looking at.
-In this section we present work that considers similar tasks, focusing on RL methods.
+Works that consider tasks that are related to searching for targets in unknown environments can be found in several fields under many names.
+In this section, we survey some of the more relevant ones.
+Although there is significant overlap between the fields, 
+we organize the works into subsections based on their targeted task.
 
-\subsection{Active Object Detection}
+\subsection{Object Search}
 
-% active object detection
+In robotics, the task of searching for objects in unknown environments is sometimes referred to as \textit{object search}.
+Several tasks, like searching for objects, require intentional actions.
+A searching observer has to both recognize and localize its targets, while controlling its sensory input.
+To search effectively, it must also model its environment and perform path planning.~\cite{chen_activevisionsurvey_2011}
+
+% https://www.semanticscholar.org/paper/A-Complexity%E2%80%90Level-Analysis-of-the-Sensor-Planning-Ye-Tsotsos/cab92e1c6aff529f536bf068299d72a0323f9f21?sort=total-citations
+
+Suppose that an agent is to search a region for a single object with a controllable camera in three dimensions.
+The state of the searcher is uniquely determined by the position of the camera.
+Actions adjust the camera configuration at a certain cost.
+After each action the agent observes the searched region through the camera, and detects objects.
+The agent has some knowledge of the target probability distribution.
+Planning a sequence of actions that maximize the probability of finding the target, under some cost constraint, is proven to be NP-complete.~\cite{ye_tsotsos_2001}
+Approximate solutions are necessary.
+% Even when using a greedy solution, it is difficult to learn probabilities and how they change from observations in the general case.
+
+Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment\dots
+
+A similar work by Shubina and Tsotsos~\cite{shubina_visualsearch_2010} consider the problem of visual search in 3D environments with a mobile robot.
+
+\cite{aydemir_real_2011}\dots
+
+\cite{aydemir_active_2013} distinguish between\dots
+
+
+% Pretty sure I had more of these?
+
+\todo{More emphasis here. Particularly on \cite{shubina_visualsearch_2010} and related works which seem especially relevant.}
+
+\subsection{Visual Attention}
+
+Minut and Mahadevan\cite{minut_mahadevan_2001} propose an sequential model of selective visual attention for visual search tasks.
+An agent is tasked with finding a particular object in a scene
+A policy for controlling a fixed pan-tilt-zoom camera is learnt using reinforcement learning.
+The goal of the agent is to aim the camera at the region where a target is most likely to be found.
+It has to decide where to fixate next based on visual information only.
+Despite being limited to a single environment, this is an early example of visual search modelled as an RL problem.
+% Due to limited 
+
+Mnih et al.~\cite{mnih_attention_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
+Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of images pixels.
+They propose a recurrent model that extracts information from images by adaptively selecting a sequence of smaller regions to process at high resolution.
+At each time step, the agent receives an image observation of the environment.
+Through actions, the agent selects a limited region of this observation to view in high resolution.
+It is given a reward that is dependent on the task the agent should perform.
+It can access this image via a bandwidth-limited sensor which it focuses on a limited region.
+The agent maintains an internal state using an LSTM layer.
+Though the model is not differentiable, it is trained using RL with a policy gradient method.
+The authors evaluate the agent for image classification and a game-like task.
+They find that the model outperforms a similar convolutional architecture for cluttered object classification tasks.
+This is attributed to its ability to focus its attention on important regions.
+
+\subsection{Object Detection}
 
 In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
 Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
@@ -431,47 +489,7 @@ A spatial memory network is proposed, which remembers features and locations of 
 A CNN is used to extract features from the memory and used together with the original image as input to a standard region proposal network.
 The approach gives a small improvement over the standalone region proposal network.
 
-\subsection{Visual Search in Robotics}
-
-Minut and Mahadevan\cite{minut_mahadevan_2001} propose an sequential model of selective visual attention for visual search tasks.
-An agent is tasked with finding a particular object in a scene
-A policy for controlling a fixed pan-tilt-zoom camera is learnt using reinforcement learning.
-The goal of the agent is to aim the camera at the region where a target is most likely to be found.
-It has to decide where to fixate next based on visual information only.
-Despite being limited to a single environment, this is an 
-
-% This means that the search process is split into two steps: directing the field of view (covert attention), and locating targets within the view (overt attention).
-
-Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
-
-
-A similar work by Shubina and Tsotsos~\cite{shubina_visualsearch_2010} consider the problem of visual search in 3D environments with a mobile robot.
-They use\dots 
-
-Partially observable processes, such as the one we consider in this work, can be seen as hard attention problems.
-By taking actions, the hard attention can be redirected
-
-Attention has been modelled in machines with success for both language~\cite{bahdanau_attention_2016} and vision tasks.
-While overt attention is hard attention, it is also interesting to take inspiration from soft attention, which more closely resembles covert attention.
-
-Mnih et al.~\cite{mnih_attention_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
-Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of images pixels.
-They propose a recurrent model that extracts information from images by adaptively selecting a sequence of smaller regions to process at high resolution.
-At each time step, the agent receives an image observation of the environment.
-Through actions, the agent selects a limited region of this observation to view in high resolution.
-It is given a reward that is dependent on the task the agent should perform.
-It can access this image via a bandwidth-limited sensor which it focuses on a limited region.
-The agent maintains an internal state using an LSTM layer.
-Though the model is not differentiable, it is trained using RL with a policy gradient method.
-The authors evaluate the agent for image classification and a game-like task.
-They find that the model outperforms a similar convolutional architecture for cluttered object classification tasks.
-This is attributed to its ability to focus its attention on important regions.
- 
-Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
-
 %\subsection{Coverage Path Planning}
-
-% could be a smaller section in background, under visual search
 
 %The problem we consider in this work shares many characteristics with coverage path planning (CPP)~\cite{galceran_carreras_2013}.
 %CPP is the task of determining a path that passes over all points in an area, and appears as a fundamental part of many real-world problems. 
@@ -484,9 +502,11 @@ Soft attention (Bahdanau~\cite{bahdanau_attention_2016})\dots
 %Although a CPP agent that is able to recognize targets is not optimal, it is a suitable baseline for the task.
 %Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is suitable for grid-discretized can be used. % some simple approximation
 
-% \cite{krishna_tetromino_2020} -connection to RL
+%Krishna et al.~\cite{krishna_tetromino_2020}...
 
 \subsection{Visual Navigation}
+
+\todo{Compress some of these. Similar works can be presented together.}
 
 % https://aihabitat.org/challenge/2020/#task-1-pointnav
 % https://aihabitat.org/challenge/2020/#task-2-objectnav
@@ -550,6 +570,10 @@ They further find that, with a single decision point whose correct\dots
 
 Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
 
+\cite{yang_semantic_2018} use semantic scene priors\dots
+
+\todo{Many of these assume that objects are discrete and recognizable. What is there are colors or patterns instead?}
+
 \subsection{Memory Architectures}
 
 A recurring theme in the related work above is the use of memory architectures.
@@ -559,48 +583,27 @@ Works that don't use memory rely on either full observability, like \cite{caiced
 For the visual search task we consider here, memory is likely to be important.
 It is likely that integrating features over time helps with finding targets quicker.
 
+Anderson et al.~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations of environments in navigation agents.
+They argue that the nature of the internal representation is central to the study of embodied navigation.
+
+Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
 Simple memory mechanisms, like the frame stacking used in \cite{mnih_human_2015} can model velocity and work well in certain environments where reactive action is sufficient.
 Once a task requires integration of features over longer time, more advanced memory is required.
 
+Augmentations like recurrent update mechanisms add more potential.
 Hausknecht and Stone~\cite{hausknecht_stone_2017} investigate the effects of adding memory in the form of a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014} and \cite{mnih_asynchronous_2016}.
-
 Recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
+
 Memory architectures that are specialized for particular tasks, like \cite{}, have the potential to be more useful and give better performance.
-
-
-Anderson et al.~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations environments in navigation agents.
-Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
-Augmentations like recurrent update mechanisms add more potential.
-More advanced memory mechanisms can be important for better navigation.
-The nature of the internal representation is central to the study of embodied navigation.
-
-One interesting example of such a memory is 
-
-Oh et al. ~\cite{oh_minecraft_2016} use a differentiable retrieval memory.
-The memory contains a mechanism for retrieving memory contents based on the current context of the agent.
-
-Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} propose a structured memory\dots % this one is very interesting
-
-% could have a section for memory mechanisms
-% this is detailed in the survey \cite{arulkumaran_survey_2017}
-% Taking recurrent processing further, it is possible to add a differentiable memory to the DQN, which allows it to more flexibly process information in its “working memory” [96]. In traditional RNNs, recurrent units are responsible for both performing calculations and storing information. Differentiable memories add large matrices that are purely used for storing information, and can be accessed using differentiable read and write operations, analagously to computer memory. With their key-value-based memory Q-network (MQN), Oh et al. [96] constructed an agent that could solve a simple maze built in Minecraft, where the correct goal in each episode was indicated by a coloured block shown near the start of the maze. The MQN, and especially its more sophisticated variants, significantly outperformed both DQN and DRQN baselines, highlighting the importance of using decoupled memory storage. More recent work, where the memory was given a 2D structure in order to resemble a spatial map, hints at future research where more specialised memory structures will be developed to address specific problems, such as 2D or 3D navigation [98]. Alternatively, differentiable memories can be used as approximate hash tables, allowing DRL algorithms to store and retrieve successful experiences to facilitate rapid learning [105].
-
-% more recommendations are there, are they relevant?
-% see citations [12, 13, 22, 23, 27] on memory mechanisms
-% \cite{gupta_cognitive_2019}
-
+Oh et al. ~\cite{oh_minecraft_2016} propose one such memory which is differentiable.
+The memory contains a mechanism for retrieving memory contents based on the current context of the agent\dots
+A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}\dots
 
 \subsection{Generalization and Inductive Bias}
-
-% first introduce the reason why generalization is important
-% reality is dynamic
-% agents need to be robust to variation
-% capability to transfer and adapt to unseen but similar environments
-% most current research works on benchmarks that do not test this (MuJoCo, Arcade learning environment)
 
 In RL, generalization refers to an agents ability to act well in environments that have not been seen during training.
 This is vital if RL is to be applied to real-world problems where conditions are diverse and unpredictable.
@@ -638,13 +641,6 @@ Hessel et al.~\cite{hessel_inductive_2019} investigate the trade-off between gen
 Through experimentation with common reward sculpting techniques, they find that learned solutions are competitive with domain heuristics like handcrafted objectives.
 Learned solutions also seem to be better at generalizing to unseen domains.
 For this reason, they argue for removing biases determined with domain knowledge in future research.
-
-% what does this mean for "oracle" reward signals, such as supervised improvement in distance? 
-% it is essentially reward shaping.
-% they introduce human bias into the possible policies.
-% the agent may fail to discover optimal policies.
-% the problem with our reward is that I am not sure it will lead to minimizing time.
-% should run experiments with time penalty and trigger reward again...
 
 Cobbe et al.~\cite{cobbe_procgen_2020} introduce a benchmark for sample efficiency and generalization in RL.
 They make use of procedural generalization, dependent on a random seed, to decide many parameters of the initial state of the environment.
@@ -726,8 +722,6 @@ With \(N\) test episodes, SPL is computed as
 \begin{equation}
     \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i, l_i)}
 \end{equation}
-
-% if we adopt SPL, we should note that the optimal path is not realistic for this problem
 
 where \(S_i\) is a binary indicator of success,
 \(l_i\) is the shortest path distance from the agent's starting position to the goal,

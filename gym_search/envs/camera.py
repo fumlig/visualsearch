@@ -34,7 +34,7 @@ class CameraEnv(SearchEnv):
 
     def generate(self, seed):
         random = np.random.default_rng(seed)
-        scene = viz.Scene(background=(0.0, 0.0, 0.0, 1.0), size=self.view)
+        scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view)
 
         # terrain
         exp = random.uniform(0.5, 5)
@@ -92,6 +92,9 @@ class CameraEnv(SearchEnv):
         img = self.scene.frame[:,:,:3]
 
         return img
+
+    def plot(self, ax, overlay=True):
+        pass
 
     def observation(self):
         return dict(

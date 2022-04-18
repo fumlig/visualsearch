@@ -121,6 +121,28 @@ class SearchEnv(gym.Env):
         
         return image
 
+    def plot(self, ax, overlay=True):
+        img = self.render()
+        obs = self.observation()
+
+        ax.grid(color="black", linestyle='--', linewidth=0.25)
+        ax.set_yticks(range(0, img.shape[0], self.view[0]))
+        ax.set_xticks(range(0, img.shape[1], self.view[1]))
+        ax.set_yticklabels(range(self.shape[0]))
+        ax.set_xticklabels(range(self.shape[1]))
+
+        ax.imshow(img)
+
+        if overlay:
+            axins = ax.inset_axes((0.1, 0.1, 0.25, 0.25))
+            axins.imshow(obs["image"], origin="upper")
+            axins.set_yticks([0, self.view[0]-1])
+            axins.set_xticks([0, self.view[1]-1])
+            ax.indicate_inset([*self.scale(self.position)[::-1], *self.view[::-1]], axins, edgecolor="black")
+        else:
+            ax.set_yticks([])
+            ax.set_xticks([])
+
     def observation(self):
         y0, x0 = np.array(self.position)*self.view
         y1, x1 = y0 + self.view[0], x0 + self.view[1]

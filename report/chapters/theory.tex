@@ -1,8 +1,6 @@
 \chapter{Theory}
 \label{cha:theory}
 
-% ~10p
-
 % The main purpose of this chapter is to make it obvious for
 % the reader that the report authors have made an effort to read
 % up on related research and other information of relevance for
@@ -53,8 +51,12 @@
 This chapter introduces background and related work.
 
 \section{Background}
+\label{sec:background}
 
-%Sections \ref{sec:visualsearch} and \ref{sec:activevision} provide perspective from neuroscience and robotics respectively.
+In this section, we give background to the tackled problem and outline the theory behind our approach.
+Sections \ref{sec:visualsearch} and \ref{sec:activevision} provide perspective to the problem from neuroscience and machine perception respectively.
+Section \ref{sec:deeplearning} overviews the theory behind function approximation with neural networks, and some common architectures.
+Section \ref{sec:reinforcementlearning} summarizes the foundations of reinforcement learning.
 
 \subsection{Visual Search and Attention}
 \label{sec:visualsearch}
@@ -90,7 +92,7 @@ Such regularities can learned  from past experience and used during future searc
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
-\subsection{Active Vision and Perception} 
+\subsection{Active Vision and Object Search} 
 \label{sec:activevision}
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
@@ -102,18 +104,35 @@ An active observer must control its sensory inputs to constrain the interpretati
 One of the difficulties of active perception problems is that they are scene and context dependent.
 A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.~\cite{bajcsy_active_1988}
 
-Although looking for targets in an unknown environment is inherently an active vision task,
-there is an argument to be made that active vision is a means to solve the task more effectively.
-Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
-Furthermore, an active learning system can select more informative samples to learn from than a passive one.
+%There is an argument to be made that active vision is a means to solve the task more effectively.
+%Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
+%Furthermore, an active learning system acquires the samples to learn from itself select more informative samples to learn from than a passive one.
 
-% Samples that have already been learnt from risk being overused,
-% and there might be samples that an incremental on-policy algorithm can not yet understand.
+In active vision, searching for objects with a camera in unknown environments is referred to as \textit{object search}.
+A searching observer has to both recognize and localize its targets, while controlling its sensory input.
+To search effectively, it must also model its environment and perform path planning.~\cite{chen_activevisionsurvey_2011}
 
+Solving the object search problem optimally involves determining a sequence of camera controlling actions that maximizes the probability of finding the target while satisfying a cost constraint.
+The state of the searcher is uniquely determined by the control parameters of the camera.
+Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
+Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
+Finding an optimal solution in three dimensions has been shown to be NP-complete, necessitating approximate solutions~\cite{ye_tsotsos_2001}.
+
+There are several rigorous attempts to implement robotic object search systems using non-learning methods.
+Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
+Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
+Each objects is examined from several perspectives and ranked by probability of being the queried object.
+Shubina and Tsotsos~\cite{shubina_visualsearch_2010} model the search problem as in \cite{ye_tsotsos_2001}, and solve with a greedy action selection strategy.
+They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
+Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_real_2011,aydemir_active_2013}.
+
+These systems solve more complex tasks than the one we consider, such as handling multiple target object categories and navigating in obstructed environments.
+However, they are also restricted by their reliance on human knowledge to act well in their environments.
 While reinforcement learning is not among the more traditional solution methods for active vision tasks~\cite{chen_activevisionsurvey_2011},
-it would seem like a fitting framework for learning to search.
+learning systems that are less dependent on expert knowledge have the potential to be more generally applicable.
 
 \subsection{Deep Learning}
+\label{sec:deeplearning}
 
 Deep learning is a family of techniques in which hypothesis are represented as computation graphs with tunable weights.
 The computation graphs are inspired by biological neurons in the brain and are referred to as \textit{neural networks}.
@@ -199,6 +218,7 @@ An architecture that addresses this issue is long short-term memory (LSTM)~\cite
 LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied from time step to time step, and three soft \textit{gating units} that govern the information flow in the hidden state update process \(f\). This makes LSTMs particularly useful for learning over long sequences.
 
 \subsection{Reinforcement Learning}
+\label{sec:reinforcementlearning}
 
 % {arulkumaran_survey_2017} also gives a good introduction to algorithms
 
@@ -291,7 +311,7 @@ The policy parameters are usually learned based on the gradient of some performa
 As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated with \textit{gradient ascent} in \(J\):
 
 \[
-    \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha \hat{\nabla J(\boldsymbol{\theta}_t)}) 
+    \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha \hat{\nabla J(\boldsymbol{\theta}_t)}
 \]
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
@@ -358,7 +378,7 @@ To incorporate some memory, images from the 4 previous time steps are stacked an
 The input is fed through three convolutional layers and a hidden fully connected layer, all with ReLU activation functions.
 The output layer has one output for each valid action, representing Atari controller buttons.
 
-DQN inspired many several follow-up works which use deep neural networks to approximate policy and value functions.
+DQN inspired many several follow-up works which use deep neural networks to approximate policy and/or value functions.
 Such methods are often referred to as deep reinforcement learning (deep RL) methods.
 
 \subsubsection{Proximal Policy Optimization}
@@ -387,47 +407,16 @@ Multiple gradient updates are performed for each batch of samples\dots
 \end{algorithm}
 
 PPO algorithms have turned out to strike a good balance between simplicity, stability and ease of tuning while achieving competitive performance on several tasks~\cite{schulman_ppo_2017,henderson_matters_2018,cobbe_procgen_2020,vinyals_alphastar_2019,andrychowicz_empirical_2020}.
-\todo{Several papers state this without providing a reference.}
 
 \section{Related Work}
+\label{sec:relatedwork}
 
 Works that consider tasks that are related to searching for targets in unknown environments can be found in several fields under many names.
-In this section, we survey some of the more relevant ones.
-Although there is significant overlap between the fields, 
-we organize the works into subsections based on their targeted task.
+In this section we survey some of the more relevant ones, focusing on those that employ RL methods.
 
-\subsection{Object Search}
+\todo{Find a better way to organize these. There is significant overlap between the tasks.}
 
-In robotics, the task of searching for objects in unknown environments is sometimes referred to as \textit{object search}.
-Several tasks, like searching for objects, require intentional actions.
-A searching observer has to both recognize and localize its targets, while controlling its sensory input.
-To search effectively, it must also model its environment and perform path planning.~\cite{chen_activevisionsurvey_2011}
-
-% https://www.semanticscholar.org/paper/A-Complexity%E2%80%90Level-Analysis-of-the-Sensor-Planning-Ye-Tsotsos/cab92e1c6aff529f536bf068299d72a0323f9f21?sort=total-citations
-
-Suppose that an agent is to search a region for a single object with a controllable camera in three dimensions.
-The state of the searcher is uniquely determined by the position of the camera.
-Actions adjust the camera configuration at a certain cost.
-After each action the agent observes the searched region through the camera, and detects objects.
-The agent has some knowledge of the target probability distribution.
-Planning a sequence of actions that maximize the probability of finding the target, under some cost constraint, is proven to be NP-complete.~\cite{ye_tsotsos_2001}
-Approximate solutions are necessary.
-% Even when using a greedy solution, it is difficult to learn probabilities and how they change from observations in the general case.
-
-Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment\dots
-
-A similar work by Shubina and Tsotsos~\cite{shubina_visualsearch_2010} consider the problem of visual search in 3D environments with a mobile robot.
-
-\cite{aydemir_real_2011}\dots
-
-\cite{aydemir_active_2013} distinguish between\dots
-
-
-% Pretty sure I had more of these?
-
-\todo{More emphasis here. Particularly on \cite{shubina_visualsearch_2010} and related works which seem especially relevant.}
-
-\subsection{Visual Attention}
+\subsection{Sequential Visual Attention}
 
 Minut and Mahadevan\cite{minut_mahadevan_2001} propose an sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
@@ -450,15 +439,16 @@ The authors evaluate the agent for image classification and a game-like task.
 They find that the model outperforms a similar convolutional architecture for cluttered object classification tasks.
 This is attributed to its ability to focus its attention on important regions.
 
-\subsection{Object Detection}
+\subsection{Active Object Detection}
 
 In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
 Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
-State of the art object detection use deep learning techniques and usually involve a deep convolutional architecture~\cite{zhao_objectdetection_2019}.
-Object detectors usually use region proposal networks that consider the whole image and return a set of bounding box candidates.
+State of the art object detection use deep learning techniques and usually involve a deep convolutional architecture to recognize objects~\cite{zhao_objectdetection_2019}.
+For localization, a region proposal process considers the whole image and returns a set of bounding box candidates.
 The object recognizer is then run on each region proposal.
+Region proposals are akin to visual attention, as they limit the region of the image that is processed by the recognizer.
 
-Although we do not focus on difficult recognition problems in this work, the task we consider bears resemblance to object localization.
+Although we do not focus on difficult recognition problems in this work, object localization is highly relevant.
 The difference is that images in object detection are passively sampled - they are drawn from some distribution and all are independent.
 Furthermore, the whole scene that is searched for objects is visible in the image.
 In \textit{active object detection}, the analyzed images are instead chosen so as to help the detector perform its task better.
@@ -508,22 +498,10 @@ The approach gives a small improvement over the standalone region proposal netwo
 
 \todo{Compress some of these. Similar works can be presented together.}
 
-% https://aihabitat.org/challenge/2020/#task-1-pointnav
-% https://aihabitat.org/challenge/2020/#task-2-objectnav
-% https://arxiv.org/pdf/1709.06158.pdf
-% https://ieeexplore.ieee.org/document/9102361
-
 Visual navigation is the process of determining a suitable path between a start point and destination point using visual input~\cite{bonin-font_visnav_2008}.
 Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles.
 The visual search problem can be considered analogous to a visual navigation in unrestricted environments.
-
-Bonin-Font et al.~\cite{bonin-font_visnav_2008} divide visual navigation in map-based and map-less systems.
-Map-based systems may explore and build a map of their environment
-They further subdivide map-based systems into map-less navigation systems into optical flow-based systems, appearance-based systems, 
-
-More recently, deep RL seen use for visual navigation as well~\cite{zeng_survey_2020}.
-The difficulty of hand-engineering 
-In particular, two tasks have been of interest: object (goal) navigation and point (goal) navigation.
+In recent years, several works have used deep RL to solve various visual navigation tasks.
 
 Zhu et al.~\cite{zhu_target_2016} create a model for target-driven visual navigation in indoor scenes with DRL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
@@ -554,7 +532,7 @@ The depth prediction is found to improve performance in all environments, indica
 
 A similar work by Ye et al.~\cite{ye_active_2018} integrates an object recognition module with a deep reinforcement learning based visual navigation module.
 They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
-Their experiments make the same assumptions as \cite{zhu_target_2016} - the scenes and targets used during testing have all been seen during training.
+Their experiments make the same assumptions as \cite{zhu_target_2016} - the scenes and targets used during testing have all been seen during training\dots
 
 Gupta et al.~\cite{gupta_cognitive_2019} introduce an agent that navigates in novel environments using a spatial memory.
 Encoded representations of observed images are placed in a top-down map\dots
@@ -572,20 +550,19 @@ Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit mem
 
 \cite{yang_semantic_2018} use semantic scene priors\dots
 
-\todo{Many of these assume that objects are discrete and recognizable. What is there are colors or patterns instead?}
+\todo{Many of these assume that objects are discrete and recognizable. What if there are colors or patterns instead?}
 
 \subsection{Memory Architectures}
 
 A recurring theme in the related work above is the use of memory architectures.
 In most cases where active sensing is involved, memory is a requirement for good performance.
 As mentioned in Section \ref{sec:pomdp}, effective behavior in partially observable processes usually requires some form of memory.
+Agents need to summarize history for good action selection.
 Works that don't use memory rely on either full observability, like \cite{caicedo_active_2015}, or low variance so that search can be done reactively, like \cite{ghesu_artificial_2016}.
-For the visual search task we consider here, memory is likely to be important.
-It is likely that integrating features over time helps with finding targets quicker.
+For the visual search task we consider here, memory is likely to be important as integrating features over time should lead to more efficient search strategies.
 
 Anderson et al.~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations of environments in navigation agents.
 They argue that the nature of the internal representation is central to the study of embodied navigation.
-
 Simple agents that are purely reactive and act on the sensory input at the current time step only work for simple tasks.
 Simple memory mechanisms, like the frame stacking used in \cite{mnih_human_2015} can model velocity and work well in certain environments where reactive action is sufficient.
 Once a task requires integration of features over longer time, more advanced memory is required.
@@ -594,14 +571,20 @@ Augmentations like recurrent update mechanisms add more potential.
 Hausknecht and Stone~\cite{hausknecht_stone_2017} investigate the effects of adding memory in the form of a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
-Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014} and \cite{mnih_asynchronous_2016}.
+Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014}, and \cite{mnih_asynchronous_2016}.
 Recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
 
-Memory architectures that are specialized for particular tasks, like \cite{}, have the potential to be more useful and give better performance.
-Oh et al. ~\cite{oh_minecraft_2016} propose one such memory which is differentiable.
-The memory contains a mechanism for retrieving memory contents based on the current context of the agent\dots
-A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}\dots
+Specialized memory architectures, like ~\cite{}, can provide better performance for their intended tasks.
+Oh et al.~\cite{oh_minecraft_2016} propose one such memory that can retain information over a limited number of time steps.
+During each time step, the agent encodes its observation and shifts it into the memory.
+It also reads the memory using a soft attention~\cite{bahdanau_attention_2016} mechanism whose weights are determined by the encoded observation.
+This way, the agent can recall information from the past that is useful to the present.
+The authors evaluate this architecture in several visual navigation tasks, where image observations are encoded with a CNN.
+In their tests, their memory architecture performs better than LSTM layers  
+
+A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}.
+Their memory is spatial rather than temporal - \dots
 
 \subsection{Generalization and Inductive Bias}
 
@@ -621,7 +604,7 @@ Zhang et al.~\cite{zhang_overfitting_2018} study overfitting and generalization 
 With experiments, they show that RL agents are capable of memorizing training data, even when completely random.
 When the number of training samples exceeds the capacity of the agent, they overfit to them.
 When exposed to new but statistically similar environments during testing, test performance could vary significantly despite consistent training performance.
-The authors argue that good generalization requires that the \textit{inductive bias} of the algorithms is compatible with the bias of the problems.
+The authors argue that good generalization requires the \textit{inductive bias} of the algorithms to be compatible with the bias of the problems.
 The inductive bias refers to a priori algorithmic preferences, like neural network architecture.
 When comparing MLPs with CNNs, they find that MLPs tend to be better at fitting the training data are worse at generalizing.
 When rewards are spatially invariant, CNNs generalize much better than MLPs.
@@ -657,16 +640,21 @@ Interestingly, training performance improves as the training set grows past a ce
 The authors attribute this to the implicit curriculum of the distribution of levels.
 
 Kirk et al.~\cite{kirk_survey_2022} survey generalization in deep RL.
-They propose a formalism for collections of problems called contextual CMDPs.
+They distinguish between methods that try to generalize from training to testing sets by increasing their similarity, and those that attempt to handle their differences.
+To handle differences between training and test sets, an agent's policy should rely only on features which will behave similarly in the training and testing context.
+If the similarities between training and testing contexts are known, they can be encoded as inductive bias for stronger generalization.
+When there is not specific inductive bias to encode, standard regularization can be used.
+Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning the invariances from training and hope that these generalize to testing.
+
+They further propose a formalism for collections of problems called contextual CMDPs.
 A CMDP which is an MDP \(\mathcal{M}\) (or POMDP) where the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
 where \(s \in \mathcal{S}\) is the underlying state and \(c \in \mathcal{C}\) is the \textit{context}.
 The context takes the role of a seed and determines the sample drawn from the underlying distribution of task instances.
 In a CMDP, separate train and test tasks can be defined by creating \(\mathcal{C}_\text{train} \subseteq \mathcal{C}\) and \(\mathcal{C}_\text{test} \subseteq \mathcal{C}\) such that \(\mathcal{C}_\text{train} \cap \mathcal{C}_\text{test} = \varnothing\).
 It is argued that the only choice when evaluating generalization with procedurally generated environments is the training set size.
 Evaluation has to be performed on the full distribution of (held out) contexts.
-They conclude that the an agent's policy should rely only on features which will behave similarly in the training and testing context.
-If the similarities between training and testing contexts are known,
-they can be encoded as inductive bias for stronger generalization.
+
+\todo{Should maybe get into why procedural generation is and is not a good idea for RL.}
 
 \subsection{Evaluation of Agents}
 

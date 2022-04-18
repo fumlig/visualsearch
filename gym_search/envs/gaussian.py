@@ -14,7 +14,7 @@ class GaussianEnv(SearchEnv):
         shape=(16, 16),
         view=(64, 64),
         num_targets=3,
-        target_size=4,
+        target_size=8,
         num_kernels=3,
         kernel_size=8,
 
@@ -46,8 +46,9 @@ class GaussianEnv(SearchEnv):
         terrain = canvas[size:-size,size:-size]
         terrain = normalize(terrain)
         prob = terrain/terrain.sum()
-        image = np.zeros((h, w, 3), dtype=np.uint8)
-        image[:,:,2] = terrain*255
+        image = np.full((h, w, 3), 255, dtype=np.uint8)
+        image[:,:,0] -= (terrain*255).astype(np.uint8)
+        image[:,:,1] -= (terrain*255).astype(np.uint8)
 
         targets = []
 
@@ -55,7 +56,7 @@ class GaussianEnv(SearchEnv):
             y, x = np.clip((y, x), (0, 0), (h - self.target_size, w - self.target_size))
             targets.append(Box(y, x, self.target_size, self.target_size))
             rr, cc = draw.rectangle((y, x), extent=(self.target_size, self.target_size), shape=(h, w))
-            image[rr, cc] = (255, 127, 0)
+            image[rr, cc] = (255, 0, 0)
 
         return image, targets
 

@@ -34,19 +34,20 @@ adopting the CMDP formalism \cite{kirk_survey_2022}.
 
 Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the context \(c\), which we refer to as the \textit{seed}.
 The state includes a space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
 At each timestep, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
+If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
 The actions in \(\mathcal{A}\) transform the view into a different subset of the scene.
-In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
-If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 With a final trigger action, the agent can indicate that there is one or more target in the view.
-The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of total steps.
-
-\todo{Could reformalize so that targets are volumes instead.}
-
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
 Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 The seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
+
+The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of total steps.
+
+
+\todo{Could reformalize so that targets are volumes instead.}
 
 \section{Approach}
 \label{sec:approach}

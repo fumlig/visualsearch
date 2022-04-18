@@ -113,10 +113,10 @@ class SearchEnv(gym.Env):
         for i in range(len(self.targets)):
             if self.hits[i]:
                 coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
-                image[coords] = add_with_alpha(image[coords], (0, 255, 0), 0.5)
+                image[coords] = (0, 255, 0)
 
         coords = tuple(draw.rectangle_perimeter(self.scale(self.position), extent=self.view, shape=self.scale(self.shape)))
-        image[coords] = (255, 255, 255)
+        image[coords] = (0, 0, 0)
         image = image.astype(np.uint8)
         
         return image

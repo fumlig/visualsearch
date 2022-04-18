@@ -96,8 +96,14 @@ class CameraEnv(SearchEnv):
     def plot(self, ax, overlay=True):
         img = self.render()
         ax.imshow(img)
-        ax.set_yticks([0, self.view[0]-1])
-        ax.set_xticks([0, self.view[1]-1])
+
+        if overlay:
+            ax.set_yticks([0, self.view[0]-1])
+            ax.set_xticks([0, self.view[1]-1])
+        else:
+            ax.set_yticks([])
+            ax.set_xticks([])
+            
 
         """
         eps = 1e-5

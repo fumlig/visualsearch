@@ -73,9 +73,17 @@ With this in mind, we use an episodic spatial memory that stores the agent's bel
     \item This way, the agent can associate information with visited.
 \end{itemize}
 
-The architecture of the neural network is presented in Figure X.
+The architecture of the neural network is presented in Figure ~\ref{fig:approach}.
 
 \todo{Describe approach once it is fully decided. Will be a (spatial) memory that allows for reasoning over the whole explored scene and history of observations.}
+
+\begin{figure}
+    \centering
+    \input{figures/approach}
+    \label{fig:approach}
+    \caption[Approach architecture]{The architecture.}
+\end{figure}
+
 
 % inhibition of return could be done programmatically, but there are advantages to learning it:
 % in some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability

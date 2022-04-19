@@ -2,13 +2,27 @@
 
 \begin{frame}
     \frametitle{Preliminiary Results}
+
+    Problems:
+
+    \begin{itemize}
+        \item Long training times.
+        \item Hyperparameter tuning expensive.
+        \item Difficult to predict how a change impacts results.
+        \item Design of reward signal.
+        \item Collecting results over many seeds will take time\dots
+        \item More or less expected results for small search spaces (\(8 \times 8\) positions).
+        \item Convergence too slow with baselines for large search spaces (\(16 \times 16\) positions).
+        \item Spatial memory approach can handle it.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Future Steps}
 
     \begin{enumerate}
-        \item Implement method.
+        \item Fix hyperparameters and other design decisions.
+        \item Collect complete results across multiple seeds.
         \item Compare to baselines and non-learning agents.
         \item Evaluate generalization.
         \item Discussion and conclusion.

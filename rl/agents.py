@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from rl.models import MLP, NatureCNN, NeuralMap, SimpleMap
+from rl.models import MLP, NatureCNN, ImpalaCNN, NeuralMap, SimpleMap
 from rl.utils import preprocess_image, init_lstm
 
 
@@ -40,6 +40,19 @@ class RandomAgent(Agent):
 
     def predict(self, _obs, state, **_kwargs):
         return self.action_space.sample(), state
+
+
+class CoverageAgent(Agent):
+    def __init__(self, envs):
+        super().__init__(envs)
+        self.shape = [s.n for s in envs.observation_space["position"]]
+
+    def initial(self, _num_envs):
+        pass 
+
+    def predict(self, _obs, state, **_kwargs):
+        """Find closest unexplored"""
+        pass
 
 
 class ImageAgent(Agent):
@@ -131,13 +144,10 @@ class BaselineAgent(Agent):
         #assert self.observation_space.get("last_reward") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        
-        hidden_dim = 0
-        hidden_dim += self.cnn.output_dim
-        hidden_dim += self.observation_space["position"][0].n
-        hidden_dim += self.observation_space["position"][1].n
-        #hidden_dim += self.action_space.n
-        #hidden_dim += 1
+        #self.cnn = ImpalaCNN(self.observation_space["image"].shape)
+        #self.mlp = MLP( + , 256)
+
+        hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n + self.observation_space["position"][1].n
 
         self.lstm = nn.LSTM(hidden_dim, 256, num_layers=num_layers)
 
@@ -150,11 +160,11 @@ class BaselineAgent(Agent):
         return [th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size), th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)]
 
     def extract(self, obs):
-        xs = []
-        xs.append(self.cnn(preprocess_image(obs["image"])))
-        xs.append(F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n))
-        xs.append(F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n))
-        return th.cat(xs, dim=1)
+        x = preprocess_image(obs["image"])
+        p_0 = F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n)
+        p_1 = F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)
+        
+        return th.cat([self.cnn(x), p_0, p_1], dim=1)
 
     def remember(self, hidden, state, done):
         state = [s.transpose(0, 1).contiguous() for s in state]
@@ -181,8 +191,6 @@ class BaselineAgent(Agent):
         return pi, v, state
 
 
-
-
 class MapAgent(Agent):
 
     def __init__(self, envs):
@@ -190,13 +198,10 @@ class MapAgent(Agent):
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
-        assert self.observation_space.get("last_action") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])        
-        #self.map_net = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
-        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim + self.action_space.n)
+        self.map_net = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
 
-        # mean zero, low std has big impact according to https://arxiv.org/pdf/2006.05990.pdf
         self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
 
@@ -204,10 +209,7 @@ class MapAgent(Agent):
         return [th.zeros((num_envs, *self.map_net.shape))]
 
     def forward(self, obs, state, done, **kwargs):
-        hidden = th.cat([
-            self.image_cnn(preprocess_image(obs["image"])),
-            F.one_hot(obs["last_action"].long(), num_classes=self.action_space.n)
-        ], dim=1)
+        hidden = self.image_cnn(preprocess_image(obs["image"]))
         index = obs["position"].long()
     
         state = state[0]

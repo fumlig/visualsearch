@@ -34,8 +34,8 @@ adopting the CMDP formalism \cite{kirk_survey_2022}.
 
 Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the context \(c\), which we refer to as the \textit{seed}.
 The state includes a space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
-In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N | t_i \in S\}\).
-At each timestep, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
+In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
+At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
 If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
 
 The actions in \(\mathcal{A}\) transform the view into a different subset of the scene.
@@ -46,8 +46,7 @@ The seed \(c\) determines the initial view \(V\), the location of the targets \(
 
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of total steps.
 
-
-\todo{Could reformalize so that targets are volumes instead.}
+%\todo{Could reformalize so that targets are volumes instead.}
 
 \section{Approach}
 \label{sec:approach}
@@ -84,6 +83,8 @@ The architecture of the neural network is presented in Figure X.
 
 \section{Baselines}
 \label{sec:baseline}
+
+\todo{Alternatively, we can use just one RL baseline and perform ablation studies.}
 
 We compare our approach to three different baselines.
 All three baselines use the same architecture for the policy and value heads as our approach.
@@ -151,8 +152,8 @@ The first reward signal is defined as
 \begin{equation*}
     \mathcal{R}(s_t, a_t) =
     \begin{cases}
-        10h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -1  & \text{otherwise.}
+        100h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -1   & \text{otherwise.}
     \end{cases}
 \end{equation*}
 
@@ -162,8 +163,11 @@ Early experiments show that a constant penalty \(r_t = -1\) that simply incentiv
 The reward for finding a target speeds up training without deviating from the goal of the task -
 targets should be triggered when in view, but triggers when targets are out of view should be penalized.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
+It seems to be important that the magnitude of the reward is similar to the return obtained in an unfinished episode.
+We suspect that the return when only hitting one target must be substantially higher than the return for not finding any targets,
+or the agent does not understand the benefit of hitting targets without finishing the episode. 
 
-In practice, early experiments show that even this reward might be too sparse.
+In practice, early experiments show that even this reward might be too sparse for large search spaces.
 To speed up training, we experiment with two extensions to the reward:
 
 \begin{equation*}
@@ -259,11 +263,13 @@ The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, whil
     \input{figures/camera.pgf}
     \label{fig:camera}
     %\vspace*{-1cm}
-    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt-zoom camera. The pan and tilt of the camera can be adjusted to move the view around. In the mid-right image, a target can be seen.}
+    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. The pan and tilt of the camera can be adjusted to move the view around. In the left image, a target can be seen.}
 \end{figure}
 
 \section{Experiments}
 \label{sec:experiments}
+
+\todo{Could remove baseline without recurrent step and instead do ablation studies.}
 
 To compare our approach to the different baselines,
 we train and test all agents on all three environments.

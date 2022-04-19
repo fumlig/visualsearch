@@ -42,7 +42,7 @@ gym.register(
     kwargs=dict(shape=(32, 32), view=(64, 64), kernel_size=16)
 )
 
-
+"""
 if os.path.exists("data/xview"):
     gym.register(
         id="XView-v0",
@@ -53,3 +53,4 @@ if os.path.exists("data/xview"):
             view=(128, 128),
         )
     )
+"""

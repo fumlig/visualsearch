@@ -4,7 +4,7 @@ import numpy as np
 
 from collections import defaultdict
 from gym_search.shapes import Box
-from gym_search.palette import add_with_alpha
+from gym_search.utils import manhattan_dist
 from skimage import draw
 
 
@@ -26,10 +26,12 @@ class SearchEnv(gym.Env):
         shape,
         view,
         wrap=False,
-        train_steps=1000,
+        train_steps=500,
         test_steps=5000,
         train_samples=None,
         test_samples=1000,
+        punish_revisit=False,
+        reward_closer=False
     ):
         self.shape = shape
         self.view = view
@@ -39,6 +41,9 @@ class SearchEnv(gym.Env):
         self.test_steps = test_steps
         self.train_samples = train_samples if train_samples is not None else np.iinfo(np.int64).max - test_samples
         self.test_samples = test_samples
+
+        self.punish_revisit = punish_revisit
+        self.reward_closer = reward_closer
 
         self.training = True
 
@@ -69,6 +74,7 @@ class SearchEnv(gym.Env):
     def step(self, action):
 
         step = self.get_action_step(action)
+        last_position = self.position
         self.position += step
 
         if self.wrap:
@@ -77,6 +83,9 @@ class SearchEnv(gym.Env):
             self.position = np.clip(self.position, (0, 0), np.array(self.shape) - (1, 1))
     
         hits = 0
+        revisit = self.visited[tuple(self.position)]
+        #nearest = np.argmin([manhattan_dist(last_position, target.position) for target, hit in zip(self.targets, self.hits) if not hit])
+        #closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
 
         if action == Action.TRIGGER:
             for i in range(len(self.targets)):
@@ -89,12 +98,12 @@ class SearchEnv(gym.Env):
 
         self.num_steps += 1
         self.counters["triggers"] += action == Action.TRIGGER
-        self.counters["revisits"] += self.visited[self.position]
+        self.counters["revisits"] += revisit
         self.path.append(self.position)
-        self.visited[self.position] = True
+        self.visited[tuple(self.position)] = True
 
         obs = self.observation()
-        rew = hits*10 if hits else -1
+        rew = -0.01 if not hits else hits
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {
             "position": self.position,
@@ -103,6 +112,12 @@ class SearchEnv(gym.Env):
             "path": self.path,
             "success": all(self.hits)
         }
+
+        if self.punish_revisit and revisit and not hits:
+            rew -= 1
+
+        #if self.reward_closer and closer and not hits:
+        #    rew += 1
 
         return obs, rew, done, info
 
@@ -115,8 +130,13 @@ class SearchEnv(gym.Env):
                 coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
                 image[coords] = (0, 255, 0)
 
+        for p in self.path:
+            coords = tuple(draw.rectangle_perimeter(self.scale(p), extent=self.view, shape=self.scale(self.shape)))
+            image[coords] = (0.5, 0.5, 0.5)
+
         coords = tuple(draw.rectangle_perimeter(self.scale(self.position), extent=self.view, shape=self.scale(self.shape)))
         image[coords] = (0, 0, 0)
+        
         image = image.astype(np.uint8)
         
         return image

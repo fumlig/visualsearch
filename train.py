@@ -58,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
     parser.add_argument("--deterministic", action="store_true")
-    parser.add_argument("--tune", type=parse_hparams)
+    #parser.add_argument("--tune", type=parse_hparams)
 
     args = parser.parse_args()
 
@@ -88,11 +88,8 @@ if __name__ == "__main__":
     ]
 
     envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
-
-    # todo
     envs = gym.wrappers.RecordEpisodeStatistics(envs)
     envs = gym.wrappers.NormalizeReward(envs)
-    #envs = gym.wrappers.NormalizeObservation(envs)
 
     # agent
     agent = th.load(args.model) if args.model else rl.agents.make(args.agent, envs, **args.agent_kwargs)

@@ -220,7 +220,7 @@ def proximal_policy_optimization(
         if ep_infos:
             avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
             avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
-            pbar.set_description(f"ret {round(avg_ret)}, len {round(avg_len)}")
+            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}")
 
 
     return avg_ret, avg_len

@@ -16,13 +16,9 @@ class GaussianEnv(SearchEnv):
         num_targets=3,
         target_size=8,
         num_kernels=3,
-        kernel_size=8,
-
+        kernel_size=12,
     ):
         super().__init__(shape, view, False)
-
-        assert target_size < min(shape)
-        assert kernel_size < min(shape)
 
         self.num_targets = num_targets
         self.target_size = target_size

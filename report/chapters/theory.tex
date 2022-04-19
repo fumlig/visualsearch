@@ -416,15 +416,16 @@ In this section we survey some of the more relevant ones, focusing on those that
 
 \todo{Find a better way to organize these. There is significant overlap between the tasks.}
 
-\subsection{Sequential Visual Attention}
+\subsection{Search with Reinforcement Learning}
+
+\subsubsection{Sequential Visual Attention}
 
 Minut and Mahadevan\cite{minut_mahadevan_2001} propose an sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
-A policy for controlling a fixed pan-tilt-zoom camera is learnt using reinforcement learning.
+A policy for controlling a fixed pan-tilt-zoom camera is learned using reinforcement learning.
 The goal of the agent is to aim the camera at the region where a target is most likely to be found.
 It has to decide where to fixate next based on visual information only.
 Despite being limited to a single environment, this is an early example of visual search modelled as an RL problem.
-% Due to limited 
 
 Mnih et al.~\cite{mnih_attention_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
 Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of images pixels.
@@ -439,7 +440,7 @@ The authors evaluate the agent for image classification and a game-like task.
 They find that the model outperforms a similar convolutional architecture for cluttered object classification tasks.
 This is attributed to its ability to focus its attention on important regions.
 
-\subsection{Active Object Detection}
+\subsubsection{Active Object Detection}
 
 In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
 Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
@@ -494,9 +495,7 @@ The approach gives a small improvement over the standalone region proposal netwo
 
 %Krishna et al.~\cite{krishna_tetromino_2020}...
 
-\subsection{Visual Navigation}
-
-\todo{Compress some of these. Similar works can be presented together.}
+\subsubsection{Visual Navigation}
 
 Visual navigation is the process of determining a suitable path between a start point and destination point using visual input~\cite{bonin-font_visnav_2008}.
 Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles.
@@ -541,7 +540,6 @@ They ask whether DRL algorithms are inherently able to gather and exploit enviro
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
 However, when trained and tested on different maps, it cannot do so successfully.
 They further find that, with a single decision point whose correct\dots
-
 
 \subsection{Memory Architectures}
 
@@ -648,7 +646,7 @@ If the similarities between training and testing contexts are known, they can be
 When there is not specific inductive bias to encode, standard regularization can be used.
 Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning the invariances from training and hope that these generalize to testing.
 
-\todo{Should get into why procedural generation is and is not a good idea for RL. It is discussed}
+\todo{Should get into why procedural generation is and is not a good idea for RL. It is discussed in \cite{kirk_survey_2022}.}
 
 They further propose a formalism for collections of problems called contextual CMDPs.
 A CMDP which is an MDP \(\mathcal{M}\) (or POMDP) where the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),

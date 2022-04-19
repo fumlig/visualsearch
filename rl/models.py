@@ -26,6 +26,7 @@ class MLP(nn.Module):
                 layers.append(init_weights(nn.Linear(in_dim, out_dim)))
                 layers.append(nn.Tanh())
 
+        self.output_dim = out_features
         self.layers = nn.Sequential(*layers)
 
     def forward(self, x):

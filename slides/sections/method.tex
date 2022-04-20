@@ -1,40 +1,209 @@
 \section{Method}
 
 \begin{frame}
-    \frametitle{Method}
+    \frametitle{Problem Formulation}
 
+    \begin{itemize}
+        \item Agent searches scene \(S \subset \mathbb{R}^d\) .
+        \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
+        \item Agent perceives view \(V \subset S\).
+        \item Move actions transform view to new subspace.
+        \item Trigger action indicates that target(s) is in view.
+        \item \textbf{Locate all targets while minimizing the number of time steps}.
+    \end{itemize}
 \end{frame}
 
 \subsection{Environments}
 
 \begin{frame}
     \frametitle{Environments}
+    
+    \begin{itemize}
+        \item Three environments with varying characteristics.
+        \item Search space discretized into \(16 \times 16\) camera positions.
+        \item Each camera position has a unique view \(V \subset S\).
+        \item Three targets in all scenes.
+        \item Target probability correlated with scene appearance.
+        \item Should be possible to do better than exhaustive search on average.
+        \item Scenes procedurally generated:
+        \begin{itemize}
+            \item Pseudorandom seed determines scene appearance and target positions.
+            \item Gives control over difficulty to solve.
+            \item Can vary training and test set sizes.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Observation, Action and Reward}
+
+    At each time step \(t\):
+
+    \begin{itemize}
+        \item The agent receives observation \(o_t = \left\langle x_t, p_t \right\rangle\), where
+        \begin{itemize}
+            \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image of current view, and
+            \item \(p_t \in \{0, \dots, 15\} \times \{0, \dots, 15\}\) is the position of the camera.
+        \end{itemize}
+        \item Takes action \(a_t \in \{\texttt{TRIGGER}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
+        \begin{itemize}
+            \item \texttt{TRIGGER} indicates that a target is in view, and
+            \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move the view in each cardinal direction.
+        \end{itemize}
+        \item Receives reward \(r_t = 10h - 1\) where \(h = \left\vert T \cap V \right\vert\) is the number of targets in view.
+        \begin{itemize}
+            \item Rewarded for finding targets.
+            \item Constant penalty encourages quick episode completion.
+            \item Two variants that reward exploration or moving towards targets: \(r'_t\) and \(r''_t\)
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Gaussian Environment}
-    %\centering
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Two-dimensional scene.
+                \item Three gaussian kernels with random center.
+                \item Sum of kernels determine appearance of scene and probability of targets.
+                \item Clear correlation between appearance and desired behavior.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=1.0]{figures/gaussian.pdf}
+            \end{figure}
+        \end{column}
+    \end{columns}    
+\end{frame}
+
+\begin{frame}
+    \frametitle{Terrain Environment}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Similar to previous environment.
+                \item Terrain seen from above.
+                \item Gradient noise used to generate height map.
+                \item Color determined by height.
+                \item Targets placed with uniform probability across coastlines.
+                \item More realistic, higher variance.
+                \item Analogous to search and rescue with UAV.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=1.0]{figures/terrain.pdf}
+            \end{figure}
+        \end{column}
+    \end{columns}   
+\end{frame}
+
+\begin{frame}
+    \frametitle{Camera Environment}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item 3D scene viewed from a perspective projection camera.
+                \item Height map from terrain environment turned into mesh, same appearance and target probability as before.
+                \item Camera location fixed at center of scene.
+                \item Moving actions control pan and tilt (pitch and yaw).
+                \item Visually complex, difficult to interpret.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=1.0]{figures/camera.pdf}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\subsection{Approach}
+
+\begin{frame}
+    \frametitle{Architecture}
+
+    \begin{itemize}
+        \item Actor-critic method.
+        \item Trained with proximal policy optimization.
+        \item Image \(x_t\) passed through CNN.
+        \item Latent image representation \(h_t\) and position \(p_t\) passed through RNN.
+        \begin{enumerate}
+            \item LSTM with input \(\left\lbrack h_t, p_t \right\rbrack\).
+            \item \textbf{Spatial memory.}
+        \end{enumerate}
+        \item Policy head approximates \(\pi\) with MLP.
+        \item Value head approximates \(v\) with MLP.
+    \end{itemize}
+
     \begin{figure}
         \centering
-        \input{figures/gaussian.pgf}
+        \includegraphics[scale=0.75]{figures/architecture.pdf}
     \end{figure}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Observation, Actions and Reward}
+    \frametitle{Spatial Memory}
+
+    \begin{itemize}
+        \item LSTM may have difficulties remembering over many time steps and reasoning over spatial relations.
+        \item Specialized memory could be more useful.
+        \item Structured memory with one slot for each camera position.
+        \item Memory read with CNN.
+        \item Written to with previous read and new latent image.
+    \end{itemize}
+
+    \begin{figure}
+        \centering
+        \includegraphics[scale=0.5]{figures/spatial.pdf}
+    \end{figure}
+\end{frame}
+
+\subsection{Experiments}
+
+\begin{frame}
+    \frametitle{Experiments}
+
+    \begin{itemize}
+        \item Train for 25M time steps.
+        \item Results reported across 3 seeds.
+        \item Separate training and test sets.
+        \item Same hyperparameters in all runs.
+    \end{itemize}
+
+    Search space:
+
+    \begin{itemize}
+        \item Larger search spaces places stronger demands on memory
+        \item Scene understanding, remember searched positions.
+        \item Investigate impact by comparing agents on \(8 \times 8\), \(12 \times 12\), \(16 \times 16\) versions of gaussian environment.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Agent}
-\end{frame}
+    \frametitle{Experiments}
 
-\subsection{Implementation}
+    Generalization:
+
+    \begin{itemize}
+        \item Limit number of scene samples seen during training to 100, 1000, 10 000.
+        \item Use terrain environment, high appearance variance and somewhat realistic.
+        \item Fix seed pool used to generate scenes seen during training.
+        \item Train agents until convergence (or for a fixed number of time steps).
+        \item Test on held out scenes from full distribution. 
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
     \frametitle{Implementation}
 
     \begin{itemize}
-        \item Environments implemented in OpenAI gym.
-        \item Models implemented and trained with PyTorch.
+        \item OpenAI Gym environment interface.
+        \item PyTorch for models and automatic differentiation.
     \end{itemize}
 \end{frame}

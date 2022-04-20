@@ -4,7 +4,8 @@
 \beamer@sectionintoc {2}{Theory}{7}{0}{2}
 \beamer@subsectionintoc {2}{1}{Background}{7}{0}{2}
 \beamer@subsectionintoc {2}{2}{Related Work}{8}{0}{2}
-\beamer@sectionintoc {3}{Method}{8}{0}{3}
-\beamer@subsectionintoc {3}{1}{Environments}{9}{0}{3}
-\beamer@subsectionintoc {3}{2}{Implementation}{13}{0}{3}
-\beamer@sectionintoc {4}{Results}{14}{0}{4}
+\beamer@sectionintoc {3}{Method}{9}{0}{3}
+\beamer@subsectionintoc {3}{1}{Environments}{10}{0}{3}
+\beamer@subsectionintoc {3}{2}{Approach}{15}{0}{3}
+\beamer@subsectionintoc {3}{3}{Experiments}{17}{0}{3}
+\beamer@sectionintoc {4}{Results}{20}{0}{4}

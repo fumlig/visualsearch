@@ -14,7 +14,7 @@ class TerrainEnv(SearchEnv):
         shape=(16, 16),
         view=(64, 64),
         num_targets=3,
-        target_size=4,
+        target_size=8,
         num_distractors=50,
         distractor_size=4,
 

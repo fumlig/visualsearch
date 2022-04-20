@@ -1,0 +1,29 @@
+\documentclass[margin=10pt]{standalone}    
+
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=2cm]
+    \tikzstyle{block} = [rectangle,minimum width=2cm,minimum height=2cm,text centered,draw=black,fill=white]
+
+    %\draw [step=0.25,gray,thin] (last.north west) grid (last.south east);
+
+
+    \node (h) {$h_t$};
+
+    \node (write) [block,right=1cm of h] {write MLP};
+    \draw [->] (h) -- (write);
+    \node (w) [right=1cm of write] {$w_{t+1}^{(p_t)}$};
+    \draw [->] (write) -- (w);
+    
+    \node (read) [block,above=1cm of write] {read CNN};
+    \draw [->] (read) -- (write);
+
+    \draw [->] (read) -- node [anchor=east]{$r_t$} (write);
+    \node (last) [above of=read] {$M_{t-1}$};
+    \draw [->] (last) -- (read);
+\end{tikzpicture}
+
+\end{document}

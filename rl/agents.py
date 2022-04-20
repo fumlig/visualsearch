@@ -135,7 +135,7 @@ class BaselineAgent(Agent):
     # https://arxiv.org/abs/1611.03673
 
 
-    def __init__(self, envs, num_layers=1):
+    def __init__(self, envs, num_layers=3, dropout=0.75):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
@@ -149,10 +149,10 @@ class BaselineAgent(Agent):
 
         hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n + self.observation_space["position"][1].n
 
-        self.lstm = nn.LSTM(hidden_dim, 256, num_layers=num_layers)
+        self.lstm = nn.LSTM(hidden_dim, 128, num_layers=num_layers, dropout=dropout)
 
-        self.policy = MLP(256, self.action_space.n, out_gain=0.01)
-        self.value = MLP(256, 1, out_gain=1.0)
+        self.policy = MLP(128, self.action_space.n, out_gain=0.01)
+        self.value = MLP(128, 1, out_gain=1.0)
 
         init_lstm(self.lstm)
 
@@ -172,6 +172,8 @@ class BaselineAgent(Agent):
         hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
         done = done.reshape((-1, batch_size))
         new_hidden = []
+
+        assert(len(hidden) == len(done))
 
         for h, d in zip(hidden, done):
             h, state = self.lstm(h.unsqueeze(0), ((1.0 - d).view(1, -1, 1) * state[0], (1.0 - d).view(1, -1, 1) * state[1]))
@@ -200,7 +202,7 @@ class MapAgent(Agent):
         assert self.observation_space.get("position") is not None
 
         self.image_cnn = NatureCNN(self.observation_space["image"])        
-        self.map_net = NeuralMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
+        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
 
         self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)

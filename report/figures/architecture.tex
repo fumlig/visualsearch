@@ -1,0 +1,36 @@
+\documentclass[margin=10pt]{standalone}    
+
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows,calc}
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=2cm]
+    \tikzstyle{l} = [rectangle,minimum width=2cm,minimum height=2cm,
+    align=center,draw=black,fill=white]
+    \tikzstyle{s} = [rectangle,minimum width=2cm,minimum height=1cm,
+    align=center,draw=black,fill=white]
+
+    \node (cnn) [l] {CNN};
+    \node (x) [left of=cnn] {$x_t$};
+    \node (rnn) [l,right=1cm of cnn,dashed]{RNN};
+    \node (p) [below of=rnn] {$p_t$};
+    \node (mlp1) [s,right=1cm of rnn,shift=({0,1cm})] {MLP};
+    \node (mlp2) [s,right=1cm of rnn,shift=({0,-1cm})] {MLP};
+    %\node (pi_out) at ($(rnn.20)-(0.1cm,0)$) {};
+    %\node (v_out) at ($(rnn.-20)-(0.1cm,0)$) {};
+    \node (pi) [right=1cm of mlp1] {$\pi$};
+    \node (v) [right=1cm of mlp2] {$v$};
+
+    \draw [->] (x) -- (cnn.west);
+    \draw [->] (cnn.east) -- node [anchor=south] {$h_t$} (rnn.west);
+    \draw (rnn) edge[loop above] (rnn);
+    \draw [->] (p) -- (rnn.south);
+    \draw [->] (rnn.east) -- (mlp1.west);
+    \draw [->] (rnn.east) -- (mlp2.west);
+    \draw [->] (mlp1.east) -- (pi);
+    \draw [->] (mlp2.east) -- (v);
+
+\end{tikzpicture}
+
+\end{document}

@@ -141,7 +141,10 @@ class SearchEnv(gym.Env):
         
         return image
 
-    def plot(self, ax, overlay=True):
+    def plot(self, ax, overlay=True, position=None):
+        _position = self.position
+        if position is not None: self.position = position
+
         img = self.render()
         obs = self.observation()
 
@@ -162,6 +165,8 @@ class SearchEnv(gym.Env):
         else:
             ax.set_yticks([])
             ax.set_xticks([])
+
+        self.position = _position
 
     def observation(self):
         y0, x0 = np.array(self.position)*self.view

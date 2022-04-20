@@ -37,7 +37,7 @@ class NatureCNN(nn.Module):
     # Mnih, Volodymyr, et al.
     # "Human-level control through deep reinforcement learning."
     
-    def __init__(self, observation_space, output_dim=256):
+    def __init__(self, observation_space, output_dim=512):
         super().__init__()
         assert isinstance(observation_space, gym.spaces.Box)
         
@@ -151,7 +151,7 @@ class SimpleMap(nn.Module):
 
     class MapCNN(nn.Module):
 
-        def __init__(self, observation_shape, output_dim=64):
+        def __init__(self, observation_shape, output_dim=32):
             super().__init__()
             
             in_channels = observation_shape[2]
@@ -182,7 +182,7 @@ class SimpleMap(nn.Module):
             return self.linear(self.convs(obs))
 
 
-    def __init__(self, map_shape, input_dim, features_dim=64):
+    def __init__(self, map_shape, input_dim, features_dim=32):
         super().__init__()
         self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
         self.write_net = MLP(input_dim + features_dim + features_dim, features_dim)

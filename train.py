@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
     # environment
     wrappers = [
-        gym_search.wrappers.LastAction,
+        #gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
     ]
 

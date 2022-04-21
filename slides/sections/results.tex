@@ -3,8 +3,14 @@
 \begin{frame}
     \frametitle{Preliminary Results}
 
-    Preliminary results collected for RL agents.
-    Have yet to implement coverage agent and 
+    Status:
+
+    \begin{itemize}
+        \item Implementation done.
+        \item Test results collected.
+        \item Everything seems to be working.
+        \item Agents can achieve episode lengths that are on par with
+    \end{itemize}
 
     Problems:
 
@@ -12,8 +18,7 @@
         \item Many configurable parts (hyperparameters, environment settings, agent architectures).
         \item Long training times, difficult to predict hyperparameter interplay, expensive to tune.
         \item Difficult to design reward signal, magnitudes matter.
-        \item Collecting rigorous results across multiple seeds will take time.
-        \item Spatial memory approach can handle it.
+        \item Initial problems with scaling up to large search spaces where intelligent search is more important, hopefully solved now.
     \end{itemize}
 \end{frame}
 
@@ -23,9 +28,8 @@
     \begin{enumerate}
         \item Collect complete results across multiple seeds for all experiments.
         \item More baselines vs. ablation studies?
-        \item Compare with random, exhaustive and human searcher.
-        \item Tidy up report.
         \item Discussion and conclusion.
+        \item Tidy up report.
         \item Presentation preparation.
     \end{enumerate}
 \end{frame}

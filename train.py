@@ -27,7 +27,7 @@ def parse_hparams(s):
         with open(s) as f:
             return yaml.load(f, Loader=yaml.FullLoader)
 
-    return yaml.loads(s)
+    return yaml.safe_load(s)
 
 def env_default(key, default=None):
     value = os.environ.get(key)

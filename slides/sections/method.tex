@@ -50,7 +50,7 @@
             \item \texttt{TRIGGER} indicates that a target is in view, and
             \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move the view in each cardinal direction.
         \end{itemize}
-        \item Receives reward \(r_t = 10h - 1\) where \(h = \left\vert T \cap V \right\vert\) is the number of targets in view.
+        \item Receives reward \(r_t = h - 0.001\) where \(h = \left\vert T \cap V \right\vert\) is the number of targets in view.
         \begin{itemize}
             \item Rewarded for finding targets.
             \item Constant penalty encourages quick episode completion.
@@ -171,9 +171,9 @@
     \begin{itemize}
         \item Train for 25M time steps.
         \item Results reported across 3 runs with different seeds.
+        \item Interval estimates via stratified bootstrap confidence intervals (\cite{agarwal_rlliable_2022}).
         \item Separate training and test sets.
         \item Same hyperparameters in all runs.
-        \item 
     \end{itemize}
 \end{frame}
 
@@ -187,12 +187,25 @@
             \item Sparse reward might not be sufficient.
             \item Stronger demands on memory (remember searched positions, scene understanding).
         \end{itemize}
-        \item Investigate impact by comparing agents on \(8 \times 8\), \(12 \times 12\), \(16 \times 16\) versions of gaussian environment.
+        \item Investigate impact by comparing agents on \(8 \times 8\), \(16 \times 16\), \(24 \times 24\), \(32 \times 32\) versions of gaussian environment.
         \item Evaluate two additional reward signals that may speed up training:
     \end{itemize}
 
-    \[r'_t = \dots\]
-    \[r''_t = \dots\]
+    \[
+        r'_t = 
+        \begin{cases}
+            1 & \text{if \(a_t \neq \texttt{TRIGGER}\) moves view towards nearest target} \\
+            r_t & \text{otherwise}
+        \end{cases}
+    \]
+
+    \[
+        r''_t =
+        \begin{cases}
+            -1 & \text{if \(a_t \neq \texttt{TRIGGER}\) moves view to visited location} \\
+            r_t & \text{otherwise}
+        \end{cases}
+    \]
 
 \end{frame}
 
@@ -200,10 +213,14 @@
     Performance:
 
     \begin{itemize}
-        \item Pick 
         \item Compare to random searcher, exhaustive searcher, human searcher with prior knowledge of scenes.
         \item Use held out samples as test set.
+        \item Average number of steps on test set.
+        \item SPL metric~\cite{anderson_evaluation_2018}, with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
     \end{itemize}
+    \[
+        \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
+    \]
 \end{frame}
 
 \begin{frame}

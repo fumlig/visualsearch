@@ -3,23 +3,39 @@
 \subsection{Background}
 
 \begin{frame}
-    \frametitle{Reinforcement Learning}
-
-    Reinforcement learning (RL) is a paradigm for learning mappings from observations to actions.
+    \frametitle{Markov Decision Process (MDP)}
     
-    Partially observable Markov decision process (POMDP):
+    Framework for modeling decision making in partly random processes.
+    In our case, partially observable MDP:
 
     \begin{itemize}
-        \item Agent interacts with environment over discrete time steps \(t = 0, 1, 2\dots\)
-        \item Takes action \(a_t\) in state \(s_t\)
-        \item Perceives observation \(o_t\) 
-        \item New state \(s_{t+1}\)
+        \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\).
+        \item Takes \textit{action} \(a_t\) in state \(s_t\).
+        \item Perceives (partial) \textit{observation} of state \(o_t\).
+        \item New state \(s_{t+1}\) depends only on history of interactions.
+        \item Agent must maintain some internal state depending on history.
     \end{itemize}
 
     \begin{figure}
         \centering
-        \input{figures/pomdp}
+        \scalebox{0.75}{\input{figures/pomdp}}
     \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Reinforcement Learning (RL)}
+
+    Learn from interactions how to achieve a goal.
+
+    \begin{itemize}
+        \item Tasks usually formalized as (partially observable) MDPs.
+        \item Policy \(\pi(a|s)\) is a mapping from states actions.
+        \item Find \(\pi\) that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} r_k \right\rbrack\).
+        \item Often involves estimating 
+    \end{itemize}
+
+    Deep RL: Approximate \(\pi\) (and \(v_\pi\)) with deep neural networks.
+
 \end{frame}
 
 \subsection{Related Work}
@@ -27,5 +43,8 @@
 \begin{frame}
     \frametitle{Search with Reinforcement Learning}
 
-    \dots
+    \begin{itemize}
+        \item Object localization (\cite{caicedo_active_2015,ghesu_artificial_2016,chen_memory_2017}).
+        \item Visual navigation (\dots).
+    \end{itemize}
 \end{frame}

@@ -64,7 +64,9 @@ class NatureCNN(nn.Module):
         self.output_dim = output_dim
 
     def forward(self, obs):
-        return self.linear(self.convs(obs))
+        x = self.convs(obs)
+        x = self.linear(x)
+        return x
 
     def _output_shape(self, input_shape, kernel_size, stride=1, padding=0):
         return (np.array(input_shape) - kernel_size+ 2*padding)//stride + 1
@@ -151,7 +153,7 @@ class SimpleMap(nn.Module):
 
     class MapCNN(nn.Module):
 
-        def __init__(self, observation_shape, output_dim=32):
+        def __init__(self, observation_shape, output_dim=64):
             super().__init__()
             
             in_channels = observation_shape[2]
@@ -182,7 +184,7 @@ class SimpleMap(nn.Module):
             return self.linear(self.convs(obs))
 
 
-    def __init__(self, map_shape, input_dim, features_dim=32):
+    def __init__(self, map_shape, input_dim, features_dim=64):
         super().__init__()
         self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
         self.write_net = MLP(input_dim + features_dim + features_dim, features_dim)

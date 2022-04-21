@@ -6,11 +6,12 @@
 \begin{frame}
     \frametitle{Problem Description}
     
-    Autonomous search for a set of targets in an environment with a fixed camera.
+    Autonomous search for a set of targets in an environment with a camera.
     
     \begin{itemize}
-        \item Agent observes a limited region of the environment. 
-        \item Can direct its gaze and indicate when a target is in view through actions.
+        \item Limited region of environment observable at any given time. 
+        \item Camera can be moved to change visible region.
+        \item Locate targets by bringing them into view and indicating that they are visible.
         \item Should locate all targets while minimizing the number of actions.
         \item Applications in search and rescue, fire detection, surveillance, etc.
     \end{itemize}
@@ -28,8 +29,8 @@
             \item Some are close together.
         \end{itemize}
         \item Patterns and cues may be subtle and difficult to pick up.
-        \item Manually engineering a searching system with rules can be difficult and costly.
-        \item Can a system learn to search intelligently from a set of samples and generalize to similar search tasks?
+        \item Manually engineering a searching system with domain knowledge be difficult and costly.
+        \item \textbf{Can a system learn to search intelligently from a set of samples and generalize to similar search tasks?}
     \end{itemize}
 \end{frame}
 
@@ -38,6 +39,7 @@
 
     \begin{itemize}
         \item Prioritize regions with high probability of targets based on previous experience.
+        \item Learn correlations between scene appearance and target probability.
         \item Find multiple targets while minimizing path length.
         \item Search exhaustively while avoiding searching the same region twice.
     \end{itemize}

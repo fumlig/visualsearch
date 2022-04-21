@@ -152,8 +152,6 @@ such as search and rescue with a UAV, where the actions correspond to translatio
 and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
 \(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
-% https://www.reddit.com/r/reinforcementlearning/comments/ggkhwq/d_does_a_constant_penalty_incite_the_agent_to/
-
 We experiment with three rewards signals.
 The first reward signal is defined as
 
@@ -164,6 +162,10 @@ The first reward signal is defined as
         -1   & \text{otherwise.}
     \end{cases}
 \end{equation*}
+
+% For bad policies, finding targets should be important, and the episode length not so much.
+% When the policy has managed to learn how to localize targets, the episode length should become more important.
+% How do we balance these two? Finding targets is implicitly important as it shortens the episode length.
 
 with \(h = \left\lvert T \cap V \right\rvert\). 
 Optimizing for this reward will lead to desirable behavior as the agent is rewarded for finding all targets quickly.

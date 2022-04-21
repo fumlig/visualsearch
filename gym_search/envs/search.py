@@ -1,5 +1,6 @@
 import gym
 import enum
+import random
 import numpy as np
 
 from collections import defaultdict
@@ -9,12 +10,11 @@ from skimage import draw
 
 
 class Action(enum.IntEnum):
-    NONE = 0
-    TRIGGER = 1
-    UP = 2
-    RIGHT = 3
-    DOWN = 4
-    LEFT = 5
+    TRIGGER = 0
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
+    LEFT = 4
 
 
 class SearchEnv(gym.Env):
@@ -64,26 +64,22 @@ class SearchEnv(gym.Env):
         self.scene, self.targets = self.generate(seed)
         self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
         self.hits = [False for _ in range(len(self.targets))]
-        self.path = [self.position]
-        self.visited = np.full(self.shape, False)
+        self.path = [tuple(self.position)]
+        self.visited = {tuple(self.position)}
         self.num_steps = 0
         self.counters = defaultdict(int)
-
+        
         return self.observation()
 
     def step(self, action):
 
-        step = self.get_action_step(action)
         last_position = self.position
-        self.position += step
-
-        if self.wrap:
-            self.position %= self.shape
-        else:
-            self.position = np.clip(self.position, (0, 0), np.array(self.shape) - (1, 1))
+        step = self.get_action_step(action)
+        self.position = self.get_next_position(step)
     
         hits = 0
-        revisit = self.visited[tuple(self.position)]
+        
+        revisit = tuple(self.position) in self.visited
         #nearest = np.argmin([manhattan_dist(last_position, target.position) for target, hit in zip(self.targets, self.hits) if not hit])
         #closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
 
@@ -99,18 +95,20 @@ class SearchEnv(gym.Env):
         self.num_steps += 1
         self.counters["triggers"] += action == Action.TRIGGER
         self.counters["revisits"] += revisit
-        self.path.append(self.position)
-        self.visited[tuple(self.position)] = True
+        self.path.append(tuple(self.position))
+        self.visited.add(tuple(self.position))
 
         obs = self.observation()
-        rew = -0.01 if not hits else hits
+        rew = -0.1 if not hits else hits # -0.01 if not hits else hits
+
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {
             "position": self.position,
             "targets": self.targets,
             "hits": self.hits,
             "path": self.path,
-            "success": all(self.hits)
+            "success": all(self.hits),
+            "counters": self.counters
         }
 
         if self.punish_revisit and revisit and not hits:
@@ -130,9 +128,9 @@ class SearchEnv(gym.Env):
                 coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
                 image[coords] = (0, 255, 0)
 
-        for p in self.path:
-            coords = tuple(draw.rectangle_perimeter(self.scale(p), extent=self.view, shape=self.scale(self.shape)))
-            image[coords] = (0.5, 0.5, 0.5)
+        #for p in self.path:
+        #    coords = tuple(draw.rectangle_perimeter(self.scale(p), extent=self.view, shape=self.scale(self.shape)))
+        #    image[coords] = (0.5, 0.5, 0.5)
 
         coords = tuple(draw.rectangle_perimeter(self.scale(self.position), extent=self.view, shape=self.scale(self.shape)))
         image[coords] = (0, 0, 0)
@@ -219,3 +217,40 @@ class SearchEnv(gym.Env):
             Action.DOWN:    ( 1, 0),
             Action.LEFT:    ( 0,-1)
         }.get(action, (0, 0))
+
+    def get_next_position(self, step):
+        position = self.position + step
+
+        if self.wrap:
+            position %= self.shape
+        else:
+            position = np.clip(position, (0, 0), np.array(self.shape) - (1, 1))
+
+        return position
+
+    def get_random_action(self, detect=False):
+        if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
+            return 0
+        
+        return random.choice(range(1, self.action_space.n))
+
+    def get_greedy_action(self, detect=False, deterministic=True):
+        if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
+            return 0
+
+        valid = []
+
+        for action in range(1, self.action_space.n):
+            step = self.get_action_step(action)
+            position = self.get_next_position(step)
+            
+            if not tuple(position) in self.visited:
+                valid.append(action)
+
+        if not valid:
+            return self.action_space.sample()
+    
+        if deterministic:
+            return valid[0]
+
+        return random.choice(valid)

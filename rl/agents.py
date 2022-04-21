@@ -16,8 +16,9 @@ from rl.utils import preprocess_image, init_lstm
 class Agent(nn.Module):
     def __init__(self, envs):
         super().__init__()
-        self.observation_space = envs.single_observation_space
-        self.action_space = envs.single_action_space
+        self.envs = envs
+        self.observation_space = envs.single_observation_space if envs.is_vector_env else envs.observation_space
+        self.action_space = envs.single_action_space if envs.is_vector_env else envs.action_space
 
     def initial(self, _num_envs):
         return []
@@ -39,20 +40,15 @@ class RandomAgent(Agent):
         super().__init__(envs)
 
     def predict(self, _obs, state, **_kwargs):
-        return self.action_space.sample(), state
+        return self.envs.get_random_action(), state
 
 
-class CoverageAgent(Agent):
+class GreedyAgent(Agent):
     def __init__(self, envs):
         super().__init__(envs)
-        self.shape = [s.n for s in envs.observation_space["position"]]
-
-    def initial(self, _num_envs):
-        pass 
 
     def predict(self, _obs, state, **_kwargs):
-        """Find closest unexplored"""
-        pass
+        return self.envs.get_greedy_action(), state
 
 
 class ImageAgent(Agent):
@@ -135,19 +131,16 @@ class BaselineAgent(Agent):
     # https://arxiv.org/abs/1611.03673
 
 
-    def __init__(self, envs, num_layers=3, dropout=0.75):
+    def __init__(self, envs, num_layers=1, dropout=0.0):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
-        #assert self.observation_space.get("last_action") is not None
-        #assert self.observation_space.get("last_reward") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        #self.cnn = ImpalaCNN(self.observation_space["image"].shape)
-        #self.mlp = MLP( + , 256)
-
+        
         hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n + self.observation_space["position"][1].n
+        #hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n*self.observation_space["position"][1].n
 
         self.lstm = nn.LSTM(hidden_dim, 128, num_layers=num_layers, dropout=dropout)
 
@@ -161,10 +154,12 @@ class BaselineAgent(Agent):
 
     def extract(self, obs):
         x = preprocess_image(obs["image"])
-        p_0 = F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n)
-        p_1 = F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)
+        h = self.cnn(x)
         
-        return th.cat([self.cnn(x), p_0, p_1], dim=1)
+        p = th.cat([F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n), F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)], dim=1)
+        #p = F.one_hot(obs["position"][:,0].long()*self.observation_space["position"][1].n + obs["position"][:,1].long(), num_classes=self.observation_space["position"][0].n*self.observation_space["position"][1].n)
+
+        return th.cat([h, p], dim=1)
 
     def remember(self, hidden, state, done):
         state = [s.transpose(0, 1).contiguous() for s in state]
@@ -238,6 +233,7 @@ class MapAgent(Agent):
 
 AGENTS = {
     "random": RandomAgent,
+    "greedy": GreedyAgent,
     "image": ImageAgent,
     "recurrent": RecurrentAgent,
     "baseline": BaselineAgent,

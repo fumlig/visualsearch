@@ -4,7 +4,7 @@ from skimage import draw
 from gym_search.utils import gaussian_kernel, normalize, sample_coords
 from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha
-from gym_search.envs.search import SearchEnv
+from gym_search.envs.search import SearchEnv, Action
 
 
 class GaussianEnv(SearchEnv):

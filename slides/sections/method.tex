@@ -54,7 +54,6 @@
         \begin{itemize}
             \item Rewarded for finding targets.
             \item Constant penalty encourages quick episode completion.
-            \item Two variants that reward exploration or moving towards targets: \(r'_t\) and \(r''_t\)
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -132,7 +131,7 @@
         \item Actor-critic method.
         \item Trained with proximal policy optimization.
         \item Image \(x_t\) passed through CNN.
-        \item Latent image representation \(h_t\) and position \(p_t\) passed through RNN.
+        \item Latent image representation \(h_t\) and position \(p_t\) passed through RNN. Two variants:
         \begin{enumerate}
             \item LSTM with input \(\left\lbrack h_t, p_t \right\rbrack\).
             \item \textbf{Spatial memory.}
@@ -143,7 +142,7 @@
 
     \begin{figure}
         \centering
-        \includegraphics[scale=0.75]{figures/architecture.pdf}
+        \includegraphics[scale=0.5]{figures/architecture.pdf}
     \end{figure}
 \end{frame}
 
@@ -171,23 +170,43 @@
 
     \begin{itemize}
         \item Train for 25M time steps.
-        \item Results reported across 3 seeds.
+        \item Results reported across 3 runs with different seeds.
         \item Separate training and test sets.
         \item Same hyperparameters in all runs.
-    \end{itemize}
-
-    Search space:
-
-    \begin{itemize}
-        \item Larger search spaces places stronger demands on memory
-        \item Scene understanding, remember searched positions.
-        \item Investigate impact by comparing agents on \(8 \times 8\), \(12 \times 12\), \(16 \times 16\) versions of gaussian environment.
+        \item 
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Experiments}
 
+    Reward signals and search space size:
+
+    \begin{itemize}
+        \item Larger search spaces take longer to train:
+        \begin{itemize}
+            \item Sparse reward might not be sufficient.
+            \item Stronger demands on memory (remember searched positions, scene understanding).
+        \end{itemize}
+        \item Investigate impact by comparing agents on \(8 \times 8\), \(12 \times 12\), \(16 \times 16\) versions of gaussian environment.
+        \item Evaluate two additional reward signals that may speed up training:
+    \end{itemize}
+
+    \[r'_t = \dots\]
+    \[r''_t = \dots\]
+
+\end{frame}
+
+\begin{frame}
+    Performance:
+
+    \begin{itemize}
+        \item Pick 
+        \item Compare to random searcher, exhaustive searcher, human searcher with prior knowledge of scenes.
+        \item Use held out samples as test set.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
     Generalization:
 
     \begin{itemize}
@@ -205,5 +224,7 @@
     \begin{itemize}
         \item OpenAI Gym environment interface.
         \item PyTorch for models and automatic differentiation.
+        \item Intel Core i9-10900X CPU.
+        \item NVIDIA GeForce RTX 2080 Ti GPU.
     \end{itemize}
 \end{frame}

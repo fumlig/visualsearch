@@ -6,8 +6,7 @@ import pymartini as martini
 
 from gym_search.utils import sample_coords, fractal_noise_2d, normalize
 from gym_search.palette import EARTH_TOON, pick_color
-from gym_search.envs.search import SearchEnv
-
+from gym_search.envs.search import SearchEnv, Action
 
 class CameraEnv(SearchEnv):
 

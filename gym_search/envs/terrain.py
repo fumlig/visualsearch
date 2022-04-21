@@ -1,10 +1,11 @@
+import gym
 import numpy as np
 from skimage import draw
 
 from gym_search.utils import fractal_noise_2d, normalize, sample_coords
 from gym_search.shapes import Box
 from gym_search.palette import add_with_alpha, pick_color, EARTH_TOON
-from gym_search.envs.search import SearchEnv
+from gym_search.envs.search import SearchEnv, Action
 
 
 class TerrainEnv(SearchEnv):

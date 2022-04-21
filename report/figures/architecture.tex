@@ -1,7 +1,7 @@
 \documentclass[margin=10pt]{standalone}    
 
 \usepackage{tikz}
-\usetikzlibrary{automata,positioning,arrows,calc}
+\usetikzlibrary{automata,positioning,shapes,calc}
 
 \begin{document}
 
@@ -24,7 +24,7 @@
 
     \draw [->] (x) -- (cnn.west);
     \draw [->] (cnn.east) -- node [anchor=south] {$h_t$} (rnn.west);
-    \draw (rnn) edge[loop above] (rnn);
+    \draw (rnn) edge [loop above] node {} (rnn);
     \draw [->] (p) -- (rnn.south);
     \draw [->] (rnn.east) -- (mlp1.west);
     \draw [->] (rnn.east) -- (mlp2.west);

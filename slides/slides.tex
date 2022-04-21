@@ -2,6 +2,8 @@
 
 % https://ftpmirror1.infania.net/mirror/CTAN/macros/latex/contrib/beamer/doc/beameruserguide.pdf
 
+\usepackage{bibentry}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{pgf}
@@ -11,6 +13,7 @@
 \usecolortheme{dove}
 \useoutertheme{infolines}
 \beamertemplatenavigationsymbolsempty
+\setbeamertemplate{bibliography item}[triangle]
 
 \title{Learning to Search for Targets}
 \subtitle{with Deep Reinforcement Learning}
@@ -37,5 +40,11 @@
 \input{sections/theory}
 \input{sections/method}
 \input{sections/results}
+
+\begin{frame}[t,allowframebreaks]
+    \frametitle{References}
+    \bibliographystyle{ieeetr}
+    \bibliography{references}
+\end{frame}
 
 \end{document}

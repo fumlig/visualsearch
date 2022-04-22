@@ -8,8 +8,9 @@
         \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
         \item Agent perceives view \(V \subset S\).
         \item Move actions transform view to new subspace.
-        \item Trigger action indicates that target(s) is in view.
-        \item \textbf{Locate all targets while minimizing the number of time steps}.
+        \item Trigger action indicates that a target is in view.
+        \item Select actions that maximize the probability of finding all targets while minimizing cost in time.
+        \item NP complete~\cite{ye_tsotsos_2001}, intractable to solve optimally.
     \end{itemize}
 \end{frame}
 
@@ -161,6 +162,7 @@
             \item Read vector \(r_t = f(M_t)\), \(f\) is CNN.
             \item Write vector \(w_t = g(\left\lbrack h_t, r_t \right\rbrack)\), \(g\) is MLP.
             \item Action probabilities \(\pi(\left\lbrack r_t, w_t \right\rbrack)\) and value \(v(\left\lbrack r_t, w_t \right\rbrack)\).
+            \item \(r_t\) contains information from the whole explored scene.
             \item \(w_t\) written to index \(p_t\) of \(M_{t+1}\).
         \end{itemize}
     \end{enumerate}

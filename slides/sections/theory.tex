@@ -12,9 +12,10 @@
         \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\).
         \item Takes \textit{action} \(a_t\) in state \(s_t\).
         \item Perceives (partial) \textit{observation} of state \(o_t\).
+        \item Receives scalar reward \(r_t\) that indicates whether action is good or bad.
         \item New state \(s_{t+1}\) depends only on history of interactions.
-        \item Agent must maintain some internal state depending on history \\
-        \(\rightarrow\) memory needed!
+        \item Agent usually maintains some internal state depending on history \\
+        \(\rightarrow\) memory.
     \end{itemize}
 
     \begin{figure}
@@ -31,7 +32,7 @@
     \begin{itemize}
         \item Tasks usually formalized as (partially observable) MDPs.
         \item Policy \(\pi(a|s)\) is a mapping from states to actions.
-        \item Find \(\pi\) that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} r_k \right\rbrack\).
+        \item Find \(\pi\) that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
         \item Often involves estimating the value \(v_\pi(s)\) of a state under policy \(pi\) (useful for training). 
     \end{itemize}
 

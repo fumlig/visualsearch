@@ -16,7 +16,6 @@ from rl.utils import preprocess_image, init_lstm
 class Agent(nn.Module):
     def __init__(self, envs):
         super().__init__()
-        self.envs = envs
         self.observation_space = envs.single_observation_space if envs.is_vector_env else envs.observation_space
         self.action_space = envs.single_action_space if envs.is_vector_env else envs.action_space
 
@@ -33,22 +32,6 @@ class Agent(nn.Module):
             return th.argmax(pi.probs).item(), state
         else:
             return pi.sample().item(), state
-
-
-class RandomAgent(Agent):
-    def __init__(self, envs):
-        super().__init__(envs)
-
-    def predict(self, _obs, state, **_kwargs):
-        return self.envs.get_random_action(), state
-
-
-class GreedyAgent(Agent):
-    def __init__(self, envs):
-        super().__init__(envs)
-
-    def predict(self, _obs, state, **_kwargs):
-        return self.envs.get_greedy_action(), state
 
 
 class ImageAgent(Agent):
@@ -232,8 +215,6 @@ class MapAgent(Agent):
 
 
 AGENTS = {
-    "random": RandomAgent,
-    "greedy": GreedyAgent,
     "image": ImageAgent,
     "recurrent": RecurrentAgent,
     "baseline": BaselineAgent,

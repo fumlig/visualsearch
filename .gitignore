@@ -1,9 +1,9 @@
 venv/
 logs/
-old_logs/
 models/
 videos/
 data/
+old/
 
 *.aux
 *.bbl

@@ -23,25 +23,6 @@ gym.register(
     entry_point=CameraEnv
 )
 
-
-gym.register(
-    id="Gaussian-S",
-    entry_point=GaussianEnv,
-    kwargs=dict(shape=(8, 8), view=(64, 64), kernel_size=6)
-)
-
-gym.register(
-    id="Gaussian-M",
-    entry_point=GaussianEnv,
-    kwargs=dict(shape=(16, 16), view=(64, 64), kernel_size=12)
-)
-
-gym.register(
-    id="Gaussian-L",
-    entry_point=GaussianEnv,
-    kwargs=dict(shape=(32, 32), view=(64, 64), kernel_size=12)
-)
-
 """
 if os.path.exists("data/xview"):
     gym.register(

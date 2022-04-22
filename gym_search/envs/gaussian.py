@@ -14,16 +14,14 @@ class GaussianEnv(SearchEnv):
         shape=(16, 16),
         view=(64, 64),
         num_targets=3,
-        target_size=8,
         num_kernels=3,
-        kernel_size=12,
     ):
         super().__init__(shape, view, False)
 
         self.num_targets = num_targets
-        self.target_size = target_size
         self.num_kernels = num_kernels
-        self.kernel_size = kernel_size
+        self.target_size = 8
+        self.kernel_size = int(min(self.shape)*0.75)
 
     def generate(self, seed):
         random = np.random.default_rng(seed)

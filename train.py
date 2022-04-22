@@ -97,11 +97,15 @@ if __name__ == "__main__":
     # train
     writer.add_text(
         "agent/hyperparameters",
-        "|parameter|value|\n"
-        f"|test|42|"
+        "|parameter|value|\n" +
+        "|---|---|\n" +
+        f"|num_timesteps|{args.num_timesteps}|\n" +
+        f"|num_envs|{args.num_envs}|\n" +
+        "".join([f"{param}|{value}\n" for param, value in args.env_kwargs.items()]) +
+        "".join([f"{param}|{value}\n" for param, value in args.alg_kwargs.items()]) +
+        "".join([f"{param}|{value}\n" for param, value in args.agent_kwargs.items()]) +
+        f"|seed|{args.seed}|\n"
     )
-
-    print(args.alg_kwargs)
 
     rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, seed=args.seed, **args.alg_kwargs)
 

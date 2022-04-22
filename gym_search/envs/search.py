@@ -26,8 +26,8 @@ class SearchEnv(gym.Env):
         shape,
         view,
         wrap=False,
-        train_steps=500,
-        test_steps=5000,
+        train_steps=1000,
+        test_steps=10000,
         train_samples=None,
         test_samples=1000,
         punish_revisit=False,
@@ -99,7 +99,7 @@ class SearchEnv(gym.Env):
         self.visited.add(tuple(self.position))
 
         obs = self.observation()
-        rew = -0.001 if not hits else hits # -0.01 if not hits else hits
+        rew = -0.01 if not hits else hits
 
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {

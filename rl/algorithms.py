@@ -41,16 +41,6 @@ def proximal_policy_optimization(
     assert isinstance(envs.single_observation_space, gym.spaces.Dict)
     assert num_envs % num_minibatches == 0
 
-    #hparams = locals()
-    #hparams.pop(envs)
-    #hparams.pop()
-
-    #writer.add_text(
-    #    "hyperparameters",
-    #    "|param|value|\n|-|-|\n" +
-    #    "\n".join([f"|{key}|{value}|" for key, value in args.hparams.items()]) 
-    #)
-
     timestep = 0
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
@@ -221,9 +211,6 @@ def proximal_policy_optimization(
             avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
             avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
             pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}")
-
-
-    return avg_ret, avg_len
 
 
 ALGORITHMS = {

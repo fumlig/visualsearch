@@ -15,8 +15,9 @@
     \node (x) [left of=cnn] {$x_t$};
     \node (rnn) [l,right=1cm of cnn,dashed]{RNN};
     \node (p) [below of=rnn] {$p_t$};
-    \node (mlp1) [s,right=1cm of rnn,shift=({0,1cm})] {MLP};
-    \node (mlp2) [s,right=1cm of rnn,shift=({0,-1cm})] {MLP};
+    \node (out) [right=0.5cm of rnn] {};
+    \node (mlp1) [s,right=1cm of out,shift=({0,1cm})] {MLP};
+    \node (mlp2) [s,right=1cm of out,shift=({0,-1cm})] {MLP};
     %\node (pi_out) at ($(rnn.20)-(0.1cm,0)$) {};
     %\node (v_out) at ($(rnn.-20)-(0.1cm,0)$) {};
     \node (pi) [right=1cm of mlp1] {$\pi$};
@@ -26,8 +27,9 @@
     \draw [->] (cnn.east) -- node [anchor=south] {$h_t$} (rnn.west);
     \draw (rnn) edge [loop above] node {} (rnn);
     \draw [->] (p) -- (rnn.south);
-    \draw [->] (rnn.east) -- (mlp1.west);
-    \draw [->] (rnn.east) -- (mlp2.west);
+    \draw (rnn.east) -- (out.east);
+    \draw [->] (out) to [out=0,in=180] (mlp1.west);
+    \draw [->] (out) to [out=0,in=180] (mlp2.west);
     \draw [->] (mlp1.east) -- (pi);
     \draw [->] (mlp2.east) -- (v);
 

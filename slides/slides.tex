@@ -13,22 +13,25 @@
 \usecolortheme{dove}
 \useoutertheme{infolines}
 \beamertemplatenavigationsymbolsempty
-\setbeamertemplate{bibliography item}[triangle]
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\setbeamerfont{bibliography item}{size=\scriptsize}
+\setbeamerfont{bibliography entry author}{size=\scriptsize}
+\setbeamerfont{bibliography entry title}{size=\scriptsize}
+\setbeamerfont{bibliography entry location}{size=\scriptsize}
+\setbeamerfont{bibliography entry note}{size=\scriptsize}
 
 \title{Learning to Search for Targets}
 \subtitle{with Deep Reinforcement Learning}
 \author{Oskar Lundin}
 \institute{Linköping University}
 \date{\today}
+\titlegraphic{\includegraphics[scale=0.75]{figures/environments.pdf}}
 %\logo{\includegraphics[height=0.5cm]{../report/figures/liu_primary_black_en.pdf}}
 
 \begin{document}
 
 \begin{frame}
     \titlepage
-    \begin{center}
-        \includegraphics[scale=0.5]{figures/terrain.pdf}
-    \end{center}
 \end{frame}
 
 \begin{frame}

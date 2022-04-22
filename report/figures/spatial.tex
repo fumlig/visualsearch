@@ -6,32 +6,36 @@
 \begin{document}
 
 \begin{tikzpicture}[node distance=2cm]
-    \tikzstyle{block} = [rectangle,minimum width=2cm,minimum height=2cm,text centered,draw=black,fill=white]
+    \tikzstyle{block} = [rectangle,minimum width=2cm,minimum height=1cm,text centered,draw=black,fill=white]
+    %\draw [step=0.252,gray,thin] (last.north west) grid (last.south east);
 
-    \node (last) [block] {};
-    \draw [step=0.252,gray,thin] (last.north west) grid (last.south east);
-    \draw node [above=0cm of last] {$M_t$};
 
-    \node (read) [block,below=1cm of last] {read CNN};
+    \node (last) {$M_t$};
+
+    \node (read) [block,right=1cm of last] {read CNN};
     \draw [->] (last) -- (read);
 
-    \node (write) [block,right=1cm of read] {write MLP};
-    \draw [->] (read) -- node [anchor=south]{$r_t$} (write);
-
-    \node (next) [block,above=1cm of write] {};
-    \draw [step=0.252,gray,thin] (next.north west) grid (next.south east);
-    \draw node [above=0cm of next] {$M_{t+1}$};
-
-    \draw [->] (write) -- node [anchor=east] {$w_{t+1}^{(p_t)}$} (next);
-
-    \node (h) [below=1cm of write] {$h_t$};
+    \node (write) [block,below=1cm of read] {write MLP};
+    \node (h) [left=1cm of write] {$h_t$};
     \node (p) [below=1cm of write] {$p_t$};
 
-    %\draw [->] (h) -- (write);
+    \draw [->] (h) -- (write);
+    \draw [->] (p) -- (write);
+    \draw [->] (read) -- node [anchor=east]{$r_t$} (write);
 
-    
-    %\node (read) [block,above=1cm of write] {read CNN};
-    %\draw [->] (read) -- (write);
+    %\node (next) [right=1cm of last]{$M_{t+1}$};
+    %\draw [step=0.252,gray,thin] (next.north west) grid (next.south east);
+
+    %\draw [->] (write) -- node [anchor=east] {$w_{t+1}^{(p_t)}$} (next);
+
+    \node (w) [right=1cm of write] {};
+    \draw (write) -- (w);
+
+    \node (cat) [right=1cm of w, minimum height=1cm] {};
+    \draw [->] (w) -- (cat);
+    \draw (cat.north) -- (cat.south);
+
+    %\draw [->] (re)to [out=0,in=180]
 
 
 \end{tikzpicture}

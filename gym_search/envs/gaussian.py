@@ -13,10 +13,12 @@ class GaussianEnv(SearchEnv):
         self,
         shape=(16, 16),
         view=(64, 64),
+        punish_revisit=False,
+        reward_closer=False,
         num_targets=3,
         num_kernels=3,
     ):
-        super().__init__(shape, view, False)
+        super().__init__(shape, view, False, punish_revisit=punish_revisit, reward_closer=reward_closer)
 
         self.num_targets = num_targets
         self.num_kernels = num_kernels
@@ -47,8 +49,12 @@ class GaussianEnv(SearchEnv):
         targets = []
 
         for y, x in sample_coords((h, w), self.num_targets, prob, random=random):
-            y, x = np.clip((y, x), (0, 0), (h - self.target_size, w - self.target_size))
-            targets.append(Box(y, x, self.target_size, self.target_size))
+            position = np.array((y, x)) // self.view
+            y, x = np.clip((y, x), position*self.view, position*self.view + self.view - (self.target_size, self.target_size))
+
+            #targets.append(Box(y, x, self.target_size, self.target_size))
+            targets.append(position)
+            
             rr, cc = draw.rectangle((y, x), extent=(self.target_size, self.target_size), shape=(h, w))
             image[rr, cc] = (255, 0, 0)
 

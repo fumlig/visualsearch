@@ -79,7 +79,7 @@ if __name__ == "__main__":
     #    gp_minimize(...)
 
     device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
-    writer = SummaryWriter(f"logs/{args.name}")
+    writer = SummaryWriter(f"logs/train/{args.name}")
 
     # environment
     wrappers = [

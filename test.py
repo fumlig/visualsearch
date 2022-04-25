@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 
-from argparse import ArgumentParser
-from collections import defaultdict
-from time import process_time
-
 import cv2 as cv
 import numpy as np
+from prometheus_client import Summary
 import torch as th
 import gym
-import gym_search
 import random
 import datetime as dt
-
-from gym_search.utils import travel_dist
+import pandas as pd
 
 import rl
 import gym_search
+
+from argparse import ArgumentParser
+from torch.utils.tensorboard import SummaryWriter
+from time import process_time
+from tqdm import tqdm
+from gym_search.utils import travel_dist
 
 
 KEY_ESC = 27
@@ -23,9 +24,9 @@ KEY_RET = 13
 WINDOW_SIZE = (640, 640)
 
 
-def spl(success, shortest_path, taken_path):
+def spl(success, shortest, taken):
     # https://arxiv.org/pdf/1807.06757.pdf
-    return success*shortest_path/max(shortest_path, taken_path)
+    return success*shortest/np.maximum(shortest, taken)
 
 
 if __name__ == "__main__":
@@ -36,12 +37,13 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--model", type=str)
     parser.add_argument("--delay", type=int, default=1)
-    parser.add_argument("--cpu", action="store_true")
+    parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--episodes", type=int, default=100)
+    parser.add_argument("--episodes", type=int, default=1000)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
+    parser.add_argument("--hidden", action="store_true")
 
     args = parser.parse_args()
 
@@ -56,7 +58,9 @@ if __name__ == "__main__":
         env = wrapper(env)
 
     agent = None
-    device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
+    device = th.device(args.device)
+    writer = SummaryWriter(f"logs/test/{args.name}")
+    df = pd.DataFrame()
     infos = []
 
     if args.seed is not None:
@@ -75,11 +79,12 @@ if __name__ == "__main__":
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
+    if not args.hidden:
+        cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
+
     env.test()
 
-    cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
-
-    for ep in range(args.episodes):
+    for ep in tqdm(range(args.episodes)):
 
         done = False
         seed = args.seed if ep == 0 else None
@@ -89,26 +94,34 @@ if __name__ == "__main__":
             state = [s.to(device) for s in agent.initial(1)]
 
         while not done:
-            if args.observe:
-                img = obs["image"]
-            else:
-                img = env.render(mode="rgb_array")
+            key = None
+            img = None
+            act = None
 
-            img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
-            img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+            if not args.hidden:
+                if args.observe:
+                    img = obs["image"]
+                else:
+                    img = env.render(mode="rgb_array")
 
-            cv.imshow(args.environment, img)	
+                img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
+                img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
-            key = cv.waitKey(args.delay)
+                cv.imshow(args.environment, img)
+                key = cv.waitKey(args.delay)
 
             if agent is None:
-                act = env.get_keys_to_action().get((key,), 0)
+                if args.agent == "random":
+                    act = env.get_random_action()
+                elif args.agent == "greedy":
+                    act = env.get_greedy_action()
+                else:
+                    act = env.get_keys_to_action().get((key,), 0)
             else:
                 with th.no_grad():
                     obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
                     act, state = agent.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
 
-            
             step_begin = process_time()
             obs, rew, done, info = env.step(act)
             step_end = process_time()
@@ -128,8 +141,12 @@ if __name__ == "__main__":
                     "fps:", 1.0/(step_end - step_begin)
                 )
 
-            if done:
-                infos.append(info)
+        infos.append(info)
 
-    # todo: spl
-    print(infos)
+    success = np.array([info["success"] for info in infos], dtype=float)
+    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
+    taken = np.array([len(info["path"]) for info in infos], dtype=float)
+
+    writer.add_histogram("metric/shortest", shortest)
+    writer.add_histogram("metric/taken", taken)
+    writer.add_histogram("metric/spl", spl(success, shortest, taken))

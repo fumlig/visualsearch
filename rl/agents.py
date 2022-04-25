@@ -179,8 +179,8 @@ class MapAgent(Agent):
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
 
-        self.image_cnn = NatureCNN(self.observation_space["image"])        
-        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
+        self.image_cnn = NatureCNN(self.observation_space["image"], output_dim=128)        
+        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim, features_dim=32)
 
         self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
@@ -223,4 +223,9 @@ AGENTS = {
 
 
 def make(id, envs, **kwargs):
-    return AGENTS.get(id)(envs, **kwargs)
+    cls = AGENTS.get(id)
+    
+    if cls is None:
+        return None
+    
+    return cls(envs, **kwargs)

@@ -41,6 +41,7 @@ class SearchEnv(gym.Env):
         self.test_steps = test_steps
         self.train_samples = train_samples if train_samples is not None else np.iinfo(np.int64).max - test_samples
         self.test_samples = test_samples
+        self.test_seed = 0
 
         self.punish_revisit = punish_revisit
         self.reward_closer = reward_closer
@@ -59,10 +60,13 @@ class SearchEnv(gym.Env):
         if self.training:
             seed = self.np_random.integers(self.test_samples, self.test_samples + self.train_samples)
         else:
-            seed = self.np_random.integers(0, self.test_samples)
+            seed = self.test_seed
+            self.test_seed += 1
+            self.test_seed %= self.test_samples
 
         self.scene, self.targets = self.generate(seed)
         self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
+        self.initial = self.position
         self.hits = [False for _ in range(len(self.targets))]
         self.path = [tuple(self.position)]
         self.visited = {tuple(self.position)}
@@ -80,8 +84,8 @@ class SearchEnv(gym.Env):
         hits = 0
         
         revisit = tuple(self.position) in self.visited
-        #nearest = np.argmin([manhattan_dist(last_position, target.position) for target, hit in zip(self.targets, self.hits) if not hit])
-        #closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
+        nearest = self.targets[np.argmin([manhattan_dist(last_position, target) for target, hit in zip(self.targets, self.hits) if not hit])]
+        closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
 
         if action == Action.TRIGGER:
             for i in range(len(self.targets)):
@@ -104,6 +108,7 @@ class SearchEnv(gym.Env):
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {
             "position": self.position,
+            "initial": self.initial,
             "targets": self.targets,
             "hits": self.hits,
             "path": self.path,
@@ -112,10 +117,10 @@ class SearchEnv(gym.Env):
         }
 
         if self.punish_revisit and revisit and not hits:
-            rew -= 1
+            rew -= 0.01
 
-        #if self.reward_closer and closer and not hits:
-        #    rew += 1
+        if self.reward_closer and closer and not hits:
+            rew += 0.01
 
         return obs, rew, done, info
 
@@ -125,7 +130,9 @@ class SearchEnv(gym.Env):
 
         for i in range(len(self.targets)):
             if self.hits[i]:
-                coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
+                #coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
+                coords = tuple(draw.rectangle_perimeter(self.scale(self.targets[i]), extent=self.view, shape=self.scale(self.shape)))
+
                 image[coords] = (0, 255, 0)
 
         #for p in self.path:
@@ -173,7 +180,8 @@ class SearchEnv(gym.Env):
         return dict(image=obs, position=self.position)
 
     def visible(self, target):
-        return Box(*self.scale(self.position), *self.view).overlap(target) > 0
+        #return Box(*self.scale(self.position), *self.view).overlap(target) > 0
+        return np.all(self.position == target)
 
     def generate(self, seed):
         raise NotImplementedError

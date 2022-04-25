@@ -57,9 +57,13 @@ class TerrainEnv(SearchEnv):
         targets = []
 
         for y, x in sample_coords(shape, self.num_targets, target_prob, random=random):
-            y, x = np.clip((y, x), (0, 0), (height-self.target_size, width-self.target_size))
+            position = np.array((y, x)) // self.view
+            y, x = np.clip((y, x), position*self.view, position*self.view + self.view - (self.target_size, self.target_size))
+
             coords = tuple(draw.rectangle((y, x), extent=(self.target_size, self.target_size), shape=shape))
             image[coords] = (255, 0, 0)
-            targets.append(Box(y, x, self.target_size, self.target_size))
+            
+            #targets.append(Box(y, x, self.target_size, self.target_size))
+            targets.append(position)
 
         return image, targets

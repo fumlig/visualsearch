@@ -12,15 +12,15 @@ class TerrainEnv(SearchEnv):
     
     def __init__(
         self,
-        shape=(16, 16),
+        shape=(10, 10),
         view=(64, 64),
         num_targets=3,
         target_size=8,
         num_distractors=50,
         distractor_size=4,
-
+        **kwargs
     ):
-        super().__init__(shape, view, False)
+        super().__init__(shape, view, False, **kwargs)
 
         assert target_size < min(shape)
         assert distractor_size < min(shape)

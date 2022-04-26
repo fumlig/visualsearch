@@ -14,7 +14,7 @@ class CameraEnv(SearchEnv):
 
     def __init__(
         self,
-        shape=(16, 16),
+        shape=(10, 10),
         view=(64, 64),
         terrain_size=1024,
         terrain_height=16,
@@ -79,23 +79,44 @@ class CameraEnv(SearchEnv):
         scene.camera_target = (0, 0, -1)
         scene.camera_matrix = pr.Matrix44.perspective_projection(360/self.shape[0], 1., 0.1, 1000.)
 
+        # visibility
+        # todo: target might be occluded
+        positions = []
+        
+        for target in targets:
+            visible = False
 
-        return scene, targets
+            for position in [(y, x) for y in range(self.shape[0]) for x in range(self.shape[1])]:
+                self.look(position)
+                
+                if self.in_frustum(*target):
+                    positions.append(position)
+                    visible = True
+                    break        
+
+            if not visible:
+                print(f"target {target} invisible")
+            assert visible
+
+        return scene, positions
 
 
     def render(self, mode="rgb_array"):
+        self.look(self.position)
+        self.scene.render()
+        img = self.scene.frame[:,:,:3]
+
+        return img
+
+    def look(self, position):
+        position = np.array(position)
         eps = 0.1
-        pitch, yaw = self.position/self.shape
+        pitch, yaw = position/self.shape
         yaw = 2*np.pi*yaw - np.pi/2
         pitch = np.clip(np.pi*(0.5-pitch), -np.pi/2+eps, np.pi/2-eps)
         direction = pr.Vector3((np.cos(yaw)*np.cos(pitch), np.sin(pitch), np.sin(yaw)*np.cos(pitch)))
         front = direction.normalized
         self.scene.camera_target = self.scene.camera_position + front
-
-        self.scene.render()
-        img = self.scene.frame[:,:,:3]
-
-        return img
 
     def plot(self, ax, overlay=True, position=None):
         if position is not None:
@@ -126,9 +147,7 @@ class CameraEnv(SearchEnv):
     def height(self, x, z):
         return self.terrain[round(x), round(z)]
 
-    def visible(self, target):
-        x, y, z = target
-
+    def in_frustum(self, x, y, z):
         proj = self.scene.camera_matrix
         view = self.scene.mv
     

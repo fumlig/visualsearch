@@ -110,7 +110,7 @@ class RecurrentAgent(Agent):
         return pi, v, state
 
 
-class BaselineAgent(Agent):    
+class LSTMAgent(Agent):    
     # https://arxiv.org/abs/1611.03673
 
 
@@ -179,8 +179,8 @@ class MapAgent(Agent):
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
 
-        self.image_cnn = NatureCNN(self.observation_space["image"], output_dim=128)        
-        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim, features_dim=32)
+        self.image_cnn = NatureCNN(self.observation_space["image"])        
+        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
 
         self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
@@ -215,9 +215,7 @@ class MapAgent(Agent):
 
 
 AGENTS = {
-    "image": ImageAgent,
-    "recurrent": RecurrentAgent,
-    "baseline": BaselineAgent,
+    "lstm": LSTMAgent,
     "map": MapAgent
 }
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import random
-import json
 import yaml
 import os
 import datetime as dt
+import signal
 import numpy as np
 import torch as th
 import gym
@@ -41,6 +41,11 @@ def env_default(key, default=None):
     return dict(default=value, nargs='?')
 
 
+def sigint_handler(signum, frame, close, **kwargs):
+    close(**kwargs)
+    exit(0)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str, **env_default("ENV_ID"))
@@ -48,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
 
     parser.add_argument("--num-timesteps", type=int, default=TOT_TIMESTEPS)
-    parser.add_argument("--num-envs", type=int, default=NUM_ENVS),
+    parser.add_argument("--num-envs", type=int, default=NUM_ENVS)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
     parser.add_argument("--alg-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent-kwargs", type=parse_hparams, default={})
@@ -57,6 +62,7 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
+    parser.add_argument("--ckpt-interval", type=int, default=0)
     parser.add_argument("--deterministic", action="store_true")
     #parser.add_argument("--tune", type=parse_hparams)
 
@@ -107,10 +113,32 @@ if __name__ == "__main__":
         f"|seed|{args.seed}|\n"
     )
 
-    rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, seed=args.seed, **args.alg_kwargs)
+    def close():
+        envs.close()
+        writer.close()
+        print(f"saving model models/{args.name}.pt")
+        th.save(agent, f"models/{args.name}.pt")
 
-    envs.close()
-    writer.close()
+    last_timestep = 0
 
-    print(f"saving as {args.name}")
-    th.save(agent, f"models/{args.name}.pt")
+    def callback(agent, timestep):
+        global last_timestep
+
+        if not args.ckpt_interval:
+            return
+
+        this_ckpt = timestep // args.ckpt_interval
+        last_ckpt = last_timestep // args.ckpt_interval
+        
+        if this_ckpt > last_ckpt:
+            print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
+            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+
+        last_timestep = timestep
+
+    signal.signal(signal.SIGINT, lambda signum, frame: sigint_handler(signum, frame, close=close))
+
+    rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, seed=args.seed, callback=callback, **args.alg_kwargs)
+
+    close()
+

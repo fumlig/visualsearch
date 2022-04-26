@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
+import os
 import cv2 as cv
 import numpy as np
-from prometheus_client import Summary
+import yaml
 import torch as th
 import gym
 import random
@@ -29,9 +30,18 @@ def spl(success, shortest, taken):
     return success*shortest/np.maximum(shortest, taken)
 
 
+def parse_hparams(s):
+    if os.path.exists(s):
+        with open(s) as f:
+            return yaml.load(f, Loader=yaml.FullLoader)
+
+    return yaml.safe_load(s)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
+    parser.add_argument("--env-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent", type=str)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
@@ -40,7 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--episodes", type=int, default=1000)
+    parser.add_argument("--episodes", type=int, default=1)#1000)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
     parser.add_argument("--hidden", action="store_true")
@@ -53,7 +63,7 @@ if __name__ == "__main__":
         gym_search.wrappers.LastAction
     ]
 
-    env = gym.make(args.environment)
+    env = gym.make(args.environment, **args.env_kwargs)
     for wrapper in wrappers:
         env = wrapper(env)
 
@@ -63,13 +73,13 @@ if __name__ == "__main__":
     df = pd.DataFrame()
     infos = []
 
+    if args.name is None:
+        args.name = dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
     if args.seed is not None:
         random.seed(args.seed)
         np.random.seed(args.seed)
         th.manual_seed(args.seed)
-
-    if args.agent is not None:
-        agent = rl.agents.make(args.agent, envs=env)
 
     if args.model:
         print(f"loading {args.model}")
@@ -150,3 +160,6 @@ if __name__ == "__main__":
     writer.add_histogram("metric/shortest", shortest)
     writer.add_histogram("metric/taken", taken)
     writer.add_histogram("metric/spl", spl(success, shortest, taken))
+
+    print("mean length:", np.mean(taken))
+    print("mean spl:", np.mean(spl(success, shortest, taken)))

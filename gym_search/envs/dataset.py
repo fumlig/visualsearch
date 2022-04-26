@@ -14,8 +14,9 @@ class DatasetEnv(SearchEnv):
         shape,
         view,
         dataset,
+        **kwargs
     ):
-        super().__init__(shape, view, False)
+        super().__init__(shape, view, False, **kwargs)
         
         self.dataset = dataset
 

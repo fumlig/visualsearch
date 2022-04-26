@@ -11,14 +11,13 @@ class GaussianEnv(SearchEnv):
     
     def __init__(
         self,
-        shape=(16, 16),
+        shape=(10, 10),
         view=(64, 64),
-        punish_revisit=False,
-        reward_closer=False,
         num_targets=3,
         num_kernels=3,
+        **kwargs
     ):
-        super().__init__(shape, view, False, punish_revisit=punish_revisit, reward_closer=reward_closer)
+        super().__init__(shape, view, False, **kwargs)
 
         self.num_targets = num_targets
         self.num_kernels = num_kernels

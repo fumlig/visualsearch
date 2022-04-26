@@ -17,6 +17,7 @@ def proximal_policy_optimization(
     agent,
     device,
     writer,
+    callback=None,
     seed=None,
     learning_rate=2.5e-4,
     num_steps=128,
@@ -57,6 +58,7 @@ def proximal_policy_optimization(
     obs = {key: th.tensor(o, dtype=th.float).to(device) for key, o in envs.reset(seed=seed).items()}
     done = th.zeros(num_envs).to(device)
     state = [s.to(device) for s in agent.initial(num_envs)]
+    ckpt_counter = 0
 
     for _b in range(num_batches):
 
@@ -66,6 +68,7 @@ def proximal_policy_optimization(
         # rollout steps
         for step in range(num_steps):
             timestep += num_envs
+            ckpt_counter += num_envs
 
             with th.no_grad():
                 pi, v, state = agent(obs, state, done=done)
@@ -211,6 +214,11 @@ def proximal_policy_optimization(
             avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
             avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
             pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}")
+
+        if callback is not None:
+            callback(agent, timestep)
+
+    pbar.update(num_timesteps)
 
 
 ALGORITHMS = {

@@ -30,7 +30,7 @@ class SearchEnv(gym.Env):
         test_steps=10000,
         train_samples=None,
         test_samples=1000,
-        punish_revisit=False,
+        reward_explore=False,
         reward_closer=False
     ):
         self.shape = shape
@@ -43,7 +43,7 @@ class SearchEnv(gym.Env):
         self.test_samples = test_samples
         self.test_seed = 0
 
-        self.punish_revisit = punish_revisit
+        self.reward_explore = reward_explore
         self.reward_closer = reward_closer
 
         self.training = True
@@ -79,13 +79,12 @@ class SearchEnv(gym.Env):
 
         last_position = self.position
         step = self.get_action_step(action)
-        self.position = self.get_next_position(step)
-    
-        hits = 0
-        
+        self.position, invalid = self.get_next_position(step)
         revisit = tuple(self.position) in self.visited
         nearest = self.targets[np.argmin([manhattan_dist(last_position, target) for target, hit in zip(self.targets, self.hits) if not hit])]
         closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
+
+        hits = 0
 
         if action == Action.TRIGGER:
             for i in range(len(self.targets)):
@@ -99,6 +98,9 @@ class SearchEnv(gym.Env):
         self.num_steps += 1
         self.counters["triggers"] += action == Action.TRIGGER
         self.counters["revisits"] += revisit
+        self.counters["explored"] += not revisit
+        self.counters["invalid"] += invalid
+        
         self.path.append(tuple(self.position))
         self.visited.add(tuple(self.position))
 
@@ -116,7 +118,7 @@ class SearchEnv(gym.Env):
             "counters": self.counters
         }
 
-        if self.punish_revisit and revisit and not hits:
+        if self.reward_explore and not revisit and not hits:
             rew -= 0.01
 
         if self.reward_closer and closer and not hits:
@@ -234,7 +236,9 @@ class SearchEnv(gym.Env):
         else:
             position = np.clip(position, (0, 0), np.array(self.shape) - (1, 1))
 
-        return position
+        invalid = tuple(self.position + step) != tuple(position)
+
+        return position, invalid
 
     def get_random_action(self, detect=False):
         if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
@@ -250,7 +254,7 @@ class SearchEnv(gym.Env):
 
         for action in range(1, self.action_space.n):
             step = self.get_action_step(action)
-            position = self.get_next_position(step)
+            position, _ = self.get_next_position(step)
             
             if not tuple(position) in self.visited:
                 valid.append(action)

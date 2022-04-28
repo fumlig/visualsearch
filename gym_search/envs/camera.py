@@ -98,7 +98,10 @@ class CameraEnv(SearchEnv):
                 print(f"target {target} invisible")
             assert visible
 
-        return scene, positions
+        # position
+        position = np.array([random.integers(0, d) for d in self.shape])
+
+        return scene, position, positions
 
 
     def render(self, mode="rgb_array"):

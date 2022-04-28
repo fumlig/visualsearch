@@ -1,138 +1,49 @@
 #!/usr/bin/env bash
 
-num_envs=64
+id="$1"
+
+env_id="$2"
+env_params="$3"
+alg_id="$4"
+alg_params="$5"
+agent_id="$6"
+agent_params="$7"
+
+num_envs=256
 num_timesteps=25000000
 ckpt_interval=1000000
 
-
 for seed in 1 2 3
 do
-    for agent in "lstm" "map"
-    do
-        # search space and reward
-        for shape in "[10,10]" "[15,15]" "[20,20]"
-        do
-            # r
-            name="shape-$agent-gaussian-r0$shape-$seed"
+    name="$id-$seed"
 
-            echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
+    echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
 
-            python3 train.py "Gaussian-v0" ppo $agent \
-                --name=$name \
-                --seed=$seed \
-                --num-timesteps=$num_timesteps \
-                --num-envs=$num_envs \
-                --ckpt-interval=$ckpt_interval \
-                --env-kwargs="{shape: $shape}" \
-                --alg-kwargs="params/our.yaml" \
-                --agent-kwargs="{}"
+    python3 train.py "$env_id" "$alg_id" "$agent_id" \
+        --name="$name" \
+        --seed="$seed" \
+        --num-timesteps="$num_timesteps" \
+        --num-envs="$num_envs" \
+        --ckpt-interval="$ckpt_interval" \
+        --env-kwargs="$env_params" \
+        --alg-kwargs="$alg_params" \
+        --agent-kwargs="$agent_params"
 
-            echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
+    echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
 
-            python3 test.py "Gaussian-v0" \
-                --name=$name \
-                --hidden \
-                --model="models/$name.pt" \
-                --env-kwargs="{shape: $shape}"
-
-            # r'
-            name="shape-$agent-gaussian-r1$shape-$seed"
-
-            echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
-
-            python3 train.py "Gaussian-v0" ppo $agent \
-                --name=$name \
-                --seed=$seed \
-                --num-timesteps=$num_timesteps \
-                --num-envs=$num_envs \
-                --ckpt-interval=$ckpt_interval \
-                --env-kwargs="{shape: $shape, reward_explore: true}" \
-                --alg-kwargs="params/our.yaml" \
-                --agent-kwargs="{}"
-
-            echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
-
-            python3 test.py "Gaussian-v0" \
-                --name=$name \
-                --hidden \
-                --model="models/$name.pt" \
-                --env-kwargs="{shape: $shape}"
-            
-            # r''
-            name="shape-$agent-gaussian-r2$shape-$seed"
-
-            echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
-
-            python3 train.py "Gaussian-v0" ppo $agent \
-                --name=$name \
-                --seed=$seed \
-                --num-timesteps=$num_timesteps \
-                --num-envs=$num_envs \
-                --ckpt-interval=$ckpt_interval \
-                --env-kwargs="{shape: $shape, reward_closer: true}" \
-                --alg-kwargs="params/our.yaml" \
-                --agent-kwargs="{}"
-
-            echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
-
-            python3 test.py "Gaussian-v0" \
-                --name=$name \
-                --hidden \
-                --model="models/$name.pt" \
-                --env-kwargs="{shape: $shape}"
-        done
-
-        # generalization
-
-        # unlimited
-        name="sample-$agent-terrain-inf-$seed"
-
-        echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
-
-        python3 train.py "Terrain-v0" ppo $agent \
-            --name=$name \
-            --seed=$seed \
-            --num-timesteps=$num_timesteps \
-            --num-envs=$num_envs \
-                --ckpt-interval=$ckpt_interval \
-            --env-kwargs="{}" \
-            --alg-kwargs="params/our.yaml" \
-            --agent-kwargs="{}"
-
-        echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
-
-        python3 test.py "Terrain-v0" \
-            --name=$name \
-            --hidden \
-            --model="models/$name.pt"
-
-        # limited
-        for samples in 1000 10000 100000
-        do
-            name="sample-$agent-terrain-$samples-$seed"
-
-            echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
-
-            python3 train.py "Terrain-v0" ppo $agent \
-                --name=$name \
-                --seed=$seed \
-                --num-timesteps=$num_timesteps \
-                --num-envs=$num_envs \
-                --ckpt-interval=$ckpt_interval \
-                --env-kwargs="{train_samples: $samples}" \
-                --alg-kwargs="params/our.yaml" \
-                --agent-kwargs="{}"
-
-            echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
-
-            python3 test.py "Terrain-v0" \
-                --name=$name \
-                --hidden \
-                --model="models/$name.pt"
-        done
-    done
+    python3 test.py "$env_id" \
+        --name="$name" \
+        --seed=0 \
+        --hidden \
+        --model="models/$name.pt" \
+        --env-kwargs="$env_params"
 done
 
-# human comparison
+# ./run.sh gaussian-ppo-lstm-small-r1 Gaussian-v0 "{shape: [10,10]}" ppo params/our.yaml lstm "{}"
+# ./run.sh gaussian-ppo-lstm-small-r2 Gaussian-v0 "{shape: [10,10], reward_explore: true}" ppo params/our.yaml lstm "{}"
+# ./run.sh gaussian-ppo-lstm-small-r3 Gaussian-v0 "{shape: [10,10], reward_closer: true}" ppo params/our.yaml lstm "{}"
 
-# ablations
+# ./run.sh gaussian-ppo-map-small-r1 Gaussian-v0 "{shape: [10,10]}" ppo params/our.yaml map "{}"
+# ./run.sh gaussian-ppo-map-small-r2 Gaussian-v0 "{shape: [10,10], reward_explore: true}" ppo params/our.yaml map "{}"
+# ./run.sh gaussian-ppo-map-small-r3 Gaussian-v0 "{shape: [10,10], reward_closer: true}" ppo params/our.yaml map "{}"
+

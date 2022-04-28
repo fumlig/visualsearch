@@ -147,7 +147,10 @@ This chapter contains the following sub-headings.
     \item Could give bad vibes...
     \item Greedy and random baselines have unfair advantage, but this is fine since we are not putting our method at an advantage.
     \item The map approach seems to scale better - with more time we could have trained for a larger search space.
-    \item Neither scales well (weights in map scale increase quadratically with search space size -- fine for fixed positions, bad for movable cameras)
+    \item Neither scales well (weights in map scale increase quadratically with search space size -- fine for fixed positions, bad for movable cameras).
+    \item If we find that bonuses speed up training but converge to poor solutions, we could discuss reward shaping. Remove bonus after convergence.
+    \item The scene characteristics matter - in some cases, amortized probability of targets is not uniform, and patterns are more complex. We need more types of environments.
+    \item Discuss the generality of the proposed approach - what types of cues can it pick up? Spatial and semantic relationships, non-uniform probabilities, etc. 
 \end{itemize}
 
 \section{The work in a wider context}

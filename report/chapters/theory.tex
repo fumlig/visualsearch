@@ -116,9 +116,9 @@ Solving the object search problem optimally involves determining a sequence of c
 The state of the searcher is uniquely determined by the control parameters of the camera.
 Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
 Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
-Finding an optimal solution in three dimensions has been shown to be NP-complete, necessitating approximate solutions~\cite{ye_tsotsos_2001}.
+Finding an optimal solution in three dimensions has been shown to be NP-complete, necessitating approximate solutions~\cite{ye_tsotsos_2001,andreopoulos_tsotsos_theory_2009}.
 
-\todo{There are other sources, should I use them instead? Also, verify this claim again! This one seems a lot better: \url{http://vigir.missouri.edu/~gdesouza/Research/Conference_CDs/IEEE_ICCV_2009/contents/pdf/iccv2009_116.pdf}. Use the references in the introduction.}
+\todo{verify np-complete/np-hard claims using second source.}
 
 There are several rigorous attempts to implement robotic object search systems using non-learning methods.
 Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
@@ -127,6 +127,7 @@ Each objects is examined from several perspectives and ranked by probability of 
 Shubina and Tsotsos~\cite{shubina_visualsearch_2010} model the search problem as in \cite{ye_tsotsos_2001}, and solve with a greedy action selection strategy.
 They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
 Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_real_2011,aydemir_active_2013}.
+Meger et al ~\cite{meger_george_2008} describe a system that performs object recognition in realistic scenarios\dots
 
 These systems solve more complex tasks than the one we consider, such as handling multiple target object categories and navigating in obstructed environments.
 However, they are also restricted by their reliance on human knowledge to act well in their environments.
@@ -693,12 +694,15 @@ Finally, \cite{henderson_matters_2018} make the point that more emphasis should 
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
 
 A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.
-They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis. 
+They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis.
 The popularity of more challenging benchmarks has lead to longer training times.
 This has made it less feasible to measure performance over many training runs,
 which in turn has led to a shift to only evaluating a small number of runs per task.
 Like \cite{henderson_matters_2018}, they advocate for the use  of performance metrics that take uncertainty in results into account.
 They propose the following set of metrics that better reflect performance across a handful of runs:
+
+\todo{Rework this -- they are a bit more nuanced than this}.
+%However, only increasing the number of runs to reduce statistical uncertainty is not feasible.
 
 \begin{itemize}
     \item Uncertainty in aggregate performance should be reported through interval estimates via stratified bootstrap confidence intervals.

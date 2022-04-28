@@ -66,4 +66,6 @@ class TerrainEnv(SearchEnv):
             #targets.append(Box(y, x, self.target_size, self.target_size))
             targets.append(position)
 
-        return image, targets
+        position = np.array([random.integers(0, d) for d in self.shape])
+
+        return image, position, targets

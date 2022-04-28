@@ -57,5 +57,7 @@ class GaussianEnv(SearchEnv):
             rr, cc = draw.rectangle((y, x), extent=(self.target_size, self.target_size), shape=(h, w))
             image[rr, cc] = (255, 0, 0)
 
-        return image, targets
+        position = np.array([random.integers(0, d) for d in self.shape])
+
+        return image, position, targets
 

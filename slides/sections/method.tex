@@ -21,7 +21,7 @@
     
     \begin{itemize}
         \item Three environments with varying characteristics.
-        \item Search space discretized into \(16 \times 16\) camera positions.
+        \item Search space discretized into \(10 \times 10\) camera positions.
         \item Each camera position has a unique view \(V \subset S\).
         \item Three targets in all scenes.
         \item Target probability correlated with scene appearance.
@@ -44,7 +44,7 @@
         \item The agent receives observation \(o_t = \left\langle x_t, p_t \right\rangle\), where
         \begin{itemize}
             \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image of current view, and
-            \item \(p_t \in \{0, \dots, 15\} \times \{0, \dots, 15\}\) is the position of the camera.
+            \item \(p_t \in \{0, \dots, 9\} \times \{0, \dots, 9\}\) is the position of the camera.
         \end{itemize}
         \item Takes action \(a_t \in \{\texttt{TRIGGER}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
         \begin{itemize}
@@ -157,7 +157,7 @@
         \end{itemize}
         \item Spatial memory (inspired by \cite{parisotto_salakhutdinov_2017}):
         \begin{itemize}
-            \item Structured memory \(M_t \in \mathbb{R}^{C \times 16 \times 16}\) as hidden state \\
+            \item Structured memory \(M_t \in \mathbb{R}^{C \times 10 \times 10}\) as hidden state \\
             (one slot per camera position \(p_t\) / unique view \(V\) / image \(x_t\)).
             \item Read vector \(r_t = f(M_t)\), \(f\) is CNN.
             \item Write vector \(w_t = g(\left\lbrack h_t, r_t \right\rbrack)\), \(g\) is MLP.
@@ -191,7 +191,7 @@
             \item Sparse reward might not be sufficient.
             \item Stronger demands on memory (remember searched positions, scene understanding).
         \end{itemize}
-        \item Investigate impact by comparing agents on \(8 \times 8\), \(16 \times 16\), \(24 \times 24\), \(32 \times 32\) versions of gaussian environment.
+        \item Investigate impact by comparing agents on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
         \item Evaluate two additional reward signals that may speed up training:
         \begin{itemize}
             \item \(r'_t = r_t + e\), where \(e=0.1\) if \(a_t \neq \mathtt{TRIGGER}\) moves the view to an unexplored region and \(0\) otherwise.

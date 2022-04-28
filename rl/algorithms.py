@@ -32,6 +32,7 @@ def proximal_policy_optimization(
     vf_coef=0.5,
     max_grad_norm=0.5,
     target_kl=None,
+    anneal_lr=False
 ):
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
@@ -60,7 +61,18 @@ def proximal_policy_optimization(
     state = [s.to(device) for s in agent.initial(num_envs)]
     ckpt_counter = 0
 
-    for _b in range(num_batches):
+    for b in range(num_batches):
+
+        if callable(learning_rate):
+            lr = learning_rate(timestep)
+        elif anneal_lr:
+            frac = 1.0 - (b - 1.0) / num_batches
+            lr = frac * learning_rate
+        else:
+            lr = learning_rate
+
+        optimizer.param_groups[0]["lr"] = lr
+
 
         # for train
         initial_state = [s.clone() for s in state]
@@ -213,7 +225,7 @@ def proximal_policy_optimization(
         if ep_infos:
             avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
             avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
-            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}")
+            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}, lr {lr:.2f}")
 
         if callback is not None:
             callback(agent, timestep)
@@ -227,4 +239,4 @@ ALGORITHMS = {
 
 
 def learn(id, num_timesteps, envs, agent, device, writer, **kwargs):
-    return ALGORITHMS.get(id)(num_timesteps, envs, agent, device, writer, **kwargs)
+    return ALGORITHMS[id](num_timesteps, envs, agent, device, writer, **kwargs)

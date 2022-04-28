@@ -114,7 +114,7 @@ class LSTMAgent(Agent):
     # https://arxiv.org/abs/1611.03673
 
 
-    def __init__(self, envs, num_layers=1, dropout=0.0):
+    def __init__(self, envs, num_layers=1, dropout=0.0, use_image=True, use_position=True, use_lstm=True):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
@@ -173,14 +173,17 @@ class LSTMAgent(Agent):
 
 class MapAgent(Agent):
 
-    def __init__(self, envs):
+    def __init__(self, envs, use_position=True):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
         assert self.observation_space.get("position") is not None
 
-        self.image_cnn = NatureCNN(self.observation_space["image"])        
-        self.map_net = SimpleMap([s.n for s in self.observation_space["position"]], self.image_cnn.output_dim)
+        self.use_position = use_position
+        position_dims = [s.n for s in self.observation_space["position"]]
+
+        self.image_cnn = NatureCNN(self.observation_space["image"]) 
+        self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim if not self.use_position else self.image_cnn.output_dim + sum(position_dims))
 
         self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
         self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
@@ -191,6 +194,11 @@ class MapAgent(Agent):
     def forward(self, obs, state, done, **kwargs):
         hidden = self.image_cnn(preprocess_image(obs["image"]))
         index = obs["position"].long()
+
+        if self.use_position:
+            position = th.cat([F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n), F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)], dim=1)
+            hidden = th.cat([hidden, position], dim=1)
+
     
         state = state[0]
         batch_size = state.shape[0]
@@ -221,9 +229,4 @@ AGENTS = {
 
 
 def make(id, envs, **kwargs):
-    cls = AGENTS.get(id)
-    
-    if cls is None:
-        return None
-    
-    return cls(envs, **kwargs)
+    return AGENTS[id](envs, **kwargs)

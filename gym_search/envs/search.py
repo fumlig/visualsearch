@@ -64,8 +64,7 @@ class SearchEnv(gym.Env):
             self.test_seed += 1
             self.test_seed %= self.test_samples
 
-        self.scene, self.targets = self.generate(seed)
-        self.position = np.array([self.np_random.integers(0, d) for d in self.shape])
+        self.scene, self.position, self.targets = self.generate(seed)
         self.initial = self.position
         self.hits = [False for _ in range(len(self.targets))]
         self.path = [tuple(self.position)]
@@ -105,7 +104,7 @@ class SearchEnv(gym.Env):
         self.visited.add(tuple(self.position))
 
         obs = self.observation()
-        rew = -0.01 if not hits else hits
+        rew = hits - 0.01
 
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {
@@ -119,10 +118,10 @@ class SearchEnv(gym.Env):
         }
 
         if self.reward_explore and not revisit and not hits:
-            rew -= 0.01
+            rew += 0.005
 
         if self.reward_closer and closer and not hits:
-            rew += 0.01
+            rew += 0.005
 
         return obs, rew, done, info
 
@@ -260,7 +259,7 @@ class SearchEnv(gym.Env):
                 valid.append(action)
 
         if not valid:
-            return self.action_space.sample()
+            return random.choice(range(1, self.action_space.n))
     
         if deterministic:
             return valid[0]

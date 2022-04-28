@@ -153,11 +153,11 @@ class SimpleMap(nn.Module):
 
     class MapCNN(nn.Module):
 
-        def __init__(self, observation_shape, output_dim=64):
+        def __init__(self, observation_shape, output_dim=256):
             super().__init__()
             
             in_channels = observation_shape[2]
-            hidden_channels = 8
+            hidden_channels = 32
 
             self.convs = nn.Sequential(
                 init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
@@ -172,9 +172,7 @@ class SimpleMap(nn.Module):
             hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
 
             self.linear = nn.Sequential(
-                init_weights(nn.Linear(hidden_dim, 256)),
-                nn.ReLU(),
-                init_weights(nn.Linear(256, output_dim)),
+                init_weights(nn.Linear(hidden_dim, output_dim)),
                 nn.ReLU()
             )
 
@@ -199,8 +197,8 @@ class SimpleMap(nn.Module):
 
     def write(self, x, r, state, index):
         b = x.shape[0]
-        w = state[th.arange(b),:,index[:,0],index[:,1]]
-        w = self.write_net(th.cat([x, r, w], dim=1))
+        m = state[th.arange(b),:,index[:,0],index[:,1]]
+        w = self.write_net(th.cat([x, r, m], dim=1))
         return w
 
     def forward(self, x, state, index):
@@ -220,11 +218,11 @@ class NeuralMap(nn.Module):
 
     class MapCNN(nn.Module):
 
-        def __init__(self, observation_shape, output_dim=32):
+        def __init__(self, observation_shape, output_dim=256):
             super().__init__()
             
             in_channels = observation_shape[2]
-            hidden_channels = 8
+            hidden_channels = 32
 
             self.convs = nn.Sequential(
                 init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
@@ -239,10 +237,8 @@ class NeuralMap(nn.Module):
             hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
 
             self.linear = nn.Sequential(
-                init_weights(nn.Linear(hidden_dim, 256)),
+                init_weights(nn.Linear(hidden_dim, output_dim)),
                 nn.ReLU(),
-                init_weights(nn.Linear(256, output_dim)),
-                nn.ReLU()
             )
 
             self.output_dim = output_dim
@@ -251,7 +247,7 @@ class NeuralMap(nn.Module):
             return self.linear(self.convs(obs))
 
 
-    def __init__(self, map_shape, input_dim, features_dim=32):
+    def __init__(self, map_shape, input_dim, features_dim=64):
         super().__init__()
         # all of the output the same number of features, I think...
         self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
@@ -278,8 +274,8 @@ class NeuralMap(nn.Module):
 
     def write(self, x, r, c, state, index):
         b = x.shape[0]
-        w = state[th.arange(b),:,index[:,0],index[:,1]]
-        w = self.write_net(th.cat([x, r, c, w], dim=1))
+        m = state[th.arange(b),:,index[:,0],index[:,1]]
+        w = self.write_net(th.cat([x, r, c, m], dim=1))
         return w
 
     def forward(self, x, state, index):

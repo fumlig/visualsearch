@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--episodes", type=int, default=1)#1000)
+    parser.add_argument("--episodes", type=int, default=1000)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
     parser.add_argument("--hidden", action="store_true")
@@ -80,6 +80,9 @@ if __name__ == "__main__":
         random.seed(args.seed)
         np.random.seed(args.seed)
         th.manual_seed(args.seed)
+    
+    if args.deterministic: 
+        th.use_deterministic_algorithms(True)
 
     if args.model:
         print(f"loading {args.model}")
@@ -150,6 +153,14 @@ if __name__ == "__main__":
                     "info:", info,
                     "fps:", 1.0/(step_end - step_begin)
                 )
+
+        length = float(len(info["path"]))
+        success = float(info["success"])
+        shortest = float(travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]))
+
+        writer.add_scalar("metric/length", length, ep)
+        writer.add_scalar("metric/shortest", shortest, ep)
+        writer.add_scalar("metric/spl", spl(success, shortest, length), ep)
 
         infos.append(info)
 

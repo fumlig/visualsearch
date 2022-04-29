@@ -158,6 +158,10 @@ if __name__ == "__main__":
         success = float(info["success"])
         shortest = float(travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]))
 
+        if args.verbose:
+            print("length:", length)
+            print("success:", success)
+
         writer.add_scalar("metric/length", length, ep)
         writer.add_scalar("metric/shortest", shortest, ep)
         writer.add_scalar("metric/spl", spl(success, shortest, length), ep)

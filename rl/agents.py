@@ -183,10 +183,14 @@ class MapAgent(Agent):
         position_dims = [s.n for s in self.observation_space["position"]]
 
         self.image_cnn = NatureCNN(self.observation_space["image"]) 
-        self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim if not self.use_position else self.image_cnn.output_dim + sum(position_dims))
+        #self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim if not self.use_position else self.image_cnn.output_dim + sum(position_dims))
+        self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim, features_dim=32)
 
-        self.policy = MLP(self.map_net.output_dim, self.action_space.n, out_gain=0.01)
-        self.value = MLP(self.map_net.output_dim, 1, out_gain=1.0)
+        if self.use_position:
+            self.pos_net = MLP(sum(position_dims), 64)
+
+        self.policy = MLP(self.map_net.output_dim + 64, self.action_space.n, out_gain=0.01)
+        self.value = MLP(self.map_net.output_dim + 64, 1, out_gain=1.0)
 
     def initial(self, num_envs):
         return [th.zeros((num_envs, *self.map_net.shape))]
@@ -195,11 +199,12 @@ class MapAgent(Agent):
         hidden = self.image_cnn(preprocess_image(obs["image"]))
         index = obs["position"].long()
 
+        """
         if self.use_position:
             position = th.cat([F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n), F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)], dim=1)
             hidden = th.cat([hidden, position], dim=1)
+        """
 
-    
         state = state[0]
         batch_size = state.shape[0]
         hidden = hidden.reshape((-1, batch_size, self.map_net.input_dim))
@@ -213,7 +218,11 @@ class MapAgent(Agent):
             new_hidden.append(h)
 
         state = [state]
-        hidden = th.cat(new_hidden, dim=0)      
+        hidden = th.cat(new_hidden, dim=0)
+
+        if self.use_position:
+            position = self.pos_net(th.cat([F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n), F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)], dim=1).float())
+            hidden = th.cat([hidden, position], dim=1)
 
         logits = self.policy(hidden)
         pi = Categorical(logits=logits)

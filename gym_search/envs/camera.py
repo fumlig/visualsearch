@@ -16,9 +16,9 @@ class CameraEnv(SearchEnv):
         self,
         shape=(10, 10),
         view=(64, 64),
-        terrain_size=1024,
+        terrain_size=2048,
         terrain_height=16,
-        num_targets=10,
+        num_targets=3,
         num_distractors=100,
     ):
         super().__init__(shape, view, True)

@@ -311,7 +311,7 @@ We run all experiments across 3 different runs, and use the aggregate metrics pr
 All agents are trained with PPO~\cite{schulman_ppo_2017}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
 Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
-We find that using more parallel environments stabilizes the training.
+More parallel environments seem to both speed up and stabilize training.
 %Furthermore, we reduce the number of steps per rollout to be much smaller than the episode length.
 %This is recommended by \cite{schulman_ppo_2017}. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
@@ -320,29 +320,15 @@ The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 \begin{table}
     \centering
     \caption{Hyperparameters used during training.}
-    \begin{tabular}{lcc}
-        \toprule
-        \textbf{Parameter} & \textbf{Value} \\
-        \midrule
-        \(\gamma\) & .999 \\
-        \(\lambda\) & .95 \\
-        \(\text{time steps per rollout}\) & 256 \\
-        \(\text{epochs per rollout}\) & 3 \\
-        \(\text{mini-batches per epoch}\) & 8 \\
-        \(\text{entropy bonus}\) & 0.01 \\
-        \(\text{clip range}\) & .2 \\
-        \(\text{reward normalization}\) & yes \\
-        \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
-        \(\text{parallel environments}\) & 64 \\
-        \(\text{total time steps}\) & \(25 \times 10^6\) \\
-        \bottomrule
-    \end{tabular}
+    \input{tables/hparams}
     \label{tab:hyperparameters}
 \end{table}
 
 We normalize the reward to limit the scale of the error derivatives.
 Early experiments show that this stabilizes training.
 Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
+Finally, we decay the learning rate linearly so that it is zero at the final time step.
+We find that this helps the agent with bettering its policy towards the end of training.
 %They use reward clipping instead which diminishes the meaning of reward magnitude.
 
 \section{Implementation}

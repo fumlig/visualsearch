@@ -3,12 +3,12 @@ gae_lambda: 0.95
 num_steps: 64
 num_epochs: 3
 num_minibatches: 8
-ent_coef: 0.01 # try 0.001
+ent_coef: 0.01
 clip_range: 0.2
-learning_rate: 5.0e-4 # 2.5e-4?
+learning_rate: 5.0e-4
 norm_adv: true
 clip_vloss: true
 vf_coef: 0.5
 max_grad_norm: 0.5
 target_kl: null
-anneal_lr: true # false
+anneal_lr: true

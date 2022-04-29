@@ -149,6 +149,7 @@ if __name__ == "__main__":
 
             if this_ckpt > last_ckpt:
                 print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
+                os.makedirs(os.path.dirname(f"models/{args.name}-ckpt-{timestep}.pt"), exist_ok=True)
                 th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
 
         if ep_infos:
@@ -161,6 +162,7 @@ if __name__ == "__main__":
     pbar.update(args.num_timesteps)
 
     print(f"saving model models/{args.name}.pt")
+    os.makedirs(os.path.dirname(f"models/{args.name}.pt"), exist_ok=True)
     th.save(agent, f"models/{args.name}.pt")
 
     envs.close()

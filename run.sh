@@ -19,8 +19,6 @@ for seed in $(seq 1 $num_seeds)
 do
     name="$id/$seed"
 
-    mkdir -p $(dirname $name)
-
     echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
 
     python3 train.py "$env_id" "$alg_id" "$agent_id" \

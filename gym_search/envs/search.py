@@ -30,6 +30,7 @@ class SearchEnv(gym.Env):
         test_steps=1000,
         train_samples=None,
         test_samples=1000,
+        punish_time=True,
         reward_explore=False,
         reward_closer=False
     ):
@@ -43,6 +44,7 @@ class SearchEnv(gym.Env):
         self.test_samples = test_samples
         self.test_seed = 0
 
+        self.punish_time = punish_time
         self.reward_explore = reward_explore
         self.reward_closer = reward_closer
 
@@ -104,7 +106,7 @@ class SearchEnv(gym.Env):
         self.visited.add(tuple(self.position))
 
         obs = self.observation()
-        rew = hits - 0.01
+        rew = hits
 
         done = all(self.hits) or self.num_steps >= self.max_steps
         info = {
@@ -117,10 +119,13 @@ class SearchEnv(gym.Env):
             "counter": self.counters
         }
 
-        if self.reward_explore and not revisit and not hits:
+        if self.punish_time:
+            rew -= 0.01
+
+        if self.reward_explore and not revisit:
             rew += 0.005
 
-        if self.reward_closer and closer and not hits:
+        if self.reward_closer and closer:
             rew += 0.005
 
         return obs, rew, done, info

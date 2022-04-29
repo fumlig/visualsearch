@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 from torch.distributions import Categorical
 
-from rl.models import MLP, NatureCNN, ImpalaCNN, NeuralMap, SimpleMap
+from rl.models import MLP, NatureCNN, ImpalaCNN, NeuralMap, Map
 from rl.utils import preprocess_image, init_lstm
 
 
@@ -121,7 +121,7 @@ class LSTMAgent(Agent):
         assert self.observation_space.get("position") is not None
 
         self.cnn = NatureCNN(self.observation_space["image"])
-        
+
         hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n + self.observation_space["position"][1].n
         #hidden_dim = self.cnn.output_dim + self.observation_space["position"][0].n*self.observation_space["position"][1].n
 
@@ -183,8 +183,7 @@ class MapAgent(Agent):
         position_dims = [s.n for s in self.observation_space["position"]]
 
         self.image_cnn = NatureCNN(self.observation_space["image"]) 
-        #self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim if not self.use_position else self.image_cnn.output_dim + sum(position_dims))
-        self.map_net = SimpleMap(position_dims, self.image_cnn.output_dim, features_dim=32)
+        self.map_net = Map(position_dims, self.image_cnn.output_dim, features_dim=32)
 
         if self.use_position:
             self.pos_net = MLP(sum(position_dims), 64)
@@ -198,12 +197,6 @@ class MapAgent(Agent):
     def forward(self, obs, state, done, **kwargs):
         hidden = self.image_cnn(preprocess_image(obs["image"]))
         index = obs["position"].long()
-
-        """
-        if self.use_position:
-            position = th.cat([F.one_hot(obs["position"][:,0].long(), num_classes=self.observation_space["position"][0].n), F.one_hot(obs["position"][:,1].long(), num_classes=self.observation_space["position"][1].n)], dim=1)
-            hidden = th.cat([hidden, position], dim=1)
-        """
 
         state = state[0]
         batch_size = state.shape[0]

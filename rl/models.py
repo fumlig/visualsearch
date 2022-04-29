@@ -149,7 +149,7 @@ class ImpalaCNN(nn.Module):
         return x
 
 
-class SimpleMap(nn.Module):
+class Map(nn.Module):
 
     class MapCNN(nn.Module):
 

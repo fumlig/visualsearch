@@ -63,6 +63,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    """
+    env_kwargs = {}
+
+    print(args.env_kwargs)
+
+    for kwargs in args.env_kwargs:
+        env_kwargs.update(kwargs)
+
+    print(env_kwargs)
+
+    exit(0)
+    """
+
     if args.name is None:
         args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{args.seed}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
 
@@ -107,7 +120,7 @@ if __name__ == "__main__":
 
     pbar = tqdm(total=args.num_timesteps)
     ep_infos = deque(maxlen=args.num_envs)
-    lr = args.learning_rate
+    lr = 0.0
 
     for timestep, info in rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, seed=args.seed, **args.alg_kwargs):
 

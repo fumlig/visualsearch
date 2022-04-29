@@ -9,13 +9,17 @@ alg_params="$5"
 agent_id="$6"
 agent_params="$7"
 
-num_envs=256
-num_timesteps=25000000
-ckpt_interval=1000000
+num_seeds="${NUM_SEEDS:-3}"
+num_envs="${NUM_ENVS:-256}"
+num_timesteps="${NUM_TIMESTEPS:-25000000}"
+ckpt_interval="${CKPT_INTERVAL:-1000000}"
 
-for seed in 1 2 3
+
+for seed in $(seq 1 $num_seeds)
 do
-    name="$id-$seed"
+    name="$id/$seed"
+
+    mkdir -p $(dirname $name)
 
     echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
 

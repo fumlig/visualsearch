@@ -172,9 +172,5 @@ if __name__ == "__main__":
     shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
     taken = np.array([len(info["path"]) for info in infos], dtype=float)
 
-    writer.add_histogram("metric/shortest", shortest)
-    writer.add_histogram("metric/taken", taken)
-    writer.add_histogram("metric/spl", spl(success, shortest, taken))
-
     print("mean length:", np.mean(taken))
     print("mean spl:", np.mean(spl(success, shortest, taken)))

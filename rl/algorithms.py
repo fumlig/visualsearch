@@ -16,8 +16,6 @@ def proximal_policy_optimization(
     envs,
     agent,
     device,
-    writer,
-    callback=None,
     seed=None,
     learning_rate=2.5e-4,
     num_steps=128,
@@ -46,8 +44,8 @@ def proximal_policy_optimization(
     timestep = 0
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
-    pbar = tqdm(total=num_timesteps)
-    ep_infos = deque(maxlen=num_envs)
+    #pbar = tqdm(total=num_timesteps)
+    #ep_infos = deque(maxlen=num_envs)
 
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
     acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
@@ -73,6 +71,9 @@ def proximal_policy_optimization(
 
         optimizer.param_groups[0]["lr"] = lr
 
+        yield timestep, {
+            "learning_rate": lr
+        }
 
         # for train
         initial_state = [s.clone() for s in state]
@@ -104,18 +105,8 @@ def proximal_policy_optimization(
             done = th.tensor(next_done, dtype=th.float).to(device)
 
             for i, info in enumerate(infos):
-                if "episode" in info:
-                    assert(done[i] == 1)
-
-                    ep_info = info["episode"]
-                    writer.add_scalar("episode/return", ep_info["r"], timestep)
-                    writer.add_scalar("episode/length",  ep_info["l"], timestep)
-                    
-                    ep_infos.append(ep_info)
-
-                    if "counters" in info:
-                        for key, count in info["counters"].items():
-                            writer.add_scalar(f"counter/{key}", count, timestep)
+                if done[i]:
+                    yield timestep, info
 
 
         # bootstrap value
@@ -216,21 +207,17 @@ def proximal_policy_optimization(
             if target_kl is not None and approx_kl > target_kl:
                 break
         
-        writer.add_scalar("losses/value_loss", val_loss.item(), timestep)
-        writer.add_scalar("losses/policy_loss", pg_loss.item(), timestep)
-        writer.add_scalar("losses/entropy_loss", ent_loss.item(), timestep)
+        yield timestep, {
+            "batch": b
+        }
 
-        pbar.update(timestep - pbar.n)
-
-        if ep_infos:
-            avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
-            avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
-            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}, lr {lr:.2e}")
-
-        if callback is not None:
-            callback(agent, timestep)
-
-    pbar.update(num_timesteps)
+        yield timestep, {
+            "loss": {
+                "value_loss": val_loss.item(),
+                "policy_loss": pg_loss.item(),
+                "entropy_loss": ent_loss.item(),
+            }
+        }
 
 
 ALGORITHMS = {
@@ -238,5 +225,5 @@ ALGORITHMS = {
 }
 
 
-def learn(id, num_timesteps, envs, agent, device, writer, **kwargs):
-    return ALGORITHMS[id](num_timesteps, envs, agent, device, writer, **kwargs)
+def learn(id, num_timesteps, envs, agent, device, **kwargs):
+    return ALGORITHMS[id](num_timesteps, envs, agent, device, **kwargs)

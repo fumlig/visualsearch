@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
+from collections import deque
 import random
 import yaml
 import os
 import datetime as dt
-import signal
 import numpy as np
 import torch as th
+import pandas as pd
 import gym
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
-from skopt import gp_minimize
+from tqdm import tqdm
 
 import gym_search
 import rl
@@ -41,11 +42,6 @@ def env_default(key, default=None):
     return dict(default=value, nargs='?')
 
 
-def sigint_handler(signum, frame, close, **kwargs):
-    close(**kwargs)
-    exit(0)
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str, **env_default("ENV_ID"))
@@ -58,13 +54,12 @@ if __name__ == "__main__":
     parser.add_argument("--alg-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent-kwargs", type=parse_hparams, default={})
 
-    parser.add_argument("--cpu", action="store_true")
+    parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--model", type=str)
     parser.add_argument("--ckpt-interval", type=int, default=0)
     parser.add_argument("--deterministic", action="store_true")
-    #parser.add_argument("--tune", type=parse_hparams)
 
     args = parser.parse_args()
 
@@ -81,13 +76,6 @@ if __name__ == "__main__":
         #th.backends.cudnn.benchmark = False
         #th.backends.cudnn.deterministic = True
 
-    #if args.tune:
-    #    gp_minimize(...)
-
-    device = th.device("cuda" if th.cuda.is_available() and not args.cpu else "cpu")
-    writer = SummaryWriter(f"logs/train/{args.name}")
-
-    # environment
     wrappers = [
         #gym_search.wrappers.LastAction,
         #gym_search.wrappers.LastReward,
@@ -97,10 +85,12 @@ if __name__ == "__main__":
     envs = gym.wrappers.RecordEpisodeStatistics(envs)
     envs = gym.wrappers.NormalizeReward(envs)
 
-    # agent
+    device = th.device(args.device)
     agent = th.load(args.model) if args.model else rl.agents.make(args.agent, envs, **args.agent_kwargs)
 
-    # train
+    df = pd.DataFrame()
+
+    writer = SummaryWriter(f"logs/train/{args.name}")
     writer.add_text(
         "agent/hyperparameters",
         "|parameter|value|\n" +
@@ -113,32 +103,52 @@ if __name__ == "__main__":
         f"|seed|{args.seed}|\n"
     )
 
-    def close():
-        envs.close()
-        writer.close()
-        print(f"saving model models/{args.name}.pt")
-        th.save(agent, f"models/{args.name}.pt")
-
     last_timestep = 0
 
-    def callback(agent, timestep):
-        global last_timestep
+    pbar = tqdm(total=args.num_timesteps)
+    ep_infos = deque(maxlen=args.num_envs)
+    lr = args.learning_rate
 
-        if not args.ckpt_interval:
-            return
+    for timestep, info in rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, seed=args.seed, **args.alg_kwargs):
 
-        this_ckpt = timestep // args.ckpt_interval
-        last_ckpt = last_timestep // args.ckpt_interval
-        
-        if this_ckpt > last_ckpt:
-            print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
-            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+        if "batch" in info:
+            pbar.update(timestep - pbar.n)
+
+        if "episode" in info:
+            writer.add_scalar("episode/return", info["episode"]["r"], timestep)
+            writer.add_scalar("episode/length", info["episode"]["l"], timestep)
+            ep_infos.append(info["episode"])
+
+        if "loss" in info:
+            for key, value in info["loss"].items():
+                writer.add_scalar(f"loss/{key}", value, timestep)
+
+        if "learning_rate" in info:
+            lr = info["learning_rate"]
+
+        if "counter" in info:
+            for key, value in info["counter"].items():
+                writer.add_scalar(f"counter/{key}", value, timestep)
+
+        if args.ckpt_interval:
+            this_ckpt = timestep // args.ckpt_interval
+            last_ckpt = last_timestep // args.ckpt_interval
+
+            if this_ckpt > last_ckpt:
+                print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
+                th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+
+        if ep_infos:
+            avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
+            avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
+            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}, lr {lr:.2e}")
 
         last_timestep = timestep
 
-    signal.signal(signal.SIGINT, lambda signum, frame: sigint_handler(signum, frame, close=close))
+    pbar.update(args.num_timesteps)
 
-    rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, writer, seed=args.seed, callback=callback, **args.alg_kwargs)
+    print(f"saving model models/{args.name}.pt")
+    th.save(agent, f"models/{args.name}.pt")
 
-    close()
-
+    envs.close()
+    writer.close()

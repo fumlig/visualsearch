@@ -1,20 +1,14 @@
 # Master's Thesis
 
-## todo
+## abstract
 
-Decision Transformer:
+## experiments
 
-- https://github.com/kzl/decision-transformer/blob/master/gym/experiment.py
+Run all experiments:
 
-GTrXL:
+```bash
+pip install -e .
+tensorboard --logdir=logs --samples_per_plugin=scalars=10000 &
 
-- https://arxiv.org/pdf/1910.06764.pdf
-- https://github.com/alantess/gtrxl-torch
-
-PyTorch example:
-https://github.com/pytorch/examples/blob/main/word_language_model/model.py
-
-## idea
-
-For realistic environment, have one target in water, one on land and one in air.
-See if agent learns this?
+./run.sh
+```

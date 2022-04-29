@@ -27,7 +27,7 @@ class SearchEnv(gym.Env):
         view,
         wrap=False,
         train_steps=1000,
-        test_steps=10000,
+        test_steps=1000,
         train_samples=None,
         test_samples=1000,
         reward_explore=False,
@@ -114,7 +114,7 @@ class SearchEnv(gym.Env):
             "hits": self.hits,
             "path": self.path,
             "success": all(self.hits),
-            "counters": self.counters
+            "counter": self.counters
         }
 
         if self.reward_explore and not revisit and not hits:

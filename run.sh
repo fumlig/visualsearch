@@ -38,13 +38,3 @@ do
         --model="models/$name.pt" \
         --env-kwargs="$env_params"
 done
-
-# ./run.sh gaussian-ppo-lstm-small-r1 Gaussian-v0 "{shape: [10,10]}" ppo params/our.yaml lstm "{}"
-# ./run.sh gaussian-ppo-lstm-small-r2 Gaussian-v0 "{shape: [10,10], reward_explore: true}" ppo params/our.yaml lstm "{}"
-# ./run.sh gaussian-ppo-lstm-small-r3 Gaussian-v0 "{shape: [10,10], reward_closer: true}" ppo params/our.yaml lstm "{}"
-
-# ./run.sh gaussian-ppo-map-small-r1 Gaussian-v0 "{shape: [10,10]}" ppo params/our.yaml map "{}"
-# ./run.sh gaussian-ppo-map-small-r2 Gaussian-v0 "{shape: [10,10], reward_explore: true}" ppo params/our.yaml map "{}"
-# ./run.sh gaussian-ppo-map-small-r3 Gaussian-v0 "{shape: [10,10], reward_closer: true}" ppo params/our.yaml map "{}"
-
-# ./run.sh gaussian-ppo-map-m-r1 Gaussian-v0 "{shape: [15,15]}" ppo params/our.yaml map "{}"

@@ -10,8 +10,6 @@ from gym_search.envs.search import SearchEnv, Action
 
 class CameraEnv(SearchEnv):
 
-    metadata = {"render.modes": ["rgb_array"]}
-
     def __init__(
         self,
         shape=(10, 10),

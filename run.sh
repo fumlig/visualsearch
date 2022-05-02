@@ -9,7 +9,7 @@ alg_params="$5"
 agent_id="$6"
 agent_params="$7"
 
-num_seeds="${NUM_SEEDS:-3}"
+num_seeds="${NUM_SEEDS:-5}"
 num_envs="${NUM_ENVS:-256}"
 num_timesteps="${NUM_TIMESTEPS:-25000000}"
 ckpt_interval="${CKPT_INTERVAL:-1000000}"

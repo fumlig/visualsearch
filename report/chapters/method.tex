@@ -158,8 +158,8 @@ The first reward signal is defined as
 \begin{equation*}
     \mathcal{R}(s_t, a_t) =
     \begin{cases}
-        100h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -1   & \text{otherwise.}
+        h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
+        -0.01   & \text{otherwise.}
     \end{cases}
 \end{equation*}
 
@@ -236,7 +236,6 @@ It is also easy to determine whether the agent acts well in this environment.
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
-    %\vspace*{-1cm}
     \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose heights are indicated by the intensity of the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels. The white border indicates the current view.}
 \end{figure}
 
@@ -254,7 +253,6 @@ It is desirable that a searching agent should learn to not search oceans and lak
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
-    %\vspace*{-1cm}
     \caption[Terrain environment]{Four samples of the terrain environment. Terrain seen from above with red targets scattered along island edges.}
 \end{figure}
 
@@ -272,7 +270,6 @@ The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, whil
     \centering
     \input{figures/camera.pgf}
     \label{fig:camera}
-    %\vspace*{-1cm}
     \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. The pan and tilt of the camera can be adjusted to move the view around. In the left image, a target can be seen.}
 \end{figure}
 

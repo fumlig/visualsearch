@@ -671,7 +671,7 @@ Furthermore, many methods have intrinsic variance which can make published resul
 This has meant that reproducing state-of-the-art deep RL results is difficult.
 
 Henderson et al.~\cite{henderson_matters_2018} discuss this problem from multiple perspectives.
-Through experimental analysis, they show that:
+Through experimental analysis, come to a set of conclusions.
 
 \begin{itemize}
     \item In policy gradient methods, hyperparameters and the choice of network architecture for policy and value function approximation can affect performance significantly.
@@ -693,6 +693,9 @@ Confidence bounds with sample bootstrapping is used to show that PPO is among th
 Finally, \cite{henderson_matters_2018} make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
 
+Colas et al.\cite{colas_hitchhiker_2019} note that bootstrapping tests should not be used for small sample sizes below \(N = 50\).
+The statistical power of 
+
 A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.
 They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis.
 Like \cite{henderson_matters_2018}, they advocate for the use  of performance metrics that take uncertainty in results into account.
@@ -700,15 +703,6 @@ The popularity of more challenging benchmarks has lead to longer training times.
 This has made it less feasible to measure performance over many training runs,
 which in turn has led to a shift to only evaluating a small number of runs per task.
 The authors propose the following set of metrics that better reflect performance across a handful of runs:
-
-\todo{Rework this -- they are a bit more nuanced than this}.
-%However, only increasing the number of runs to reduce statistical uncertainty is not feasible.
-
-\begin{itemize}
-    \item Uncertainty in aggregate performance should be reported through interval estimates via stratified bootstrap confidence intervals.
-    \item Variability in performance across tasks should be reported through performance profiles (score distributions).
-    \item Aggregate metrics for summarizing performance across tasks should be reported through interquartile mean (IQM) across all runs.
-\end{itemize}
 
 Anderson et al.~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents, and make a set of recommendations.
 A navigation agent should be equipped with a special action that indicates that it has concluded the episode.

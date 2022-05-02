@@ -29,4 +29,40 @@
 %This coupled with a sparse reward signal led to many cases where the agent converged towards a poor local optimum (or perhaps never converged at all).
 
 
-\todo{Results collected for baselines, add here.}
+This chapter presents the results for each of the experiments described in Section ~\ref{sec:experiments}.
+
+\section{Scalability to Search Space Sizes}
+
+Figure 
+
+% 3 plots, one for each shape
+% 2 algorithms per plot
+% 5 seeds per plot with mean and standard deviation
+% Check if test performance maxes out before
+
+\begin{figure}
+    \centering
+    \label{fig:train-shape}
+    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 3 seeds.}
+\end{figure}
+
+\begin{table}
+    \caption[Search space performance metrics.]{Number of completed searches, average length of completed searches and SPL score.}
+    \centering
+    \label{tab:test-shape}
+\end{table}
+
+\section{Generalization with Limited Number of Samples}
+
+\begin{figure}
+    \centering
+    \label{fig:samples}
+    \caption[Generalization results.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 3 seeds.}
+\end{figure}
+
+
+\section{Applicability to Realistic Search Tasks}
+
+
+
+\section{Comparison to Human Search Performance}

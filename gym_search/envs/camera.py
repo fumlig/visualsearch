@@ -12,14 +12,15 @@ class CameraEnv(SearchEnv):
 
     def __init__(
         self,
-        shape=(10, 10),
+        shape=(10, 20),
         view=(64, 64),
         terrain_size=2048,
         terrain_height=16,
         num_targets=3,
         num_distractors=100,
+        **kwargs,
     ):
-        super().__init__(shape, view, True)
+        super().__init__(shape, view, True, **kwargs)
 
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
@@ -53,8 +54,23 @@ class CameraEnv(SearchEnv):
         mesh = viz.Mesh.from_faces(vertices, faces, colors)
         scene.add(mesh)
 
+        # camera
+        x = self.terrain_size//2
+        z = self.terrain_size//2
+        y = self.terrain_height*4 # self.height(x, z)
+
+        fov = 180/min(self.shape)
+
+        scene.camera_position = (x, y, z)
+        scene.up_vector = (0, 1, 0)
+        scene.camera_target = (0, 0, -1)
+        scene.camera_matrix = pr.Matrix44.perspective_projection(fov, 1., 0.1, self.terrain_size)
+
+        # position
+        player = np.array([random.integers(0, d) for d in self.shape])
+
         # targets
-        targets = []
+        positions = []
         tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
         target_prob = tree_line.astype(float)/tree_line.sum()
 
@@ -62,44 +78,29 @@ class CameraEnv(SearchEnv):
 
         for z, x in sample_coords((self.terrain_size+1, self.terrain_size+1), self.num_targets, target_prob, random=random):
             y = self.height(x, z)+side
-            targets.append((x, y, z))
+            positions.append((x, y, z))
         
-        meshes = viz.Mesh.from_boxes(targets, [[side/2]*3]*len(targets), [[255, 0, 0]]*len(targets))
+        meshes = viz.Mesh.from_boxes(positions, [[side/2]*3]*len(positions), [[255, 0, 0]]*len(positions))
         scene.add(meshes)
-
-        # camera
-        x = self.terrain_size//2
-        z = self.terrain_size//2
-        y = self.terrain_height*4 # self.height(x, z)
-
-        scene.camera_position = (x, y, z)
-        scene.up_vector = (0, 1, 0)
-        scene.camera_target = (0, 0, -1)
-        scene.camera_matrix = pr.Matrix44.perspective_projection(360/self.shape[0], 1., 0.1, 1000.)
 
         # visibility
         # todo: target might be occluded
-        positions = []
+        targets = []
         
-        for target in targets:
+        for position in positions:
             visible = False
 
-            for position in [(y, x) for y in range(self.shape[0]) for x in range(self.shape[1])]:
-                self.look(position)
+            for target in [(y, x) for y in range(self.shape[0]) for x in range(self.shape[1])]:
+                self.look(target)
                 
-                if self.in_frustum(*target):
-                    positions.append(position)
+                if self.in_frustum(*position):
+                    targets.append(target)
                     visible = True
                     break        
+            
+            assert visible, f"target at {position} invisible, player {player}"
 
-            if not visible:
-                print(f"target {target} invisible")
-            assert visible
-
-        # position
-        position = np.array([random.integers(0, d) for d in self.shape])
-
-        return scene, position, positions
+        return scene, player, targets
 
 
     def render(self, mode="rgb_array"):
@@ -110,9 +111,8 @@ class CameraEnv(SearchEnv):
         return img
 
     def look(self, position):
-        position = np.array(position)
         eps = 0.1
-        pitch, yaw = position/self.shape
+        pitch, yaw = np.array(position)/self.shape
         yaw = 2*np.pi*yaw - np.pi/2
         pitch = np.clip(np.pi*(0.5-pitch), -np.pi/2+eps, np.pi/2-eps)
         direction = pr.Vector3((np.cos(yaw)*np.cos(pitch), np.sin(pitch), np.sin(yaw)*np.cos(pitch)))
@@ -149,10 +149,7 @@ class CameraEnv(SearchEnv):
         return self.terrain[round(x), round(z)]
 
     def in_frustum(self, x, y, z):
-        proj = self.scene.camera_matrix
-        view = self.scene.mv
-    
-        position = proj * view * pr.Vector4([x, y, z, 1.0])    
+        position = self.scene.mvp * pr.Vector4([x, y, z, 1.0])        
         p = np.array(position[:3]) / position[3]
 
         return np.all((p >= -1.0) & (p <= 1.0))

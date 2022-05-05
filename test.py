@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     agent = None
     device = th.device(args.device)
-    writer = SummaryWriter(f"logs/test/{args.name}")
+    writer = SummaryWriter(f"logs/{args.name}/test")
     df = pd.DataFrame()
     infos = []
 
@@ -94,8 +94,6 @@ if __name__ == "__main__":
 
     if not args.hidden:
         cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
-
-    env.test()
 
     for ep in tqdm(range(args.episodes)):
 
@@ -148,7 +146,7 @@ if __name__ == "__main__":
             if args.verbose:
                 print(
                     "action:", env.get_action_meanings()[act],
-                    "observation:", obs,
+                    #"observation:", obs,
                     "reward:", rew,
                     "info:", info,
                     "fps:", 1.0/(step_end - step_begin)

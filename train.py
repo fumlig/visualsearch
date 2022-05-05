@@ -63,19 +63,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    """
-    env_kwargs = {}
-
-    print(args.env_kwargs)
-
-    for kwargs in args.env_kwargs:
-        env_kwargs.update(kwargs)
-
-    print(env_kwargs)
-
-    exit(0)
-    """
-
     if args.name is None:
         args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{args.seed}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
 
@@ -103,7 +90,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame()
 
-    writer = SummaryWriter(f"logs/train/{args.name}")
+    writer = SummaryWriter(f"logs/{args.name}/train")
     writer.add_text(
         "agent/hyperparameters",
         "|parameter|value|\n" +
@@ -143,14 +130,10 @@ if __name__ == "__main__":
             for key, value in info["counter"].items():
                 writer.add_scalar(f"counter/{key}", value, timestep)
 
-        if args.ckpt_interval:
-            this_ckpt = timestep // args.ckpt_interval
-            last_ckpt = last_timestep // args.ckpt_interval
-
-            if this_ckpt > last_ckpt:
-                print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
-                os.makedirs(os.path.dirname(f"models/{args.name}-ckpt-{timestep}.pt"), exist_ok=True)
-                th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+        if args.ckpt_interval and timestep // args.ckpt_interval > last_timestep // args.ckpt_interval:
+            print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
+            os.makedirs(os.path.dirname(f"models/{args.name}-ckpt-{timestep}.pt"), exist_ok=True)
+            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
 
         if ep_infos:
             avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])

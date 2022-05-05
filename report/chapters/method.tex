@@ -36,7 +36,7 @@ Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the 
 The state includes a space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
 At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
-If \(T \cap V \neq \varnothing\) there are \(h = \left\lvert T \cap V \right\rvert\) targets in view.
+If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
 
 The actions in \(\mathcal{A}\) transform the view into a different subset of the scene.
 With a final trigger action, the agent can indicate that there is one or more target in the view.
@@ -152,22 +152,15 @@ such as search and rescue with a UAV, where the actions correspond to translatio
 and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
 \(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
-We experiment with three rewards signals.
-The first reward signal is defined as
+The reward signal is defined as 
 
 \begin{equation*}
-    \mathcal{R}(s_t, a_t) =
-    \begin{cases}
-        h & \text{if \(a_t = \mathtt{TRIGGER}\) and a target is in view,} \\
-        -0.01   & \text{otherwise.}
-    \end{cases}
+    \mathcal{R}(s_t, a_t) = h + d + v - p
 \end{equation*}
 
-% For bad policies, finding targets should be important, and the episode length not so much.
-% When the policy has managed to learn how to localize targets, the episode length should become more important.
-% How do we balance these two? Finding targets is implicitly important as it shortens the episode length.
+where \(h = \left\lvert T \cap V \right\rvert\) is the number of targets in view,
+\(d = 0.05\) if...
 
-with \(h = \left\lvert T \cap V \right\rvert\). 
 Optimizing for this reward will lead to desirable behavior as the agent is rewarded for finding all targets quickly.
 Early experiments show that a constant penalty \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible is too slow to train for moderately large scenes.
 The reward for finding a target speeds up training without deviating from the goal of the task -
@@ -276,6 +269,8 @@ The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, whil
 \section{Experiments}
 \label{sec:experiments}
 
+To evaluate our approach, we run four different experiments.
+
 \todo{Could remove baseline without recurrent step and instead do ablation studies.}
 
 To compare our approach to the different baselines,
@@ -287,7 +282,7 @@ They are then tested on 1000 held out samples from each environment.
 
 For each agent, environment, and reward signal we report the average return and episode length over time during training.
 During testing, we compare the learning agents to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
-We report the SPL metric for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
+We report the SPL metric~\cite{anderson_evaluation_2018} for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
 The distance between two points is computed as the minimal number of actions to transform the view between the two.
 Although finding the optimal path is not realistic in partially observable environments, SPL can still be useful when compared to that of a human.
 

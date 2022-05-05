@@ -26,10 +26,9 @@ class SearchEnv(gym.Env):
         shape,
         view,
         wrap=False,
-        train_steps=1000,
-        test_steps=1000,
-        train_samples=None,
-        test_samples=1000,
+        max_steps=1000,
+        num_samples=None,
+        first_sample=0,
         punish_time=True,
         reward_explore=False,
         reward_closer=False
@@ -38,17 +37,13 @@ class SearchEnv(gym.Env):
         self.view = view
         self.wrap = wrap
 
-        self.train_steps = train_steps
-        self.test_steps = test_steps
-        self.train_samples = train_samples if train_samples is not None else np.iinfo(np.int64).max - test_samples
-        self.test_samples = test_samples
-        self.test_seed = 0
+        self.max_steps = max_steps
+        self.num_samples = num_samples if num_samples else np.iinfo(np.int64).max
+        self.first_sample = first_sample
 
         self.punish_time = punish_time
         self.reward_explore = reward_explore
         self.reward_closer = reward_closer
-
-        self.training = True
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(Action))
@@ -57,14 +52,9 @@ class SearchEnv(gym.Env):
 
     def reset(self, seed=None):
         if seed is not None:
-            self.np_random, seed = gym.utils.seeding.np_random(seed)
+            self.np_random, _ = gym.utils.seeding.np_random(seed)
 
-        if self.training:
-            seed = self.np_random.integers(self.test_samples, self.test_samples + self.train_samples)
-        else:
-            seed = self.test_seed
-            self.test_seed += 1
-            self.test_seed %= self.test_samples
+        seed = self.np_random.integers(self.first_sample, self.num_samples)
 
         self.scene, self.position, self.targets = self.generate(seed)
         self.initial = self.position
@@ -191,22 +181,6 @@ class SearchEnv(gym.Env):
 
     def generate(self, seed):
         raise NotImplementedError
-
-
-    def train(self, mode=True):
-        self.training = mode
-    
-    def test(self):
-        self.train(False)
-
-
-    @property
-    def max_steps(self):
-        if self.training:
-            return self.train_steps
-        else:
-            return self.test_steps
-
 
     def scale(self, position):
         return np.array(position)*self.view

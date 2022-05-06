@@ -45,21 +45,23 @@ def env_default(key, default=None):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str, **env_default("ENV_ID"))
-    parser.add_argument("algorithm", type=str, choices=rl.algorithms.ALGORITHMS.keys())
     parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
+    parser.add_argument("algorithm", type=str, choices=rl.algorithms.ALGORITHMS.keys())
 
     parser.add_argument("--num-timesteps", type=int, default=TOT_TIMESTEPS)
     parser.add_argument("--num-envs", type=int, default=NUM_ENVS)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
-    parser.add_argument("--alg-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent-kwargs", type=parse_hparams, default={})
+    parser.add_argument("--alg-kwargs", type=parse_hparams, default={})
 
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--name", type=str)
     parser.add_argument("--seed", type=int, default=SEED)
-    parser.add_argument("--model", type=str)
-    parser.add_argument("--ckpt-interval", type=int, default=0)
     parser.add_argument("--deterministic", action="store_true")
+    parser.add_argument("--model", type=str)
+    parser.add_argument("--eval-interval", type=int, default=10000)
+    parser.add_argument("--ckpt-interval", type=int, default=100000)
+
 
     args = parser.parse_args()
 
@@ -103,11 +105,9 @@ if __name__ == "__main__":
         f"|seed|{args.seed}|\n"
     )
 
-    last_timestep = 0
-
     pbar = tqdm(total=args.num_timesteps)
-    ep_infos = deque(maxlen=args.num_envs)
-    lr = 0.0
+    ep_queue = deque(maxlen=100)
+    last_timestep = 0
 
     for timestep, info in rl.algorithms.learn(args.algorithm, args.num_timesteps, envs, agent, device, seed=args.seed, **args.alg_kwargs):
 
@@ -117,28 +117,39 @@ if __name__ == "__main__":
         if "episode" in info:
             writer.add_scalar("episode/return", info["episode"]["r"], timestep)
             writer.add_scalar("episode/length", info["episode"]["l"], timestep)
-            ep_infos.append(info["episode"])
+
+            ep_queue.append({
+                "return": info["episode"]["r"],
+                "length": info["episode"]["l"],
+                "success": info["success"],
+            })
 
         if "loss" in info:
             for key, value in info["loss"].items():
                 writer.add_scalar(f"loss/{key}", value, timestep)
 
-        if "learning_rate" in info:
-            lr = info["learning_rate"]
-
         if "counter" in info:
             for key, value in info["counter"].items():
                 writer.add_scalar(f"counter/{key}", value, timestep)
 
-        if args.ckpt_interval and timestep // args.ckpt_interval > last_timestep // args.ckpt_interval:
-            print(f"saving checkpoint models/{args.name}-ckpt-{timestep}.pt")
-            os.makedirs(os.path.dirname(f"models/{args.name}-ckpt-{timestep}.pt"), exist_ok=True)
-            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+        if args.eval_interval and timestep // args.eval_interval > last_timestep // args.eval_interval:
+            eval_step = (timestep // args.eval_interval) * args.eval_interval
 
-        if ep_infos:
-            avg_ret = np.mean([ep_info["r"] for ep_info in ep_infos])
-            avg_len = np.mean([ep_info["l"] for ep_info in ep_infos])
-            pbar.set_description(f"ret {avg_ret:.2f}, len {avg_len:.2f}, lr {lr:.2e}")
+            avg_return = np.mean([ep["return"] for ep in ep_queue])
+            avg_length = np.mean([ep["length"] for ep in ep_queue])
+            avg_success = np.mean([ep["success"] for ep in ep_queue])
+
+            writer.add_scalar("average/return", avg_return, eval_step)
+            writer.add_scalar("average/length", avg_length, eval_step)
+            writer.add_scalar("average/success", avg_success, eval_step)
+
+            pbar.set_description(f"ret {avg_return:.2f}, len {avg_length:.2f}")
+
+        if args.ckpt_interval and timestep // args.ckpt_interval > last_timestep // args.ckpt_interval:
+            ckpt_step = (timestep // args.ckpt_interval) * args.ckpt_interval
+
+            os.makedirs(os.path.dirname(f"models/{args.name}/ckpt/{timestep}.pt"), exist_ok=True)
+            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
 
         last_timestep = timestep
 

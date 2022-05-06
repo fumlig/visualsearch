@@ -29,9 +29,9 @@ class SearchEnv(gym.Env):
         max_steps=1000,
         num_samples=None,
         first_sample=0,
-        punish_time=True,
-        reward_explore=False,
-        reward_closer=False
+        time_penalty=0.01,
+        explore_reward=0.005,
+        closer_reward=0.005
     ):
         self.shape = shape
         self.view = view
@@ -41,9 +41,9 @@ class SearchEnv(gym.Env):
         self.num_samples = num_samples if num_samples else np.iinfo(np.int64).max
         self.first_sample = first_sample
 
-        self.punish_time = punish_time
-        self.reward_explore = reward_explore
-        self.reward_closer = reward_closer
+        self.time_penalty = time_penalty
+        self.explore_reward = explore_reward
+        self.closer_reward = closer_reward
 
         self.reward_range = (-np.inf, np.inf)
         self.action_space = gym.spaces.Discrete(len(Action))
@@ -68,12 +68,13 @@ class SearchEnv(gym.Env):
 
     def step(self, action):
 
-        last_position = self.position
+        last_position = tuple(self.position)
         step = self.get_action_step(action)
         self.position, invalid = self.get_next_position(step)
         revisit = tuple(self.position) in self.visited
-        nearest = self.targets[np.argmin([manhattan_dist(last_position, target) for target, hit in zip(self.targets, self.hits) if not hit])]
-        closer = manhattan_dist(self.position, nearest) < manhattan_dist(last_position, nearest)
+        distances = [(manhattan_dist(last_position, target), tuple(target)) for target, hit in zip(self.targets, self.hits) if not hit]
+        last_distance, nearest = min(distances)
+        closer = manhattan_dist(self.position, nearest) < last_distance
 
         hits = 0
 
@@ -98,7 +99,7 @@ class SearchEnv(gym.Env):
         obs = self.observation()
         rew = hits
 
-        done = all(self.hits) or self.num_steps >= self.max_steps
+        done = all(self.hits) or (self.max_steps and self.num_steps >= self.max_steps)
         info = {
             "position": self.position,
             "initial": self.initial,
@@ -109,14 +110,14 @@ class SearchEnv(gym.Env):
             "counter": self.counters
         }
 
-        if self.punish_time:
-            rew -= 0.01
+        if self.time_penalty:
+            rew -= self.time_penalty
 
-        if self.reward_explore and not revisit:
-            rew += 0.005
+        if self.explore_reward and not revisit:
+            rew += self.explore_reward
 
-        if self.reward_closer and closer:
-            rew += 0.005
+        if self.closer_reward and closer:
+            rew += self.closer_reward
 
         return obs, rew, done, info
 

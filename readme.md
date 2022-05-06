@@ -10,5 +10,5 @@ Run all experiments:
 pip install -e .
 tensorboard --logdir=logs --samples_per_plugin=scalars=10000 &
 
-./run.sh
+python3 train.py 
 ```

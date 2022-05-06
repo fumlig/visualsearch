@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+python3 train.py Gaussian-v0 map ppo --name=fknhell --num-timesteps=25000000 --alg-kwargs=params/our.yaml --num-envs=256
+
+: '
 id="$1"
 
 env_id="$2"
@@ -40,3 +43,5 @@ do
         --model="models/$name.pt" \
         --env-kwargs="$env_params"
 done
+'
+

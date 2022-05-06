@@ -1,0 +1,14 @@
+venv/
+logs/
+models/
+videos/
+data/
+old/
+
+report/
+slides/
+
+__pycache__/
+
+.ipynb_checkpoints
+.vscode

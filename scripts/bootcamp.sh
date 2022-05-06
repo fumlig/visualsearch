@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-docker --host=ssh://oslund@bootcamp run --gpus all -it --rm nvcr.io/nvidia/pytorch:22.04-py3 --
+TAG="$USER/thesis:latest"
+HOST="bootcamp"
+
+docker build --tag=$TAG .
+docker save $TAG | ssh -C ${USER}@${HOST} docker load
+docker --host=ssh://${USER}@${HOST} run --rm --gpus=all -it $TAG

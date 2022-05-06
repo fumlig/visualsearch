@@ -38,14 +38,16 @@ def parse_hparams(s):
     return yaml.safe_load(s)
 
 
+def test()
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
+    parser.add_argument("agent", type=str)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
-    parser.add_argument("--agent", type=str)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
-    parser.add_argument("--model", type=str)
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")

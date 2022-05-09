@@ -39,7 +39,8 @@ class CameraEnv(SearchEnv):
 
         # terrain
         exp = random.uniform(0.5, 5)
-        noise = fractal_noise_2d((self.terrain_size+1, self.terrain_size+1), periods=(4, 4), octaves=4, seed=seed)
+        noise = fractal_noise_2d((self.terrain_size, self.terrain_size), periods=(4, 4), octaves=4, seed=seed)
+        noise = np.pad(noise, ((0, 1), (0, 1)), mode="edge")
         terrain = normalize(noise)**exp
         image = pick_color(terrain, EARTH_TOON)
 

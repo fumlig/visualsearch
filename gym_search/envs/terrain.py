@@ -1,10 +1,11 @@
 import gym
 import numpy as np
+import functools
 from skimage import draw
 
 from gym_search.utils import fractal_noise_2d, normalize, sample_coords
 from gym_search.shapes import Box
-from gym_search.palette import add_with_alpha, pick_color, EARTH_TOON
+from gym_search.palette import BLUE_MARBLE, add_with_alpha, pick_color, EARTH_TOON
 from gym_search.envs.search import SearchEnv, Action
 
 
@@ -31,6 +32,7 @@ class TerrainEnv(SearchEnv):
         self.distractor_size = distractor_size
     
 
+    @functools.lru_cache(maxsize=1024)
     def generate(self, seed):
         # https://jackmckew.dev/3d-terrain-in-python.html
         # https://www.redblobgames.com/maps/terrain-from-noise/
@@ -39,7 +41,7 @@ class TerrainEnv(SearchEnv):
         
         random = np.random.default_rng(seed)
 
-        shape = self.scale(self.shape)
+        shape = tuple(self.scale(self.shape))
         height, width = shape
         exp = random.uniform(0.5, 5)
         noise = fractal_noise_2d(shape, periods=(4, 4), octaves=4, seed=seed)

@@ -9,6 +9,7 @@ import numpy as np
 import torch as th
 import pandas as pd
 import gym
+import csv
 
 from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
@@ -19,7 +20,7 @@ import rl
 
 
 SEED = 0
-TOT_TIMESTEPS = int(25e6)
+TOT_TIMESTEPS = 10000
 NUM_ENVS = 4
 
 
@@ -59,14 +60,12 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--model", type=str)
-    parser.add_argument("--eval-interval", type=int, default=10000)
-    parser.add_argument("--ckpt-interval", type=int, default=100000)
-
+    parser.add_argument("--num-checkpoints", type=int, default=10)
 
     args = parser.parse_args()
 
     if args.name is None:
-        args.name = f"{args.environment.lower()}-{args.algorithm}-{args.agent}-{args.seed}-{dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
+        args.name = dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
     if args.seed is not None:
         random.seed(args.seed)
@@ -105,6 +104,11 @@ if __name__ == "__main__":
         f"|seed|{args.seed}|\n"
     )
 
+    os.makedirs(f"results/{args.name}", exist_ok=True)
+    with open(f"results/{args.name}/train.csv", "w") as f:
+        results = csv.writer(f)
+        results.writerow(["step", "return", "length", "success"])
+
     pbar = tqdm(total=args.num_timesteps)
     ep_queue = deque(maxlen=100)
     last_timestep = 0
@@ -113,6 +117,21 @@ if __name__ == "__main__":
 
         if "batch" in info:
             pbar.update(timestep - pbar.n)
+
+            if ep_queue:
+                avg_return = np.mean([ep["return"] for ep in ep_queue])
+                avg_length = np.mean([ep["length"] for ep in ep_queue])
+                avg_success = np.mean([ep["success"] for ep in ep_queue])
+
+                writer.add_scalar("average/return", avg_return, timestep)
+                writer.add_scalar("average/length", avg_length, timestep)
+                writer.add_scalar("average/success", avg_success, timestep)
+
+                with open(f"results/{args.name}/train.csv", "a") as f:
+                    results = csv.writer(f)
+                    results.writerow([timestep, avg_return, avg_length, avg_success])
+
+                pbar.set_description(f"ret {avg_return:.2f}, len {avg_length:.2f}")
 
         if "episode" in info:
             writer.add_scalar("episode/return", info["episode"]["r"], timestep)
@@ -132,32 +151,23 @@ if __name__ == "__main__":
             for key, value in info["counter"].items():
                 writer.add_scalar(f"counter/{key}", value, timestep)
 
-        if args.eval_interval and timestep // args.eval_interval > last_timestep // args.eval_interval:
-            eval_step = (timestep // args.eval_interval) * args.eval_interval
+        if args.num_checkpoints:
+            ckpt_interval = args.num_timesteps // args.num_checkpoints
+            this_ckpt = timestep // ckpt_interval
+            last_ckpt =  last_timestep // ckpt_interval
+            ckpt_step = (timestep // ckpt_interval)*ckpt_interval
 
-            avg_return = np.mean([ep["return"] for ep in ep_queue])
-            avg_length = np.mean([ep["length"] for ep in ep_queue])
-            avg_success = np.mean([ep["success"] for ep in ep_queue])
-
-            writer.add_scalar("average/return", avg_return, eval_step)
-            writer.add_scalar("average/length", avg_length, eval_step)
-            writer.add_scalar("average/success", avg_success, eval_step)
-
-            pbar.set_description(f"ret {avg_return:.2f}, len {avg_length:.2f}")
-
-        if args.ckpt_interval and timestep // args.ckpt_interval > last_timestep // args.ckpt_interval:
-            ckpt_step = (timestep // args.ckpt_interval) * args.ckpt_interval
-
-            os.makedirs(os.path.dirname(f"models/{args.name}/ckpt/{timestep}.pt"), exist_ok=True)
-            th.save(agent, f"models/{args.name}-ckpt-{timestep}.pt")
+            os.makedirs(f"models/{args.name}/ckpt", exist_ok=True)
+            th.save(agent, f"models/{args.name}/ckpt/{ckpt_step}.pt")
 
         last_timestep = timestep
 
     pbar.update(args.num_timesteps)
 
     print(f"saving model models/{args.name}.pt")
-    os.makedirs(os.path.dirname(f"models/{args.name}.pt"), exist_ok=True)
+    os.makedirs(os.path.dirname(f"models/{args.name}/model.pt"), exist_ok=True)
     th.save(agent, f"models/{args.name}.pt")
 
     envs.close()
     writer.close()
+

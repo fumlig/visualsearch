@@ -1,7 +1,6 @@
 import numpy as np
 import itertools
-import opensimplex
-
+import functools
 
 
 def to_point(i, w):
@@ -92,11 +91,13 @@ def travel_dist(points, dist_func=manhattan_dist):
 
     return min_dist
 
+"""
+import opensimplex
 
 def simplex_noise_2d(x, y):
     return opensimplex.noise2array(x, y)
 
-
+@functools.lru_cache(maxsize=1024)
 def fractal_noise_2d(shape, periods=(1, 1), octaves=1, persistence=0.5, lacunarity=2, seed=None):
     if seed is not None:
         opensimplex.seed(int(seed))
@@ -114,3 +115,19 @@ def fractal_noise_2d(shape, periods=(1, 1), octaves=1, persistence=0.5, lacunari
     return noise
 
     # todo: can we do a sum reduce? if it seems necessary...
+"""
+
+import pyfastnoisesimd as fns
+
+def fractal_noise_2d(shape, periods=(1, 1), octaves=4, persistence=0.45, lacunarity=2.1, seed=None):
+    perlin = fns.Noise(seed, numWorkers=4)
+    perlin.frequency = 0.0025
+    perlin.noiseType = fns.NoiseType.SimplexFractal
+    perlin.fractal.octaves = octaves
+    perlin.fractal.lacunarity = lacunarity
+    perlin.fractal.gain = persistence
+    perlin.perturb.perturbType = fns.PerturbType.NoPerturb
+
+    noise = perlin.genAsGrid(shape)
+
+    return noise

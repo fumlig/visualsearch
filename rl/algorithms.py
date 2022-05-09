@@ -71,10 +71,6 @@ def proximal_policy_optimization(
 
         optimizer.param_groups[0]["lr"] = lr
 
-        yield timestep, {
-            "learning_rate": lr
-        }
-
         # for train
         initial_state = [s.clone() for s in state]
         

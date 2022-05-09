@@ -1,47 +1,153 @@
 #!/usr/bin/env bash
 
-python3 train.py Gaussian-v0 map ppo --name=fknhell --num-timesteps=25000000 --alg-kwargs=params/our.yaml --num-envs=256
 
-: '
-id="$1"
+function shape
+{
+    agent=$1
+    side=$2
+    seed=$3
 
-env_id="$2"
-env_params="$3"
-alg_id="$4"
-alg_params="$5"
-agent_id="$6"
-agent_params="$7"
+    python3 train.py Gaussian-v0 $agent ppo \
+        --name="shape/$agent/$side/$seed" \
+        --seed=$seed \
+        --num-timesteps=25000000 \
+        --num-envs=64 \
+        --num-checkpoints=250 \
+        --env-kwargs="{shape: [$side,$side]}" \
+        --alg-kwargs=params/procgen.yaml
+}
 
-num_seeds="${NUM_SEEDS:-5}"
-num_envs="${NUM_ENVS:-256}"
-num_timesteps="${NUM_TIMESTEPS:-25000000}"
-ckpt_interval="${CKPT_INTERVAL:-1000000}"
+function sample
+{
+    agent=$1
+    sample=$2
+    seed=$3
+
+    python3 train.py Terrain-v0 $agent ppo \
+        --name="sample/$agent/$sample/$seed" \
+        --seed=$seed \
+        --num-timesteps=25000000 \
+        --num-envs=64 \
+        --num-checkpoints=250 \
+        --env-kwargs="{num_samples: $sample}" \
+        --alg-kwargs=params/procgen.yaml
+}
 
 
-for seed in $(seq 1 $num_seeds)
-do
-    name="$id/$seed"
+function experiment1
+{
+    {
+        CUDA_VISIBLE_DEVICES=0 shape lstm 10 0 &
+        CUDA_VISIBLE_DEVICES=0 shape map 10 0 &
+        wait
 
-    echo "$(date +%T): train $(tput bold)$name$(tput sgr0)"
+        CUDA_VISIBLE_DEVICES=0 shape lstm 15 0 &
+        CUDA_VISIBLE_DEVICES=0 shape map 15 0 &
+        wait
+        
+        CUDA_VISIBLE_DEVICES=0 shape lstm 20 0 &
+        CUDA_VISIBLE_DEVICES=0 shape map 20 0 &
+        wait
+    } &
 
-    python3 train.py "$env_id" "$alg_id" "$agent_id" \
-        --name="$name" \
-        --seed="$seed" \
-        --num-timesteps="$num_timesteps" \
-        --num-envs="$num_envs" \
-        --ckpt-interval="$ckpt_interval" \
-        --env-kwargs="$env_params" \
-        --alg-kwargs="$alg_params" \
-        --agent-kwargs="$agent_params"
+    {
+        CUDA_VISIBLE_DEVICES=1 shape lstm 10 1 &
+        CUDA_VISIBLE_DEVICES=1 shape map 10 1 &
+        wait
+        
+        CUDA_VISIBLE_DEVICES=1 shape lstm 15 1 &
+        CUDA_VISIBLE_DEVICES=1 shape map 15 1 &
+        wait
 
-    echo "$(date +%T): test $(tput bold)$name$(tput sgr0)"
+        CUDA_VISIBLE_DEVICES=1 shape lstm 20 1 &
+        CUDA_VISIBLE_DEVICES=1 shape map 20 1 &
+        wait
+    } &
 
-    python3 test.py "$env_id" \
-        --name="$name" \
-        --seed=0 \
-        --hidden \
-        --model="models/$name.pt" \
-        --env-kwargs="$env_params"
-done
-'
+    {
+        CUDA_VISIBLE_DEVICES=2 shape lstm 10 2 &
+        CUDA_VISIBLE_DEVICES=2 shape map 10 2 &
+        wait
 
+        CUDA_VISIBLE_DEVICES=2 shape lstm 15 2 &
+        CUDA_VISIBLE_DEVICES=2 shape map 15 2 &
+        wait
+
+        CUDA_VISIBLE_DEVICES=2 shape lstm 20 2 &
+        CUDA_VISIBLE_DEVICES=2 shape map 20 2 &
+        wait
+    } &
+
+    {
+        CUDA_VISIBLE_DEVICES=3 shape lstm 10 3 &
+        CUDA_VISIBLE_DEVICES=3 shape map 10 3 &
+        wait
+        
+        CUDA_VISIBLE_DEVICES=3 shape lstm 15 3 &
+        CUDA_VISIBLE_DEVICES=3 shape map 15 3 &
+        wait
+        
+        CUDA_VISIBLE_DEVICES=3 shape lstm 20 3 &
+        CUDA_VISIBLE_DEVICES=3 shape map 20 3 &
+        wait
+    } &
+
+    wait
+}
+
+
+function experiment2
+{
+    {
+        CUDA_VISIBLE_DEVICES=0 sample map null 0 &
+        CUDA_VISIBLE_DEVICES=0 sample map null 1 &
+        CUDA_VISIBLE_DEVICES=0 sample map null 2 &
+        wait
+
+        CUDA_VISIBLE_DEVICES=0 sample lstm null 0 &
+        CUDA_VISIBLE_DEVICES=0 sample lstm null 1 &
+        CUDA_VISIBLE_DEVICES=0 sample lstm null 2 &
+        wait
+    } &
+
+    {
+        CUDA_VISIBLE_DEVICES=1 sample map 1000 0 &
+        CUDA_VISIBLE_DEVICES=1 sample map 1000 1 &
+        CUDA_VISIBLE_DEVICES=1 sample map 1000 2 &
+        wait
+
+        CUDA_VISIBLE_DEVICES=1 sample lstm 1000 0 &
+        CUDA_VISIBLE_DEVICES=1 sample lstm 1000 1 &
+        CUDA_VISIBLE_DEVICES=1 sample lstm 1000 2 &
+        wait
+    } &
+
+    {
+        CUDA_VISIBLE_DEVICES=2 sample map 10000 0 &
+        CUDA_VISIBLE_DEVICES=2 sample map 10000 1 &
+        CUDA_VISIBLE_DEVICES=2 sample map 10000 2 &
+        wait
+
+        CUDA_VISIBLE_DEVICES=2 sample lstm 10000 0 &
+        CUDA_VISIBLE_DEVICES=2 sample lstm 10000 1 &
+        CUDA_VISIBLE_DEVICES=2 sample lstm 10000 2 &
+        wait
+    } &
+
+    {
+        CUDA_VISIBLE_DEVICES=3 sample map 100000 0 &
+        CUDA_VISIBLE_DEVICES=3 sample map 100000 1 &
+        CUDA_VISIBLE_DEVICES=3 sample map 100000 2 &
+        wait
+
+        CUDA_VISIBLE_DEVICES=3 sample lstm 100000 0 &
+        CUDA_VISIBLE_DEVICES=3 sample lstm 100000 1 &
+        CUDA_VISIBLE_DEVICES=3 sample lstm 100000 2 &
+        wait
+    } &
+
+    wait
+}
+
+#experiment1
+experiment2

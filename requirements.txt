@@ -1,8 +1,6 @@
 gym==0.23.1
 matplotlib==3.5.2
-numba==0.55.1
 opencv-python-headless==4.5.5.64
-opensimplex==0.4.2
 pandas==1.4.2
 pip-chill==1.0.1
 pymartini==0.4.3
@@ -13,3 +11,4 @@ tensorboard==2.9.0
 torchaudio==0.11.0
 torchvision==0.12.0
 tqdm==4.64.0
+pyfastnoisesimd==0.4.2

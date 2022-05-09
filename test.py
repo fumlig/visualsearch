@@ -38,21 +38,19 @@ def parse_hparams(s):
     return yaml.safe_load(s)
 
 
-def test()
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
-    parser.add_argument("agent", type=str)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
+    parser.add_argument("--agent", type=str, default="human")
+    parser.add_argument("--model", type=str, nargs="*")
+    parser.add_argument("--episodes", type=int, default=100)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--episodes", type=int, default=1000)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
     parser.add_argument("--hidden", action="store_true")
@@ -69,7 +67,7 @@ if __name__ == "__main__":
     for wrapper in wrappers:
         env = wrapper(env)
 
-    agent = None
+    model = None
     device = th.device(args.device)
     writer = SummaryWriter(f"logs/{args.name}/test")
     df = pd.DataFrame()
@@ -88,8 +86,8 @@ if __name__ == "__main__":
 
     if args.model:
         print(f"loading {args.model}")
-        agent = th.load(args.model).to(device)
-        agent.eval()
+        model = th.load(args.model).to(device)
+        model.eval()
 
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
@@ -103,8 +101,8 @@ if __name__ == "__main__":
         seed = args.seed if ep == 0 else None
         obs = env.reset(seed=seed)
 
-        if agent is not None:
-            state = [s.to(device) for s in agent.initial(1)]
+        if model is not None:
+            state = [s.to(device) for s in model.initial(1)]
 
         while not done:
             key = None
@@ -123,17 +121,17 @@ if __name__ == "__main__":
                 cv.imshow(args.environment, img)
                 key = cv.waitKey(args.delay)
 
-            if agent is None:
+            if model is not None:
+                with th.no_grad():
+                    obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
+                    act, state = model.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
+            else:
+                if args.agent == "human":
+                    act = env.get_keys_to_action().get((key,), 0)
                 if args.agent == "random":
                     act = env.get_random_action()
                 elif args.agent == "greedy":
                     act = env.get_greedy_action()
-                else:
-                    act = env.get_keys_to_action().get((key,), 0)
-            else:
-                with th.no_grad():
-                    obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                    act, state = agent.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
 
             step_begin = process_time()
             obs, rew, done, info = env.step(act)

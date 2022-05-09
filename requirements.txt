@@ -1,6 +1,6 @@
 gym==0.23.1
 matplotlib==3.5.2
-opencv-python==4.5.5.64 # opencv-python-headless==4.5.5.64
+opencv-python-headless==4.5.5.64 # opencv-python==4.5.5.64 if not headless
 pandas==1.4.2
 pip-chill==1.0.1
 pymartini==0.4.3

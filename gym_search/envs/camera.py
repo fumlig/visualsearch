@@ -3,9 +3,10 @@ import moderngl as gl
 import pyrr as pr
 import simple_3dviz as viz
 import pymartini as martini
+import functools
 
 from gym_search.utils import sample_coords, fractal_noise_2d, normalize
-from gym_search.palette import EARTH_TOON, pick_color
+from gym_search.palette import BLUE_MARBLE, EARTH_TOON, pick_color
 from gym_search.envs.search import SearchEnv, Action
 
 class CameraEnv(SearchEnv):
@@ -14,10 +15,9 @@ class CameraEnv(SearchEnv):
         self,
         shape=(10, 20),
         view=(64, 64),
-        terrain_size=2048,
-        terrain_height=16,
+        terrain_size=1024,
+        terrain_height=32,
         num_targets=3,
-        num_distractors=100,
         **kwargs,
     ):
         super().__init__(shape, view, True, **kwargs)
@@ -25,11 +25,9 @@ class CameraEnv(SearchEnv):
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
         self.num_targets = num_targets
-        self.num_distractors = num_distractors
  
         self.martini = martini.Martini(self.terrain_size+1)
         self.scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view)
-
 
     def generate(self, seed):
         scene = self.scene
@@ -38,13 +36,14 @@ class CameraEnv(SearchEnv):
         random = np.random.default_rng(seed)
 
         # terrain
-        exp = random.uniform(0.5, 5)
+        exp = random.uniform(0.5, 3)
         noise = fractal_noise_2d((self.terrain_size, self.terrain_size), periods=(4, 4), octaves=4, seed=seed)
         noise = np.pad(noise, ((0, 1), (0, 1)), mode="edge")
+        kernel = np.array([[x**2+y**2 for x in np.linspace(-1, 1, num=self.terrain_size+1)] for y in np.linspace(-1, 1, num=self.terrain_size+1)])
         terrain = normalize(noise)**exp
-        image = pick_color(terrain, EARTH_TOON)
-
-        self.terrain = terrain*self.terrain_height
+        image = pick_color(terrain, BLUE_MARBLE)
+        
+        self.terrain = terrain*self.terrain_height*kernel
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
         vertices, faces = tile.get_mesh(0.5)
         vertices = martini.rescale_positions(vertices, self.terrain)
@@ -58,9 +57,9 @@ class CameraEnv(SearchEnv):
         # camera
         x = self.terrain_size//2
         z = self.terrain_size//2
-        y = self.terrain_height*4 # self.height(x, z)
+        y = self.terrain_height*2
 
-        fov = 180/min(self.shape)
+        fov = 45 #180/min(self.shape)
 
         scene.camera_position = (x, y, z)
         scene.up_vector = (0, 1, 0)
@@ -72,33 +71,59 @@ class CameraEnv(SearchEnv):
 
         # targets
         positions = []
-        tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
-        target_prob = tree_line.astype(float)/tree_line.sum()
-
-        side = 8
-
-        for z, x in sample_coords((self.terrain_size+1, self.terrain_size+1), self.num_targets, target_prob, random=random):
-            y = self.height(x, z)+side
-            positions.append((x, y, z))
         
+        side = 10
+
+        #tree_line = np.logical_and(terrain >= 0.5, terrain < 0.75)
+        #target_prob = tree_line.astype(float)/tree_line.sum()
+
+        #for z, x in sample_coords((self.terrain_size+1, self.terrain_size+1), self.num_targets, target_prob, random=random):
+        #    y = self.height(x, z)+side
+        #    positions.append((x, y, z))
+
+        shape = (self.terrain_size+1, self.terrain_size+1)
+        water = np.logical_and(terrain >= 0.00, terrain < 0.33)
+        coast = np.logical_and(terrain >= 0.33, terrain < 0.66)
+        hills = np.logical_and(terrain >= 0.66, terrain <= 1.0)
+
+        target_1, = sample_coords(shape, 1, water.astype(float)/water.sum(), random=random)
+        target_2, = sample_coords(shape, 1, coast.astype(float)/coast.sum(), random=random)
+        target_3, = sample_coords(shape, 1, hills.astype(float)/hills.sum(), random=random)
+
+        positions = [(x, self.height(x, z) + side/2, z) for z, x in [target_1, target_2, target_3]]
+
         meshes = viz.Mesh.from_boxes(positions, [[side/2]*3]*len(positions), [[255, 0, 0]]*len(positions))
         scene.add(meshes)
 
         # visibility
         # todo: target might be occluded
-        targets = []
+        targets = [(0, 0), (0, 0), (0, 0)]
         
         for position in positions:
             visible = False
+            closest_direction = None
+            closest_distance = np.inf
 
-            for target in [(y, x) for y in range(self.shape[0]) for x in range(self.shape[1])]:
-                self.look(target)
-                
-                if self.in_frustum(*position):
-                    targets.append(target)
+            for direction in [(y, x) for y in range(self.shape[0]) for x in range(self.shape[1])]:
+                self.look(direction)
+
+
+                p = self.scene.mvp * pr.Vector4.from_vector3(position, 1.0)        
+                p = pr.Vector3(np.array(p[:3]) / p[3])
+
+                if np.all((p >= -1.0) & (p <= 1.0)):
                     visible = True
-                    break        
-            
+                else:
+                    continue
+
+                distance = np.linalg.norm((0, 0) - p.xy)
+
+                if distance < closest_distance:
+                    closest_direction = direction
+                    closest_distance = distance
+
+            targets.append(closest_direction)
+
             assert visible, f"target at {position} invisible, player {player}"
 
         return scene, player, targets
@@ -148,9 +173,3 @@ class CameraEnv(SearchEnv):
 
     def height(self, x, z):
         return self.terrain[round(x), round(z)]
-
-    def in_frustum(self, x, y, z):
-        position = self.scene.mvp * pr.Vector4([x, y, z, 1.0])        
-        p = np.array(position[:3]) / position[3]
-
-        return np.all((p >= -1.0) & (p <= 1.0))

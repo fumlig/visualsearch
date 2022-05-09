@@ -151,3 +151,6 @@ function experiment2
 
 #experiment1
 experiment2
+
+
+# python3 test.py Gaussian-v0 --hidden --name=shape/lstm/10/0 --models=models/shape/lstm/10/0/ckpt/*

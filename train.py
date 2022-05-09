@@ -158,15 +158,15 @@ if __name__ == "__main__":
             ckpt_step = (timestep // ckpt_interval)*ckpt_interval
 
             os.makedirs(f"models/{args.name}/ckpt", exist_ok=True)
-            th.save(agent, f"models/{args.name}/ckpt/{ckpt_step}.pt")
+            th.save(agent, f"models/{args.name}/ckpt/{str(ckpt_step).zfill(len(str(args.num_timesteps)))}.pt")
 
         last_timestep = timestep
 
     pbar.update(args.num_timesteps)
 
-    print(f"saving model models/{args.name}.pt")
-    os.makedirs(os.path.dirname(f"models/{args.name}/model.pt"), exist_ok=True)
-    th.save(agent, f"models/{args.name}.pt")
+    print(f"saving model models/{args.name}/model.pt")
+    os.makedirs(os.path.dirname(f"models/{args.name}"), exist_ok=True)
+    th.save(agent, f"models/{args.name}/model.pt")
 
     envs.close()
     writer.close()

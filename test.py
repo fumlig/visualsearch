@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument("environment", type=str)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
     parser.add_argument("--agent", type=str, default="human")
-    parser.add_argument("--model", type=str, nargs="*")
+    parser.add_argument("--model", type=str)
     parser.add_argument("--episodes", type=int, default=100)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     model = None
     device = th.device(args.device)
-    writer = SummaryWriter(f"logs/{args.name}/test")
+    #writer = SummaryWriter(f"logs/{args.name}/test")
     df = pd.DataFrame()
     infos = []
 
@@ -160,9 +160,9 @@ if __name__ == "__main__":
             print("length:", length)
             print("success:", success)
 
-        writer.add_scalar("metric/length", length, ep)
-        writer.add_scalar("metric/shortest", shortest, ep)
-        writer.add_scalar("metric/spl", spl(success, shortest, length), ep)
+        #writer.add_scalar("metric/length", length, ep)
+        #writer.add_scalar("metric/shortest", shortest, ep)
+        #writer.add_scalar("metric/spl", spl(success, shortest, length), ep)
 
         infos.append(info)
 

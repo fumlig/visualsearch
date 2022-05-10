@@ -244,8 +244,8 @@ In practice, value functions are often still used to learn the policy parameter,
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
 
-Function approximation includes important aspects of partial observability.
-If there is a state variable that is not observable,
+One important aspect of function approximation is its interplay with partial observability.
+If there is a state variable that is not observable, as for partially observable environments,
 then the parametrization can be chosen such that the approximate value does not depend on that state variable.
 Because of this, function approximation is applicable to the partially observable case.~\cite{sutton_reinforcement_2018}
 
@@ -253,8 +253,6 @@ Because of this, function approximation is applicable to the partially observabl
 % https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
 % https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
 % https://sites.ualberta.ca/~szepesva/rlbook.html
-
-% We might imagine an artificial neural network (ANN) in which the last layer is split into multiple parts, or heads, each working on a di↵erent task. One head might produce the approximate value function for the main task (with reward as its cumulant) whereas the others would produce solutions to various auxiliary tasks. All heads could propagate errors by stochastic gradient descent into the same body—the shared preceding part of the network—which would then try to form representations, in its next-to-last layer, to support all the heads. Researchers have experimented with auxiliary tasks such as predicting change in pixels, predicting the next time step’s reward, and predicting the distribution of the return. In many cases this approach has been shown to greatly accelerate learning on the main task (Jaderberg et al., 2017). Multiple predictions have similarly been repeatedly proposed as a way of directing the construction of state estimates (see Section 17.3). (Sutton)
 
 \subsubsection{Design Challenges}
 
@@ -373,9 +371,7 @@ Each objects is examined from several perspectives and ranked by probability of 
 Shubina and Tsotsos~\cite{shubina_visualsearch_2010} model the search problem as in \cite{ye_tsotsos_2001}, and solve with a greedy action selection strategy.
 They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
 Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_real_2011,aydemir_active_2013}.
-Meger et al.~\cite{meger_george_2008} describe a system that performs object recognition in realistic scenarios\dots
-
-\todo{finish}
+%Meger et al.~\cite{meger_george_2008} describe a system that performs object recognition in realistic scenarios\dots
 
 These systems solve more complex tasks than the one we consider, such as handling multiple target object categories and navigating in obstructed environments.
 However, they are also restricted by their reliance on human knowledge to act well in their environments.
@@ -426,7 +422,6 @@ They find that this reward communicates more clearly which transformations keep 
 When there is no action that improves the bounding box, the agent may select an indication action (which would be the only action that does not give a negative reward) which resets the box.
 This way the agent may select additional bounding boxes.
 Each indication action modifies the environment by marking it so that the agent may learn to not select the same region twice.
-% inhibition-of-return mechanism, widely used in visual attention models ~\cite{itti_koch_2001}
 
 A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
 Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
@@ -462,6 +457,21 @@ They a set of 32 scenes, each of which contain a fixed number of object instance
 They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
 Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
 
+Ye et al.~\cite{ye_active_2018} propose an alternative architecture to \cite{zhu_target_2016}
+which, in addition to an image of the camera view and the target object, uses the output of an object recognition module to select actions.
+Specifically, the output of the localization component is fed as input.
+This allows the agent to know if the target object is in view, and where.
+The object recognition module is trained separately from the policy.
+While requires a set of images of potential target objects labelled with their class and location, it also illustrates how object recognition can be offloaded to a separate module in reinforcement learning agents that benefit from such functionality.
+
+Yang et al.~\cite{yang_semantic_2018} propose to use semantic scene priors to improve navigation towards objects in unseen scenes.
+The agent observes its environment through a camera.
+Prior knowledge of spatial relations between objects types is encoded as a graph, which is encoded with a graph convolutional network.
+Their agent is also told what object to look for in the form of a word embedding.
+The encoded object graph and word embedding is used as input together with the camera image to an actor critic network that selects actions that navigate towards the target object.
+As the agent collects experiences, it also updates its prior knowledge of spatial relationships between objects.
+It is shown that prior knowledge encoded in such a way improves the agents ability to navigate to objects.
+
 Mnih et al.~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
 3D labyrinths are randomly generated, and an agent is tasked with finding objects in them.
 The same architecture as in \cite{mnih_human_2015} is used, but with 256 LSTM cells after the final hidden layer.
@@ -479,21 +489,12 @@ It is found that an agent that only receives image observations performs worse t
 Adding the previous reward, action and velocity to the observations bring modest performance improvements.
 The depth prediction is found to improve performance in all environments, indicating that the correct auxiliary task can help learning.
 
-A similar work by Ye et al.~\cite{ye_active_2018} integrates an object recognition module with a deep reinforcement learning based visual navigation module.
-They experiment with a set of reward functions and find that constant time penalizing rewards can be problematic and lead to slow convergence.
-Their experiments make the same assumptions as \cite{zhu_target_2016} - the scenes and targets used during testing have all been seen during training\dots
-
-\cite{yang_semantic_2018} use semantic scene priors\dots
-
-\todo{finish}
-
-Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for navigation.
+Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for navigation, using a CNN and RNN architecture as in \cite{hausknecht_stone_2017} and \cite{mirowski_navigate_2017}.
 They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
-However, when trained and tested on different maps, it cannot do so successfully.
-They further find that, with a single decision point whose correct\dots
-
-\todo{finish}
+When trained and tested on different maps, the agent does not seem to be able to exploit environment information to navigate more effectively.
+The authors use relatively small training set of less than 1000 samples, but do not consider that their agents could have overfit this this set.
+Finally, they find that the agent is not able to consistently find optimal navigation paths in seen environments when its starting position is randomized.
 
 \subsection{Memory Architectures}
 
@@ -521,11 +522,14 @@ Furthermore, they might not be easily trained for all tasks.
 Specialized memory architectures can provide better performance for their intended tasks.
 Henriques and Vedaldi~\cite{henriques_vedaldi_2018} argue that autonomous agents must switch from an egocentric representation of their scenes to an allocentric one.
 They propose a spatial memory which can be updated dynamically during each episode\dots
+\todo{finish}
 
 Gupta et al.~\cite{gupta_cognitive_2019} introduce an agent that navigates in novel environments using a spatial memory.
 Encoded representations of observed images are placed in a top-down map\dots
+\todo{finish}
 
 Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
+\todo{finish}
 
 Oh et al.~\cite{oh_minecraft_2016} propose one such memory that can retain information over a limited number of time steps.
 During each time step, the agent encodes its observation and shifts it into the memory.
@@ -533,10 +537,10 @@ It also reads the memory using a soft attention~\cite{bahdanau_attention_2016} m
 This way, the agent can recall information from the past that is useful to the present.
 The authors evaluate this architecture in several visual navigation tasks, where image observations are encoded with a CNN.
 In their tests, their memory architecture performs better than LSTM layers\dots
+\todo{finish}
 
 A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}.
 Their memory is spatial rather than temporal - \dots
-
 \todo{finish}
 
 \subsection{Visual Exploration}
@@ -616,43 +620,32 @@ Evaluation has to be performed on the full distribution of (held out) contexts.
 A problem in state-of-the art RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
+In some cases, training an algorithm in an environment twice can give learning curves that do not fall within the same distribution~\cite{henderson_matters_2018}.
 This has meant that reproducing state-of-the-art deep RL results is difficult.
+A common solution is to report average results and variance across multiple different runs.
 
-The popularity of more challenging benchmarks has lead to longer training times.
+However, the sample inefficiency of current deep RL algorithms together with the rise in popularity of more challenging benchmarks has led to long training times.
 This has made it less feasible to measure performance over many training runs,
-which in turn has led to a shift to only evaluating a small number of runs per task.~\cite{agarwal_rlliable_2022}
+which in turn has led to a shift to only evaluating a small number of runs (\(N \leq 5\)) per task.~\cite{agarwal_rlliable_2022}
+This is problematic, as several analyses indicate that as many as \(N = 20\) runs are required for statistically significant results~\cite{colas_seeds_2018,colas_hitchhiker_2019}.
 
-Henderson et al.~\cite{henderson_matters_2018} discuss this problem from multiple perspectives.
-Through experimental analysis, come to a set of conclusions.
+Henderson et al.~\cite{henderson_matters_2018} investigate reproducibility methods in deep RL empirically, focusing on policy gradient methods.
+They try to reproduce results in works with published code bases, and investigate how various modifications affect results.
 
-\begin{itemize}
-    \item In policy gradient methods, hyperparameters and the choice of network architecture for policy and value function approximation can affect performance significantly.
-    They find that ReLU activations tend to perform best across environments and algorithms.
-    For PPO, the use of large networks may require changing other hyperparameters like learning rate.
-    \item Rescaling rewards can have a large effect, although it is difficult to predict how.
-    \item Variance between random seeds in stochastic environments affects performance of algorithms, and give learning curves that do not fall within the same distribution.
-    This suggests that selecting the top \(N\) trials or average over a small number of trials \(N\) can be misleading. They suggest to compare performance over many different random seeds.
-    \item For certain environments, learning curves can indicate successful optimization but the learned behavior may not be satisfactory.
-    It is therefore important to not only show returns, but also demonstrations of the learned policy in action.
-    \item Implementation differences that are not reflected in publications can have a dramatic impact on performance.
-    It is therefore necessary to enumerate implementation details and package code bases with publications.
-    Performance of baseline experiments should also match original baseline publication code.
-\end{itemize}
-
-Due to the unstable nature of RL algorithms, it is often inadequate to just report average return.
-Henderson et al.~\cite{henderson_matters_2018} propose to include confidence intervals when reporting results.
+They find that hyperparameters and the choice of network architecture for policy and value function approximation can affect performance significantly.
+Furthermore, rescaling rewards can have a large effect, although it is difficult to predict how.
+It is found that ReLU activations tend to perform best across environments and algorithms.
+For PPO, the use of large networks may require changing other hyperparameters like learning rate.
 Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
+
+For certain environments, learning curves can indicate successful optimization but the learned behavior may not be satisfactory.
+It is therefore important to not only show returns, but also demonstrations of the learned policy in action.
+Interestingly, implementation differences that are not reflected in publications can have a dramatic impact on performance.
+It is therefore necessary to enumerate implementation details and package code bases with publications.
+Performance of baseline experiments should also match original baseline publication code.
+
 Finally, \cite{henderson_matters_2018} make the point that more emphasis should be placed on applying RL algorithms to real-world tasks.
 It could be more useful to propose a set of tasks that an algorithm could be used for than to show performance on fictional tasks.
-
-Colas et al. ~\cite{colas_seeds_2018}\dots
-
-Colas et al.\cite{colas_hitchhiker_2019} note that bootstrapping tests should not be used for small sample sizes below \(N = 50\).
-The statistical power of 
-
-A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.
-They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis.
-Like \cite{henderson_matters_2018}, they advocate for the use  of performance metrics that take uncertainty in results into account.
 
 Anderson et al.~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents, and make a set of recommendations.
 A navigation agent should be equipped with a special action that indicates that it has concluded the episode.

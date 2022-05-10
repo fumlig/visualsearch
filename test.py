@@ -186,7 +186,11 @@ if __name__ == "__main__":
 
         with open(f"results/{args.name}/test.csv", "a") as f:
             results = csv.writer(f)
-            id, _ = os.path.splitext(os.path.basename(path))
+            if path is None:
+                id = "-"
+            else:
+                id, _ = os.path.splitext(os.path.basename(path))
+            
             results.writerow([id, np.mean(taken), np.mean(success), np.mean(spl(success, shortest, taken))])
 
         if args.verbose:

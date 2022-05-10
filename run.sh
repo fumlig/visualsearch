@@ -152,20 +152,20 @@ function experiment2
 #experiment1
 #experiment2
 
-python3 test.py Terrain-v0 --hidden --name=sample/map/1000/0 --models=models/sample/map/1000/0/ckpt/* &
-python3 test.py Terrain-v0 --hidden --name=sample/map/1000/1 --models=models/sample/map/1000/1/ckpt/* &
-python3 test.py Terrain-v0 --hidden --name=sample/map/1000/2 --models=models/sample/map/1000/2/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/1000/0 --models=models/sample/map/1000/0/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/1000/1 --models=models/sample/map/1000/1/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/1000/2 --models=models/sample/map/1000/2/ckpt/* &
 
-python3 test.py Terrain-v0 --hidden --name=sample/map/10000/0 --models=models/sample/map/10000/0/ckpt/* &
-python3 test.py Terrain-v0 --hidden --name=sample/map/10000/1 --models=models/sample/map/10000/1/ckpt/* &
-python3 test.py Terrain-v0 --hidden --name=sample/map/10000/2 --models=models/sample/map/10000/2/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/10000/0 --models=models/sample/map/10000/0/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/10000/1 --models=models/sample/map/10000/1/ckpt/* &
+#python3 test.py Terrain-v0 --hidden --name=sample/map/10000/2 --models=models/sample/map/10000/2/ckpt/* &
 
-#python3 test.py Terrain-v0 --hidden --name=sample/map/100000/0 --models=models/sample/map/100000/0/ckpt/* &
-#python3 test.py Terrain-v0 --hidden --name=sample/map/100000/1 --models=models/sample/map/100000/1/ckpt/* &
-#python3 test.py Terrain-v0 --hidden --name=sample/map/100000/2 --models=models/sample/map/100000/2/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/100000/0 --models=models/sample/map/100000/0/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/100000/1 --models=models/sample/map/100000/1/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/100000/2 --models=models/sample/map/100000/2/ckpt/* &
 
-#python3 test.py Terrain-v0 --hidden --name=sample/map/null/0 --models=models/sample/map/null/0/ckpt/* &
-#python3 test.py Terrain-v0 --hidden --name=sample/map/null/1 --models=models/sample/map/null/1/ckpt/* &
-#python3 test.py Terrain-v0 --hidden --name=sample/map/null/2 --models=models/sample/map/null/2/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/null/0 --models=models/sample/map/null/0/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/null/1 --models=models/sample/map/null/1/ckpt/* &
+python3 test.py Terrain-v0 --hidden --name=sample/map/null/2 --models=models/sample/map/null/2/ckpt/* &
 
 wait

@@ -37,8 +37,6 @@ For each environment, we find that
 
 \section{Scalability to Search Space Sizes}
 
-Figure 
-
 % 3 plots, one for each shape
 % 2 algorithms per plot
 % 5 seeds per plot with mean and standard deviation
@@ -46,22 +44,21 @@ Figure
 
 \begin{figure}
     \centering
+    \input{figures/shape-10.pgf}
+    \input{figures/shape-15.pgf}
+    \input{figures/shape-20.pgf}
     \label{fig:train-shape}
-    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 3 seeds.}
+    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 seeds.}
 \end{figure}
-
-\begin{table}
-    \caption[Search space performance metrics.]{Number of completed searches, average length of completed searches and SPL score.}
-    \centering
-    \label{tab:test-shape}
-\end{table}
 
 \section{Generalization with Limited Number of Samples}
 
 \begin{figure}
     \centering
+    \input{figures/sample-1000.pgf}
+    \input{figures/sample-10000.pgf}
     \label{fig:samples}
-    \caption[Generalization results.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 3 seeds.}
+    \caption[Generalization results.]{Reward and episode length curves during training for three training set sizes. Mean and standard deviation across 3 seeds.}
 \end{figure}
 
 

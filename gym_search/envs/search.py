@@ -35,7 +35,7 @@ class SearchEnv(gym.Env):
     ):
         self.shape = shape
         self.view = view
-        self.wrap = wrap
+        self.wrap = wrap if np.array(wrap).shape == (2,) else (wrap, wrap)
 
         self.max_steps = max_steps
         self.num_samples = num_samples if num_samples else np.iinfo(np.int64).max
@@ -208,12 +208,29 @@ class SearchEnv(gym.Env):
         }.get(action, (0, 0))
 
     def get_next_position(self, step):
-        position = self.position + step
+        y, x = self.position + step
+        h, w = self.shape
 
+        wrap_y, wrap_x = self.wrap
+
+        if wrap_y:
+            y %= h
+        else:
+            y = np.clip(y, 0, h-1)
+        
+        if wrap_x:
+            x %= w
+        else:
+            x = np.clip(x, 0, w-1)
+
+        position = np.array([y, x])
+
+        """
         if self.wrap:
             position %= self.shape
         else:
             position = np.clip(position, (0, 0), np.array(self.shape) - (1, 1))
+        """
 
         invalid = tuple(self.position + step) != tuple(position)
 

@@ -104,16 +104,17 @@ if __name__ == "__main__":
     if not args.hidden:
         cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
 
-    for path in sorted(model_paths):
+    for path in tqdm(sorted(model_paths)):
 
         if path is not None:
-            print(f"loading {path}")
+            if args.verbose:
+                print(f"loading {path}")
             model = th.load(path).to(device)
             model.eval()
         else:
             model = None
 
-        for ep in tqdm(range(args.episodes)):
+        for ep in tqdm(range(args.episodes), leave=False):
             done = False
             seed = args.seed if ep == 0 else None
             obs = env.reset(seed=seed)
@@ -185,8 +186,9 @@ if __name__ == "__main__":
 
         with open(f"results/{args.name}/test.csv", "a") as f:
             results = csv.writer(f)
-            id, = os.path.splitext(os.path.basename(path))
+            id, _ = os.path.splitext(os.path.basename(path))
             results.writerow([id, np.mean(taken), np.mean(success), np.mean(spl(success, shortest, taken))])
 
-        print("mean length:", np.mean(taken))
-        print("mean spl:", np.mean(spl(success, shortest, taken)))
+        if args.verbose:
+            print("mean length:", np.mean(taken))
+            print("mean spl:", np.mean(spl(success, shortest, taken)))

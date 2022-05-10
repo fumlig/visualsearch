@@ -39,12 +39,12 @@ At each time step, the agent perceives a subspace \(V \subset S\) of the environ
 If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
 
 The actions in \(\mathcal{A}\) transform the view into a different subset of the scene.
-With a final trigger action, the agent can indicate that there is one or more target in the view.
+With a final action, the agent can indicate that there is one or more target in the view.
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
 Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 The seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
 
-The goal of the agent is to select actions that bring each target into view and indicate that they are visible with the trigger action, while minimizing the number of total steps.
+The goal of the agent is to select actions that bring each target into view and indicate that they are visible, while minimizing the number of total steps.
 
 %\todo{Could reformalize so that targets are volumes instead.}
 
@@ -143,14 +143,14 @@ If how each action moves the agent is well-defined, the relative position can be
 The action space is the same in all environments:
 
 \begin{equation*}
-    \mathcal{A} = \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{TRIGGER} \right\rbrace,
+    \mathcal{A} = \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{INDICATE} \right\rbrace,
 \end{equation*}
 
 \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
 This action space is realistic for many real-world search tasks,
 such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
 and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
-\(\mathtt{TRIGGER}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
+\(\mathtt{INDICATE}\) is used to indicate that a target is in view, and functions as the done signal recommended by \cite{anderson_evaluation_2018}.
 
 The reward signal is defined as 
 
@@ -163,8 +163,7 @@ where \(h = \left\lvert T \cap V \right\rvert\) is the number of targets in view
 
 Optimizing for this reward will lead to desirable behavior as the agent is rewarded for finding all targets quickly.
 Early experiments show that a constant penalty \(r_t = -1\) that simply incentivize the agent to complete the episode as quickly as possible is too slow to train for moderately large scenes.
-The reward for finding a target speeds up training without deviating from the goal of the task -
-targets should be triggered when in view, but triggers when targets are out of view should be penalized.
+The reward for finding a target speeds up training without deviating from the goal of the task - targets should be indicated only when in view.
 The constant penalty of \(-1\) in all other cases assures that the agent is rewarded for quick episode completion.
 It seems to be important that the magnitude of the reward is similar to the return obtained in an unfinished episode.
 We suspect that the return when only hitting one target must be substantially higher than the return for not finding any targets,
@@ -176,7 +175,7 @@ To speed up training, we experiment with two extensions to the reward:
 \begin{equation*}
     \mathcal{R}'(s_t, a_t) =
     \begin{cases}
-        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view closer to the nearest target, and} \\
+        1 & \text{if \(a_t \neq \mathtt{INDICATE}\) moves the view closer to the nearest target, and} \\
         \mathcal{R}(s_t, a_t) & \text{otherwise}.
     \end{cases}
 \end{equation*}
@@ -184,7 +183,7 @@ To speed up training, we experiment with two extensions to the reward:
 \begin{equation*}
     \mathcal{R}''(s_t, a_t) =
     \begin{cases}
-        1 & \text{if \(a_t \neq \mathtt{TRIGGER}\) moves the view to a previously unseen subspace, and} \\
+        1 & \text{if \(a_t \neq \mathtt{INDICATE}\) moves the view to a previously unseen subspace, and} \\
         \mathcal{R}(s_t, a_t) & \text{otherwise}.
     \end{cases}
 \end{equation*}
@@ -210,7 +209,7 @@ The first environment is the simplest environment.
 The scene's appearance is given by a \(1024 \times 1024\) RGB image.
 The agent observes a \(64 \times 64\) sub-image at each time step.
 Which sub-image is viewed is determined by the position of the agent.
-Each non-trigger action move the agent one step in the corresponding cardinal direction.
+Each moving action translates the agent one step in the corresponding cardinal direction.
 
 In the image there are three Gaussian kernels with random positions.
 The height of the kernel is indicated by a higher intensity in the blue channel.
@@ -269,7 +268,10 @@ The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, whil
 \section{Experiments}
 \label{sec:experiments}
 
-To evaluate our approach, we run four different experiments.
+To evaluate our approaches, we run four different experiments.
+First, we train both the LSTM agent and the map agent i
+
+Finally, to evaluate the quality of the learned policy, we compare both approaches to a set of baselines.
 
 \todo{Could remove baseline without recurrent step and instead do ablation studies.}
 

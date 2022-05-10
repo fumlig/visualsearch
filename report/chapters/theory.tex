@@ -1,53 +1,6 @@
 \chapter{Theory}
 \label{cha:theory}
 
-% The main purpose of this chapter is to make it obvious for
-% the reader that the report authors have made an effort to read
-% up on related research and other information of relevance for
-% the research questions. It is a question of trust. Can I as a
-% reader rely on what the authors are saying? If it is obvious
-% that the authors know the topic area well and clearly present
-% their lessons learned, it raises the perceived quality of the
-% entire report.
-% 
-% After having read the theory chapter it shall be obvious for          <--
-% the reader that the research questions are both well                  <--
-% formulated and relevant.                                              <--
-% 
-% The chapter must contain theory of use for the intended
-% study, both in terms of technique and method. If a final thesis
-% project is about the development of a new search engine for
-% a certain application domain, the theory must bring up related
-% work on search algorithms and related techniques, but also
-% methods for evaluating search engines, including
-% performance measures such as precision, accuracy and
-% recall.
-% 
-% The chapter shall be structured thematically, not per author.
-% A good approach to making a review of scientific literature
-% is to use \emph{Google Scholar} (which also has the useful function
-% \emph{Cite}). By iterating between searching for articles and reading
-% abstracts to find new terms to guide further searches, it is
-% fairly straight forward to locate good and relevant
-% information, such as \cite{test}.
-% 
-% Having found a relevant article one can use the function for
-% viewing other articles that have cited this particular article,
-% and also go through the article’s own reference list. Among
-% these articles on can often find other interesting articles and
-% thus proceed further.
-% 
-% It can also be a good idea to consider which sources seem
-% most relevant for the problem area at hand. Are there any
-% special conference or journal that often occurs one can search
-% in more detail in lists of published articles from these venues
-% in particular. One can also search for the web sites of
-% important authors and investigate what they have published
-% in general.
-% 
-% This chapter is called either \emph{Theory, Related Work}, or
-% \emph{Related Research}. Check with your supervisor.
-
 This chapter introduces background and related work.
 
 \section{Background}
@@ -55,30 +8,28 @@ This chapter introduces background and related work.
 
 In this section, we give background to the tackled problem and outline the theory behind our approach.
 Sections \ref{sec:visualsearch} and \ref{sec:activevision} provide perspective to the problem from neuroscience and machine perception respectively.
-Section \ref{sec:deeplearning} overviews the theory behind function approximation with neural networks, and some common architectures.
-Section \ref{sec:reinforcementlearning} summarizes the foundations of reinforcement learning.
+Section \ref{sec:deeplearning} overviews the theory behind function approximation with neural networks, and some common neural network architectures.
+Section \ref{sec:reinforcementlearning} summarizes the foundations of reinforcement learning and deep reinforcement learning.
 
 \subsection{Visual Search and Attention}
 \label{sec:visualsearch}
 
 The perceptual task of searching for something in a visual environment is usually referred to as \textit{visual search}~\cite{wolfe_visual_2010}.
-The searched object or feature is the \textit{target}, and the other objects or features in the environment are the \textit{distractors}.
+The object or feature that is being searched for is referred to as the \textit{target}, and the other objects or features in the environment as \textit{distractors}.
 This task has been studied extensively in psychology and neuroscience.
 
 Two big limitations of performance in visual search are processing power, and limited observability.
-Processing high-dimensional images is expensive, and environments are too large and complex to view all at once.
+Processing high-dimensional sensory input like images is expensive, and environments are often too large and complex to view all at once.
 An observer that searches a scene for targets has to direct its \textit{visual attention} to one region at a time.
 Humans scan environments by directing their gaze (\textit{overt attention}) and shifts of attention in the current visible region (\textit{covert attention})~\cite{itti_koch_2001}.
 While covert attention tends to be reactionary, overt attention usually integrates more features over time.
 In this work we focus specifically on the former, moving the gaze to bring targets into view.
 
-% Saccadic and foveated vision
-
 Humans control overt attention through both eye movements and head movements.
 Eye movement is almost instant between locations, and the cost of directing attention with eye movements is constant regardless of distance.
 This is not true for head movements, and in general not true for robotic systems:
 movements induced by motors tend to come at a cost that is proportional to the distance moved, both in time and energy.
-The cost of directing attention increases the need for strategy.
+The cost of directing overt attention means that there is a need to do so strategically.
 
 If the searched environment is a random field, visual search is akin to a random process~\cite{nakayama_situating_2011}.
 Experiments in humans have shown that search in featureless environments is consistent with random walk with no memory.
@@ -88,7 +39,7 @@ Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_ko
 
 Natural environments are in fact seldom completely random, but instead tend to exhibit some structure.
 When finding targets, there is usually to be something about this structure that can be used to improve search performance.
-Such regularities can learned  from past experience and used during future searches.
+Such regularities can learned from past experience and used during future searches.
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
@@ -104,11 +55,11 @@ An active observer must control its sensory inputs to constrain the interpretati
 One of the difficulties of active perception problems is that they are scene and context dependent.
 A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.~\cite{bajcsy_active_1988}
 
-%There is an argument to be made that active vision is a means to solve the task more effectively.
+%While certain tasks are necessarily active vision tasks, there is an argument to be made that active vision is a means to solve the task more effectively.
 %Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
 %Furthermore, an active learning system acquires the samples to learn from itself select more informative samples to learn from than a passive one.
 
-In active vision, searching for objects with a camera in unknown environments is referred to as \textit{object search}.
+In active vision, searching for objects with a camera in unknown environments is referred to as \textit{object search} or \textit{active object localization}.
 A searching observer has to both recognize and localize its targets, while controlling its sensory input.
 To search effectively, it must also model its environment and perform path planning.~\cite{chen_activevisionsurvey_2011}
 
@@ -116,23 +67,7 @@ Solving the object search problem optimally involves determining a sequence of c
 The state of the searcher is uniquely determined by the control parameters of the camera.
 Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
 Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
-Finding an optimal solution in three dimensions has been shown to be NP-complete, necessitating approximate solutions~\cite{ye_tsotsos_2001,andreopoulos_tsotsos_theory_2009}.
-
-\todo{verify np-complete/np-hard claims using second source.}
-
-There are several rigorous attempts to implement robotic object search systems using non-learning methods.
-Forssén et al~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
-Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
-Each objects is examined from several perspectives and ranked by probability of being the queried object.
-Shubina and Tsotsos~\cite{shubina_visualsearch_2010} model the search problem as in \cite{ye_tsotsos_2001}, and solve with a greedy action selection strategy.
-They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
-Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_real_2011,aydemir_active_2013}.
-Meger et al ~\cite{meger_george_2008} describe a system that performs object recognition in realistic scenarios\dots
-
-These systems solve more complex tasks than the one we consider, such as handling multiple target object categories and navigating in obstructed environments.
-However, they are also restricted by their reliance on human knowledge to act well in their environments.
-While reinforcement learning is not among the more traditional solution methods for active vision tasks~\cite{chen_activevisionsurvey_2011},
-learning systems that are less dependent on expert knowledge have the potential to be more generally applicable.
+Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions.~\cite{ye_tsotsos_2001,andreopoulos_tsotsos_theory_2009}
 
 \subsection{Deep Learning}
 \label{sec:deeplearning}
@@ -194,8 +129,6 @@ Furthermore, the same parameters are also used for more than one function in the
 The output of one kernel is the same regardless of the input location.
 This property of CNNs is useful for images where similar features may be useful regardless of their location in the input.~\cite{goodfellow_deep_2016}
 
-%A common augmentation to deep CNNs is \textit{residual networks}.
-
 \subsubsection{Recurrent Neural Network}
 \label{sec:rnn}
 
@@ -222,12 +155,6 @@ LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied fr
 
 \subsection{Reinforcement Learning}
 \label{sec:reinforcementlearning}
-
-% {arulkumaran_survey_2017} also gives a good introduction to algorithms
-
-% https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
-% https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
-% https://sites.ualberta.ca/~szepesva/rlbook.html
 
 Reinforcement learning (RL)~\cite{sutton_reinforcement_2018} is a subfield of machine learning concerned with learning from interaction how to achieve a goal.
 This section introduces the fundamental concepts of RL.
@@ -285,7 +212,6 @@ It does not need to summarize the whole history, but generally only the informat
 From here on we will use the belief state and the environment state \(s\) interchangeably. 
 % Sutton page 467 is better, contains latent state assumption
 
-
 \subsubsection{Policies and Value Functions}
 \label{sec:policy-value}
 
@@ -310,12 +236,8 @@ We write \(\hat{V}(s,\mathbf{w}) \approx V_\pi(s)\) for the approximate value of
 An alternative to action-value methods is to approximate the policy itself.
 \textit{Policy gradient methods}~\cite{sutton_policygrad_1999} learn a parametrized policy that select actions without a value function.
 We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
-The policy parameters are usually learned based on the gradient of some performance measure \(J(\boldsymbol{\theta})\).
-As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated with \textit{gradient ascent} in \(J\):
-
-\[
-    \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \alpha \hat{\nabla J(\boldsymbol{\theta}_t)}
-\]
+The policy parameters are usually learned based on the gradient of some performance measure \(L(\boldsymbol{\theta})\).
+As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
 In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
@@ -325,11 +247,12 @@ In these cases, there might also be some overlap between the weights \(\mathbf{w
 Function approximation includes important aspects of partial observability.
 If there is a state variable that is not observable,
 then the parametrization can be chosen such that the approximate value does not depend on that state variable.
-Because of this, function approximation is applicable to the partially observable case.
+Because of this, function approximation is applicable to the partially observable case.~\cite{sutton_reinforcement_2018}
 
-% Q-learning vs. Policy-G: https://flyyufelix.github.io/2017/10/12/dqn-vs-pg.html
-
-% https://www.quora.com/What-are-the-benefits-of-actor-critic-framework-in-reinforcement-learning
+% {arulkumaran_survey_2017} also gives a good introduction to algorithms
+% https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
+% https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html
+% https://sites.ualberta.ca/~szepesva/rlbook.html
 
 % We might imagine an artificial neural network (ANN) in which the last layer is split into multiple parts, or heads, each working on a di↵erent task. One head might produce the approximate value function for the main task (with reward as its cumulant) whereas the others would produce solutions to various auxiliary tasks. All heads could propagate errors by stochastic gradient descent into the same body—the shared preceding part of the network—which would then try to form representations, in its next-to-last layer, to support all the heads. Researchers have experimented with auxiliary tasks such as predicting change in pixels, predicting the next time step’s reward, and predicting the distribution of the return. In many cases this approach has been shown to greatly accelerate learning on the main task (Jaderberg et al., 2017). Multiple predictions have similarly been repeatedly proposed as a way of directing the construction of state estimates (see Section 17.3). (Sutton)
 
@@ -340,8 +263,7 @@ Because of this, function approximation is applicable to the partially observabl
 One of the challenges that arises in reinforcement learning is the exploration-exploitation trade-off.
 An RL agent should \textit{exploit} knowledge gained from previous experiences and prefer actions that has yielded reward in the past.
 It should also \textit{explore} in order to learn better actions to take in the future.
-Agents that fail to both exploit and explore will lead to failure at the task.
-%Furthermore, striking a good balance between the two is non-trivial, and often requires care.~\cite{sutton}
+Agents that fail to both exploit and explore will lead to failure at the task, and striking a good balance between the two is non-trivial.~\cite{sutton_reinforcement_2018}
 
 Another challenge is the design of reward signals.
 For some tasks, like certain video games, the objective is simply to maximize the score obtained.
@@ -354,18 +276,13 @@ Here, the problem of \textit{sparse rewards} also comes into play.
 The agent has to be reward frequently enough to allow it to achieve its goal once.
 Often it has to incentivize it to achieve its goal efficiently, with multiple different starting conditions.
 If rewards are too sparse, the agent may explore aimlessly and take too long to find achieve its goal.
-In such cases, it can be effective to modify the reward to give the agent hints along the way.
 If the received reward is temporally distant from the action that caused it, the agent may have difficulty connecting the two.
 This is known as the \textit{credit assignment problem}~\cite{minsky_cap_1961}.
 
 In practice, rewards are often designed through trial-and-error.
+Through \textit{reward shaping}~\cite{mataric_shaping_1994},
+the reward is designed so as to guide the agent towards achieving its goal by giving additional rewards along the way.
 Several iterations of a reward signal are tried until one yields expected and sufficient results.
-
-% Reward shaping is a technique to tackle\dots~\cite{mataric_shaping_1994}
-% https://ai.stackexchange.com/questions/12908/what-is-the-credit-assignment-problem
-% https://medium.com/@m.k.daaboul/dealing-with-sparse-reward-environments-38c0489c844d
-% reward shaping
-
 
 \subsubsection{Deep Reinforcement Learning}
 
@@ -387,15 +304,47 @@ Such methods are often referred to as deep reinforcement learning (deep RL) meth
 \subsubsection{Proximal Policy Optimization}
 \label{sec:ppo}
 
-% ~\cite{zeng_survey_2020} has a concise overview of algorithms
+Proximal policy optimization (PPO)~\cite{schulman_ppo_2017} is a family of policy-gradient algorithms that have turned out to strike a good balance between simplicity, stability and ease of tuning while achieving competitive performance on several tasks~\cite{schulman_ppo_2017,henderson_matters_2018,cobbe_procgen_2020,vinyals_alphastar_2019,andrychowicz_empirical_2020}.
 
-% https://openai.com/blog/openai-baselines-ppo/
+PPO alternates between sampling agent-environment interactions over \(T\) time steps and optimizing the policy using those interactions.
+The parameters \(\boldsymbol{\theta}\) of the policy \(\pi\) are updated with the objective
 
-Proximal policy optimization (PPO)~\cite{schulman_ppo_2017} is a family of policy-gradient algorithms.
-PPO alternates between sampling agent-environment interactions and optimizing the policy.
-Multiple gradient updates are performed for each batch of samples\dots
+\[
+    \mathcal{L}_\text{CLIP}(\boldsymbol{\theta}) = 
+    \hat{\mathbb{E}}_t \left\lbrack \min(r_t(\boldsymbol{\theta}) \hat{A}_t, \text{clip}(r_t(\boldsymbol{\theta}),1-\epsilon, 1+\epsilon) \hat{A}_t \right\rbrack.
+\]
+
+The expectation \(\mathbb{\hat{E}}\) indicates the empirical average over a finite batch of samples collected under the old policy with parameters \(\theta_{\text{old}}\).
+Here, \(r_t(\theta) = \frac{\pi(a_t | s_t, \boldsymbol{\theta})}{\pi(a_t | s_t, \boldsymbol{\theta}_{\text{old}})}\) and \(\hat{A}_t\) is an estimate 
+of the advantage function.
+The clip range \(\epsilon\) is used to clip the surrogate objective,
+putting a pessimistic bound on the product of the probability ratio and the advantage estimate.
+This in turn ensures that the size of the policy updates is limited.
+In an actor-critic approach, the advantage is estimated over using a learned state value function \(V(s)\) as 
+
+\[
+    \hat{A}_t = \delta_t + (\gamma\lambda) \delta_{t+1} + \dots + (\gamma\lambda)^{T-t+1} \delta_{T-1}
+\]
+
+where \(\delta_t = r_t + \gamma V(s_t+1) - V(s_t)\). If a neural network architecture that shares parameters between the policy and value function, a loss function that combines the policy loss and the value function error term must be used.
+It is also common to introduce an entropy bonus to ensure sufficient exploration.
+The full PPO objective for an actor-critic approach is
+
+\[
+    \mathcal{L}_t(\boldsymbol{\theta})
+    \hat{\mathbb{E}}_t
+    \left\lbrack
+    \mathcal{L}_\text{CLIP}(\boldsymbol{\theta}) -
+    c_1 \mathcal{L}_\text{VF}(\boldsymbol{\theta}) +
+    c_2 S [\pi](s_t, \boldsymbol{\theta})
+    \right\rbrack
+\]
+
+where \(c_1\) and \(c_2\) value loss is the entropy bonus coefficients,
+\(S\) is an entropy bonus and \(\mathcal{L}_\text{VF}\) is a squared-error loss in the value output. Algorithm ~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}
+    \label{alg:ppo}
     \caption{Proximal Policy Optimization}
     \begin{algorithmic}
         \For{\(\text{iteration} = 1,2,\dots\)}
@@ -403,13 +352,11 @@ Multiple gradient updates are performed for each batch of samples\dots
                 \State \(\text{Run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ time steps}\)
                 \State \(\text{Compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
             \EndFor
-            \State \(\text{Optimize surrogate } L \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
+            \State \(\text{Optimize } \mathcal{L} \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
             \State \(\theta_{\text{old}} \leftarrow \theta\)
         \EndFor
     \end{algorithmic}
 \end{algorithm}
-
-PPO algorithms have turned out to strike a good balance between simplicity, stability and ease of tuning while achieving competitive performance on several tasks~\cite{schulman_ppo_2017,henderson_matters_2018,cobbe_procgen_2020,vinyals_alphastar_2019,andrychowicz_empirical_2020}.
 
 \section{Related Work}
 \label{sec:relatedwork}
@@ -417,9 +364,23 @@ PPO algorithms have turned out to strike a good balance between simplicity, stab
 Works that consider tasks that are related to searching for targets in unknown environments can be found in several fields under many names.
 In this section we survey some of the more relevant ones, focusing on those that employ RL methods.
 
-\todo{Find a better way to organize these. There is significant overlap between the tasks.}
-
 \subsection{Search with Reinforcement Learning}
+
+There are several rigorous attempts to implement robotic object search systems using non-learning methods.
+Forssén et al.~\cite{forssen_visual_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
+Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
+Each objects is examined from several perspectives and ranked by probability of being the queried object.
+Shubina and Tsotsos~\cite{shubina_visualsearch_2010} model the search problem as in \cite{ye_tsotsos_2001}, and solve with a greedy action selection strategy.
+They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
+Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_real_2011,aydemir_active_2013}.
+Meger et al.~\cite{meger_george_2008} describe a system that performs object recognition in realistic scenarios\dots
+
+\todo{finish}
+
+These systems solve more complex tasks than the one we consider, such as handling multiple target object categories and navigating in obstructed environments.
+However, they are also restricted by their reliance on human knowledge to act well in their environments.
+While reinforcement learning is not among the more traditional solution methods for active vision tasks~\cite{chen_activevisionsurvey_2011},
+learning systems that are less dependent on expert knowledge have the potential to be more generally applicable.
 
 \subsubsection{Sequential Visual Attention}
 
@@ -462,9 +423,10 @@ An agent is trained to successively improve a bounding box using translating and
 They use a reward signal that is proportional to how well the current box covers the target object.
 An action that improves the region is rewarded with +1, and given a punishment of -1 otherwise.
 They find that this reward communicates more clearly which transformations keep the object inside the box and which take the box away from the target.
-When there is no action that improves the bounding box, the agent may select a trigger action (which would be the only action that does not give a negative reward) which resets the box.
+When there is no action that improves the bounding box, the agent may select an indication action (which would be the only action that does not give a negative reward) which resets the box.
 This way the agent may select additional bounding boxes.
-Each trigger modifies the environment by marking it so that the agent may learn to not select the same region twice. % inhibition-of-return mechanism, widely used in visual attention models ~\cite{itti_koch_2001}
+Each indication action modifies the environment by marking it so that the agent may learn to not select the same region twice.
+% inhibition-of-return mechanism, widely used in visual attention models ~\cite{itti_koch_2001}
 
 A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
 Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
@@ -482,21 +444,6 @@ Furthermore, they pose that this memory should capture the spatial layout of the
 A spatial memory network is proposed, which remembers features and locations of past detections in an image and uses this to improve future ones.
 A CNN is used to extract features from the memory and used together with the original image as input to a standard region proposal network.
 The approach gives a small improvement over the standalone region proposal network.
-
-%\subsection{Coverage Path Planning}
-
-%The problem we consider in this work shares many characteristics with coverage path planning (CPP)~\cite{galceran_carreras_2013}.
-%CPP is the task of determining a path that passes over all points in an area, and appears as a fundamental part of many real-world problems. 
-%In the general case, an agent that does not learn to exhaustively search its environment can not be expected to be successful for the visual search task.
-%The CPP is strongly related to the traveling salesman problem (TSP).
-%The unrestricted CPP where there are no obstacles (the "lawnmower problem") is in fact proven to be NP-hard~\cite{arkin_lawnmowing_2000}.
-%In our problem, we do not require complete coverage, but just that certain points (those that contain targets) are visited.
-%The shape of the environment is known, as the sensor has limited range of movement.
-%Furthermore, a good agent should also prioritize certain regions which is not part of the CPP task.
-%Although a CPP agent that is able to recognize targets is not optimal, it is a suitable baseline for the task.
-%Specifically, the wavefront algorithm~\cite{galceran_carreras_2013} which is suitable for grid-discretized can be used. % some simple approximation
-
-%Krishna et al.~\cite{krishna_tetromino_2020}...
 
 \subsubsection{Visual Navigation}
 
@@ -538,20 +485,24 @@ Their experiments make the same assumptions as \cite{zhu_target_2016} - the scen
 
 \cite{yang_semantic_2018} use semantic scene priors\dots
 
+\todo{finish}
+
 Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for navigation.
 They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
 However, when trained and tested on different maps, it cannot do so successfully.
 They further find that, with a single decision point whose correct\dots
 
+\todo{finish}
+
 \subsection{Memory Architectures}
 
 A recurring theme in the related work above is the use of memory architectures.
 In most cases where active sensing is involved, memory is a requirement for good performance.
 As mentioned in Section \ref{sec:pomdp}, effective behavior in partially observable processes usually requires some form of memory.
-Agents need to summarize history for good action selection.
+Agents need to summarize the history of interactions with their environment for good action selection.
 Works that don't use memory rely on either full observability, like \cite{caicedo_active_2015}, or low variance so that search can be done reactively, like \cite{ghesu_artificial_2016}.
-For the visual search task we consider here, memory is likely to be important as integrating features over time should lead to more efficient search strategies.
+Memory is intuitively important for the search task we consider here, as integrating features over time should lead to more efficient search strategies.
 
 Anderson et al.~\cite{anderson_evaluation_2018} emphasize the importance of memory mechanisms that support the construction of rich internal representations of environments in navigation agents.
 They argue that the nature of the internal representation is central to the study of embodied navigation.
@@ -561,16 +512,13 @@ Once a task requires integration of features over longer time, more advanced mem
 
 Augmentations like recurrent update mechanisms add more potential.
 Hausknecht and Stone~\cite{hausknecht_stone_2017} investigate the effects of adding memory in the form of a recurrent step to DQN in order to tackle POMDPs.
-They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM.
+They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM layer.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014}, and \cite{mnih_asynchronous_2016}.
 Recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
 
-\todo{All of these are for navigation.}
-
 Specialized memory architectures can provide better performance for their intended tasks.
-
 Henriques and Vedaldi~\cite{henriques_vedaldi_2018} argue that autonomous agents must switch from an egocentric representation of their scenes to an allocentric one.
 They propose a spatial memory which can be updated dynamically during each episode\dots
 
@@ -587,11 +535,13 @@ The authors evaluate this architecture in several visual navigation tasks, where
 In their tests, their memory architecture performs better than LSTM layers\dots
 
 A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}.
-Their memory is spatial rather than temporal\dots
+Their memory is spatial rather than temporal - \dots
+
+\todo{finish}
 
 \subsection{Visual Exploration}
 
-% https://vision.cs.utexas.edu/projects/exploring-exploration/
+\todo{https://vision.cs.utexas.edu/projects/exploring-exploration/}
 
 \subsection{Generalization and Inductive Bias}
 
@@ -653,8 +603,6 @@ If the similarities between training and testing contexts are known, they can be
 When there is not specific inductive bias to encode, standard regularization can be used.
 Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning the invariances from training and hope that these generalize to testing.
 
-\todo{Should get into why procedural generation is and is not a good idea for RL. It is discussed in \cite{kirk_survey_2022}.}
-
 They further propose a formalism for collections of problems called contextual CMDPs.
 A CMDP which is an MDP \(\mathcal{M}\) (or POMDP) where the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
 where \(s \in \mathcal{S}\) is the underlying state and \(c \in \mathcal{C}\) is the \textit{context}.
@@ -669,6 +617,10 @@ A problem in state-of-the art RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
 This has meant that reproducing state-of-the-art deep RL results is difficult.
+
+The popularity of more challenging benchmarks has lead to longer training times.
+This has made it less feasible to measure performance over many training runs,
+which in turn has led to a shift to only evaluating a small number of runs per task.~\cite{agarwal_rlliable_2022}
 
 Henderson et al.~\cite{henderson_matters_2018} discuss this problem from multiple perspectives.
 Through experimental analysis, come to a set of conclusions.
@@ -701,15 +653,11 @@ The statistical power of
 A similar work by Agarwal et al.~\cite{agarwal_rlliable_2022} criticizes the heavy use of point estimates of aggregate performance.
 They show that conclusions drawn from point estimates can be very different from those drawn from more thorough statistical analysis.
 Like \cite{henderson_matters_2018}, they advocate for the use  of performance metrics that take uncertainty in results into account.
-The popularity of more challenging benchmarks has lead to longer training times.
-This has made it less feasible to measure performance over many training runs,
-which in turn has led to a shift to only evaluating a small number of runs per task.
-The authors propose the following set of metrics that better reflect performance across a handful of runs:
 
 Anderson et al.~\cite{anderson_evaluation_2018} discuss problem statements and evaluation measures for embodied navigation agents, and make a set of recommendations.
 A navigation agent should be equipped with a special action that indicates that it has concluded the episode.
-The agent should be evaluated at the time this action is made, and not at some more favorable time step. % implicitly the trigger action for us, since we have multiple targets
-Proximity to a goal should be measured using geodesic distance, the shortest distance in the environment. % Manhattan in 2D?
+The agent should be evaluated at the time this action is made, and not at some more favorable time step.
+Proximity to a goal should be measured using geodesic distance, the shortest distance in the environment.
 They recommend success weighted by (normalized inverse) path length (SPL) as the primary measure of navigation performance.
 With \(N\) test episodes, SPL is computed as 
 
@@ -723,12 +671,12 @@ and \(p_i\) is the length of the path actually taken in the episode.
 If 50\% of test episode are successful and the agent takes the optimal path in all of them, its SPL is 0.5.
 By measuring SPL of human subjects, what is a good score can be calibrated.
 
-Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
-They note some issues with the SPL metric.
-It fails to consider the fact that some failures are less of a failure than others.
-Some failures might in fact be close to reaching the goal while some fail completely.
-The binary success introduces high variance in average SPL computation.
-Furthermore, SPL is not particularly suitable for comparison across different datasets,
-as obtaining a high SPL is more difficult for short paths than for long paths.
-They suggest that SPL should be replaced by some metric that takes these issues into account.
-However, to our knowledge such a metric is yet to be proposed and widely adopted.
+%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
+%They note some issues with the SPL metric.
+%It fails to consider the fact that some failures are less of a failure than others.
+%Some failures might in fact be close to reaching the goal while some fail completely.
+%The binary success introduces high variance in average SPL computation.
+%Furthermore, SPL is not particularly suitable for comparison across different datasets,
+%as obtaining a high SPL is more difficult for short paths than for long paths.
+%They suggest that SPL should be replaced by some metric that takes these issues into account.
+%However, to our knowledge such a metric is yet to be proposed and widely adopted.

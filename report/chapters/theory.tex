@@ -38,7 +38,7 @@ Humans have also been shown to use the history of observations to improve visual
 Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_koch_2001} that prevents searching visited locations twice, improve search time in random fields considerably.
 
 Natural environments are in fact seldom completely random, but instead tend to exhibit some structure.
-When finding targets, there is usually to be something about this structure that can be used to improve search performance.
+When finding targets, there is usually something about this structure that can be utilized to improve search performance.
 Such regularities can learned from past experience and used during future searches.
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
@@ -457,8 +457,7 @@ They a set of 32 scenes, each of which contain a fixed number of object instance
 They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
 Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
 
-Ye et al.~\cite{ye_active_2018} propose an alternative architecture to \cite{zhu_target_2016}
-which, in addition to an image of the camera view and the target object, uses the output of an object recognition module to select actions.
+Ye et al.~\cite{ye_active_2018} propose an alternative architecture to \cite{zhu_target_2016} which, in addition to an image of the camera view and the target object, uses the output of an object recognition module to select actions.
 Specifically, the output of the localization component is fed as input.
 This allows the agent to know if the target object is in view, and where.
 The object recognition module is trained separately from the policy.

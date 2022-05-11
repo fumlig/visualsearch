@@ -152,52 +152,54 @@ function experiment2
 #experiment1
 #experiment2
 
+
 {
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/null/0 --models=models/sample/map/null/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/null/1 --models=models/sample/map/null/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/null/2 --models=models/sample/map/null/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=0 sample map 500 0 &
+    CUDA_VISIBLE_DEVICES=0 sample map 500 1 &
+    CUDA_VISIBLE_DEVICES=0 sample map 500 2 &
     wait
 
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/lstm/null/0 --models=models/sample/lstm/null/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/lstm/null/1 --models=models/sample/lstm/null/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/lstm/null/2 --models=models/sample/lstm/null/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/0 --models=models/sample/map/500/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/1 --models=models/sample/map/500/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/2 --models=models/sample/map/500/2/ckpt/* &
     wait
 } &
 
 {
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/1000/0 --models=models/sample/map/1000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/1000/1 --models=models/sample/map/1000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/1000/2 --models=models/sample/map/1000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=1 sample map 5000 0 &
+    CUDA_VISIBLE_DEVICES=1 sample map 5000 1 &
+    CUDA_VISIBLE_DEVICES=1 sample map 5000 2 &
     wait
 
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/lstm/1000/0 --models=models/sample/lstm/1000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/lstm/1000/1 --models=models/sample/lstm/1000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/lstm/1000/2 --models=models/sample/lstm/1000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/0 --models=models/sample/map/5000/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/1 --models=models/sample/map/5000/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/2 --models=models/sample/map/5000/2/ckpt/* &
     wait
 } &
 
 {
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/map/10000/0 --models=models/sample/map/10000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/map/10000/1 --models=models/sample/map/10000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/map/10000/2 --models=models/sample/map/10000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=2 sample lstm 500 0 &
+    CUDA_VISIBLE_DEVICES=2 sample lstm 500 1 &
+    CUDA_VISIBLE_DEVICES=2 sample lstm 500 2 &
     wait
 
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/10000/0 --models=models/sample/lstm/10000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/10000/1 --models=models/sample/lstm/10000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/10000/2 --models=models/sample/lstm/10000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/0 --models=models/sample/lstm/500/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/1 --models=models/sample/lstm/500/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/2 --models=models/sample/lstm/500/2/ckpt/* &
     wait
 } &
 
 {
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/map/100000/0 --models=models/sample/map/100000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/map/100000/1 --models=models/sample/map/100000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/map/100000/2 --models=models/sample/map/100000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 0 &
+    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 1 &
+    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 2 &
     wait
 
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/100000/0 --models=models/sample/lstm/100000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/100000/1 --models=models/sample/lstm/100000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/100000/2 --models=models/sample/lstm/100000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/0 --models=models/sample/lstm/5000/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/1 --models=models/sample/lstm/5000/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/2 --models=models/sample/lstm/5000/2/ckpt/* &
     wait
 } &
+
 
 wait

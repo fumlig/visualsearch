@@ -329,7 +329,7 @@ It is also common to introduce an entropy bonus to ensure sufficient exploration
 The full PPO objective for an actor-critic approach is
 
 \[
-    \mathcal{L}_t(\boldsymbol{\theta})
+    \mathcal{L}_t(\boldsymbol{\theta}) =
     \hat{\mathbb{E}}_t
     \left\lbrack
     \mathcal{L}_\text{CLIP}(\boldsymbol{\theta}) -
@@ -496,6 +496,10 @@ When trained and tested on different maps, the agent does not seem to be able to
 The authors use relatively small training set of less than 1000 samples, but do not consider that their agents could have overfit this this set.
 Finally, they find that the agent is not able to consistently find optimal navigation paths in seen environments when its starting position is randomized.
 
+%These works all focus on navigation between points in a scene.
+%Visual search is perhaps more akin to intelligent visual exploration.
+%\todo{https://vision.cs.utexas.edu/projects/exploring-exploration/}
+
 \subsection{Memory Architectures}
 
 A recurring theme in the related work above is the use of memory architectures.
@@ -515,37 +519,24 @@ Augmentations like recurrent update mechanisms add more potential.
 Hausknecht and Stone~\cite{hausknecht_stone_2017} investigate the effects of adding memory in the form of a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM layer.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
-Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014}, and \cite{mnih_asynchronous_2016}.
-Recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
+Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_attention_2014} and \cite{mnih_asynchronous_2016}.
+General-purpose recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
 
 Specialized memory architectures can provide better performance for their intended tasks.
-Henriques and Vedaldi~\cite{henriques_vedaldi_2018} argue that autonomous agents must switch from an egocentric representation of their scenes to an allocentric one.
-They propose a spatial memory which can be updated dynamically during each episode\dots
-\todo{finish}
-
-Gupta et al.~\cite{gupta_cognitive_2019} introduce an agent that navigates in novel environments using a spatial memory.
-Encoded representations of observed images are placed in a top-down map\dots
-\todo{finish}
-
-Chaplot et al.~\cite{chaplot_semantic_2020} build on the idea of an explicit memory by including environment semantics\dots
-\todo{finish}
-
-Oh et al.~\cite{oh_minecraft_2016} propose one such memory that can retain information over a limited number of time steps.
+Oh et al.~\cite{oh_minecraft_2016} propose one such memory that can retain information over a fixed limited number of time steps.
 During each time step, the agent encodes its observation and shifts it into the memory.
 It also reads the memory using a soft attention~\cite{bahdanau_attention_2016} mechanism whose weights are determined by the encoded observation.
 This way, the agent can recall information from the past that is useful to the present.
 The authors evaluate this architecture in several visual navigation tasks, where image observations are encoded with a CNN.
-In their tests, their memory architecture performs better than LSTM layers\dots
-\todo{finish}
+In their tests, their memory architecture performs better than LSTM layers, and generalizes better to unseen environments.
 
-A similar memory architecture is introduced by Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017}.
-Their memory is spatial rather than temporal - \dots
-\todo{finish}
-
-\subsection{Visual Exploration}
-
-\todo{https://vision.cs.utexas.edu/projects/exploring-exploration/}
+Several works propose the use of spatial memories rather than temporal ones, which the agent can address with its location and use to store structured information of its environment.
+Parisotto and Salakhutdinov~\cite{parisotto_salakhutdinov_2017} introduce a general-purpose spatial memory architecture.
+They assume that the environment can be discretized into a set of positions.
+The agent retains a feature map with one feature vector per position it can occupy in the environment.
+At each time step, the agent reads the feature map from the previous time step and writes information to the slot for its current position.
+This architecture is shown to outperform LSTM and the architecture in \cite{oh_minecraft_2016} in several navigation tasks which require remembering over many time steps. Several similar architectures have been proposed~\cite{henriques_vedaldi_2018,gupta_cognitive_2019,chaplot_semantic_2020}.
 
 \subsection{Generalization and Inductive Bias}
 

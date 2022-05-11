@@ -1,20 +1,11 @@
-% should decide on a clear terminology,
-% target, distractor, region, view, move, etc.
-
 \chapter{Introduction}
 \label{cha:introduction}
 
-In this thesis project, the problem of searching for targets in unknown but familiar environments is addressed.
+In this thesis project, the problem of searching for target objects in unknown but familiar environments is addressed.
 This chapter presents the motivation behind the project, the research questions that are addressed, and the delimitations. 
 
 \section{Motivation}
 \label{sec:motivation}
-
-% This is where the studied problem is described from a general
-% point of view and put in a context which makes it clear that
-% it is interesting and well worth studying. The aim is to make
-% the reader interested in the work and create an urge to
-% continue reading.
 
 The ability to visually search for things in an environment is fundamental to intelligent behavior.
 We humans are constantly looking for things, be it be it the right book in the bookshelf, a certain keyword in an article or blueberries in the forest.
@@ -52,7 +43,7 @@ This makes it interesting to see if RL can also be applied to visual search.
 \section{Aim}
 \label{sec:aim}
 
-The aim of this thesis is to investigate how an intelligent agent that learns to search for targets can be implemented with deep reinforcement learning.
+The aim of this thesis is to investigate how an intelligent agent that learns to search for targets using visual input can be implemented with deep reinforcement learning.
 Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to search strategically in unseen environments.
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through an camera whose movements are unrestricted.
 The agent has to actively choose where to look in order to gain new information about the environment.
@@ -66,7 +57,7 @@ Finally, the agent should be able to locate multiple targets while minimizing th
 If such a system is to be trained and deployed for a real-world task, there is likely a limited set of samples to learn from.
 Therefore it is also of interest to investigate how many samples are required to infer how to effectively search in similar environments.
 While similar problems have been addressed in the past, both with learning agents~\cite{minut_mahadevan_2001,mirowski_navigate_2017,ghesu_artificial_2016,caicedo_active_2015} and non-learning agents~\cite{shubina_visualsearch_2010,forssen_visual_2008}, 
-our impression is that this is the first work to address learning to search in unseen environments where emphasis is placed on how visual cues can guide search.
+our impression is that this is the first work to address learning to search in unseen environments where emphasis is placed on how arbitrary visual cues can guide search.
 Our contributions are as follows:
 
 \begin{itemize}
@@ -81,50 +72,6 @@ Our contributions are as follows:
 \section{Research questions}
 \label{sec:research-questions}
 
-% This is where the research questions are described.
-% Formulate these as explicit questions, terminated with a
-% question mark. A report will usually contain several different
-% research questions that are somehow thematically connected.
-% There are usually 2-4 questions in total.
-% 
-% Examples of common types of research questions (simplified
-% and generalized):
-% 
-% \begin{enumerate}
-% \item How does technique X affect the possibility of achieving the
-%   effect Y?
-% 
-% \item How can a system (or a solution) for X be realized so
-%   that the effect Y is achieved?
-% 
-% \item What are the alternatives to
-%   achieving X, and which alternative gives the best effect considering
-%   Y and Z? (This research question is normally broken down in to 2
-%   separate questions.)
-% 
-% \end{enumerate}
-% 
-% 
-% Observe that a very specific research question almost always
-% leads to a better thesis report than a general research question
-% (it is simply much more difficult to make something good
-% from a general research question.)
-% 
-% The best way to achieve a really good and specific research
-% question is to conduct a thorough literature review and get
-% familiarized with related research and practice. This leads to
-% ideas and terminology which allows one to express oneself
-% with precision and also have something valuable to say in the
-% discussion chapter. And once a detailed research question
-% has been specified, it is much easier to establish a suitable
-% method and thus carry out the actual thesis work much faster
-% than when starting with a fairly general research question. In
-% the end, it usually pays off to spend some extra time in the
-% beginning working on the literature review. The thesis
-% supervisor can be of assistance in deciding when the research
-% question is sufficiently specific and well-grounded in related
-% research.
-
 This thesis will address the following questions:
 
 \begin{enumerate}
@@ -136,11 +83,6 @@ This thesis will address the following questions:
 
 \section{Delimitations}
 \label{sec:delimitations}
-
-% This is where the main delimitations are described. For
-% example, this could be that one has focused the study on a
-% specific application domain or target user group. In the
-% normal case, the delimitations need not be justified.
 
 We focus on the behavioral and decision-making aspects of the presented problem, and delimit ourselves from difficult detection problems.
 For this reason, targets will deliberately be made easy to detect once visible.

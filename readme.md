@@ -1,14 +1,19 @@
-# Master's Thesis
+<h1 align="center"> Learning to Search for Targets</h1>
+<p align="center">A Deep Reinforcement Learning Approach to Visual Search in Unknown Environments</p>
 
-## abstract
+## Abstract
 
-## experiments
+## Overview
 
-Run all experiments:
+## Reproduce
+
+To reproduce results, run:
 
 ```bash
-pip install -e .
-tensorboard --logdir=logs --samples_per_plugin=scalars=10000 &
+pip install -r requirements.txt
 
-python3 train.py 
+./run.sh 
 ```
+
+This will run all experiments that are presented in the report.
+Learning information is written to the [results](./results) directory, checkpoints and the final model to [models](./models), and tensorboard logs to [logs](./logs).

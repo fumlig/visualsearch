@@ -80,7 +80,6 @@ if __name__ == "__main__":
     model = None
     device = th.device(args.device)
     df = pd.DataFrame()
-    infos = []
 
     if args.seed is not None:
         random.seed(args.seed)
@@ -114,6 +113,8 @@ if __name__ == "__main__":
         else:
             model = None
 
+        infos = []
+
         for ep in tqdm(range(args.episodes), leave=False):
             done = False
             seed = args.seed if ep == 0 else None
@@ -130,6 +131,7 @@ if __name__ == "__main__":
                 if not args.hidden:
                     if args.observe:
                         img = obs["image"]
+                        print("position:", obs["position"])
                     else:
                         img = env.render(mode="rgb_array")
 

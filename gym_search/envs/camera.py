@@ -14,7 +14,7 @@ class CameraEnv(SearchEnv):
 
     def __init__(
         self,
-        shape=(20, 40),
+        shape=(5, 20),
         view=(64, 64),
         terrain_size=2048,
         terrain_height=32,
@@ -67,7 +67,7 @@ class CameraEnv(SearchEnv):
         z = self.terrain_size//2
         y = self.terrain_height*4
 
-        fov = 15 # 180/min(self.shape) # 45
+        fov = 180/min(self.shape)
 
         scene.camera_position = (x, y, z)
         scene.up_vector = (0, 1, 0)
@@ -137,6 +137,7 @@ class CameraEnv(SearchEnv):
                     closest_distance = distance
 
             targets.append(closest_direction)
+            #targets.append((0, 0))
 
             assert visible, f"target at {position} invisible, player {player}"
 
@@ -154,9 +155,10 @@ class CameraEnv(SearchEnv):
 
     def look(self, position):
         eps = 0.1
+        pitch_min, pitch_max = 0, -np.pi/2+eps # np.pi/2-eps
         pitch, yaw = np.array(position)/self.shape
         yaw = 2*np.pi*yaw - np.pi/2
-        pitch = np.clip(np.pi*(0.5-pitch), -np.pi/2+eps, np.pi/2-eps)
+        pitch = (((pitch - 0.0) * (pitch_max - pitch_min)) / (1.0 - 0.0)) + pitch_min
         direction = pr.Vector3((np.cos(yaw)*np.cos(pitch), np.sin(pitch), np.sin(yaw)*np.cos(pitch)))
         front = direction.normalized
         self.scene.camera_target = self.scene.camera_position + front

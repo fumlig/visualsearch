@@ -84,57 +84,62 @@ The term \(d = 1\) if \(p_t\) is closer to the nearest target than \(p_{t-1}\), 
 Similarly, \(e = 1\) if \(p_t\) has not been explored previously and \(e = 0\) otherwise.
 
 Through experimentation, we find that a larger time penalty than \(-0.01\) dominates the reward for finding targets.
-This is potentially related to the episode time - with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
+This is potentially related to the episode time -- with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
 The two next terms are bonus rewards, intended to speed up learning by further encouraging desired behavior.
 Actions that move the agent towards the nearest target and move the view to previously unseen regions are desirable.
-Importantly, the sum of these bonuses does not exceed the time penalty.
+Importantly, the sum of these bonuses is not larger than the magnitude of the time penalty.
 This is to ensure that exploration and moving towards targets does not seem more important to the agent than finishing the episode quickly.
-
-\todo{Go into interplay of penalty and max time steps.}
+Therefore, the bonuses may guide the agent towards finding targets but do not cause it to steer away from the underlying goal.
 
 \subsection{Gaussian Environment}
 
-The first environment is the simplest environment. 
-The scene's appearance is given by a \(1024 \times 1024\) RGB image.
-The agent observes a \(64 \times 64\) sub-image at each time step.
-Which sub-image is viewed is determined by the position of the agent.
-Each moving action translates the agent one step in the corresponding cardinal direction.
+The first environment is the simplest environment, where the correlation between scene appearance and target probability is clear.
+During each episode reset, a \(1024 \times 1024\) RGB image is generated conditioned on the seed.
+The image contains three blue bumps, whose intensity is highest towards their center and wears off radially outwards.
+The intensity wears off as an (approximate) Gaussian function.
+The sum of the intensity in the blue channel in the image is used as a probability density function to select the location of three targets.
+Targets are characterized by red \(8 \times 8\) squares.
+The higher the intensity in the blue channel, the more likely that there is a target there.
 
-In the image there are three Gaussian kernels with random positions.
-The height of the kernel is indicated by a higher intensity in the blue channel.
-Three targets are scattered around the environment, visualized as red squares.
-The larger the sum of the gaussian kernels, the more likely it is that there is a target present.
+The image is divided into a grid of \(10 \times 10\) steps, one per position \(p_t\).
+The image \(x_t\) is the \(64 \times 64\) sub-image at the current position in the grid.
+Each moving action translates the agent one step in corresponding cardinal direction in the grid.
 
-The idea with this environment is to test that the method learns what we want it to learn.
-There is a clear correlation between observations and desirable actions.
-It is also easy to determine whether the agent acts well in this environment.
-% Our feeling is that this is something that previous similar works has not done. % cite
-
-%To investigate the effect the scene size has on the agent's ability to learn a good policy,
-%we use three different versions of the environment.
+The idea with this environment is to test whether an agent is able to utilize scene characteristics to search quicker.
+An efficient searcher in this environment should prioritize locations where the intensity in the blue channel is high.
+It should be able to use the gradient of the underlying Gaussian function to move towards locations with higher target probabilities, while avoiding revisiting locations and intelligently planning its search path.
 
 \begin{figure}
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
-    \caption[Gaussian environment]{Four samples of the first environment. There are three gaussian kernels in the environment, whose heights are indicated by the intensity of the blue channel. There are three targets in the environment, whose location is sampled from the distribution defined by the sum of the three gaussian kernels. The white border indicates the current view.}
+    \caption[Gaussian environment]{Four samples of the first environment. There are three blue bumps and three red targets in each scene. Targets are more likely where the intensity of the bumps is high.}
 \end{figure}
 
 \subsection{Terrain Environment}
 
-The second environment is similar to the first one, but intended to look like realistic terrain.
-It roughly represents a UAV search-and-rescue scenario.
-To generate the image, gradient noise is generated and used as a height map.
-The height map determines the color of the image, which is picked to resemble water, sand, grass and rock.
-The height also correlates to the probability of targets.
-Specifically, three targets are located with uniform probability between shores and mountain bases.
-It is desirable that a searching agent should learn to not search oceans and lakes, and instead prioritize searching along the edges of land masses.
+The second environment is similar to the first one, but intended to simulate a search scenario in realistic terrain.
+Actions and observations behave the same as in the first environment.
+At the start of each episode, a \(1024 \times 1024\) height map is generated using gradient noise.
+The height map is used to determine the color of an image of the same size.
+Lower heights are filled with blue ocean, and higher areas with green grass and brown mountains.
+Three red targets are located with uniform probability along the shores, between mountains and water.
+Green trees are also scattered around each scene, whose positions are sampled from the same distribution as that of the targets.
+
+While this environment is similar to the first environment, it is less clear how to search efficiently in it.
+There is higher variance between scene samples.
+It is also less clear how the scene appearance is correlated to the probability of targets.
+It is desirable that a searching agent should learn to not search oceans and mountains.
+Instead it should prioritize searching along the edges of land masses.
+For some scene samples, there are multiple islands with small patches of land between them.
+These patches could be used to quickly prioritize land while avoiding water.
+One can draw parallels to search-and-rescue scenarios with UAVs or fire detection.
 
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
-    \caption[Terrain environment]{Four samples of the terrain environment. Terrain seen from above with red targets scattered along island edges.}
+    \caption[Terrain environment]{Four samples of the second environment. Terrain seen from above with red targets scattered and green trees scattered along shores.}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -143,15 +148,22 @@ The third environment is a three-dimensional version of the second one.
 The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
 The agent observes the scene through a pan-tilt perspective camera.
 Targets are, as before, placed along island edges.
-The agent is therefore expected to avoid searching the skies and oceans.
-This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+
 The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, while \texttt{DOWN} and \texttt{UP} control its pitch.
+The yaw is divided into 10 steps between 0 and 360 degrees.
+The yaw angle wraps around, so that the agent can look around freely.
+Similarly, the pitch is divided into 10 steps between 0 (straight forward) and -90 degrees (straight down), but without wrapping around.
+
+Targets are always visible from at least one camera position.
+They may be visible from multiple positions, and the agent is expected to indicate that they are visible only when they are as close to the center of the view image as possible.
+This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
+In some scenarios, it can be important that objects are not only localized, but localized accurately.
 
 \begin{figure}
     \centering
     \input{figures/camera.pgf}
     \label{fig:camera}
-    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. The pan and tilt of the camera can be adjusted to move the view around. In the left image, a target can be seen.}
+    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. The pan and tilt of the camera can be adjusted to move the view around.}
 \end{figure}
 
 \section{Approach}
@@ -166,7 +178,9 @@ Due to the advantages described in Section \ref{sec:policy-value}, we limit our 
 Specifically, we employ an actor-critic approach that estimates a policy and value function with a multi-headed neural network.
 The neural network architecture should reflect the aforementioned requirements.
 
-With this in mind we design our neural network architecture as follows:
+\subsection{Architecture}
+
+We design our neural network architecture as follows:
 A CNN takes the observed image \(x_t\) and encodes it into a latent representation \(h_t\).
 This allows the agent to extract translation invariant features in observed images.
 The latent representation, as well as the current position of the agent \(p_t\) is used as input to an RNN.
@@ -214,7 +228,7 @@ It is defined by the following set of operations:
     \end{cases}
 \end{equation}
 
-Here, \(z_t \in \mathbb{R}^{64 \times 10 \times 10}\) is a feature map with one feature vector per possible position \(p_t\).
+Here, \(z_t \in \mathbb{R}^{64 \times 10 \times 10}\) is a feature map with one 64-dimensional feature vector per possible position \(p_t\).
 At each time step, the agent reads from this map using a CNN with three convolutional layers.
 Each layer has 32 filters of size \(3 \times 3\), and uses a padding of 1.
 A final fully connected layer produces a 64-dimensional read vector \(\rho_t\).
@@ -301,11 +315,12 @@ We find that this helps the agent with finding a better local optimum.
 %This could make it difficult for the agent to search exhaustively.
 %With these three baselines, we can clearly see what role the observations and memory plays for the search task.
 
-\subsection{Impact of Search Space Size}
+\subsection{Search Efficiency}
 
-\subsection{Generalization with Limited Samples}
+\subsection{Scene Size}
 
-\subsection{Comparison with Human Performance}
+\subsection{Generalization}
+
 
 \subsection{Baselines}
 \label{sec:baseline}
@@ -317,28 +332,8 @@ To get a sense of quality of the learned policies, we compare our approaches to 
 
 \section{Implementation}
 
-The environment is implemented with Gym~\cite{brockman_gym_2016}. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
-Proximal policy optimization~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI,
+The environment is implemented with using the Gym~\cite{brockman_gym_2016} interface. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
+PPO~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI,
 and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 The source code for environments, models and algorithms is available at \url{https://gitlab.liu.se/osklu414/tqdt33-masters-thesis}.
-
-% learning actions, recognition and localization simultaneously feels in itself interesting
-% how do we interpret such a model? are there papers for visualizing reinforcement learning weights
-
-% discuss state representation
-% need more than the image
-% - either memory or position or both
-
-% also same configuration possibly?
-% more parallel environments seem to lead to stable training (relatively slow increase in reward though...)
-
-% an interesting question is how large search windows we can handle
-% could be an alternative to zoom
-% a large search window presumably requires attention
-
-
-% memory is needed for (a) remembering previous locations, and (b) integrating features over time
-
-% PPO
-% PPG

@@ -66,6 +66,8 @@ if __name__ == "__main__":
         model_paths = []
         for path in args.models:
             model_paths += glob.glob(path)
+        
+        model_paths.sort(key=lambda x: os.path.getmtime(x))
 
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
@@ -103,7 +105,7 @@ if __name__ == "__main__":
     if not args.hidden:
         cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
 
-    for path in tqdm(sorted(model_paths)):
+    for path in tqdm(model_paths):
 
         if path is not None:
             if args.verbose:

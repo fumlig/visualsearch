@@ -14,9 +14,9 @@ class CameraEnv(SearchEnv):
 
     def __init__(
         self,
-        shape=(5, 20),
+        shape=(10, 20),
         view=(64, 64),
-        terrain_size=2048,
+        terrain_size=1024,
         terrain_height=32,
         num_targets=3,
         **kwargs,
@@ -65,9 +65,9 @@ class CameraEnv(SearchEnv):
         # camera
         x = self.terrain_size//2
         z = self.terrain_size//2
-        y = self.terrain_height*4
+        y = self.terrain_height*2
 
-        fov = 180/min(self.shape)
+        fov = 45 #180/min(self.shape)
 
         scene.camera_position = (x, y, z)
         scene.up_vector = (0, 1, 0)

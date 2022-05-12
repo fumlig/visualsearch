@@ -171,8 +171,10 @@ In some scenarios, it can be important that objects are not only localized, but 
 
 To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
 The final agent should be able to recognize targets, regardless of where they appear in view.
+It is likely important for the agent to have access to its location, especially for large search spaces.
+As environments are procedurally generated, a partial image observation of the scene is not sufficient to ground the agent in it.
 It should also be able to integrate features over time in order to remember which locations have been visited.
-Remembering features of of these locations may also be of importance, as it can provide clues for what is in their proximity.
+Remembering visual features of of these locations may also be of importance, as it can provide clues for what is in their proximity.
 
 Due to the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradient methods.
 Specifically, we employ an actor-critic approach that estimates a policy and value function with a multi-headed neural network.
@@ -235,15 +237,16 @@ A final fully connected layer produces a 64-dimensional read vector \(\rho_t\).
 An MLP takes the read vector concatenated with \(h_t\) and the feature vector stored in the map at the current position \(z_t^{(p_t)}\), and produces a 64-dimensional write vector \(\omega_{t}\).
 Another MLP takes a one-hot encoding of the position as input and outputs a 64-dimensional vector \(q_t\).
 The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(y_t\) to the value and policy networks.
-This means that they can make use of (a) visual features of previously explored locations, (b) spatial relationships between these features, and (c) the current position of the agent.
-Finally, the feature map is updated so that \(z_{t+1}^{(p_t)} = \omega_{t}\).
+This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
+Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
 \todo{Illustrate map updates.}
 
 The hyperparameters for the two RNN architectures are chosen so that they have a comparable number of trainable parameters.
 Both the policy and value network are fully connected networks.
 The value network has one output for the value estimate.
-The policy network has 5 outputs, the logits for each action. 
+The policy network has 5 outputs, the logits for each action.
+Applying the softmax operation on this output gives the final action probabilities.
 All network layers have ReLU activation functions, as suggested by \cite{henderson_matters_2018}.
 
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
@@ -308,6 +311,7 @@ Early experiments show that this stabilizes training.
 Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
 Finally, we decay the learning rate linearly so that it is zero at the final time step.
 We find that this helps the agent with finding a better local optimum.
+
 %They use reward clipping instead which diminishes the meaning of reward magnitude.
 
 %As scenes differ in appearance, the image is not enough to ground the agent.

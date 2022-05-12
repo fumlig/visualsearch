@@ -1,5 +1,6 @@
 \documentclass[margin=10pt]{standalone}    
 
+\usepackage{amsmath}
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning,shapes,calc}
 
@@ -11,13 +12,13 @@
     \tikzstyle{s} = [rectangle,minimum width=2cm,minimum height=1cm,
     align=center,draw=black,fill=white]
 
-    \node (cnn) [l] {CNN};
+    \node (cnn) [l] {$\text{CNN}_{\text{image}}$};
     \node (x) [left of=cnn] {$x_t$};
     \node (rnn) [l,right=1cm of cnn,dashed]{RNN};
     \node (p) [below of=rnn] {$p_t$};
     \node (out) [right=0.5cm of rnn] {};
-    \node (mlp1) [s,right=1cm of out,shift=({0,1cm})] {MLP};
-    \node (mlp2) [s,right=1cm of out,shift=({0,-1cm})] {MLP};
+    \node (mlp1) [s,right=1cm of out,shift=({0,1cm})] {$\text{MLP}_{\text{policy}}$};
+    \node (mlp2) [s,right=1cm of out,shift=({0,-1cm})] {$\text{MLP}_{\text{value}}$};
     \node (pi) [right=1cm of mlp1] {$\pi$};
     \node (v) [right=1cm of mlp2] {$v$};
 

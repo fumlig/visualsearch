@@ -41,7 +41,7 @@ class CameraEnv(SearchEnv):
 
         t = time.process_time()
         noise = fractal_noise_2d((self.terrain_size, self.terrain_size), periods=(4, 4), octaves=4, seed=seed)
-        print("noise:", time.process_time() - t)
+        #print("noise:", time.process_time() - t)
         noise = np.pad(noise, ((0, 1), (0, 1)), mode="edge")
         #kernel = np.array([[x**2+y**2 for x in np.linspace(-1, 1, num=self.terrain_size+1)] for y in np.linspace(-1, 1, num=self.terrain_size+1)])
         terrain = normalize(noise)**exp
@@ -51,7 +51,7 @@ class CameraEnv(SearchEnv):
 
         t = time.process_time()
         tile = self.martini.create_tile(self.terrain.astype(np.float32))
-        print("martini:", time.process_time() - t)
+        #print("martini:", time.process_time() - t)
         
         vertices, faces = tile.get_mesh(1.0)
         vertices = martini.rescale_positions(vertices, self.terrain)
@@ -141,7 +141,7 @@ class CameraEnv(SearchEnv):
 
             assert visible, f"target at {position} invisible, player {player}"
 
-        print("targets:", time.process_time() - t)
+        #print("targets:", time.process_time() - t)
 
         return scene, player, targets
 

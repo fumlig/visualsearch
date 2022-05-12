@@ -1,5 +1,31 @@
 #!/usr/bin/env bash
 
+function train
+{
+    name=$1
+    env_id=$2
+    agent_id=$3
+    alg_id=$4
+    seed=$5
+    device=$6
+
+    env_kwargs=${"{}":-env_kwargs}
+    agent_kwargs=${"{}":-agent_kwargs}
+    alg_kwargs=${"params/procgen.yaml":-alg_kwargs}
+
+    num_timesteps=25000000
+    num_envs=64
+    num_checkpoints=250
+
+    CUDA_VISIBLE_DEVICES=$device train.py $environment $agent $algorithm \
+        --name="$name" \
+        --seed="$seed" \
+        --num-timesteps=$num_timesteps \
+        --num-checkpoints=$num_checkpoints \
+        --env-kwargs=$env_kwargs
+}
+
+
 
 function shape
 {
@@ -154,26 +180,17 @@ function experiment2
 
 
 {
-    CUDA_VISIBLE_DEVICES=0 sample map 500 0 &
-    CUDA_VISIBLE_DEVICES=0 sample map 500 1 &
-    CUDA_VISIBLE_DEVICES=0 sample map 500 2 &
-    wait
-
     CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/0 --models=models/sample/map/500/0/ckpt/* &   
     CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/1 --models=models/sample/map/500/1/ckpt/* &
     CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/2 --models=models/sample/map/500/2/ckpt/* &
     wait
 } &
 
+"'
 {
-    CUDA_VISIBLE_DEVICES=1 sample map 5000 0 &
-    CUDA_VISIBLE_DEVICES=1 sample map 5000 1 &
-    CUDA_VISIBLE_DEVICES=1 sample map 5000 2 &
-    wait
-
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/0 --models=models/sample/map/5000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/1 --models=models/sample/map/5000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/500/2 --models=models/sample/map/5000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/0 --models=models/sample/map/5000/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/1 --models=models/sample/map/5000/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/2 --models=models/sample/map/5000/2/ckpt/* &
     wait
 } &
 
@@ -195,11 +212,13 @@ function experiment2
     CUDA_VISIBLE_DEVICES=3 sample lstm 5000 2 &
     wait
 
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/0 --models=models/sample/lstm/5000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/1 --models=models/sample/lstm/5000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/2 --models=models/sample/lstm/5000/2/ckpt/* &
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/0 --models=models/sample/lstm/5000/0/ckpt/* &   
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/1 --models=models/sample/lstm/5000/1/ckpt/* &
+    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/2 --models=models/sample/lstm/5000/2/ckpt/* &
     wait
 } &
-
+"
 
 wait
+
+# cat results/sample/map/$sample/$seed/test.csv | (sed -u 1q; sort -n -t',' -k1,1) > results/sample/map/$sample/$seed/sort.csv

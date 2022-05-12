@@ -22,7 +22,7 @@ If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\)
 The actions \(a \in \mathcal{A}\) transform the view into a different subset of the scene.
 With a final action, the agent can indicate that there is one or more target in the view.
 The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
-Here, \(x \in \mathbb{R}^{3 \times W \times H}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
+Here, \(x \in \mathbb{R}^{3 \times w \times h}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible, while minimizing the number of total steps.
 There is no inherent reward \(\mathcal{R}\) for this problem, so it has to be designed.
 Finally, seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
@@ -50,11 +50,11 @@ The position and image observations are
 \begin{align}
     o_t & = \left\langle x_t, p_t \right\rangle \text{, where} \\
     x_t & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
-    p_t & \in \{0, \dots, 9\} \times \{0, \dots, 9\}
+    p_t & \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
 \end{align}
 
 All image observations are \(64 \times 64\) RGB images.
-The agent moves in a \(10 \times 10\) grid, and we assume the presence of some oracle that provides the agent with its position.
+The agent moves in a \(H \times W\) grid, and we assume the presence of some oracle that provides the agent with its position.
 In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
 If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
 
@@ -150,14 +150,15 @@ The agent observes the scene through a pan-tilt perspective camera.
 Targets are, as before, placed along island edges.
 
 The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, while \texttt{DOWN} and \texttt{UP} control its pitch.
-The yaw is divided into 10 steps between 0 and 360 degrees.
+The yaw is divided into 20 steps between 0 and 360 degrees.
 The yaw angle wraps around, so that the agent can look around freely.
 Similarly, the pitch is divided into 10 steps between 0 (straight forward) and -90 degrees (straight down), but without wrapping around.
+This means that the camera can take 200 different positions.
 
 Targets are always visible from at least one camera position.
-They may be visible from multiple positions, and the agent is expected to indicate that they are visible only when they are as close to the center of the view image as possible.
+They may be visible from multiple positions, and the agent is expected to use the \texttt{INDICATE} action only when a target is as close to the center of the view image as possible.
 This environment is intended to model more realistic scenarios where the image is more difficult to interpret.
-In some scenarios, it can be important that objects are not only localized, but localized accurately.
+In some scenarios it can be important that objects are not only localized, but localized accurately.
 
 \begin{figure}
     \centering
@@ -184,7 +185,7 @@ The neural network architecture should reflect the aforementioned requirements.
 
 We design our neural network architecture as follows:
 A CNN takes the observed image \(x_t\) and encodes it into a latent representation \(h_t\).
-This allows the agent to extract translation invariant features in observed images.
+This allows the agent to extract translation invariant features from observed images.
 The latent representation, as well as the current position of the agent \(p_t\) is used as input to an RNN.
 Feeding both an image representation and the position of the agent to a recurrent step lets the agent remember visited locations and their appearance.
 The output of the recurrent step is in turn is connected to an actor MLP head and a critic MLP head, which approximate the policy \(\pi\) and value function \(v\) respectively.
@@ -197,7 +198,7 @@ The architecture of the neural network is presented in Figure ~\ref{fig:architec
     \caption[Network architecture]{The neural network architecture used for estimating the policy and value functions from image and position observations.}
 \end{figure}
 
-For the CNN, we use the same architecture as \cite{mnih_human_2015}. % and more
+For the CNN, we use the same architecture as \cite{mnih_human_2015}.
 The input image \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is fed through three convolutional layers: the first layer convolves 32 filters of size \(8 \times 8\) with stride 4, the second convolves 64 filters of size \(4 \times 4\) with stride 2, and the third layer convolves 64 filters of size \(3 \times 3\) with stride 1.
 This is followed by a final fully connected hidden layer with 512 outputs for the latent representation \(h_t \in \mathbb{R}^{512}\).
 
@@ -253,86 +254,114 @@ All network layers have ReLU activation functions, as suggested by \cite{henders
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.
 % Cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies).
 
-\section{Experiments}
-\label{sec:experiments}
+\subsection{Training}
 
-We train the network with the PPO~\cite{schulman_ppo_2017} algorithm described in Section~\ref{sec:ppo}.
-
-To evaluate our approaches, we run four different experiments.
-First, we train both the LSTM agent and the map agent i
-
-Finally, to evaluate the quality of the learned policy, we compare both approaches to a set of baselines.
-
-To compare our approach to the different baselines,
-we train and test all agents on all three environments.
-The agents are trained on the full distribution of environments,
-We do this for all three reward signals \(R\), \(R'\) and \(R''\).
-All agents are trained for 25 million time steps.
-They are then tested on 1000 held out samples from each environment.
-
-For each agent, environment, and reward signal we report the average return and episode length over time during training.
-During testing, we compare the learning agents to random walk, exhaustive search and a human searcher with prior knowledge of the characteristics of the searched environments.
-We report the SPL metric~\cite{anderson_evaluation_2018} for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
-The distance between two points is computed as the minimal number of actions to transform the view between the two.
-Although finding the optimal path is not realistic in partially observable environments, SPL can still be useful when compared to that of a human.
-
-During testing, we increase the maximum episode length from 1000 time steps to 5000 time steps.
-This is to give more accurate metrics for episodes that do not terminate within 1000 time steps. 
-
-Additionally, we conduct experiments to measure the generalization capabilities of the agents.
-For this, we use the terrain environment only.
-The training set size is varied from 100, 1000, 10 000, and 100 000 samples by limiting the seed pool used to generate the environments.
-We test on held out samples from the full distribution, as done by \cite{cobbe_procgen_2020}.
-This way, we can get a sense of how much data and simulation is required to apply the approach to real-world tasks.
-For each training set size, we train the agents until convergence.
-Once again, we compare all three reward signals.
-
-Following the recommendations of \cite{henderson_matters_2018} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
-We run all experiments across 3 different runs, and use the aggregate metrics proposed by \cite{agarwal_rlliable_2022}.
-
-All agents are trained with PPO~\cite{schulman_ppo_2017}.
+We train both agents with PPO~\cite{schulman_ppo_2017}, as described in Section~\ref{sec:ppo}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
-Furthermore, we use similar hyperparameters as in \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
-More parallel environments seem to both speed up and stabilize training.
-%Furthermore, we reduce the number of steps per rollout to be much smaller than the episode length.
-%This is recommended by \cite{schulman_ppo_2017}. 
+Furthermore, we use similar hyperparameters to \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
+Many parallel environments seem to both speed up and stabilize training. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
-The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
-
-\begin{table}
-    \centering
-    \caption{Hyperparameters used during training.}
-    \input{tables/hparams}
-    \label{tab:hyperparameters}
-\end{table}
 
 We normalize the reward to limit the scale of the error derivatives.
 Early experiments show that this stabilizes training.
 Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
+The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
 Finally, we decay the learning rate linearly so that it is zero at the final time step.
 We find that this helps the agent with finding a better local optimum.
 
-%They use reward clipping instead which diminishes the meaning of reward magnitude.
+\begin{table}
+    \centering
+    \caption[PPO hyperparamters]{PPO hyperparameters used during training.}
+    \input{tables/hparams}
+    \label{tab:hyperparameters}
+\end{table}
 
-%As scenes differ in appearance, the image is not enough to ground the agent.
-%For large scenes, the position is likely to be needed as a way for the agent to orient itself.
-%This could make it difficult for the agent to search exhaustively.
-%With these three baselines, we can clearly see what role the observations and memory plays for the search task.
+\section{Experiments}
+\label{sec:experiments}
 
-\subsection{Search Efficiency}
+We conduct four different experiments to evaluate our approaches and answer the research questions in \ref{sec:research-questions}. 
+Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
 
-\subsection{Scene Size}
+\subsection{Quality of Search Behavior}
 
-\subsection{Generalization}
+To evaluate the quality of the learned policy, we compare our approaches to a set of baselines.
+The first baseline acts randomly, and the second one greedily.
+We also investigate how the search performance of our approach compares to that of a human, by testing each environment on 5 individuals.
+As quality is of interest, we train our approaches on the full distribution of samples for each environment.
 
+The random baseline is detailed in Algorithm ~\ref{alg:random}, and the greedy baseline in Algorithm ~\ref{alg:greedy}.
+Both automatically indicate when a target is visible.
+Without offloading the detection from the baselines, they would not find reasonable solutions.
+Furthermore, we feel that it is still an interesting comparison as it does not benefit our approach.
 
-\subsection{Baselines}
-\label{sec:baseline}
+\begin{algorithm}
+    \label{alg:random}
+    \caption{Random Baseline Policy}
+    \begin{algorithmic}
+        \If{there is a target at \(p_t\)}
+            \State \(a_t \leftarrow \mathtt{INDICATE}\)
+        \Else
+            \State \(\mathcal{A}_{\text{move}} = \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State sample \(a_t\) from \(\mathcal{A}_{\text{move}}\)
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
 
-To get a sense of quality of the learned policies, we compare our approaches to two common baselines.
+\begin{algorithm}
+    \label{alg:greedy}
+    \caption{Greedy Baseline Policy}
+    \begin{algorithmic}
+        \If{there is a target at \(p_t\)}
+            \State \(a_t \leftarrow \mathtt{INDICATE}\)
+        \Else
+            \State \(\mathcal{A}_{\text{move}} = \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location}\}\) 
+            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
+                \State sample \(a_t\) from \(\mathcal{A}_{\text{explore}}\)
+            \Else
+                \State sample \(a_t\) from \(\mathcal{A}_{\text{move}}\)
+            \EndIf
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
+
+For each environment, approach and baseline, we measure the search path length and success rate after training.
+For this, we use a fixed set of 100 test samples from each environment.
+We report both mean and standard deviation for the 5 human searchers and three runs of our two approaches.
+We also report the SPL metric~\cite{anderson_evaluation_2018} for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
+The distance between two points is computed as the minimal number of actions to transform the view between the two.
+Although finding the optimal path is not realistic in partially observable environments, SPL can still be useful when compared to that of a human.
+
+\subsection{Size of Search Space}
+
+The number of steps required to locate all targets in a scene is dependent on the size of the search space.
+In small search spaces, the difference in performance between an intelligent searcher and a less intelligent one may be difficult to quantify.
+Furthermore, a large scene is more difficult to search intelligently - more capacity is needed to remember visited locations and plan future steps.
+
+To investigate how well our approach scales to different search space sizes, we train our approaches on three variants of the gaussian environment.
+The scene image is scaled up so that there are \(10 \times 10\), \(15 \times 15\) and \(20 \times 20\) possible camera positions in each environment.
+We train and test both approaches on the full distribution of samples from all three search space sizes respectively.
+By varying the search space size in each environment, we can get a feel for how the size affects training times and the quality of the learned policies.
+For each agent and search space size, we report how the average length and success rate changes while learning.
+
+\subsection{Number of Training Samples}
+
+In realistic scenarios, training agents on an unlimited number of samples is not possible.
+It is more likely that there is a limited set of samples for an agent to learn from.
+For this reason, it is interesting to quantify how the number of training samples affects generalization to the full distribution.
+
+We do this by training our two agents on 500, 1000, 5000, 10000 and an unlimited number samples of the terrain environment.
+Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_procgen_2020}.
+This should illustrate how many samples are needed to generalize, and if overfitting is an issue.
+For each agent and training set size, we report how the average length and success rate changes while learning.
 
 \subsection{Ablations}
 \label{sec:ablations}
+
+Finally, we investigate which aspects of our architecture are important for good search behavior through a set of ablation studies.
+In the gaussian environment, we train three additional variants of our agent architecture.
+One without the recurrent step, one without image observations, and one without position observations.
+We compare the achieved performance to that of our full architectures.
 
 \section{Implementation}
 

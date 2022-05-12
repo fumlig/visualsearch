@@ -31,44 +31,55 @@
 
 This chapter presents the results for each of the experiments described in Section ~\ref{sec:experiments}.
 
-\section{Overall Results Per Environment}
+\section{Quality of Search Behavior}
 
-For each environment, we find that 
+Table ~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
+These metrics are presented for our approaches trained on the full distribution of environments, as well as baselines.
+Human results are collected from 5 individuals.
 
-\section{Scalability to Search Space Sizes}
+\begin{table}
+    \centering
+    \label{tab:metrics}
+    \caption[Quality results.]{Average search path length, success rate and SPL metric on a fixed set of a 100 samples from each environment. Metrics for spatial memory, temporal memory, random baseline, greedy baseline and human searchers.}
+    \input{tables/metrics}
+\end{table}
 
-% 3 plots, one for each shape
-% 2 algorithms per plot
-% 5 seeds per plot with mean and standard deviation
-% Check if test performance maxes out before
+\section{Size of Search Space}
+
+The results of the search space experiments in the gaussian environment are presented in Figure~\ref{fig:shape}.
+Results were collected across four different runs, and the plots show the mean and standard deviation.
+For the search space of \(10 \times 10\), both architectures initially improve their policy quickly.
+Past a certain time step, they keep improving at a reduced pace.
+At the end of training, the spatial memory architecture has reached a policy that seems to find targets quicker than the temporal memory.
+Both seem to be able to find the all three targets in every episode.
+
+For the larger search space sizes with \(15 \times 15\) and \(20 \times 20\) the difference between the two architectures is greater.
+While the spatial memory seems to consistently find targets in a number of steps that is comparable to the number of positions in the search space,
+the search paths of the agent with the temporal memory are substantially longer.
 
 \begin{figure}
     \centering
     \input{figures/shape-10.pgf}
     \input{figures/shape-15.pgf}
     \input{figures/shape-20.pgf}
-    \label{fig:train-shape}
-    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 seeds.}
+    \label{fig:shape}
+    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
 \end{figure}
 
-\section{Generalization with Limited Number of Samples}
+\section{Number of Training Samples}
+
+Figure ~\ref{fig:sample} shows how the average length and success rate in the terrain environment is affected by the number of samples seen during training.
+These metrics are presented for the limited training set and unlimited testing set respectively.
+It seems like both architectures can overfit to training sets of as many as 5000 samples,
+For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
+The the training and test performance are equal when the training set is unlimited.
+As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve equal training and test performance. 
 
 \begin{figure}
     \centering
     \input{figures/sample-1000.pgf}
     \input{figures/sample-10000.pgf}
     \input{figures/sample-null.pgf}
-    \label{fig:samples}
+    \label{fig:sample}
     \caption[Generalization results.]{Reward and episode length curves during training for three training set sizes. Mean and standard deviation across 3 seeds.}
 \end{figure}
-
-
-\section{Comparison to Baselines and Human Search Performance}
-
-\begin{itemize}
-    \item 100 trials with N = 5 humans, N = 5 seeds.
-    \item Add trees and hide objects behind them.
-    \item Search space is no longer uniform, can afford larger spaces.
-    \item Should we add zoom? Do we have time?
-    \item Success rate, SPL, average length.
-\end{itemize}

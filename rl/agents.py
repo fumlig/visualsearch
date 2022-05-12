@@ -127,8 +127,8 @@ class LSTMAgent(Agent):
 
         self.lstm = nn.LSTM(hidden_dim, 128, num_layers=num_layers, dropout=dropout)
 
-        self.policy = MLP(512, self.action_space.n, out_gain=0.01)
-        self.value = MLP(512, 1, out_gain=1.0)
+        self.policy = MLP(128, self.action_space.n, out_gain=0.01)
+        self.value = MLP(128, 1, out_gain=1.0)
 
         init_lstm(self.lstm)
 

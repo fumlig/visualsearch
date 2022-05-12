@@ -1,18 +1,19 @@
 \begin{tabular}{lcc}
     \toprule
-    \textbf{Parameter} & \textbf{Value} \\
+    Parameter & Value \\
     \midrule
-    \(\gamma\) & .999 \\
-    \(\lambda\) & .95 \\
-    \(\text{time steps per rollout}\) & 256 \\
-    \(\text{epochs per rollout}\) & 3 \\
-    \(\text{mini-batches per epoch}\) & 8 \\
-    \(\text{entropy bonus}\) & 0.01 \\
-    \(\text{clip range}\) & .2 \\
-    \(\text{reward normalization}\) & yes \\
-    \(\text{learning rate}\) & \(5 \times 10^{-4}\) \\
-    \(\text{rate schedule}\) & linear \\
-    \(\text{parallel environments}\) & 64 \\
-    \(\text{total time steps}\) & \(25 \times 10^6\) \\
+    total time steps & \(25 \times 10^6\) \\
+    discount factor \(\gamma\) & .999 \\
+    advantage factor \(\lambda\) & .95 \\
+    parallel environments \(N\) & 64 \\
+    time steps per rollout \(T\) & 256 \\
+    epochs per rollout \(K\) & 3 \\
+    mini-batches size \({M}\) & 2048 \\
+    value loss coefficient \(c_1\) & 0.5 \\
+    entropy bonus coefficient \(c_2\) & 0.01 \\
+    clip range \(\epsilon\) & .2 \\
+    learning rate \(\alpha\) & \(5 \times 10^{-4}\) \\
+    reward normalization & yes \\
+    rate schedule & linear \\
     \bottomrule
 \end{tabular}

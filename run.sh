@@ -1,32 +1,5 @@
 #!/usr/bin/env bash
 
-function train
-{
-    name=$1
-    env_id=$2
-    agent_id=$3
-    alg_id=$4
-    seed=$5
-    device=$6
-
-    env_kwargs=${"{}":-env_kwargs}
-    agent_kwargs=${"{}":-agent_kwargs}
-    alg_kwargs=${"params/procgen.yaml":-alg_kwargs}
-
-    num_timesteps=25000000
-    num_envs=64
-    num_checkpoints=250
-
-    CUDA_VISIBLE_DEVICES=$device train.py $environment $agent $algorithm \
-        --name="$name" \
-        --seed="$seed" \
-        --num-timesteps=$num_timesteps \
-        --num-checkpoints=$num_checkpoints \
-        --env-kwargs=$env_kwargs
-}
-
-
-
 function shape
 {
     agent=$1

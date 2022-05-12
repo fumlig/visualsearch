@@ -158,7 +158,7 @@ if __name__ == "__main__":
             ckpt_step = (timestep // ckpt_interval)*ckpt_interval
 
             os.makedirs(f"models/{args.name}/ckpt", exist_ok=True)
-            th.save(agent, f"models/{args.name}/ckpt/{str(ckpt_step).zfill(len(str(args.num_timesteps)))}.pt")
+            th.save(agent, f"models/{args.name}/ckpt/{ckpt_step}.pt")
 
         last_timestep = timestep
 

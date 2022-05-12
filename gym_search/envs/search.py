@@ -242,7 +242,25 @@ class SearchEnv(gym.Env):
         
         return random.choice(range(1, self.action_space.n))
 
-    def get_greedy_action(self, detect=False, deterministic=True):
+    def get_greedy_action(self, detect=False):
+        if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
+            return 0
+
+        valid = []
+
+        for action in range(1, self.action_space.n):
+            step = self.get_action_step(action)
+            position, _ = self.get_next_position(step)
+            
+            if not tuple(position) in self.visited:
+                valid.append(action)
+
+        if not valid:
+            return random.choice(range(1, self.action_space.n))
+
+        return random.choice(valid)
+
+    def get_exhaustive_action(self, detect=False):
         if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
             return 0
 
@@ -258,7 +276,4 @@ class SearchEnv(gym.Env):
         if not valid:
             return random.choice(range(1, self.action_space.n))
     
-        if deterministic:
-            return valid[0]
-
-        return random.choice(valid)
+        return valid[0]

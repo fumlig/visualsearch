@@ -26,8 +26,10 @@ KEY_ESC = 27
 KEY_RET = 13
 WINDOW_SIZE = (640, 640)
 
+BASELINES = ["human", "greedy", "random", "exhaustive"]
 
-def spl(success, shortest, taken):
+
+def spl_metric(success, shortest, taken):
     # https://arxiv.org/pdf/1807.06757.pdf
     return success*shortest/np.maximum(shortest, taken)
 
@@ -40,12 +42,87 @@ def parse_hparams(s):
     return yaml.safe_load(s)
 
 
+def play(episodes, env, agent="human", model=None, device=None, hidden=False, observe=False, delay=1, seed=None, deterministic=False):
+    infos = []
+
+    if not hidden:
+        cv.namedWindow(env.spec.id, cv.WINDOW_AUTOSIZE)
+
+    for ep in tqdm(range(episodes), leave=False):
+        done = False
+        obs = env.reset(seed=seed if ep == 0 else None)
+
+        if model is not None:
+            state = [s.to(device) for s in model.initial(1)]
+
+        while not done:
+            key = None
+            img = None
+            act = None
+
+            if not hidden:
+                if observe:
+                    img = obs["image"]
+                    print("position:", obs["position"])
+                else:
+                    img = env.render(mode="rgb_array")
+
+                img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
+                img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+
+                cv.imshow(env.spec.id, img)
+                key = cv.waitKey(delay)
+
+            if model is not None:
+                with th.no_grad():
+                    obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
+                    act, state = model.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=deterministic)
+            elif agent == "human":
+                act = env.get_keys_to_action().get((key,), 0)
+            elif agent == "random":
+                act = env.get_random_action()
+            elif agent == "greedy":
+                act = env.get_greedy_action()
+            elif agent == "exhaustive":
+                act = env.get_exhaustive_action()
+            else:
+                raise ValueError(f"agent must be one of {','.join(BASELINES)}")
+
+            step_begin = process_time()
+            obs, rew, done, info = env.step(act)
+            step_end = process_time()
+
+            if key == KEY_RET:
+                done = True
+
+            if key == KEY_ESC:
+                exit(0)
+
+            """
+            print(
+                "action:", env.get_action_meanings()[act],
+                #"observation:", obs,
+                "reward:", rew,
+                "info:", info,
+                "fps:", 1.0/(step_end - step_begin)
+            )
+            """
+
+        infos.append(info)
+
+    success = np.array([info["success"] for info in infos], dtype=float)
+    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
+    taken = np.array([len(info["path"]) for info in infos], dtype=float)
+
+    return np.mean(taken), np.mean(success), np.mean(spl_metric(success, shortest, taken))
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
-    parser.add_argument("--agent", type=str, default="human")
-    parser.add_argument("--models", type=str, nargs="*")
+    parser.add_argument("--agent", type=str, choices=BASELINES, default="human")
+    parser.add_argument("--models", type=str, nargs="*", default=[])
     parser.add_argument("--episodes", type=int, default=100)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
@@ -53,21 +130,18 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--record", action="store_true")
     parser.add_argument("--hidden", action="store_true")
-    parser.add_argument("--results")
+    parser.add_argument("--deterministic", action="store_true")
 
     args = parser.parse_args()
 
-    if args.models is None:
-        model_paths = [None]
-    else:
-        model_paths = []
-        for path in args.models:
-            model_paths += glob.glob(path)
-        
-        model_paths.sort(key=lambda x: os.path.getmtime(x))
+    model_paths = []
+
+    for path in args.models:
+        model_paths += glob.glob(path)
+    
+    model_paths.sort(key=lambda x: os.path.getmtime(x))
 
     wrappers = [
         gym.wrappers.RecordEpisodeStatistics,
@@ -79,17 +153,8 @@ if __name__ == "__main__":
     for wrapper in wrappers:
         env = wrapper(env)
 
-    model = None
     device = th.device(args.device)
     df = pd.DataFrame()
-
-    if args.seed is not None:
-        random.seed(args.seed)
-        np.random.seed(args.seed)
-        th.manual_seed(args.seed)
-    
-    if args.deterministic: 
-        th.use_deterministic_algorithms(True)
 
     if args.name is None:
         args.name = dt.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
@@ -97,106 +162,34 @@ if __name__ == "__main__":
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
-    os.makedirs(f"results/{args.name}", exist_ok=True)
-    with open(f"results/{args.name}/test.csv", "w") as f:
-        results = csv.writer(f)
-        results.writerow(["id", "length", "success", "spl"])
-
-    if not args.hidden:
-        cv.namedWindow(args.environment, cv.WINDOW_AUTOSIZE)
-
-    for path in tqdm(model_paths):
-
-        if path is not None:
-            if args.verbose:
-                print(f"loading {path}")
-            model = th.load(path).to(device)
-            model.eval()
-        else:
-            model = None
-
-        infos = []
-
-        for ep in tqdm(range(args.episodes), leave=False):
-            done = False
-            seed = args.seed if ep == 0 else None
-            obs = env.reset(seed=seed)
-
-            if model is not None:
-                state = [s.to(device) for s in model.initial(1)]
-
-            while not done:
-                key = None
-                img = None
-                act = None
-
-                if not args.hidden:
-                    if args.observe:
-                        img = obs["image"]
-                        print("position:", obs["position"])
-                    else:
-                        img = env.render(mode="rgb_array")
-
-                    img = cv.resize(img, WINDOW_SIZE, interpolation=cv.INTER_AREA)
-                    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-
-                    cv.imshow(args.environment, img)
-                    key = cv.waitKey(args.delay)
-
-                if model is not None:
-                    with th.no_grad():
-                        obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                        act, state = model.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=args.deterministic)
-                else:
-                    if args.agent == "human":
-                        act = env.get_keys_to_action().get((key,), 0)
-                    if args.agent == "random":
-                        act = env.get_random_action()
-                    elif args.agent == "greedy":
-                        act = env.get_greedy_action()
-
-                step_begin = process_time()
-                obs, rew, done, info = env.step(act)
-                step_end = process_time()
-
-                if key == KEY_RET:
-                    done = True
-
-                if key == KEY_ESC:
-                    exit(0)
-
-                if args.verbose:
-                    print(
-                        "action:", env.get_action_meanings()[act],
-                        #"observation:", obs,
-                        "reward:", rew,
-                        "info:", info,
-                        "fps:", 1.0/(step_end - step_begin)
-                    )
-
-            length = float(len(info["path"]))
-            success = float(info["success"])
-            shortest = float(travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]))
-
-            if args.verbose:
-                print("length:", length)
-                print("success:", success)
-
-            infos.append(info)
-
-        success = np.array([info["success"] for info in infos], dtype=float)
-        shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
-        taken = np.array([len(info["path"]) for info in infos], dtype=float)
-
-        with open(f"results/{args.name}/test.csv", "a") as f:
+    if model_paths:
+        os.makedirs(f"results/{args.name}", exist_ok=True)
+        with open(f"results/{args.name}/test.csv", "w") as f:
             results = csv.writer(f)
-            if path is None:
-                id = "-"
-            else:
-                id, _ = os.path.splitext(os.path.basename(path))
-            
-            results.writerow([id, np.mean(taken), np.mean(success), np.mean(spl(success, shortest, taken))])
+            results.writerow(["id", "length", "success", "spl"])
 
-        if args.verbose:
-            print("mean length:", np.mean(taken))
-            print("mean spl:", np.mean(spl(success, shortest, taken)))
+        for path in tqdm(model_paths):
+            if path is not None:
+                if args.verbose:
+                    print(f"loading {path}")
+                model = th.load(path).to(device)
+                model.eval()
+            else:
+                model = None
+
+            length, success, spl = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed, deterministic=args.deterministic)
+
+            with open(f"results/{args.name}/test.csv", "a") as f:
+                results = csv.writer(f)
+                if path is None:
+                    id = "-"
+                else:
+                    id, _ = os.path.splitext(os.path.basename(path))
+                
+                results.writerow([id, length, success, spl])
+
+            if args.verbose:
+                print(f"{id}: length: {length}, success: {success}, spl: {spl}")
+    else:
+        length, success, spl = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
+        print(f"{args.name}: length: {length}, success: {success}, spl: {spl}")

@@ -3,6 +3,16 @@
 
 ## Abstract
 
+todo
+
+## To do
+
+- Finish results
+- Update plots
+- Train in camera environment
+- Collect metrics for baselines and agents
+- Write abstract
+
 ## Overview
 
 ## Reproduce

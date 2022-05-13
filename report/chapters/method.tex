@@ -281,19 +281,18 @@ We find that this helps the agent with finding a better local optimum.
 \label{sec:experiments}
 
 We conduct four different experiments to evaluate our approaches and answer the research questions in \ref{sec:research-questions}. 
-Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report confidence intervals across a handful of seeds.
+Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Quality of Search Behavior}
 
 To evaluate the quality of the learned policy, we compare our approaches to a set of baselines.
 The first baseline acts randomly, and the second one greedily.
-We also investigate how the search performance of our approach compares to that of a human, by testing each environment on 5 individuals.
-As quality is of interest, we train our approaches on the full distribution of samples for each environment.
-
 The random baseline is detailed in Algorithm ~\ref{alg:random}, and the greedy baseline in Algorithm ~\ref{alg:greedy}.
 Both automatically indicate when a target is visible.
 Without offloading the detection from the baselines, they would not find reasonable solutions.
 Furthermore, we feel that it is still an interesting comparison as it does not benefit our approach.
+We also investigate how the search performance of our approach compares to that of a human.
+Human searchers are given the same observations as the other agents.
 
 \begin{algorithm}
     \label{alg:random}

@@ -16,7 +16,8 @@ Human results are collected from 5 individuals.
     \input{tables/metrics}
 \end{table}
 
-We see that
+The random and greedy baselines are consistently worse than the other agents.
+The temporal memory agent seems to\dots
 
 \section{Size of Search Space}
 
@@ -51,9 +52,10 @@ As many as 10000 training samples are needed to generalize to the full distribut
 
 \begin{figure}
     \centering
+    \input{figures/sample-500.pgf}
     \input{figures/sample-1000.pgf}
+    \input{figures/sample-5000.pgf}
     \input{figures/sample-10000.pgf}
-    \input{figures/sample-null.pgf}
     \label{fig:sample}
     \caption[Generalization results.]{Reward and episode length curves during training for three training set sizes. Mean and standard deviation across 3 seeds.}
 \end{figure}

@@ -1,43 +1,7 @@
 \chapter{Discussion}
 \label{cha:discussion}
 
-%
-% here we should do a deep dive into the models
-% would certainly be interesting to see if there is some correlation between the actions and the representations learned
-%
-
-% visualize learned probability mask
-% how to make it different from plain visual attention?
-
-% study the weights
-
-% discuss limitations of environment
-
-% how can this be used, how can it not
-
-% which applications are not good
-
-% discuss use for non-image signals
-% audio, video (along time dimension?)
-
-% the performance is limited by (a) the agent's capability to extract useful features and (b) the usefulness of the signal's features
-
-% go back to generalization: is this feasible? do we need a simulated environment?
-% how many samples do we need to train on?
-
-% It seems like many weights with a sparse reward function is problematic
-% Prevents the network from learning anything?
-% A dense reward signal is more sucessful
-% Also making it binary seems to help. Same reason as in [aol w drl]
-
-% discuss quality of searches.
-
 This chapter contains the following sub-headings.
-
-% we can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
-% Itti & Koch (Computational modelling of visual attention) mention that overt attention and covert attention are related and depend on each other.
-% This is related to this.
-
 
 \section{Results}
 \label{sec:discussion-results}
@@ -107,24 +71,6 @@ This chapter contains the following sub-headings.
 
 %Another thing worth discussing is the possibility of combining manual search method with reinforcement learning. One could imagine combining a frontier based approach with a learning approach.
 
-
-%In this work, we have only covered searches where the view is transformed in the spatial domain.
-%However, the method could be applied to a broader category of problems.
-%For instance, one could imagine a scenario when searching along the time dimension is useful.
-%If we let the actions be translations arbitrary translations along the time dimensions in, say, a long audio or video file,
-%the agent could learn to look for landmark features in such modalities.
-
-% might not really need to motivate everything...
-
-% reward signal:
-% giving positive reward for moving towards target incentivizes utilizing environment appearance directly
-% however, it might prevent the agent from learning good exhaustive strategies?
-% do one experiment with time penalty and reward for hitting targets and see if results are similar
-
-
-% we notice that baseline methods with recurrent memory fail for visually rich environments
-% might be that the explicit memorys are more robust for that
-
 \begin{itemize}
     \item Compare and analyze results.
     \item Evaluate generalization and viability for real world training sets. 
@@ -160,6 +106,8 @@ This chapter contains the following sub-headings.
     \item Hopefully the camera environment is interesting.
     \item Early experiments with stacking multiple LSTM layers lead to heavy overfitting and unstable learning curves.
     \item The difficulty of each environment is related to the potential region targets can appear in. We can measure this in the environments themselves.
+    \item We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
+    \item We have illustrated that reinforcement learning agents overfit to training samples and must be tested on separate sets.
 \end{itemize}
 
 

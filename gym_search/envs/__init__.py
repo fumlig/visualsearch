@@ -1,5 +1,6 @@
 import os
 import gym
+import moderngl as gl
 from gym_search.envs.dataset import DatasetEnv
 
 
@@ -19,5 +20,6 @@ gym.register(
 
 gym.register(
     id="Camera-v0",
-    entry_point=CameraEnv
+    entry_point=CameraEnv,
 )
+

@@ -151,46 +151,62 @@ function experiment2
 #experiment1
 #experiment2
 
+num_envs=64
+alg_kwargs=params/procgen.yaml
 
-{
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/0 --models=models/sample/map/500/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/1 --models=models/sample/map/500/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=0 python3 test.py Terrain-v0 --hidden --name=sample/map/500/2 --models=models/sample/map/500/2/ckpt/* &
-    wait
-} &
+seed=0
 
-"'
-{
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/0 --models=models/sample/map/5000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/1 --models=models/sample/map/5000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=1 python3 test.py Terrain-v0 --hidden --name=sample/map/5000/2 --models=models/sample/map/5000/2/ckpt/* &
-    wait
-} &
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 lstm ppo \
+    --name="camera/lstm/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
 
-{
-    CUDA_VISIBLE_DEVICES=2 sample lstm 500 0 &
-    CUDA_VISIBLE_DEVICES=2 sample lstm 500 1 &
-    CUDA_VISIBLE_DEVICES=2 sample lstm 500 2 &
-    wait
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 map ppo \
+    --name="camera/map/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
 
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/0 --models=models/sample/lstm/500/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/1 --models=models/sample/lstm/500/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=2 python3 test.py Terrain-v0 --hidden --name=sample/lstm/500/2 --models=models/sample/lstm/500/2/ckpt/* &
-    wait
-} &
+seed=1
 
-{
-    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 0 &
-    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 1 &
-    CUDA_VISIBLE_DEVICES=3 sample lstm 5000 2 &
-    wait
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 lstm ppo \
+    --name="camera/lstm/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
 
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/0 --models=models/sample/lstm/5000/0/ckpt/* &   
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/1 --models=models/sample/lstm/5000/1/ckpt/* &
-    CUDA_VISIBLE_DEVICES=3 python3 test.py Terrain-v0 --hidden --name=sample/lstm/5000/2 --models=models/sample/lstm/5000/2/ckpt/* &
-    wait
-} &
-"
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 map ppo \
+    --name="camera/map/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
+
+seed=2
+
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 lstm ppo \
+    --name="camera/lstm/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
+
+CUDA_VISIBLE_DEVICES=$seed python3 train.py Camera-v0 map ppo \
+    --name="camera/map/$seed" \
+    --seed=0 \
+    --num-timesteps=25000000 \
+    --num-envs=$num_envs \
+    --num-checkpoints=250 \
+    --alg-kwargs=params/procgen.yaml &
 
 wait
 

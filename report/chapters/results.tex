@@ -45,9 +45,12 @@ the search paths of the agent with the temporal memory are substantially longer.
 
 Figure ~\ref{fig:sample} shows how the average length and success rate in the terrain environment is affected by the number of samples seen during training.
 These metrics are presented for the limited training set and unlimited testing set respectively.
-It seems like both architectures can overfit to training sets of as many as 5000 samples,
+
+It seems like both architectures can overfit to training sets of as many as 1000 samples,
 For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
-The the training and test performance are equal when the training set is unlimited.
+Interestingly the LSTM architecture seems to overfit more severely to small training sets.
+Its performance on the test set decreases substantially past a certain time step.
+The spatial memory architecture does not 
 As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve equal training and test performance. 
 
 \begin{figure}

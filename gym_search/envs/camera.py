@@ -12,6 +12,11 @@ from gym_search.envs.search import SearchEnv, Action
 
 class CameraEnv(SearchEnv):
 
+    # only create one gl context
+    gl_context = gl.create_standalone_context(backend="egl")
+    gl_context.enable(gl.BLEND)
+    gl_context.blend_func = (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
     def __init__(
         self,
         shape=(10, 20),
@@ -26,9 +31,10 @@ class CameraEnv(SearchEnv):
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
         self.num_targets = num_targets
- 
+
+        self.scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view, ctx=self.gl_context)
+        self.framebuffer = self.gl_context.framebuffer(self.gl_context.renderbuffer(self.view), self.gl_context.depth_renderbuffer(self.view))
         self.martini = martini.Martini(self.terrain_size+1)
-        self.scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view)
 
     def generate(self, seed):
         scene = self.scene
@@ -148,10 +154,12 @@ class CameraEnv(SearchEnv):
 
     def render(self, mode="rgb_array"):
         self.look(self.position)
+        self.framebuffer.use()
         self.scene.render()
-        img = self.scene.frame[:,:,:3]
+        frame = np.frombuffer(self.framebuffer.read(components=4), dtype=np.uint8).reshape(*(self.framebuffer.size + (4,)))[::-1]
+        image = frame[:,:,:3]
 
-        return img
+        return image
 
     def look(self, position):
         eps = 0.1

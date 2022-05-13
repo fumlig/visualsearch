@@ -234,7 +234,7 @@ With examples from the true value function, an approximation can be made with su
 We write \(\hat{V}(s,\mathbf{w}) \approx V_\pi(s)\) for the approximate value of state \(s\) with some weight vector \(\mathbf{w} \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
 
 An alternative to action-value methods is to approximate the policy itself.
-\textit{Policy gradient methods}~\cite{sutton_policygrad_1999} learn a parametrized policy that select actions without a value function.
+\textit{Policy gradient}~\cite{sutton_policygrad_1999} methods learn a parametrized policy that select actions without a value function.
 We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
 The policy parameters are usually learned based on the gradient of some performance measure \(L(\boldsymbol{\theta})\).
 As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.

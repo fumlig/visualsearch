@@ -258,7 +258,8 @@ All network layers have ReLU activation functions, as suggested by \cite{henders
 
 We train both agents with PPO~\cite{schulman_ppo_2017}, as described in Section~\ref{sec:ppo}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
-Furthermore, we use similar hyperparameters to \cite{cobbe_procgen_2020} (Table~\ref{tab:hyperparameters}).
+Furthermore, we use similar hyperparameters to \cite{cobbe_procgen_2020}.
+These are presented in Table~\ref{tab:hyperparameters}.
 Many parallel environments seem to both speed up and stabilize training. 
 As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
 
@@ -272,7 +273,7 @@ We find that this helps the agent with finding a better local optimum.
 
 \begin{table}
     \centering
-    \caption[PPO hyperparamters]{PPO hyperparameters used during training.}
+    \caption[PPO hyperparameters]{PPO hyperparameters used during training.}
     \input{tables/hparams}
     \label{tab:hyperparameters}
 \end{table}

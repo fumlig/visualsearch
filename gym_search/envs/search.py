@@ -68,6 +68,7 @@ class SearchEnv(gym.Env):
 
     def step(self, action):
 
+        trigger = action == Action.TRIGGER
         last_position = tuple(self.position)
         step = self.get_action_step(action)
         self.position, invalid = self.get_next_position(step)
@@ -88,13 +89,14 @@ class SearchEnv(gym.Env):
                     hits += 1
 
         self.num_steps += 1
-        self.counters["triggers"] += action == Action.TRIGGER
-        self.counters["revisits"] += revisit
+        self.counters["triggers"] += trigger
+        self.counters["revisits"] += revisit and not trigger
         self.counters["explored"] += not revisit
         self.counters["invalid"] += invalid
         
-        self.path.append(tuple(self.position))
-        self.visited.add(tuple(self.position))
+        if not trigger:
+            self.path.append(tuple(self.position))
+            self.visited.add(tuple(self.position))
 
         obs = self.observation()
         rew = hits

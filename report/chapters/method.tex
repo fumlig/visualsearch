@@ -94,7 +94,7 @@ Therefore, the bonuses may guide the agent towards finding targets but do not ca
 
 The first environment is the simplest environment, where the correlation between scene appearance and target probability is clear.
 During each episode reset, a \(1024 \times 1024\) RGB image is generated conditioned on the seed.
-The image contains three blue bumps, whose intensity is highest towards their center and wears off radially outwards.
+The image contains three blue spots, whose intensity is highest towards their center and wears off radially outwards.
 The intensity wears off as an (approximate) Gaussian function.
 The sum of the intensity in the blue channel in the image is used as a probability density function to select the location of three targets.
 Targets are characterized by red \(8 \times 8\) squares.
@@ -112,7 +112,7 @@ It should be able to use the gradient of the underlying Gaussian function to mov
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
-    \caption[Gaussian environment]{Four samples of the first environment. There are three blue bumps and three red targets in each scene. Targets are more likely where the intensity of the bumps is high.}
+    \caption[Gaussian environment]{Four samples of the first environment. There are three blue spots and three red targets in each scene. Targets are more likely where the intensity of the spots is high.}
 \end{figure}
 
 \subsection{Terrain Environment}
@@ -223,7 +223,8 @@ Finally, \(z_t\) contains the hidden and cell states.
 
 \subsubsection{Spatial Memory}
 
-The spatial memory is composed of a readable and writable feature map, similar to those in \cite{parisotto_salakhutdinov_2017}, \cite{henriques_vedaldi_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_semantic_2020}.
+The spatial memory is composed of a readable and writable feature map.
+This is a simplified version of the architecture proposed in \cite{parisotto_salakhutdinov_2017}, similar in spirit to the architectures in \cite{henriques_vedaldi_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_semantic_2020}.
 It is defined by the following set of operations:
 
 \begin{align}
@@ -281,7 +282,7 @@ We find that this helps the agent with finding a better local optimum.
 \section{Experiments}
 \label{sec:experiments}
 
-We conduct four different experiments to evaluate our approaches and answer the research questions in \ref{sec:questions}. 
+We conduct three different experiments to evaluate our approaches and answer the research questions in \ref{sec:questions}. 
 Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Quality of Search Behavior}
@@ -342,7 +343,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
             \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
             \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
             \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(a_t \leftarrow \text{the first } a \in \mathcal{A}_{\text{explore}} \text{ in } \langle \mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN} \rangle\)
+                \State \(a_t \leftarrow \text{the first } a \text{ in } \langle \mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN} \rangle \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
             \Else
                 \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
             \EndIf
@@ -384,13 +385,13 @@ Both agents are tested on held out samples from the full distribution of samples
 This should illustrate how many samples are needed to generalize, and if overfitting is an issue.
 For each agent and training set size, we report how the average length and success rate changes while learning.
 
-\subsection{Ablations}
-\label{sec:ablations}
-
-Finally, we investigate which aspects of our architecture are important for good search behavior through a set of ablation studies.
-In the gaussian environment, we train three additional variants of our agent architecture.
-One without the recurrent step, one without image observations, and one without position observations.
-We compare the achieved performance to that of our full architectures.
+%\subsection{Ablations}
+%\label{sec:ablations}
+%
+%Finally, we investigate which aspects of our architecture are important for good search behavior through a set of ablation studies.
+%In the gaussian environment, we train three additional variants of our agent architecture:
+%one without the recurrent step, one without image observations, and one without position observations.
+%We compare the achieved performance to that of our full architectures.
 
 \section{Implementation}
 

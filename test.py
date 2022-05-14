@@ -29,9 +29,20 @@ WINDOW_SIZE = (640, 640)
 BASELINES = ["human", "greedy", "random", "exhaustive"]
 
 
-def spl_metric(success, taken, shortest):
-    # https://arxiv.org/pdf/1807.06757.pdf
-    return success*shortest/np.maximum(shortest, taken)
+def metrics(infos):
+    success = np.array([info["success"] for info in infos], dtype=float)
+    taken = np.array([len(info["path"]) for info in infos], dtype=float)
+    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) for info in infos], dtype=float)
+
+    return {
+        # https://arxiv.org/pdf/1807.06757.pdf
+        "spl": np.mean(success*shortest/np.maximum(shortest, taken)), 
+        "length": np.sum(success*taken)/np.sum(success),
+        "success": np.mean(success),
+        "triggers": np.mean([info["counter"]["triggers"] for info in infos]),
+        "explored": np.mean([info["counter"]["explored"] for info in infos]),
+        "revisits": np.mean([info["counter"]["revisits"] for info in infos]),
+    }
 
 
 def parse_hparams(s):
@@ -117,18 +128,22 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("environment", type=str)
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
+
+    parser.add_argument("--episodes", type=int, default=100)
+    parser.add_argument("--runs", type=int, default=1)
+
     parser.add_argument("--agent", type=str, choices=BASELINES, default="human")
     parser.add_argument("--models", type=str, nargs="*", default=[])
-    parser.add_argument("--episodes", type=int, default=100)
+    
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
+    
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--observe", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--record", action="store_true")
     parser.add_argument("--hidden", action="store_true")
-    parser.add_argument("--deterministic", action="store_true")
 
     args = parser.parse_args()
 
@@ -158,52 +173,34 @@ if __name__ == "__main__":
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
 
+    run_metrics = []
+
     if model_paths:
-        os.makedirs(f"results/{args.name}", exist_ok=True)
-        with open(f"results/{args.name}/test.csv", "w") as f:
-            results = csv.writer(f)
-            results.writerow(["id", "length", "success", "spl"])
-
         for path in tqdm(model_paths):
-            if path is not None:
-                if args.verbose:
-                    print(f"loading {path}")
-                model = th.load(path).to(device)
-                model.eval()
-            else:
-                model = None
+            model = th.load(path).to(device)
+            model.eval()
 
-            infos = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed, deterministic=args.deterministic)
-
-
-            s = np.array([info["success"] for info in infos], dtype=float)
-            p = np.array([len(info["path"]) for info in infos], dtype=float)
-            l = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
-
-            spl = np.mean(spl_metric(s, p, l))
-            success = np.mean(s)
-            length = np.sum(s*p)/np.sum(s)
-
-            with open(f"results/{args.name}/test.csv", "a") as f:
-                results = csv.writer(f)
-                if path is None:
-                    id = "-"
-                else:
-                    id, _ = os.path.splitext(os.path.basename(path))
-                
-                results.writerow([id, spl, length, success])
+            id, _ = os.path.splitext(os.path.basename(path))
+            infos = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
+            run_metrics.append({"id": id} | metrics(infos))
 
             if args.verbose:
-                print(f"{id}: spl: {spl}, length: {length}, success: {success}")
-    else:
-        infos = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
-        
-        s = np.array([info["success"] for info in infos], dtype=float)
-        p = np.array([len(info["path"]) for info in infos], dtype=float)
-        l = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
+                print(f"{args.name}/{id}:", metrics(infos))
 
-        spl = np.mean(spl_metric(s, p, l))
-        success = np.mean(s)
-        length = np.sum(s*p)/np.sum(s)
+    else:
+        for run in tqdm(range(args.runs)):
+            infos = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
+            run_metrics.append({"id": run} | metrics(infos))
+
+            if args.verbose:
+                print(f"{args.name}/{run}:", metrics(infos))
+
+
+    os.makedirs(f"results/{args.name}", exist_ok=True)
     
-        print(f"{args.name}: spl: {spl}, length: {length}, success: {success}")
+    with open(f"results/{args.name}/test.csv", "w") as f:
+        results = csv.DictWriter(f, fieldnames=run_metrics[0].keys())
+        results.writeheader()
+
+        for row in run_metrics:
+            results.writerow(row)

@@ -12,12 +12,16 @@ This means that they take many redundant steps that revisit already explored pos
 The exhaustive policy avoids revisiting positions and achieves an average search path length that is below the total number of positions in each search space.
 
 In all three environments, our two approaches as well as human searchers achieve higher SPL values than the three baselines.
-
+The spatial memory agent achieves higher results than the temporal memory agent.
+Furthermore, the temporal memory agent takes search paths that are longer than both the exhaustive baseline, the spatial memory agent, and a human searcher.
+Human searchers seemed to be successful in utilizing using environment cues to guide search, but frequently forgot which positions had been visited.
+The spatial memory achieves the highest SPL score in all three environments.
+It also has the most competitive average search path length.
 
 \begin{table}
     \centering
     \label{tab:metrics}
-    \caption[Quality results.]{SPL, search path length and success rate from three runs on a fixed set of a 100 samples from each environment.}
+    \caption[Performance metrics for each environment.]{SPL, search path length and success rate from three runs on a fixed set of a 100 samples from each environment.}
     Gaussian environment\par\vspace{0.5em}
     \input{tables/metrics-gaussian}
     \par\vspace{1em}Terrain environment\par\vspace{0.5em}
@@ -39,6 +43,7 @@ Both seem to be able to find the all three targets in every episode.
 For the larger search space sizes with \(15 \times 15\) and \(20 \times 20\) the difference between the two architectures is greater.
 While the spatial memory seems to consistently find targets in a number of steps that is comparable to the number of positions in the search space,
 the search paths of the agent with the temporal memory are substantially longer.
+Furthermore, the variance across runs increases with the search space size.
 
 \begin{figure}
     \centering
@@ -49,7 +54,7 @@ the search paths of the agent with the temporal memory are substantially longer.
     \(20 \times 20\)
     \input{figures/shape-20.pgf}
     \label{fig:shape}
-    \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
+    \caption[Learning curves for different search space sizes.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
 \end{figure}
 
 \section{Number of Training Samples}
@@ -59,10 +64,10 @@ These metrics are presented for the limited training set and unlimited testing s
 
 It seems like both architectures can overfit to training sets of as many as 1000 samples,
 For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
-Interestingly the LSTM architecture seems to overfit more severely to small training sets.
+Interestingly the LSTM architecture seems to overf<it more severely to small training sets.
 Its performance on the test set decreases substantially past a certain time step.
 The spatial memory architecture does not 
-As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve equal training and test performance. 
+As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
 
 \begin{figure}
     \centering
@@ -75,5 +80,10 @@ As many as 10000 training samples are needed to generalize to the full distribut
     \(10000\) samples
     \input{figures/sample-10000.pgf}
     \label{fig:sample}
-    \caption[Generalization results.]{Reward and episode length curves during training for three training set sizes. Mean and standard deviation across 3 seeds.}
+    \caption[Learning curves for different number of training samples.]{Reward and episode length curves for different training set sizes in terrain environment. Mean and standard deviation across 3 seeds.}
 \end{figure}
+
+
+%\section{Ablations}
+%
+%\dots

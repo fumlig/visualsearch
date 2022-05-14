@@ -200,9 +200,9 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
 The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
 At each time step \(t\), the goal of the agent is to select the action that maximizes the expected \textit{discounted return}:
 
-\[ 
+\begin{equation}
     \mathbb{E} \left[ \sum_{k=0}^T \gamma^{k-t-1} r_k \right]
-\]
+\end{equation}
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 Planning in a POMDP is undecidable, and solving one is often computationally intractable.
@@ -307,10 +307,10 @@ Proximal policy optimization (PPO)~\cite{schulman_ppo_2017} is a family of polic
 PPO alternates between sampling agent-environment interactions over \(T\) time steps and optimizing the policy using those interactions.
 The parameters \(\boldsymbol{\theta}\) of the policy \(\pi\) are updated with the objective
 
-\[
+\begin{equation}
     \mathcal{L}_\text{CLIP}(\boldsymbol{\theta}) = 
     \hat{\mathbb{E}}_t \left\lbrack \min(r_t(\boldsymbol{\theta}) \hat{A}_t, \text{clip}(r_t(\boldsymbol{\theta}),1-\epsilon, 1+\epsilon) \hat{A}_t \right\rbrack.
-\]
+\end{equation}
 
 The expectation \(\mathbb{\hat{E}}\) indicates the empirical average over a finite batch of samples collected under the old policy with parameters \(\theta_{\text{old}}\).
 Here, \(r_t(\theta) = \frac{\pi(a_t | s_t, \boldsymbol{\theta})}{\pi(a_t | s_t, \boldsymbol{\theta}_{\text{old}})}\) and \(\hat{A}_t\) is an estimate 
@@ -320,16 +320,16 @@ putting a pessimistic bound on the product of the probability ratio and the adva
 This in turn ensures that the size of the policy updates is limited.
 In an actor-critic approach, the advantage is estimated over using a learned state value function \(V(s)\) as 
 
-\[
+\begin{equation}
     \hat{A}_t = \delta_t + (\gamma\lambda) \delta_{t+1} + \dots + (\gamma\lambda)^{T-t+1} \delta_{T-1}
-\]
+\end{equation}
 
 where \(\delta_t = r_t + \gamma V(s_t+1) - V(s_t)\).
 If the policy and value functions estimations share parameters, for example in a multi-headed neural network architecture, a loss function that combines the policy loss and the value function error term must be used.
 It is also common to introduce an entropy bonus to ensure sufficient exploration.
 The full PPO objective for an actor-critic approach is
 
-\[
+\begin{equation}
     \mathcal{L}_t(\boldsymbol{\theta}) =
     \hat{\mathbb{E}}_t
     \left\lbrack
@@ -337,9 +337,9 @@ The full PPO objective for an actor-critic approach is
     c_1 \mathcal{L}_\text{VF}(\boldsymbol{\theta}) +
     c_2 S [\pi](s_t, \boldsymbol{\theta})
     \right\rbrack
-\]
+\end{equation}
 
-where \(c_1\) and \(c_2\) value loss is the entropy bonus coefficients,
+where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the impact of the value loss and entropy bonus,
 \(S\) is an entropy bonus and \(\mathcal{L}_\text{VF}\) is a squared-error loss in the value output. Algorithm ~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}
@@ -348,10 +348,10 @@ where \(c_1\) and \(c_2\) value loss is the entropy bonus coefficients,
     \begin{algorithmic}
         \For{\(\text{iteration} = 1,2,\dots\)}
             \For{\(\text{actor} = 1,2,\dots,N\)}
-                \State \(\text{Run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ time steps}\)
-                \State \(\text{Compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
+                \State \(\text{run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ time steps}\)
+                \State \(\text{compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
             \EndFor
-            \State \(\text{Optimize } \mathcal{L} \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
+            \State \(\text{optimize } \mathcal{L} \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
             \State \(\theta_{\text{old}} \leftarrow \theta\)
         \EndFor
     \end{algorithmic}
@@ -646,22 +646,12 @@ They recommend success weighted by (normalized inverse) path length (SPL) as the
 With \(N\) test episodes, SPL is computed as 
 
 \begin{equation}
-    \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i, l_i)}
+    \text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i, l_i)}
 \end{equation}
 
 where \(S_i\) is a binary indicator of success,
 \(l_i\) is the shortest path distance from the agent's starting position to the goal,
 and \(p_i\) is the length of the path actually taken in the episode.
-SPL takes the quality of the solution into account.
+SPL takes the quality of the solution into account:
 If 50\% of test episode are successful and the agent takes the optimal path in all of them, its SPL is 0.5.
 By measuring SPL of human subjects, what is a good score can be calibrated.
-
-%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
-%They note some issues with the SPL metric.
-%It fails to consider the fact that some failures are less of a failure than others.
-%Some failures might in fact be close to reaching the goal while some fail completely.
-%The binary success introduces high variance in average SPL computation.
-%Furthermore, SPL is not particularly suitable for comparison across different datasets,
-%as obtaining a high SPL is more difficult for short paths than for long paths.
-%They suggest that SPL should be replaced by some metric that takes these issues into account.
-%However, to our knowledge such a metric is yet to be proposed and widely adopted.

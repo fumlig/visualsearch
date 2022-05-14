@@ -108,7 +108,18 @@ This chapter contains the following sub-headings.
     \item The difficulty of each environment is related to the potential region targets can appear in. We can measure this in the environments themselves.
     \item We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
     \item We have illustrated that reinforcement learning agents overfit to training samples and must be tested on separate sets.
+    \item SPL metric
 \end{itemize}
+
+%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
+%They note some issues with the SPL metric.
+%It fails to consider the fact that some failures are less of a failure than others.
+%Some failures might in fact be close to reaching the goal while some fail completely.
+%The binary success introduces high variance in average SPL computation.
+%Furthermore, SPL is not particularly suitable for comparison across different datasets,
+%as obtaining a high SPL is more difficult for short paths than for long paths.
+%They suggest that SPL should be replaced by some metric that takes these issues into account.
+%However, to our knowledge such a metric is yet to be proposed and widely adopted.
 
 
 % learning actions, recognition and localization simultaneously feels in itself interesting

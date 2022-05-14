@@ -29,7 +29,7 @@ WINDOW_SIZE = (640, 640)
 BASELINES = ["human", "greedy", "random", "exhaustive"]
 
 
-def spl_metric(success, shortest, taken):
+def spl_metric(success, taken, shortest):
     # https://arxiv.org/pdf/1807.06757.pdf
     return success*shortest/np.maximum(shortest, taken)
 
@@ -110,11 +110,7 @@ def play(episodes, env, agent="human", model=None, device=None, hidden=False, ob
 
         infos.append(info)
 
-    success = np.array([info["success"] for info in infos], dtype=float)
-    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
-    taken = np.array([len(info["path"]) for info in infos], dtype=float)
-
-    return np.mean(taken), np.mean(success), np.mean(spl_metric(success, shortest, taken))
+    return infos
 
 
 if __name__ == "__main__":
@@ -177,7 +173,16 @@ if __name__ == "__main__":
             else:
                 model = None
 
-            length, success, spl = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed, deterministic=args.deterministic)
+            infos = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed, deterministic=args.deterministic)
+
+
+            s = np.array([info["success"] for info in infos], dtype=float)
+            p = np.array([len(info["path"]) for info in infos], dtype=float)
+            l = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
+
+            spl = np.mean(spl_metric(s, p, l))
+            success = np.mean(s)
+            length = np.sum(s*p)/np.sum(s)
 
             with open(f"results/{args.name}/test.csv", "a") as f:
                 results = csv.writer(f)
@@ -186,10 +191,19 @@ if __name__ == "__main__":
                 else:
                     id, _ = os.path.splitext(os.path.basename(path))
                 
-                results.writerow([id, length, success, spl])
+                results.writerow([id, spl, length, success])
 
             if args.verbose:
-                print(f"{id}: length: {length}, success: {success}, spl: {spl}")
+                print(f"{id}: spl: {spl}, length: {length}, success: {success}")
     else:
-        length, success, spl = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
-        print(f"{args.name}: length: {length}, success: {success}, spl: {spl}")
+        infos = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
+        
+        s = np.array([info["success"] for info in infos], dtype=float)
+        p = np.array([len(info["path"]) for info in infos], dtype=float)
+        l = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
+
+        spl = np.mean(spl_metric(s, p, l))
+        success = np.mean(s)
+        length = np.sum(s*p)/np.sum(s)
+    
+        print(f"{args.name}: spl: {spl}, length: {length}, success: {success}")

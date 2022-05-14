@@ -1,10 +1,9 @@
 \chapter{Method}
 \label{cha:method}
 
-In this chapter, the method used is described.
+In this chapter, the method used to answer the research questions in Section~\ref{sec:questions}
 Section \ref{sec:problem} formalizes the problem solved.
 Section \ref{sec:environments} details the environment used to evaluate solutions.
-Section \ref{sec:baseline} describes the baseline learning method.
 Section \ref{sec:approach} describes the approach used to solve the problem with a learning agent.
 Section \ref{sec:experiments} describes the experiments conducted to answer research questions \ref{itm:rq2} and \ref{itm:rq3}.
 
@@ -202,16 +201,27 @@ For the CNN, we use the same architecture as \cite{mnih_human_2015}.
 The input image \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is fed through three convolutional layers: the first layer convolves 32 filters of size \(8 \times 8\) with stride 4, the second convolves 64 filters of size \(4 \times 4\) with stride 2, and the third layer convolves 64 filters of size \(3 \times 3\) with stride 1.
 This is followed by a final fully connected hidden layer with 512 outputs for the latent representation \(h_t \in \mathbb{R}^{512}\).
 
+Both the policy and value network are fully connected networks.
+The value network has one output for the value estimate.
+The policy network has 5 outputs, the logits for each action.
+Applying the softmax operation on this output gives the final action probabilities.
+All network layers have ReLU activation functions, as suggested by \cite{henderson_matters_2018}.
+
 Two RNN architectures are compared: one temporal, and one spatial.
 While a temporal memory can retain location and appearance information over time, it is not cleared how this information is stored and whether it can be utilized properly.
 We hypothesize that agents using temporal memories may struggle with learning good policies in large search spaces and those that require scene understanding, such as reasoning over previously visited locations.
 Several results from works in embodied visual navigation indicate that spatial memories can give better results than temporal ones~\cite{parisotto_salakhutdinov_2017,henriques_vedaldi_2018,gupta_cognitive_2019,chaplot_semantic_2020}.
 Taking inspiration from this, we investigate whether a spatial memory can be more useful than a temporal one when searching for targets.
+The hyperparameters for the two RNN architectures are chosen so that they have a comparable number of trainable parameters.
+
+\subsubsection{Temporal Memory}
 
 The temporal memory is a single LSTM~\cite{hochreiter_schmidhuber_lstm_1997} layer, as proposed by \cite{hausknecht_stone_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017}, and \cite{gupta_cognitive_2019}.
 As input to the LSTM, we use the latent image representation \(h_t\) concatenated with one-hot encodings of each dimension of \(p_t\).
 The LSTM layer has 128 hidden cells so that \(y_t\) has 128 dimensions.
 Finally, \(z_t\) contains the hidden and cell states.
+
+\subsubsection{Spatial Memory}
 
 The spatial memory is composed of a readable and writable feature map, similar to those in \cite{parisotto_salakhutdinov_2017}, \cite{henriques_vedaldi_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_semantic_2020}.
 It is defined by the following set of operations:
@@ -220,16 +230,13 @@ It is defined by the following set of operations:
     \rho_t &= \text{CNN}_\text{read}(z_t) \\
     \omega_t &= \text{MLP}_\text{write}(\left\lbrack h_t, \rho_t, z_t^{(p_t)} \right\rbrack) \\
     q_t &= \text{MLP}_\text{position}(\text{onehot}(p_t)) \\
-    y_t &= \left\lbrack \rho_t, \omega_t, q_t \right\rbrack
-\end{align}
-
-\begin{equation}    
-    z_{t+1}^{(p')} =
+    y_t &= \left\lbrack \rho_t, \omega_t, q_t \right\rbrack \\
+    z_{t+1}^{(p')} &=
     \begin{cases}
         \omega_t & \text{if } p' = p_t \\
         z_{t}^{(p')} & \text{if} p' \neq p_t
     \end{cases}
-\end{equation}
+\end{align}
 
 Here, \(z_t \in \mathbb{R}^{64 \times 10 \times 10}\) is a feature map with one 64-dimensional feature vector per possible position \(p_t\).
 At each time step, the agent reads from this map using a CNN with three convolutional layers.
@@ -241,14 +248,7 @@ The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position ve
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
-\todo{Illustrate map updates.}
-
-The hyperparameters for the two RNN architectures are chosen so that they have a comparable number of trainable parameters.
-Both the policy and value network are fully connected networks.
-The value network has one output for the value estimate.
-The policy network has 5 outputs, the logits for each action.
-Applying the softmax operation on this output gives the final action probabilities.
-All network layers have ReLU activation functions, as suggested by \cite{henderson_matters_2018}.
+\todo{Illustrate map updates?}
 
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.
@@ -274,26 +274,30 @@ We find that this helps the agent with finding a better local optimum.
 \begin{table}
     \centering
     \caption[PPO hyperparameters]{PPO hyperparameters used during training.}
-    \input{tables/hparams}
+    \input{tables/hyperparameters}
     \label{tab:hyperparameters}
 \end{table}
 
 \section{Experiments}
 \label{sec:experiments}
 
-We conduct four different experiments to evaluate our approaches and answer the research questions in \ref{sec:research-questions}. 
+We conduct four different experiments to evaluate our approaches and answer the research questions in \ref{sec:questions}. 
 Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Quality of Search Behavior}
 
-To evaluate the quality of the learned policy, we compare our approaches to a set of baselines.
-The first baseline acts randomly, and the second one greedily.
-The random baseline is detailed in Algorithm ~\ref{alg:random}, and the greedy baseline in Algorithm ~\ref{alg:greedy}.
-Both automatically indicate when a target is visible.
-Without offloading the detection from the baselines, they would not find reasonable solutions.
-Furthermore, we feel that it is still an interesting comparison as it does not benefit our approach.
-We also investigate how the search performance of our approach compares to that of a human.
-Human searchers are given the same observations as the other agents.
+To evaluate the quality of the learned policy, we compare our approaches to a set of baseline policies: one random, one greedy, and one exhaustive.
+The random policy (Algorithm ~\ref{alg:random}), selects random moving actions.
+The greedy policy (Algorithm ~\ref{alg:greedy}) keeps track of visited positions, and greedily selects actions that explore new positions.
+If no such actions exist, it selects a random moving action.
+The exhaustive policy (Algorithm ~\ref{alg:exhaustive}) behaves similarly to the second one.
+Instead of sampling exploring actions randomly, it selects exploring actions from a predetermined order.
+In rectangular search spaces without obstacles, this policy leads to search paths that cover the whole search space with a small amount number of revisited positions.
+
+All baselines automatically indicate when a target is visible.
+We feel that offloading the detection from the baselines is reasonable.
+Having the baselines randomly indicate that targets are visible would lead to excessively long search paths in moderately large search spaces.
+By giving this advantage to the baselines, the emphasis of the comparison is put on the search path planning.
 
 \begin{algorithm}
     \label{alg:random}
@@ -302,8 +306,8 @@ Human searchers are given the same observations as the other agents.
         \If{there is a target at \(p_t\)}
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
-            \State \(\mathcal{A}_{\text{move}} = \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
-            \State sample \(a_t\) from \(\mathcal{A}_{\text{move}}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
         \EndIf
     \end{algorithmic}
 \end{algorithm}
@@ -315,23 +319,47 @@ Human searchers are given the same observations as the other agents.
         \If{there is a target at \(p_t\)}
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
-            \State \(\mathcal{A}_{\text{move}} = \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
-            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location}\}\) 
+            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
             \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State sample \(a_t\) from \(\mathcal{A}_{\text{explore}}\)
+                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{explore}}\)
             \Else
-                \State sample \(a_t\) from \(\mathcal{A}_{\text{move}}\)
+                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
             \EndIf
         \EndIf
     \end{algorithmic}
 \end{algorithm}
 
-For each environment, approach and baseline, we measure the search path length and success rate after training.
-For this, we use a fixed set of 100 test samples from each environment.
-We report both mean and standard deviation for the 5 human searchers and three runs of our two approaches.
+\begin{algorithm}
+    \label{alg:exhaustive}
+    \caption{Exhaustive Baseline Policy}
+    \begin{algorithmic}
+        \If{there is a target at \(p_t\)}
+            \State \(a_t \leftarrow \mathtt{INDICATE}\)
+        \Else
+            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
+            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
+                \State \(a_t \leftarrow \text{the first } a \in \mathcal{A}_{\text{explore}} \text{ in } \langle \mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN} \rangle\)
+            \Else
+                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
+            \EndIf
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
+
+For each of the three environments, we train our approaches on the full distribution of samples.
+Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.
+When measuring the average search path length, we only include successful searches.
+Finally, we investigate how the search performance of our approach compares to that of a human with prior knowledge of each environment.
+\todo{Recollect test results...}
+
 We also report the SPL metric~\cite{anderson_evaluation_2018} for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
 The distance between two points is computed as the minimal number of actions to transform the view between the two.
 Although finding the optimal path is not realistic in partially observable environments, SPL can still be useful when compared to that of a human.
+For each metric and agent, we report both the mean and standard deviation across three runs.
 
 \subsection{Size of Search Space}
 

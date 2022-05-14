@@ -6,18 +6,26 @@ This chapter presents the results for each of the experiments described in Secti
 \section{Quality of Search Behavior}
 
 Table ~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
-These metrics are presented for our approaches trained on the full distribution of environments, as well as baselines.
-Human results are collected from 5 individuals.
+These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the four baselines and human searchers.
+Both the random and greedy baselines policies take search paths that are on average much longer than the number of positions in the search spaces for the respective environments.
+This means that they take many redundant steps that revisit already explored positions.
+The exhaustive policy avoids revisiting positions and achieves an average search path length that is below the total number of positions in each search space.
+
+In all three environments, our two approaches as well as human searchers achieve higher SPL values than the three baselines.
+
 
 \begin{table}
     \centering
     \label{tab:metrics}
-    \caption[Quality results.]{Average search path length, success rate and SPL metric on a fixed set of a 100 samples from each environment. Metrics for spatial memory, temporal memory, random baseline, greedy baseline and human searchers.}
-    \input{tables/metrics}
+    \caption[Quality results.]{SPL, search path length and success rate from three runs on a fixed set of a 100 samples from each environment.}
+    Gaussian environment\par\vspace{0.5em}
+    \input{tables/metrics-gaussian}
+    \par\vspace{1em}Terrain environment\par\vspace{0.5em}
+    \input{tables/metrics-terrain}
+    \par\vspace{1em}Camera environment\par\vspace{0.5em}
+    \input{tables/metrics-camera}
 \end{table}
 
-The random and greedy baselines are consistently worse than the other agents.
-The temporal memory agent seems to\dots
 
 \section{Size of Search Space}
 
@@ -34,11 +42,11 @@ the search paths of the agent with the temporal memory are substantially longer.
 
 \begin{figure}
     \centering
-    \(\mathbf{10 \times 10}\)
+    \(10 \times 10\)
     \input{figures/shape-10.pgf}
-    \(\mathbf{15 \times 15}\)
+    \(15 \times 15\)
     \input{figures/shape-15.pgf}
-    \(\mathbf{20 \times 20}\)
+    \(20 \times 20\)
     \input{figures/shape-20.pgf}
     \label{fig:shape}
     \caption[Search space size learning curve.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
@@ -58,9 +66,13 @@ As many as 10000 training samples are needed to generalize to the full distribut
 
 \begin{figure}
     \centering
+    \(500\) samples
     \input{figures/sample-500.pgf}
+    \(100\) samples
     \input{figures/sample-1000.pgf}
+    \(5000\) samples
     \input{figures/sample-5000.pgf}
+    \(10000\) samples
     \input{figures/sample-10000.pgf}
     \label{fig:sample}
     \caption[Generalization results.]{Reward and episode length curves during training for three training set sizes. Mean and standard deviation across 3 seeds.}

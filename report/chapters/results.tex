@@ -9,23 +9,21 @@ Table ~\ref{tab:metrics} shows the average search path length, success rate and 
 The average search path length is computed from episodes in which the agents successfully finds all targets.
 These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the four baselines and human searchers.
 
-Both the random and greedy baselines policies take search paths that are on average much longer than the number of positions in the search spaces for the respective environments.
-In both the gaussian environment and terrain environment, there is a total of 100 positions in the search space, and in the camera environment there is a total of 200 positions.
-This means that the random and greedy baselines take many redundant steps that revisit already explored positions.
-
-The exhaustive policy avoids revisiting positions and achieves an average search path length that is below the total number of positions in each search space.
-Notably, the search paths are particularly short in the camera environment.
-This is related to the fact that targets are most commonly found at the horizon, and the deterministic ordering of actions happened to favor that distribution.
-In the gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
+Overall, our two approaches and human searchers achieve similar scores.
+Our spatial memory approach achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
+Our temporal memory agent select search paths that are on average longer than the paths chosen by our spatial memory approach and human searchers.
+In the camera environment, the temporal memory agent is better both in average length and SPL score.
+Interestingly, the temporal memory agent achieves SPL scores comparable to that of the spatial memory agent despite choosing much longer path lengths.
 
 Human searchers seemed to be successful in utilizing using environment cues to guide search, but frequently forgot which positions had been visited.
 In the camera environment, human searchers found it difficult to identify when targets should be indicated,
 as the discretization of the search space did not always align targets closely to the center of the screen.
 This is more of a side-effect of the implementation than an indication of poor search performance.
 
-Overall, the spatial memory agent achieves the most competitive search path lengths and SPL scores.
-The temporal memory agent struggles with avoiding revisits in the first two environments.
-In the camera environment, both of our approaches achieve similar average length.
+The random baseline policy achieves the worst SPL, success rate and average search path length in all three environments.
+The greedy baseline policy is closer to the remaining agents.
+The exhaustive baseline policy achieves an average search path length that is lower than our temporal memory approach.
+Its SPL score, however, is only higher than the those of the other two baselines.
 
 \begin{table}
     \centering
@@ -39,6 +37,7 @@ In the camera environment, both of our approaches achieve similar average length
     \input{tables/metrics-camera}
 \end{table}
 
+% todo: reward curves in the environments
 
 \section{Size of Search Space}
 

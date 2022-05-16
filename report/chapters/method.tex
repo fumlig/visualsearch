@@ -54,8 +54,6 @@ The position and image observations are
 
 All image observations are \(64 \times 64\) RGB images.
 The agent moves in a \(H \times W\) grid, and we assume the presence of some oracle that provides the agent with its position.
-In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
 
 The action space is the same in all environments:
 
@@ -64,9 +62,6 @@ The action space is the same in all environments:
 \end{equation}
 
 where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
-This action space is realistic for many real-world search tasks,
-such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
-and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
 The final action, \(\mathtt{INDICATE}\), is used to indicate that a target is in view.
 
 The reward signal should be designed so that the agent learns a policy that achieves the goal of finding all targets with a minimal number of actions.
@@ -146,10 +141,12 @@ One can draw parallels to search-and-rescue scenarios with UAVs or fire detectio
 
 The third environment is a three-dimensional version of the second one.
 The height map is turned into a three-dimensional mesh, and the agent is placed at its center.
-The agent observes the scene through a pan-tilt perspective camera.
 Targets are, as before, placed along island edges.
 
+The agent observes the scene through a pan-tilt perspective camera.
+Moving actions rotate the camera instead of translating it.
 The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, while \texttt{DOWN} and \texttt{UP} control its pitch.
+
 The yaw is divided into 20 steps between 0 and 360 degrees.
 The yaw angle wraps around, so that the agent can look around freely.
 Similarly, the pitch is divided into 10 steps between 0 (straight forward) and -90 degrees (straight down), but without wrapping around.

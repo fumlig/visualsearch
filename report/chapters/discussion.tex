@@ -16,6 +16,51 @@ This chapter contains the following sub-headings.
 % literature review, or is everything as one would theoretically
 % expect?
 
+\subsection{Evaluation of Search Quality}
+
+To evaluate the search quality, we first look at the average search path length of each agent.
+It is useful to compare the path length to the number of points in each search space.
+The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
+A search path length above this suggests many revisited positions.
+The exhaustive baseline policy provides a good measure for what sort of path lengths can be achieved when only avoiding revisiting positions.
+Both the random and greedy baseline policies select search paths that are on average much longer than the number of positions, suggesting several redundant steps.
+
+Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
+This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
+Our spatial memory agent achieves better average lengths in these two environments.
+
+We see that search paths are particularly short in the camera environment,
+despite its larger search space.
+This has two reasons:
+First, targets may be visible in the periphery from a large set of camera positions.
+Once targets are visible, it is simpler for an agent to select actions that center them.
+Second, targets are not distributed uniformly across many samples of the camera environment.
+They are most commonly found near the horizon.
+In the gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
+
+Our temporal memory agent performs very well in the camera environment.
+We suspect that this is due to the fact that less emphasis is placed on remembering over many time steps.
+Search in this environment can be more reactive.
+When inspecting the search patterns used by our temporal memory agent in this environment, we see that it has learned to alternate between scanning across the horizon and locating targets in its periphery.
+
+The baselines are unable to utilize this imbalance in target distributions.
+The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
+
+Worth noting is that revisiting positions is not always the wrong choice.
+One such example is when the current position of the agent is directly between two targets.
+The optimal path to find both of these is to first go to any one of them, and then to go back towards the other one by revisiting positions.
+
+Next, we consider the SPL score of each agent.
+When averaged over many episodes, the SPL score should be a better measure of search path quality than average length, as it also accounts for how close each path is to the optimal one.
+From the definition of the SPL metric in Equation \ref{equ:spl}, we that it favors search paths whose length are close to the shortest one in each sample.
+
+Both our two approaches and human searchers achieve similar SPL scores in all three environments.
+While the exhaustive baseline policy achieves average path lengths that are close to those of our two approaches and human searchers, its lower SPL score suggests that it is less successful in finding close to optimal solutions.
+In all three environments, one of our approaches achieve a higher SPL score,
+although we would not consider this significant due to the large variance.
+
+Under these metrics, both approaches achieve comparable performance to that of a human searcher. Overall, it would seem like our spatial memory approach is most suited where large search spaces have to be explored strategically, while our temporal memory approach is most suited for search problems where search spaces can be explored reactively.
+
 \subsection{Applicability to Real-world Search Scenarios}
 
 \begin{itemize}
@@ -88,7 +133,18 @@ The three environments we have used to train and test searching agents are all q
 
 Notably, the camera environment does not follow the same 
 
-\subsection{Reward Signal for Real-world Tasks}
+The image observations are low-dimensional and likely not sufficient for real-world scenarios\dots
+
+Position observations are\dots
+In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
+
+The action space is realistic for many real-world search tasks,
+such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
+and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
+
+In some cases, like human eye movements, \dots
+
 
 \begin{itemize}
     \item Reward signal requires good knowledge of scene.
@@ -144,17 +200,21 @@ Notably, the camera environment does not follow the same
 % In the discussion chapter, one must explicitly refer to sources
 % relevant to the discussion.
 
+Furthermore, automating manual tasks has societal implications.
+
+
+\subsection{Ethics of Autonomous Agents}
+
+Russell et al.~\cite{russell_priorities_2015}
+
 \cite{vinuesa_sustainable_2020}
 
-\cite{russell_priorities_2015}
 
 \cite{russell_ethics_2015}
 
 \cite{russell_beneficial_2022}
 
-Visual search is ubiquitous in our daily lives as humans.
-Automated visual search systems therefore naturally have many potential applications.
-Furthermore, automating manual tasks has societal implications.
+\cite{brundage_malicious_2018}
 
 Several applications are positive, like search-and-rescue and fire detection.
 In such scenarios, a short search time can be the difference between life and death.
@@ -169,8 +229,11 @@ The widely discussed topic of autonomous weapon systems
 
 As the authors of this work, we explicitly condemn its use for lethal weaponry.
 
-\subsection{Trustworthiness for Critical Applications}
+\subsection{Trustworthiness for Safety-Critical Applications}
 
+How can we trust an autonomous visual search system?
+For safety critical applications, certain requirements when it comes to robustness are needed.
+Things to consider before deploying a system for such a scenario include verification, validity, security, control
 
 % what can this be used for? good and bad things?
 

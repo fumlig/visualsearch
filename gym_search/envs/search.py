@@ -94,9 +94,9 @@ class SearchEnv(gym.Env):
         self.counters["explored"] += not revisit
         self.counters["invalid"] += invalid
         
-        if not trigger:
-            self.path.append(tuple(self.position))
-            self.visited.add(tuple(self.position))
+        #if not trigger:
+        self.path.append(tuple(self.position))
+        self.visited.add(tuple(self.position))
 
         obs = self.observation()
         rew = hits

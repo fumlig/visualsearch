@@ -32,7 +32,7 @@ BASELINES = ["human", "greedy", "random", "exhaustive"]
 def metrics(infos):
     success = np.array([info["success"] for info in infos], dtype=float)
     taken = np.array([len(info["path"]) for info in infos], dtype=float)
-    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) for info in infos], dtype=float)
+    shortest = np.array([travel_dist(info["targets"] + [info["initial"]]) + len(info["targets"]) for info in infos], dtype=float)
 
     return {
         # https://arxiv.org/pdf/1807.06757.pdf
@@ -182,7 +182,9 @@ if __name__ == "__main__":
 
             id, _ = os.path.splitext(os.path.basename(path))
             infos = play(args.episodes, env, model=model, device=device, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
-            run_metrics.append({"id": id} | metrics(infos))
+            scores = metrics(infos)
+            scores.update({"id": id})
+            run_metrics.append(scores)
 
             if args.verbose:
                 print(f"{args.name}/{id}:", metrics(infos))
@@ -190,7 +192,9 @@ if __name__ == "__main__":
     else:
         for run in tqdm(range(args.runs)):
             infos = play(args.episodes, env, agent=args.agent, hidden=args.hidden, observe=args.observe, delay=args.delay, seed=args.seed)
-            run_metrics.append({"id": run} | metrics(infos))
+            scores = metrics(infos)
+            scores.update({"id": run})
+            run_metrics.append(scores)
 
             if args.verbose:
                 print(f"{args.name}/{run}:", metrics(infos))

@@ -137,6 +137,7 @@ if __name__ == "__main__":
     
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--name", type=str, default=dt.datetime.now().isoformat())
+    parser.add_argument("--deterministic", action="store_true")
     
     parser.add_argument("--delay", type=int, default=1)
     parser.add_argument("--device", type=str, default="cuda")
@@ -172,6 +173,11 @@ if __name__ == "__main__":
 
     if args.record:
         env = gym.wrappers.RecordVideo(env, "videos", episode_trigger=lambda _: True, name_prefix=args.name)
+
+    if args.deterministic and args.seed is not None:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        th.manual_seed(args.seed)
 
     run_metrics = []
 

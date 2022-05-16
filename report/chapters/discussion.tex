@@ -16,6 +16,16 @@ This chapter contains the following sub-headings.
 % literature review, or is everything as one would theoretically
 % expect?
 
+\subsection{Applicability to Real-world Search Scenarios}
+
+\begin{itemize}
+    \item Do the environments test realistic tasks?
+    \item Is the needed number of training samples realistic?
+    \item What happens when detection is more difficult?
+    \item Real-world search has higher variance.
+    \item Has the agent simply seen the full distribution, i.e. is it bridging any generalization gap?
+\end{itemize}
+
 \section{Method}
 \label{sec:discussion-method}
 
@@ -64,6 +74,111 @@ This chapter contains the following sub-headings.
 % If not about the actual research questions, there is certainly
 % important information about the domain under study.
 
+\subsection{Reinforcement Learning for Visual Search}
+
+\begin{itemize}
+    \item Is it a good idea to begin with?
+    \item Other methods can potentially provide more guarantees.
+    \item Connect back to \cite{dhiman_critical_2019}, who find that DRL is not able to exploit environment information to navigate more efficiently.
+\end{itemize}
+
+\subsection{Characteristics of Experimental Environments}
+
+The three environments we have used to train and test searching agents are all quite different.
+
+Notably, the camera environment does not follow the same 
+
+\subsection{Reward Signal for Real-world Tasks}
+
+\begin{itemize}
+    \item Reward signal requires good knowledge of scene.
+    \item As long as we have labelled scenes, we can use the reward.
+\end{itemize}
+
+\subsection{Evaluation and Comparison of Agents}
+
+\begin{itemize}
+    \item Is the comparison between spatial and temporal memory meaningful?
+    \item Would have been nice with a comparison to a close-to-optimal rule-based baseline in each environment.
+    \item Discussion about metrics, like SPL.
+    \item What does the difference in SPL mean?
+\end{itemize}
+
+%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
+%They note some issues with the SPL metric.
+%It fails to consider the fact that some failures are less of a failure than others.
+%Some failures might in fact be close to reaching the goal while some fail completely.
+%The binary success introduces high variance in average SPL computation.
+%Furthermore, SPL is not particularly suitable for comparison across different datasets,
+%as obtaining a high SPL is more difficult for short paths than for long paths.
+%They suggest that SPL should be replaced by some metric that takes these issues into account.
+%However, to our knowledge such a metric is yet to be proposed and widely adopted.
+
+\subsection{Replicability, Reliability and Validity}
+
+\begin{itemize}
+    \item We have published source code.
+    \item Reinforcement learning is inherently unreliable.
+    \item Stochasticity necessary to avoid getting stuck, leads to less precise paths.
+    \item Possibility of implementation errors.
+    \item Low number of runs, quite high variance.
+    \item Few samples during testing.
+\end{itemize}
+
+\subsection{Source Criticism}
+
+\begin{itemize}
+    \item We have based most of our work on known theory
+\end{itemize}
+
+\section{The work in a wider context}
+
+% There must be a section discussing ethical and societal
+% aspects related to the work. This is important for the authors
+% to demonstrate a professional maturity and also for achieving
+% the education goals. If the work, for some reason, completely
+% lacks a connection to ethical or societal aspects this must be
+% explicitly stated and justified in the section Delimitations in
+% the introduction chapter.
+% 
+% In the discussion chapter, one must explicitly refer to sources
+% relevant to the discussion.
+
+\cite{vinuesa_sustainable_2020}
+
+\cite{russell_priorities_2015}
+
+\cite{russell_ethics_2015}
+
+\cite{russell_beneficial_2022}
+
+Visual search is ubiquitous in our daily lives as humans.
+Automated visual search systems therefore naturally have many potential applications.
+Furthermore, automating manual tasks has societal implications.
+
+Several applications are positive, like search-and-rescue and fire detection.
+In such scenarios, a short search time can be the difference between life and death.
+Artificial intelligence systems have proven before that they are capable to outperform humans in specific tasks~\cite{silver_alphago_2016,vinyals_alphastar_2019}, and they could potentially do the same in visual search.
+
+However, there automated visual search systems also have destructive applications.
+A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems for 
+
+The widely discussed topic of autonomous weapon systems
+
+% https://people.eecs.berkeley.edu/~russell/research/LAWS.html
+
+As the authors of this work, we explicitly condemn its use for lethal weaponry.
+
+\subsection{Trustworthiness for Critical Applications}
+
+
+% what can this be used for? good and bad things?
+
+%While automated search systems have many positive uses, like XXX, there are certainly other use cases that could be considered negative.
+%Mass surveillance, XXX, are both very relevant today.
+
+
+
 %It is worth considering whether using a learning agent like this is suitable for this task.
 %One could imagine that it is possible to compute an optimal strategy for certain environments.
 %However, this quickly falls apart.
@@ -71,8 +186,9 @@ This chapter contains the following sub-headings.
 
 %Another thing worth discussing is the possibility of combining manual search method with reinforcement learning. One could imagine combining a frontier based approach with a learning approach.
 
+\rule{5cm}{1pt}
+
 \begin{itemize}
-    \item Compare and analyze results.
     \item Evaluate generalization and viability for real world training sets. 
     \item Discuss advantages and disadvantages of RL for this task.
     \item The less bias we introduce, the more general the method has the potential to be.
@@ -111,35 +227,5 @@ This chapter contains the following sub-headings.
     \item SPL metric
 \end{itemize}
 
-%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
-%They note some issues with the SPL metric.
-%It fails to consider the fact that some failures are less of a failure than others.
-%Some failures might in fact be close to reaching the goal while some fail completely.
-%The binary success introduces high variance in average SPL computation.
-%Furthermore, SPL is not particularly suitable for comparison across different datasets,
-%as obtaining a high SPL is more difficult for short paths than for long paths.
-%They suggest that SPL should be replaced by some metric that takes these issues into account.
-%However, to our knowledge such a metric is yet to be proposed and widely adopted.
-
-
 % learning actions, recognition and localization simultaneously feels in itself interesting
 % how do we interpret such a model? are there papers for visualizing reinforcement learning weights
-
-\section{The work in a wider context}
-\label{sec:work-wider-context}
-
-% There must be a section discussing ethical and societal
-% aspects related to the work. This is important for the authors
-% to demonstrate a professional maturity and also for achieving
-% the education goals. If the work, for some reason, completely
-% lacks a connection to ethical or societal aspects this must be
-% explicitly stated and justified in the section Delimitations in
-% the introduction chapter.
-% 
-% In the discussion chapter, one must explicitly refer to sources
-% relevant to the discussion.
-
-% what can this be used for? good and bad things?
-
-%While automated search systems have many positive uses, like XXX, there are certainly other use cases that could be considered negative.
-%Mass surveillance, XXX, are both very relevant today.

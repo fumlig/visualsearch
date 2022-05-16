@@ -6,17 +6,26 @@ This chapter presents the results for each of the experiments described in Secti
 \section{Quality of Search Behavior}
 
 Table ~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
+The average search path length is computed from episodes in which the agents successfully finds all targets.
 These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the four baselines and human searchers.
-Both the random and greedy baselines policies take search paths that are on average much longer than the number of positions in the search spaces for the respective environments.
-This means that they take many redundant steps that revisit already explored positions.
-The exhaustive policy avoids revisiting positions and achieves an average search path length that is below the total number of positions in each search space.
 
-In all three environments, our two approaches as well as human searchers achieve higher SPL values than the three baselines.
-The spatial memory agent achieves higher results than the temporal memory agent.
-Furthermore, the temporal memory agent takes search paths that are longer than both the exhaustive baseline, the spatial memory agent, and a human searcher.
+Both the random and greedy baselines policies take search paths that are on average much longer than the number of positions in the search spaces for the respective environments.
+In both the gaussian environment and terrain environment, there is a total of 100 positions in the search space, and in the camera environment there is a total of 200 positions.
+This means that the random and greedy baselines take many redundant steps that revisit already explored positions.
+
+The exhaustive policy avoids revisiting positions and achieves an average search path length that is below the total number of positions in each search space.
+Notably, the search paths are particularly short in the camera environment.
+This is related to the fact that targets are most commonly found at the horizon, and the deterministic ordering of actions happened to favor that distribution.
+In the gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
+
 Human searchers seemed to be successful in utilizing using environment cues to guide search, but frequently forgot which positions had been visited.
-The spatial memory achieves the highest SPL score in all three environments.
-It also has the most competitive average search path length.
+In the camera environment, human searchers found it difficult to identify when targets should be indicated,
+as the discretization of the search space did not always align targets closely to the center of the screen.
+This is more of a side-effect of the implementation than an indication of poor search performance.
+
+Overall, the spatial memory agent achieves the most competitive search path lengths and SPL scores.
+The temporal memory agent struggles with avoiding revisits in the first two environments.
+In the camera environment, both of our approaches achieve similar average length.
 
 \begin{table}
     \centering
@@ -54,7 +63,7 @@ Furthermore, the variance across runs increases with the search space size.
     \(20 \times 20\)
     \input{figures/shape-20.pgf}
     \label{fig:shape}
-    \caption[Learning curves for different search space sizes.]{Reward and episode length curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
+    \caption[Learning curves for different search space sizes.]{Episode length and success rate curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
 \end{figure}
 
 \section{Number of Training Samples}
@@ -64,7 +73,7 @@ These metrics are presented for the limited training set and unlimited testing s
 
 It seems like both architectures can overfit to training sets of as many as 1000 samples,
 For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
-Interestingly the LSTM architecture seems to overf<it more severely to small training sets.
+Interestingly the LSTM architecture seems to overfit more severely to small training sets.
 Its performance on the test set decreases substantially past a certain time step.
 The spatial memory architecture does not 
 As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
@@ -80,10 +89,5 @@ As many as 10000 training samples are needed to generalize to the full distribut
     \(10000\) samples
     \input{figures/sample-10000.pgf}
     \label{fig:sample}
-    \caption[Learning curves for different number of training samples.]{Reward and episode length curves for different training set sizes in terrain environment. Mean and standard deviation across 3 seeds.}
+    \caption[Learning curves for different number of training samples.]{Episode length and success rate curves for different training set sizes in terrain environment. Mean and standard deviation across 3 seeds.}
 \end{figure}
-
-
-%\section{Ablations}
-%
-%\dots

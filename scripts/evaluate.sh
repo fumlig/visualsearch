@@ -37,6 +37,7 @@ do
         --episodes=100 \
         --runs=3 \
         --seed=0 \
+        --deterministic \
         --hidden &
 
     python3 test.py Terrain-v0 \
@@ -45,6 +46,7 @@ do
         --episodes=100 \
         --runs=3 \
         --seed=0 \
+        --deterministic \
         --hidden &
 
     # todo: weird directory
@@ -54,6 +56,7 @@ do
         --episodes=100 \
         --runs=3 \
         --seed=0 \
+        --deterministic \
         --hidden &
 
     wait

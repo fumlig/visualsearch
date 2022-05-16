@@ -84,6 +84,7 @@ Similarly, \(e = 1\) if \(p_t\) has not been explored previously and \(e = 0\) o
 
 Through experimentation, we find that a larger time penalty than \(-0.01\) dominates the reward for finding targets.
 This is potentially related to the episode time -- with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
+
 The two next terms are bonus rewards, intended to speed up learning by further encouraging desired behavior.
 Actions that move the agent towards the nearest target and move the view to previously unseen regions are desirable.
 Importantly, the sum of these bonuses is not larger than the magnitude of the time penalty.
@@ -249,8 +250,6 @@ The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position ve
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
-\todo{Illustrate map updates?}
-
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.
 % Cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies).
@@ -355,7 +354,6 @@ For each of the three environments, we train our approaches on the full distribu
 Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.
 When measuring the average search path length, we only include successful searches.
 Finally, we investigate how the search performance of our approach compares to that of a human with prior knowledge of each environment.
-\todo{Recollect test results...}
 
 We also report the SPL metric~\cite{anderson_evaluation_2018} for all agents, where the shortest path length is the optimal travel distance between the targets and the initial position of the agent.
 The distance between two points is computed as the minimal number of actions to transform the view between the two.

@@ -47,7 +47,7 @@ Furthermore, if targets usually co-occur with other visible elements they tend t
 \label{sec:activevision}
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
-Animal perception, in contrast, is active - we do not only see, but also decide where to look.
+Animal perception, in contrast, is active -- we do not only see, but also decide where to look.
 In the \textit{active vision} paradigm, an the observer has some control of its sensory input.~\cite{aloimonos_active_1988}
 
 Active vision, and \textit{active perception} in general, is a problem of intelligent data acquisition.
@@ -58,6 +58,13 @@ A thorough understanding of the data acquisition parameters and the goal of the 
 %While certain tasks are necessarily active vision tasks, there is an argument to be made that active vision is a means to solve the task more effectively.
 %Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
 %Furthermore, an active learning system acquires the samples to learn from itself select more informative samples to learn from than a passive one.
+
+%Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} state that
+
+%\begin{quote}
+%    An agent is an active perceiver if it knows why it wishes to sense,
+%    and then chooses what to perceive, and determines how, when and where to achieve that perception.
+%\end{quote}
 
 In active vision, searching for objects with a camera in unknown environments is referred to as \textit{object search} or \textit{active object localization}.
 A searching observer has to both recognize and localize its targets, while controlling its sensory input.
@@ -234,10 +241,10 @@ With examples from the true value function, an approximation can be made with su
 We write \(\hat{V}(s,\mathbf{w}) \approx V_\pi(s)\) for the approximate value of state \(s\) with some weight vector \(\mathbf{w} \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
 
 An alternative to action-value methods is to approximate the policy itself.
-\textit{Policy gradient}~\cite{sutton_policygrad_1999} methods learn a parametrized policy that select actions without a value function.
+\textit{Policy gradient} methods learn a parametrized policy that select actions without a value function.
 We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
 The policy parameters are usually learned based on the gradient of some performance measure \(L(\boldsymbol{\theta})\).
-As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.
+As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.~\cite{sutton_policygrad_1999}
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policygrad_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
 In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
@@ -499,7 +506,7 @@ Finally, they find that the agent is not able to consistently find optimal navig
 
 %These works all focus on navigation between points in a scene.
 %Visual search is perhaps more akin to intelligent visual exploration.
-%\todo{https://vision.cs.utexas.edu/projects/exploring-exploration/}
+%https://vision.cs.utexas.edu/projects/exploring-exploration/
 
 \subsection{Memory Architectures}
 

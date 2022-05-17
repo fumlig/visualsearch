@@ -37,9 +37,8 @@ Its SPL score, however, is only higher than the those of the other two baselines
     \input{tables/metrics-camera}
 \end{table}
 
-% todo: reward curves in the environments
-
 \section{Size of Search Space}
+\label{sec:shape}
 
 The results of the search space experiments in the gaussian environment are presented in Figure~\ref{fig:shape}.
 Results were collected across four different runs, and the plots show the mean and standard deviation.
@@ -66,6 +65,7 @@ Furthermore, the variance across runs increases with the search space size.
 \end{figure}
 
 \section{Number of Training Samples}
+\label{sec:sample}
 
 Figure ~\ref{fig:sample} shows how the average length and success rate in the terrain environment is affected by the number of samples seen during training.
 These metrics are presented for the limited training set and unlimited testing set respectively.
@@ -81,7 +81,7 @@ As many as 10000 training samples are needed to generalize to the full distribut
     \centering
     \(500\) samples
     \input{figures/sample-500.pgf}
-    \(100\) samples
+    \(1000\) samples
     \input{figures/sample-1000.pgf}
     \(5000\) samples
     \input{figures/sample-5000.pgf}

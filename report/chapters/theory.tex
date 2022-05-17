@@ -432,7 +432,7 @@ When there is no action that improves the bounding box, the agent may select an 
 This way the agent may select additional bounding boxes.
 Each indication action modifies the environment by marking it so that the agent may learn to not select the same region twice.
 
-A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with DRL.
+A similar work by Ghesu et al.~\cite{ghesu_artificial_2016} present an agent for anatomical landmark detection trained with deep RL.
 Different from \cite{caicedo_active_2015} is that the entire scene is not visible at once.
 The agent sees a limited region of interest in an image, with its center representing the current position of the agent.
 The actions available to the agent translate the view up, down, left and right.
@@ -456,7 +456,7 @@ Visual navigation has been studied for use in both autonomous ground vehicles, w
 The visual search problem can be considered analogous to a visual navigation in unrestricted environments.
 In recent years, several works have used deep RL to solve various visual navigation tasks.
 
-Zhu et al.~\cite{zhu_target_2016} create a model for target-driven visual navigation in indoor scenes with DRL.
+Zhu et al.~\cite{zhu_target_2016} create a model for target-driven visual navigation in indoor scenes with deep RL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object n the scene with a minimal number of steps.
 The agent moves forwards, backwards, and turns left and right at constant step lengths.
 They use a reward signal with a small time penalty to incentivize task completion in few steps.
@@ -498,7 +498,7 @@ Adding the previous reward, action and velocity to the observations bring modest
 The depth prediction is found to improve performance in all environments, indicating that the correct auxiliary task can help learning.
 
 Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for navigation, using a CNN and RNN architecture as in \cite{hausknecht_stone_2017} and \cite{mirowski_navigate_2017}.
-They ask whether DRL algorithms are inherently able to gather and exploit environmental information for during navigation.
+They ask whether deep RL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
 When trained and tested on different maps, the agent does not seem to be able to exploit environment information to navigate more effectively.
 The authors use relatively small training set of less than 1000 samples, but do not consider that their agents could have overfit this this set.
@@ -615,8 +615,9 @@ It is argued that the only choice when evaluating generalization with procedural
 Evaluation has to be performed on the full distribution of (held out) contexts.
 
 \subsection{Evaluation of Agents}
+\label{sec:theory-evaluation}
 
-A problem in state-of-the art RL is reproducibility.
+A problem in state-of-the art deep RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
 In some cases, training an algorithm in an environment twice can give learning curves that do not fall within the same distribution~\cite{henderson_matters_2018}.

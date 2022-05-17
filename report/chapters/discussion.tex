@@ -9,7 +9,7 @@ We also discuss the work in a wider context (Section~\ref{sec:discussion-wider})
 
 In this section, we discuss the results of each of the conducted experiments.
 
-\subsection{Reflection on Search Quality}
+\subsection{Reflection on Search Performance}
 
 To evaluate the search quality, we first consider the at the average search path length of each agent.
 It is useful to compare the path length to the number of points in each search space.
@@ -17,10 +17,7 @@ The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable 
 A search path length above this suggests many revisited positions.
 The exhaustive baseline policy provides a good measure for what sort of path lengths can be achieved when only avoiding revisiting positions.
 Both the random and greedy baseline policies select search paths that are on average much longer than the number of positions, suggesting several redundant steps.
-
 This is further reinforced by the sample search paths in Figures \ref{fig:path-random}, \ref{fig:path-greedy} and \ref{fig:path-exhaustive}.
-By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
-Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well.
 
 Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
 This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
@@ -41,6 +38,12 @@ Search in this environment can be more reactive.
 When inspecting the search patterns used by our temporal memory agent in this environment, we see that it has learned to alternate between scanning across the horizon and locating targets in its periphery.
 The baselines are unable to utilize this imbalance in target distributions.
 The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
+
+By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
+However, they also tend to revisit positions, and it is not clear that this is good.
+Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well.
+Some of these revisits could be attributed to the stochastic policy.
+Making the policy completely deterministic by selecting the action with the highest probability is not a solution, as it tends to lead to dead states or loops where the agent does not progress.
 
 Worth noting is that revisiting positions is not always the wrong choice.
 One such example is when the current position of the agent is directly between two targets.
@@ -145,29 +148,22 @@ However, the results do offer insights into how these two architectures compare 
 
 \subsection{Reinforcement Learning for Visual Search}
 
-\begin{itemize}
-    \item Is it a good idea to begin with?
-    \item Other methods can potentially provide more guarantees.
-    \item Connect back to \cite{dhiman_critical_2019}, who find that deep RL is not able to exploit environment information to navigate more efficiently.
-    \item Are the solutions close to optimal?
-\end{itemize}
-
 It is worth considering whether using a learning agent like this is suitable for visual search problems.
-Several of the works which we cover in Section ~\label{sec:relatedwork} utilize other solution methods with apparent success.
+Several of the works which we cover in Section ~\ref{sec:relatedwork} utilize other solution methods with apparent success.
 Such methods can sometimes be probably correct and efficient.
 It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
 One could imagine that it is possible to compute an optimal strategy for certain environments.
 
-The perspective we take in this work is that non-learning solution methods,
-However, it is worth exploring whether learning methods can compete.
-We argue that RL is a suitable framework for implementing agents that learn to search.
+The perspective we take with this work is that non-learning solution methods may offer these guarantees, but designing such approaches for every search problem is laborious.
+The characteristics of environments can vary considerably which may drastically affect how a manual approach is implemented.
+Interpreting and utilizing patterns in arbitrary scenes may even be difficult for us humans.
+If we cannot understand patterns ourselves, we can not expect to communicate how to search to machines.
+Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_alphago_2016,vinyals_alphastar_2019}.
 
-However, this quickly falls apart.
-The dynamics of environments can vary considerably which may drastically affect how a manual approach is implemented.
-
-Another thing worth discussing is the possibility of combining manual search method with reinforcement learning.
-One could imagine combining a frontier based approach with a learning approach.
-
+These two points alone are strong arguments for exploring whether learning systems can be good searchers.
+We would argue that RL is a suitable framework for implementing such learning agents.
+Our approach seems to be able to utilize environment appearance to search more efficiently.
+It is less clear if their behavior is close to optimality or not.
 
 \subsection{Design of Environments}
 
@@ -308,7 +304,7 @@ Russell et al.~\cite{russell_priorities_2015}
 
 Several applications are positive, like search-and-rescue and fire detection.
 In such scenarios, a short search time can be the difference between life and death.
-Artificial intelligence systems have proven before that they are capable to outperform humans in specific tasks~\cite{silver_alphago_2016,vinyals_alphastar_2019}, and they could potentially do the same in visual search.
+
 
 However, there automated visual search systems also have destructive applications.
 A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems for 

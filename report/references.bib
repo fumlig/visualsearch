@@ -9,116 +9,6 @@
   month        = {Jan}
 }
 
-@article{andreopoulos_tsotsos_theory_2009,
-  title        = {A Theory of Active Object Localization},
-  abstractnote = {We present some theoretical results related to the problem of actively searching for a target in a 3D environment, under the constraint of a maximum search time. We deﬁne the object localization problem as the maximization over the search region of the Lebesgue integral of the scene structure probabilities. We study variants of the problem as they relate to actively selecting a ﬁnite set of optimal viewpoints of the scene for detecting and localizing an object. We do a complexity-level analysis and show that the problem variants are NP-Complete or NP-Hard. We study the tradeoffs of localizing vs. detecting a target object, using singleview and multiple-view recognition, under imperfect deadreckoning and an imperfect recognition algorithm. These results motivate a set of properties that efﬁcient and reliable active object localization algorithms should satisfy.},
-  author       = {Andreopoulos, Alexander and Tsotsos, John K},
-  pages        = {8},
-  language     = {en}
-}
-
-@article{colas_seeds_2018,
-  title        = {How Many Random Seeds? Statistical Power Analysis in Deep Reinforcement Learning Experiments},
-  url          = {http://arxiv.org/abs/1806.08295},
-  abstractnote = {Consistently checking the statistical signiﬁcance of experimental results is one of the mandatory methodological steps to address the so-called “reproducibility crisis” in deep reinforcement learning. In this tutorial paper, we explain how the number of random seeds relates to the probabilities of statistical errors. For both the t-test and the bootstrap conﬁdence interval test, we recall theoretical guidelines to determine the number of random seeds one should use to provide a statistically signiﬁcant comparison of the performance of two algorithms. Finally, we discuss the inﬂuence of deviations from the assumptions usually made by statistical tests. We show that they can lead to inaccurate evaluations of statistical errors and provide guidelines to counter these negative eﬀects. We make our code available to perform the tests1.},
-  note         = {arXiv: 1806.08295},
-  journal      = {arXiv:1806.08295 [cs, stat]},
-  author       = {Colas, Cédric and Sigaud, Olivier and Oudeyer, Pierre-Yves},
-  year         = {2018},
-  month        = {Jul},
-  language     = {en}
-}
-
-
-@article{colas_hitchhiker_2019,
-  title        = {A Hitchhiker’s Guide to Statistical Comparisons of Reinforcement Learning Algorithms},
-  url          = {http://arxiv.org/abs/1904.06979},
-  abstractnote = {Consistently checking the statistical signiﬁcance of experimental results is the ﬁrst mandatory step towards reproducible science. This paper presents a hitchhiker’s guide to rigorous comparisons of reinforcement learning algorithms. After introducing the concepts of statistical testing, we review the relevant statistical tests and compare them empirically in terms of false positive rate and statistical power as a function of the sample size (number of seeds) and effect size. We further investigate the robustness of these tests to violations of the most common hypotheses (normal distributions, same distributions, equal variances). Beside simulations, we compare empirical distributions obtained by running Soft-Actor Critic and Twin-Delayed Deep Deterministic Policy Gradient on Half-Cheetah. We conclude by providing guidelines and code to perform rigorous comparisons of RL algorithm performances.},
-  note         = {arXiv: 1904.06979},
-  journal      = {arXiv:1904.06979 [cs, stat]},
-  author       = {Colas, Cédric and Sigaud, Olivier and Oudeyer, Pierre-Yves},
-  year         = {2019},
-  month        = {Apr},
-  language     = {en}
-}
-
-@article{meger_george_2008,
-  series       = {From Sensors to Human Spatial Concepts},
-  title        = {Curious George: An attentive semantic robot},
-  volume       = {56},
-  issn         = {0921-8890},
-  doi          = {10.1016/j.robot.2008.03.008},
-  abstractnote = {State-of-the-art methods have recently achieved impressive performance for recognising the objects present in large databases of pre-collected images. There has been much less focus on building embodied systems that recognise objects present in the real world. This paper describes an intelligent system that attempts to perform robust object recognition in a realistic scenario, where a mobile robot moving through an environment must use the images collected from its camera directly to recognise objects. To perform successful recognition in this scenario, we have chosen a combination of techniques including a peripheral-foveal vision system, an attention system combining bottom-up visual saliency with structure from stereo, and a localisation and mapping technique. The result is a highly capable object recognition system that can be easily trained to locate the objects of interest in an environment, and subsequently build a spatial-semantic map of the region. This capability has been demonstrated during the Semantic Robot Vision Challenge, and is further illustrated with a demonstration of semantic mapping. We also empirically verify that the attention system outperforms an undirected approach even with a significantly lower number of foveations.},
-  number       = {6},
-  journal      = {Robotics and Autonomous Systems},
-  author       = {Meger, David and Forssén, Per-Erik and Lai, Kevin and Helmer, Scott and McCann, Sancho and Southey, Tristram and Baumann, Matthew and Little, James J. and Lowe, David G.},
-  year         = {2008},
-  month        = {Jun},
-  pages        = {503–511},
-  collection   = {From Sensors to Human Spatial Concepts},
-  language     = {en}
-}
-
-
-@article{vinyals_alphastar_2019,
-  title        = {Grandmaster level in StarCraft II using multi-agent reinforcement learning},
-  volume       = {575},
-  issn         = {1476-4687},
-  doi          = {10.1038/s41586-019-1724-z},
-  abstractnote = {Many real-world applications require artificial agents to compete and coordinate with other agents in complex environments. As a stepping stone to this goal, the domain of StarCraft has emerged as an important challenge for artificial intelligence research, owing to its iconic and enduring status among the most difficult professional esports and its relevance to the real world in terms of its raw complexity and multi-agent challenges. Over the course of a decade and numerous competitions1–3, the strongest agents have simplified important aspects of the game, utilized superhuman capabilities, or employed hand-crafted sub-systems4. Despite these advantages, no previous agent has come close to matching the overall skill of top StarCraft players. We chose to address the challenge of StarCraft using general-purpose learning methods that are in principle applicable to other complex domains: a multi-agent reinforcement learning algorithm that uses data from both human and agent games within a diverse league of continually adapting strategies and counter-strategies, each represented by deep neural networks5,6. We evaluated our agent, AlphaStar, in the full game of StarCraft II, through a series of online games against human players. AlphaStar was rated at Grandmaster level for all three StarCraft races and above 99.8% of officially ranked human players.},
-  number       = {77827782},
-  journal      = {Nature},
-  publisher    = {Nature Publishing Group},
-  author       = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and Mathieu, Michaël and Dudzik, Andrew and Chung, Junyoung and Choi, David H. and Powell, Richard and Ewalds, Timo and Georgiev, Petko and Oh, Junhyuk and Horgan, Dan and Kroiss, Manuel and Danihelka, Ivo and Huang, Aja and Sifre, Laurent and Cai, Trevor and Agapiou, John P. and Jaderberg, Max and Vezhnevets, Alexander S. and Leblond, Rémi and Pohlen, Tobias and Dalibard, Valentin and Budden, David and Sulsky, Yury and Molloy, James and Paine, Tom L. and Gulcehre, Caglar and Wang, Ziyu and Pfaff, Tobias and Wu, Yuhuai and Ring, Roman and Yogatama, Dani and Wünsch, Dario and McKinney, Katrina and Smith, Oliver and Schaul, Tom and Lillicrap, Timothy and Kavukcuoglu, Koray and Hassabis, Demis and Apps, Chris and Silver, David},
-  year         = {2019},
-  month        = {Nov},
-  pages        = {350–354}
-}
-
-
-@inproceedings{chen_memory_2017,
-  place        = {Venice},
-  title        = {Spatial Memory for Context Reasoning in Object Detection},
-  isbn         = {978-1-5386-1032-9},
-  url          = {http://ieeexplore.ieee.org/document/8237702/},
-  doi          = {10.1109/ICCV.2017.440},
-  abstractnote = {Modeling instance-level context and object-object relationships is extremely challenging. It requires reasoning about bounding boxes of different classes, locations etc. Above all, instance-level spatial reasoning inherently requires modeling conditional distributions on previous detections. Unfortunately, our current object detection systems do not have any memory to remember what to condition on! The state-of-the-art object detectors still detect all object in parallel followed by non-maximal suppression (NMS). While memory has been used for tasks such as captioning, they mostly use image-level memory cells without capturing the spatial layout. On the other hand, modeling object-object relationships requires spatial reasoning –not only do we need a memory to store the spatial layout, but also a effective reasoning module to extract spatial patterns. This paper presents a conceptually simple yet powerful solution – Spatial Memory Network (SMN), to model the instance-level context efﬁciently and effectively. Our spatial memory essentially assembles object instances back into a pseudo “image” representation that is easy to be fed into another ConvNet for object-object context reasoning. This leads to a new sequential reasoning architecture where image and memory are processed in parallel to obtain detections which update the memory again. We show our SMN direction is promising as it provides 2.2% improvement over baseline Faster RCNN on the COCO dataset with VGG161.},
-  booktitle    = {2017 IEEE International Conference on Computer Vision (ICCV)},
-  publisher    = {IEEE},
-  author       = {Chen, Xinlei and Gupta, Abhinav},
-  year         = {2017},
-  month        = {Oct},
-  pages        = {4106–4116}
-}
-
-@article{silver_alphago_2016,
-  title        = {Mastering the game of Go with deep neural networks and tree search},
-  volume       = {529},
-  issn         = {1476-4687},
-  doi          = {10.1038/nature16961},
-  abstractnote = {The game of Go has long been viewed as the most challenging of classic games for artificial intelligence owing to its enormous search space and the difficulty of evaluating board positions and moves. Here we introduce a new approach to computer Go that uses ‘value networks’ to evaluate board positions and ‘policy networks’ to select moves. These deep neural networks are trained by a novel combination of supervised learning from human expert games, and reinforcement learning from games of self-play. Without any lookahead search, the neural networks play Go at the level of state-of-the-art Monte Carlo tree search programs that simulate thousands of random games of self-play. We also introduce a new search algorithm that combines Monte Carlo simulation with value and policy networks. Using this search algorithm, our program AlphaGo achieved a 99.8% winning rate against other Go programs, and defeated the human European Go champion by 5 games to 0. This is the first time that a computer program has defeated a human professional player in the full-sized game of Go, a feat previously thought to be at least a decade away.},
-  number       = {75877587},
-  journal      = {Nature},
-  publisher    = {Nature Publishing Group},
-  author       = {Silver, David and Huang, Aja and Maddison, Chris J. and Guez, Arthur and Sifre, Laurent and van den Driessche, George and Schrittwieser, Julian and Antonoglou, Ioannis and Panneershelvam, Veda and Lanctot, Marc and Dieleman, Sander and Grewe, Dominik and Nham, John and Kalchbrenner, Nal and Sutskever, Ilya and Lillicrap, Timothy and Leach, Madeleine and Kavukcuoglu, Koray and Graepel, Thore and Hassabis, Demis},
-  year         = {2016},
-  month        = {Jan},
-  pages        = {484–489}
-}
-
-
-@article{bengio_representation_2014,
-  title        = {Representation Learning: A Review and New Perspectives},
-  url          = {http://arxiv.org/abs/1206.5538},
-  abstractnote = {The success of machine learning algorithms generally depends on data representation, and we hypothesize that this is because different representations can entangle and hide more or less the different explanatory factors of variation behind the data. Although specific domain knowledge can be used to help design representations, learning with generic priors can also be used, and the quest for AI is motivating the design of more powerful representation-learning algorithms implementing such priors. This paper reviews recent work in the area of unsupervised feature learning and deep learning, covering advances in probabilistic models, auto-encoders, manifold learning, and deep networks. This motivates longer-term unanswered questions about the appropriate objectives for learning good representations, for computing representations (i.e., inference), and the geometrical connections between representation learning, density estimation and manifold learning.},
-  note         = {arXiv: 1206.5538},
-  journal      = {arXiv:1206.5538 [cs]},
-  author       = {Bengio, Yoshua and Courville, Aaron and Vincent, Pascal},
-  year         = {2014},
-  month        = {Apr}
-}
-
-
 @article{aloimonos_active_1988,
   title        = {Active vision},
   volume       = {1},
@@ -148,6 +38,42 @@
   month        = {Jul}
 }
 
+
+@article{andreopoulos_tsotsos_theory_2009,
+  title        = {A Theory of Active Object Localization},
+  abstractnote = {We present some theoretical results related to the problem of actively searching for a target in a 3D environment, under the constraint of a maximum search time. We deﬁne the object localization problem as the maximization over the search region of the Lebesgue integral of the scene structure probabilities. We study variants of the problem as they relate to actively selecting a ﬁnite set of optimal viewpoints of the scene for detecting and localizing an object. We do a complexity-level analysis and show that the problem variants are NP-Complete or NP-Hard. We study the tradeoffs of localizing vs. detecting a target object, using singleview and multiple-view recognition, under imperfect deadreckoning and an imperfect recognition algorithm. These results motivate a set of properties that efﬁcient and reliable active object localization algorithms should satisfy.},
+  author       = {Andreopoulos, Alexander and Tsotsos, John K},
+  pages        = {8},
+  language     = {en}
+}
+
+@article{andrychowicz_empirical_2020,
+  title        = {What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study},
+  url          = {http://arxiv.org/abs/2006.05990},
+  abstractnote = {In recent years, on-policy reinforcement learning (RL) has been successfully applied to many different continuous control tasks. While RL algorithms are often conceptually simple, their state-of-the-art implementations take numerous low- and high-level design decisions that strongly affect the performance of the resulting agents. Those choices are usually not extensively discussed in the literature, leading to discrepancy between published descriptions of algorithms and their implementations. This makes it hard to attribute progress in RL and slows down overall progress [27]. As a step towards ﬁlling that gap, we implement >50 such “choices” in a uniﬁed on-policy RL framework, allowing us to investigate their impact in a large-scale empirical study. We train over 250’000 agents in ﬁve continuous control environments of different complexity and provide insights and practical recommendations for on-policy training of RL agents.},
+  note         = {arXiv: 2006.05990},
+  journal      = {arXiv:2006.05990 [cs, stat]},
+  author       = {Andrychowicz, Marcin and Raichuk, Anton and Stańczyk, Piotr and Orsini, Manu and Girgin, Sertan and Marinier, Raphael and Hussenot, Léonard and Geist, Matthieu and Pietquin, Olivier and Michalski, Marcin and Gelly, Sylvain and Bachem, Olivier},
+  year         = {2020},
+  month        = {Jun}
+}
+
+
+@article{arkin_lawnmowing_2000,
+  title        = {Approximation algorithms for lawn mowing and milling},
+  volume       = {17},
+  issn         = {0925-7721},
+  doi          = {10.1016/S0925-7721(00)00015-8},
+  abstractnote = {We study the problem of finding shortest tours/paths for “lawn mowing” and “milling” problems: Given a region in the plane, and given the shape of a “cutter” (typically, a circle or a square), find a shortest tour/path for the cutter such that every point within the region is covered by the cutter at some position along the tour/path. In the milling version of the problem, the cutter is constrained to stay within the region. The milling problem arises naturally in the area of automatic tool path generation for NC pocket machining. The lawn mowing problem arises in optical inspection, spray painting, and optimal search planning. Both problems are NP-hard in general. We give efficient constant-factor approximation algorithms for both problems. In particular, we give a (3+ε)-approximation algorithm for the lawn mowing problem and a 2.5-approximation algorithm for the milling problem. Furthermore, we give a simple 65-approximation algorithm for the TSP problem in simple grid graphs, which leads to an 115-approximation algorithm for milling simple rectilinear polygons.},
+  number       = {1},
+  journal      = {Computational Geometry},
+  author       = {Arkin, Esther M. and Fekete, Sándor P. and Mitchell, Joseph S. B.},
+  year         = {2000},
+  month        = {Oct},
+  pages        = {25–50}
+}
+
+
 @article{arulkumaran_survey_2017,
   title        = {A Brief Survey of Deep Reinforcement Learning},
   volume       = {34},
@@ -163,6 +89,38 @@
   pages        = {26–38}
 }
 
+@article{aydemir_active_2013,
+  title        = {Active Visual Object Search in Unknown Environments Using Uncertain Semantics},
+  volume       = {29},
+  issn         = {1941-0468},
+  doi          = {10.1109/TRO.2013.2256686},
+  abstractnote = {In this paper, we study the problem of active visual search (AVS) in large, unknown, or partially known environments. We argue that by making use of uncertain semantics of the environment, a robot tasked with finding an object can devise efficient search strategies that can locate everyday objects at the scale of an entire building floor, which is previously unknown to the robot. To realize this, we present a probabilistic model of the search environment, which allows for prioritizing the search effort to those parts of the environment that are most promising for a specific object type. Further, we describe a method for reasoning about the unexplored part of the environment for goal-directed exploration with the purpose of object search. We demonstrate the validity of our approach by comparing it with two other search systems in terms of search trajectory length and time. First, we implement a greedy coverage-based search strategy that is found in previous work. Second, we let human participants search for objects as an alternative comparison for our method. Our results show that AVS strategies that exploit uncertain semantics of the environment are a very promising idea, and our method pushes the state-of-the-art forward in AVS.},
+  note         = {65 citations (Crossref) [2022-02-28]},
+  number       = {4},
+  journal      = {IEEE Transactions on Robotics},
+  author       = {Aydemir, Alper and Pronobis, Andrzej and Göbelbecker, Moritz and Jensfelt, Patric},
+  year         = {2013},
+  month        = {Aug},
+  pages        = {986–1002}
+}
+
+
+@inproceedings{aydemir_real_2011,
+  address      = {Shanghai, China},
+  title        = {Search in the real world: Active visual object search based on spatial relations},
+  isbn         = {978-1-61284-386-5},
+  url          = {http://ieeexplore.ieee.org/document/5980495/},
+  doi          = {10.1109/ICRA.2011.5980495},
+  abstractnote = {Objects are integral to a robot’s understanding of space. Various tasks such as semantic mapping, pick-andcarry missions or manipulation involve interaction with objects. Previous work in the ﬁeld largely builds on the assumption that the object in question starts out within the ready sensory reach of the robot. In this work we aim to relax this assumption by providing the means to perform robust and large-scale active visual object search. Presenting spatial relations that describe topological relationships between objects, we then show how to use these to create potential search actions. We introduce a method for efﬁciently selecting search strategies given probabilities for those relations. Finally we perform experiments to verify the feasibility of our approach.},
+  note         = {48 citations (Crossref) [2022-02-28]},
+  booktitle    = {2011 IEEE International Conference on Robotics and Automation},
+  publisher    = {IEEE},
+  author       = {Aydemir, A. and Sjoo, K. and Folkesson, J. and Pronobis, A. and Jensfelt, P.},
+  year         = {2011},
+  month        = {May},
+  pages        = {2818–2824},
+  language     = {en}
+}
 
 
 @article{bahdanau_attention_2016,
@@ -193,23 +151,6 @@
   file         = {IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/FCL5ZG3R/5968.html:text/html;Active perception:/home/oslund/Zotero/storage/6BV9NPKM/bajcsy1988.pdf.pdf:application/pdf}
 }
 
-@inbook{mataric_shaping_1994,
-  place        = {San Francisco (CA)},
-  title        = {Reward Functions for Accelerated Learning},
-  isbn         = {978-1-55860-335-6},
-  url          = {https://www.sciencedirect.com/science/article/pii/B9781558603356500301},
-  doi          = {10.1016/B978-1-55860-335-6.50030-1},
-  abstractnote = {This paper discusses why traditional reinforcement learning methods, and algorithms applied to those models, result in poor performance in situated domains characterized by multiple goals, noisy state, and inconsistent reinforcement. We propose a methodology for designing reinforcement functions that take advantage of implicit domain knowledge in order to accelerate learning in such domains. The methodology involves the use of heterogeneous reinforcement functions and progress estimators, and applies to learning in domains with a single agent or with multiple agents. The methodology is experimentally validated on a group of mobile robots learning a foraging task.},
-  booktitle    = {Machine Learning Proceedings 1994},
-  publisher    = {Morgan Kaufmann},
-  author       = {Mataric, Maja J},
-  editor       = {Cohen, William W. and Hirsh, Haym},
-  year         = {1994},
-  month        = {Jan},
-  pages        = {181–189}
-}
-
-
 @article{bajcsy_revisiting_2018,
   title        = {Revisiting active perception},
   volume       = {42},
@@ -230,6 +171,7 @@
 }
 
 
+
 @article{batra_evaluation_2020,
   title        = {ObjectNav Revisited: On Evaluation of Embodied Agents Navigating to Objects},
   url          = {http://arxiv.org/abs/2006.13171},
@@ -241,6 +183,32 @@
   month        = {Aug}
 }
 
+@article{bengio_representation_2014,
+  title        = {Representation Learning: A Review and New Perspectives},
+  url          = {http://arxiv.org/abs/1206.5538},
+  abstractnote = {The success of machine learning algorithms generally depends on data representation, and we hypothesize that this is because different representations can entangle and hide more or less the different explanatory factors of variation behind the data. Although specific domain knowledge can be used to help design representations, learning with generic priors can also be used, and the quest for AI is motivating the design of more powerful representation-learning algorithms implementing such priors. This paper reviews recent work in the area of unsupervised feature learning and deep learning, covering advances in probabilistic models, auto-encoders, manifold learning, and deep networks. This motivates longer-term unanswered questions about the appropriate objectives for learning good representations, for computing representations (i.e., inference), and the geometrical connections between representation learning, density estimation and manifold learning.},
+  note         = {arXiv: 1206.5538},
+  journal      = {arXiv:1206.5538 [cs]},
+  author       = {Bengio, Yoshua and Courville, Aaron and Vincent, Pascal},
+  year         = {2014},
+  month        = {Apr}
+}
+
+@article{bonin-font_visnav_2008,
+  title        = {Visual Navigation for Mobile Robots: A Survey},
+  volume       = {53},
+  issn         = {0921-0296, 1573-0409},
+  doi          = {10.1007/s10846-008-9235-4},
+  abstractnote = {Mobile robot vision-based navigation has been the source of countless research contributions, from the domains of both vision and control. Vision is becoming more and more common in applications such as localization, automatic map construction, autonomous navigation, path following, inspection, monitoring or risky situation detection. This survey presents those pieces of work, from the nineties until nowadays, which constitute a wide progress in visual navigation techniques for land, aerial and autonomous underwater vehicles. The paper deals with two major approaches: map-based navigation and mapless navigation. Map-based navigation has been in turn subdivided in metric map-based navigation and topological mapbased navigation. Our outline to mapless navigation includes reactive techniques based on qualitative characteristics extraction, appearance-based localization, optical ﬂow, features tracking, plane ground detection/tracking, etc... The recent concept of visual sonar has also been revised.},
+  number       = {3},
+  journal      = {Journal of Intelligent and Robotic Systems},
+  author       = {Bonin-Font, Francisco and Ortiz, Alberto and Oliver, Gabriel},
+  year         = {2008},
+  month        = {Nov},
+  pages        = {263–296}
+}
+
+
 @article{brockman_gym_2016,
   title        = {OpenAI Gym},
   url          = {http://arxiv.org/abs/1606.01540},
@@ -251,6 +219,7 @@
   year         = {2016},
   month        = {Jun}
 }
+
 
 @article{brockman_openai_2016,
   title        = {{OpenAI} Gym},
@@ -267,6 +236,19 @@
   file         = {Brockman et al. - 2016 - OpenAI Gym.pdf:/home/oslund/Zotero/storage/6DWT7K4D/Brockman et al. - 2016 - OpenAI Gym.pdf:application/pdf}
 }
 
+@book{brundage_malicious_2018,
+  title        = {The Malicious Use of Artificial Intelligence: Forecasting, Prevention, and Mitigation},
+  url          = {http://arxiv.org/abs/1802.07228},
+  doi          = {10.48550/arXiv.1802.07228},
+  abstractnote = {This report surveys the landscape of potential security threats from malicious uses of AI, and proposes ways to better forecast, prevent, and mitigate these threats. After analyzing the ways in which AI may influence the threat landscape in the digital, physical, and political domains, we make four high-level recommendations for AI researchers and other stakeholders. We also suggest several promising areas for further research that could expand the portfolio of defenses, or make attacks less effective or harder to execute. Finally, we discuss, but do not conclusively resolve, the long-term equilibrium of attackers and defenders.},
+  note         = {arXiv:1802.07228 [cs]
+                  type: article},
+  number       = {arXiv:1802.07228},
+  institution  = {arXiv},
+  author       = {Brundage, Miles and Avin, Shahar and Clark, Jack and Toner, Helen and Eckersley, Peter and Garfinkel, Ben and Dafoe, Allan and Scharre, Paul and Zeitzoff, Thomas and Filar, Bobby and Anderson, Hyrum and Roff, Heather and Allen, Gregory C. and Steinhardt, Jacob and Flynn, Carrick and hÉigeartaigh, Seán Ó and Beard, Simon and Belfield, Haydn and Farquhar, Sebastian and Lyle, Clare and Crootof, Rebecca and Evans, Owain and Page, Michael and Bryson, Joanna and Yampolskiy, Roman and Amodei, Dario},
+  year         = {2018},
+  month        = {Feb}
+}
 
 @article{caicedo_active_2015,
   title        = {Active Object Localization with Deep Reinforcement Learning},
@@ -283,21 +265,6 @@
   file         = {Caicedo and Lazebnik - 2015 - Active Object Localization with Deep Reinforcement.pdf:/home/oslund/Zotero/storage/ENEDBIBQ/Caicedo and Lazebnik - 2015 - Active Object Localization with Deep Reinforcement.pdf:application/pdf}
 }
 
-@article{itti_koch_2001,
-  title        = {Computational modelling of visual attention},
-  volume       = {2},
-  issn         = {1471-0048},
-  doi          = {10.1038/35058500},
-  abstractnote = {We review recent work on computational models of focal visual attention, with emphasis on the bottom-up, saliency- or image-based control of attentional deployment. We highlight five important trends that have emerged from the computational literature: First, the perceptual saliency of stimuli critically depends on surrounding context; that is, the same object may or may not appear salient depending on the nature and arrangement of other objects in the scene. Computationally, this means that contextual influences, such as non-classical surround interactions, must be included in models. Second, a unique “saliency map” topographically encoding for stimulus conspicuity over the visual scene has proved to be an efficient and plausible bottom-up control strategy. Many successful models are based on such architecture, and electrophysiological as well as psychophysical studies have recently supported the idea that saliency is explicitly encoded in the brain. Third, inhibition-of-return (IOR), the process by which the currently attended location is transiently inhibited, is a critical element of attentional deployment. Without IOR, attention would endlessly be attracted towards the most salient stimulus. IOR thus implements a memory of recently visited locations, and allows attention to thoroughly scan our visual environment. Fourth, attention and eye movements tightly interplay, posing computational challenges with respect to the coordinate system used to control attention. Understanding the interaction between overt and covert attention is particularly important for models concerned with visual search. Last, scene understanding and object recognition strongly constrain the selection of attended locations. Although several models have approached, in an information-theoretical sense, the problem of optimally deploying attention to analyse a scene, biologically plausible implementations of such a computational strategy remain to be developed.},
-  number       = {33},
-  journal      = {Nature Reviews Neuroscience},
-  publisher    = {Nature Publishing Group},
-  author       = {Itti, Laurent and Koch, Christof},
-  year         = {2001},
-  month        = {Mar},
-  pages        = {194–203}
-}
-
 
 @article{chaplot_semantic_2020,
   title        = {Object Goal Navigation using Goal-Oriented Semantic Exploration},
@@ -310,16 +277,35 @@
   month        = {Jul}
 }
 
+@article{chen_activevisionsurvey_2011,
+  title        = {Active vision in robotic systems: A survey of recent developments},
+  volume       = {30},
+  issn         = {0278-3649},
+  doi          = {10.1177/0278364911410755},
+  abstractnote = {In this paper we provide a broad survey of developments in active vision in robotic applications over the last 15 years. With increasing demand for robotic automation, research in this area has received much attention. Among the many factors that can be attributed to a high-performance robotic system, the planned sensing or acquisition of perceptions on the operating environment is a crucial component. The aim of sensor planning is to determine the pose and settings of vision sensors for undertaking a vision-based task that usually requires obtaining multiple views of the object to be manipulated. Planning for robot vision is a complex problem for an active system due to its sensing uncertainty and environmental uncertainty. This paper describes such problems arising from many applications, e.g. object recognition and modeling, site reconstruction and inspection, surveillance, tracking and search, as well as robotic manipulation and assembly, localization and mapping, navigation and exploration. A bundle of solutions and methods have been proposed to solve these problems in the past. They are summarized in this review while enabling readers to easily refer solution methods for practical applications. Representative contributions, their evaluations, analyses, and future research trends are also addressed in an abstract level.},
+  number       = {11},
+  journal      = {The International Journal of Robotics Research},
+  publisher    = {SAGE Publications Ltd STM},
+  author       = {Chen, Shengyong and Li, Youfu and Kwok, Ngai Ming},
+  year         = {2011},
+  month        = {Sep},
+  pages        = {1343–1377}
+}
 
-@article{yang_semantic_2018,
-  title        = {Visual Semantic Navigation using Scene Priors},
-  url          = {http://arxiv.org/abs/1810.06543},
-  abstractnote = {How do humans navigate to target objects in novel scenes? Do we use the semantic/functional priors we have built over years to efficiently search and navigate? For example, to search for mugs, we search cabinets near the coffee machine and for fruits we try the fridge. In this work, we focus on incorporating semantic priors in the task of semantic navigation. We propose to use Graph Convolutional Networks for incorporating the prior knowledge into a deep reinforcement learning framework. The agent uses the features from the knowledge graph to predict the actions. For evaluation, we use the AI2-THOR framework. Our experiments show how semantic knowledge improves performance significantly. More importantly, we show improvement in generalization to unseen scenes and/or objects. The supplementary video can be accessed at the following link: https://youtu.be/otKjuO805dE .},
-  note         = {arXiv: 1810.06543},
-  journal      = {arXiv:1810.06543 [cs]},
-  author       = {Yang, Wei and Wang, Xiaolong and Farhadi, Ali and Gupta, Abhinav and Mottaghi, Roozbeh},
-  year         = {2018},
-  month        = {Oct}
+
+@inproceedings{chen_memory_2017,
+  place        = {Venice},
+  title        = {Spatial Memory for Context Reasoning in Object Detection},
+  isbn         = {978-1-5386-1032-9},
+  url          = {http://ieeexplore.ieee.org/document/8237702/},
+  doi          = {10.1109/ICCV.2017.440},
+  abstractnote = {Modeling instance-level context and object-object relationships is extremely challenging. It requires reasoning about bounding boxes of different classes, locations etc. Above all, instance-level spatial reasoning inherently requires modeling conditional distributions on previous detections. Unfortunately, our current object detection systems do not have any memory to remember what to condition on! The state-of-the-art object detectors still detect all object in parallel followed by non-maximal suppression (NMS). While memory has been used for tasks such as captioning, they mostly use image-level memory cells without capturing the spatial layout. On the other hand, modeling object-object relationships requires spatial reasoning –not only do we need a memory to store the spatial layout, but also a effective reasoning module to extract spatial patterns. This paper presents a conceptually simple yet powerful solution – Spatial Memory Network (SMN), to model the instance-level context efﬁciently and effectively. Our spatial memory essentially assembles object instances back into a pseudo “image” representation that is easy to be fed into another ConvNet for object-object context reasoning. This leads to a new sequential reasoning architecture where image and memory are processed in parallel to obtain detections which update the memory again. We show our SMN direction is promising as it provides 2.2% improvement over baseline Faster RCNN on the COCO dataset with VGG161.},
+  booktitle    = {2017 IEEE International Conference on Computer Vision (ICCV)},
+  publisher    = {IEEE},
+  author       = {Chen, Xinlei and Gupta, Abhinav},
+  year         = {2017},
+  month        = {Oct},
+  pages        = {4106–4116}
 }
 
 
@@ -334,6 +320,7 @@
   month        = {Jul}
 }
 
+
 @article{cobbe_procgen_2020,
   title        = {Leveraging Procedural Generation to Benchmark Reinforcement Learning},
   url          = {http://arxiv.org/abs/1912.01588},
@@ -343,6 +330,30 @@
   author       = {Cobbe, Karl and Hesse, Christopher and Hilton, Jacob and Schulman, John},
   year         = {2020},
   month        = {Jul}
+}
+
+@article{colas_hitchhiker_2019,
+  title        = {A Hitchhiker’s Guide to Statistical Comparisons of Reinforcement Learning Algorithms},
+  url          = {http://arxiv.org/abs/1904.06979},
+  abstractnote = {Consistently checking the statistical signiﬁcance of experimental results is the ﬁrst mandatory step towards reproducible science. This paper presents a hitchhiker’s guide to rigorous comparisons of reinforcement learning algorithms. After introducing the concepts of statistical testing, we review the relevant statistical tests and compare them empirically in terms of false positive rate and statistical power as a function of the sample size (number of seeds) and effect size. We further investigate the robustness of these tests to violations of the most common hypotheses (normal distributions, same distributions, equal variances). Beside simulations, we compare empirical distributions obtained by running Soft-Actor Critic and Twin-Delayed Deep Deterministic Policy Gradient on Half-Cheetah. We conclude by providing guidelines and code to perform rigorous comparisons of RL algorithm performances.},
+  note         = {arXiv: 1904.06979},
+  journal      = {arXiv:1904.06979 [cs, stat]},
+  author       = {Colas, Cédric and Sigaud, Olivier and Oudeyer, Pierre-Yves},
+  year         = {2019},
+  month        = {Apr},
+  language     = {en}
+}
+
+@article{colas_seeds_2018,
+  title        = {How Many Random Seeds? Statistical Power Analysis in Deep Reinforcement Learning Experiments},
+  url          = {http://arxiv.org/abs/1806.08295},
+  abstractnote = {Consistently checking the statistical signiﬁcance of experimental results is one of the mandatory methodological steps to address the so-called “reproducibility crisis” in deep reinforcement learning. In this tutorial paper, we explain how the number of random seeds relates to the probabilities of statistical errors. For both the t-test and the bootstrap conﬁdence interval test, we recall theoretical guidelines to determine the number of random seeds one should use to provide a statistically signiﬁcant comparison of the performance of two algorithms. Finally, we discuss the inﬂuence of deviations from the assumptions usually made by statistical tests. We show that they can lead to inaccurate evaluations of statistical errors and provide guidelines to counter these negative eﬀects. We make our code available to perform the tests1.},
+  note         = {arXiv: 1806.08295},
+  journal      = {arXiv:1806.08295 [cs, stat]},
+  author       = {Colas, Cédric and Sigaud, Olivier and Oudeyer, Pierre-Yves},
+  year         = {2018},
+  month        = {Jul},
+  language     = {en}
 }
 
 @article{dhiman_critical_2019,
@@ -375,20 +386,18 @@
   file         = {Eckstein - 2011 - Visual search A retrospective.pdf:/home/oslund/Zotero/storage/E87E8PCH/Eckstein - 2011 - Visual search A retrospective.pdf:application/pdf;Visual search\: A retrospective:/home/oslund/Zotero/storage/PX9QE8ZC/eckstein2011.pdf.pdf:application/pdf}
 }
 
-@article{zhao_objectdetection_2019,
-  title        = {Object Detection With Deep Learning: A Review},
-  volume       = {30},
-  issn         = {2162-237X, 2162-2388},
-  doi          = {10.1109/TNNLS.2018.2876865},
-  abstractnote = {Due to object detection’s close relationship with video analysis and image understanding, it has attracted much research attention in recent years. Traditional object detection methods are built on handcrafted features and shallow trainable architectures. Their performance easily stagnates by constructing complex ensembles that combine multiple low-level image features with high-level context from object detectors and scene classiﬁers. With the rapid development in deep learning, more powerful tools, which are able to learn semantic, high-level, deeper features, are introduced to address the problems existing in traditional architectures. These models behave differently in network architecture, training strategy, and optimization function. In this paper, we provide a review of deep learning-based object detection frameworks. Our review begins with a brief introduction on the history of deep learning and its representative tool, namely, the convolutional neural network. Then, we focus on typical generic object detection architectures along with some modiﬁcations and useful tricks to improve detection performance further. As distinct speciﬁc detection tasks exhibit different characteristics, we also brieﬂy survey several speciﬁc tasks, including salient object detection, face detection, and pedestrian detection. Experimental analyses are also provided to compare various methods and draw some meaningful conclusions. Finally, several promising directions and tasks are provided to serve as guidelines for future work in both object detection and relevant neural network-based learning systems.},
-  number       = {11},
-  journal      = {IEEE Transactions on Neural Networks and Learning Systems},
-  author       = {Zhao, Zhong-Qiu and Zheng, Peng and Xu, Shou-Tao and Wu, Xindong},
-  year         = {2019},
-  month        = {Nov},
-  pages        = {3212–3232}
-}
 
+@inproceedings{forssen_visual_2008,
+  title        = {Informed visual search: Combining attention and object recognition},
+  issn         = {1050-4729},
+  doi          = {10.1109/ROBOT.2008.4543325},
+  abstractnote = {This paper studies the sequential object recognition problem faced by a mobile robot searching for specific objects within a cluttered environment. In contrast to current state-of-the-art object recognition solutions which are evaluated on databases of static images, the system described in this paper employs an active strategy based on identifying potential objects using an attention mechanism and planning to obtain images of these objects from numerous viewpoints. We demonstrate the use of a bag-of-features technique for ranking potential objects, and show that this measure outperforms geometric matching for invariance across viewpoints. Our system implements informed visual search by prioritising map locations and re-examining promising locations first. Experimental results demonstrate that our system is a highly competent object recognition system that is capable of locating numerous challenging objects amongst distractors.},
+  booktitle    = {2008 IEEE International Conference on Robotics and Automation},
+  author       = {Forssen, Per-Erik and Meger, David and Lai, Kevin and Helmer, Scott and Little, James J. and Lowe, David G.},
+  year         = {2008},
+  month        = {May},
+  pages        = {935–942}
+}
 
 @article{galceran_carreras_2013,
   title        = {A survey on coverage path planning for robotics},
@@ -404,69 +413,23 @@
   pages        = {1258–1276}
 }
 
-@article{arkin_lawnmowing_2000,
-  title        = {Approximation algorithms for lawn mowing and milling},
-  volume       = {17},
-  issn         = {0925-7721},
-  doi          = {10.1016/S0925-7721(00)00015-8},
-  abstractnote = {We study the problem of finding shortest tours/paths for “lawn mowing” and “milling” problems: Given a region in the plane, and given the shape of a “cutter” (typically, a circle or a square), find a shortest tour/path for the cutter such that every point within the region is covered by the cutter at some position along the tour/path. In the milling version of the problem, the cutter is constrained to stay within the region. The milling problem arises naturally in the area of automatic tool path generation for NC pocket machining. The lawn mowing problem arises in optical inspection, spray painting, and optimal search planning. Both problems are NP-hard in general. We give efficient constant-factor approximation algorithms for both problems. In particular, we give a (3+ε)-approximation algorithm for the lawn mowing problem and a 2.5-approximation algorithm for the milling problem. Furthermore, we give a simple 65-approximation algorithm for the TSP problem in simple grid graphs, which leads to an 115-approximation algorithm for milling simple rectilinear polygons.},
-  number       = {1},
-  journal      = {Computational Geometry},
-  author       = {Arkin, Esther M. and Fekete, Sándor P. and Mitchell, Joseph S. B.},
-  year         = {2000},
-  month        = {Oct},
-  pages        = {25–50}
+@inbook{ghesu_artificial_2016,
+  place        = {Cham},
+  series       = {Lecture Notes in Computer Science},
+  title        = {An Artificial Agent for Anatomical Landmark Detection in Medical Images},
+  volume       = {9902},
+  isbn         = {978-3-319-46725-2},
+  url          = {https://link.springer.com/10.1007/978-3-319-46726-9_27},
+  doi          = {10.1007/978-3-319-46726-9_27},
+  abstractnote = {Fast and robust detection of anatomical structures or pathologies represents a fundamental task in medical image analysis. Most of the current solutions are however suboptimal and unconstrained by learning an appearance model and exhaustively scanning the space of parameters to detect a speciﬁc anatomical structure. In addition, typical feature computation or estimation of meta-parameters related to the appearance model or the search strategy, is based on local criteria or predeﬁned approximation schemes. We propose a new learning method following a fundamentally diﬀerent paradigm by simultaneously modeling both the object appearance and the parameter search strategy as a uniﬁed behavioral task for an artiﬁcial agent. The method combines the advantages of behavior learning achieved through reinforcement learning with eﬀective hierarchical feature extraction achieved through deep learning. We show that given only a sequence of annotated images, the agent can automatically and strategically learn optimal paths that converge to the sought anatomical landmark location as opposed to exhaustively scanning the entire solution space. The method signiﬁcantly outperforms state-ofthe-art machine learning and deep learning approaches both in terms of accuracy and speed on 2D magnetic resonance images, 2D ultrasound and 3D CT images, achieving average detection errors of 1-2 pixels, while also recognizing the absence of an object from the image.},
+  booktitle    = {Medical Image Computing and Computer-Assisted Intervention - MICCAI 2016},
+  publisher    = {Springer International Publishing},
+  author       = {Ghesu, Florin C. and Georgescu, Bogdan and Mansi, Tommaso and Neumann, Dominik and Hornegger, Joachim and Comaniciu, Dorin},
+  editor       = {Ourselin, Sebastien and Joskowicz, Leo and Sabuncu, Mert R. and Unal, Gozde and Wells, William},
+  year         = {2016},
+  pages        = {229–237},
+  collection   = {Lecture Notes in Computer Science}
 }
-
-@article{pardo_timelimits_2022,
-  title        = {Time Limits in Reinforcement Learning},
-  url          = {http://arxiv.org/abs/1712.00378},
-  abstractnote = {In reinforcement learning, it is common to let an agent interact for a fixed amount of time with its environment before resetting it and repeating the process in a series of episodes. The task that the agent has to learn can either be to maximize its performance over (i) that fixed period, or (ii) an indefinite period where time limits are only used during training to diversify experience. In this paper, we provide a formal account for how time limits could effectively be handled in each of the two cases and explain why not doing so can cause state aliasing and invalidation of experience replay, leading to suboptimal policies and training instability. In case (i), we argue that the terminations due to time limits are in fact part of the environment, and thus a notion of the remaining time should be included as part of the agent’s input to avoid violation of the Markov property. In case (ii), the time limits are not part of the environment and are only used to facilitate learning. We argue that this insight should be incorporated by bootstrapping from the value of the state at the end of each partial episode. For both cases, we illustrate empirically the significance of our considerations in improving the performance and stability of existing reinforcement learning algorithms, showing state-of-the-art results on several control tasks.},
-  note         = {arXiv: 1712.00378},
-  journal      = {arXiv:1712.00378 [cs]},
-  author       = {Pardo, Fabio and Tavakoli, Arash and Levdik, Vitaly and Kormushev, Petar},
-  year         = {2022},
-  month        = {Jan}
-}
-
-@inproceedings{forssen_visual_2008,
-  title        = {Informed visual search: Combining attention and object recognition},
-  issn         = {1050-4729},
-  doi          = {10.1109/ROBOT.2008.4543325},
-  abstractnote = {This paper studies the sequential object recognition problem faced by a mobile robot searching for specific objects within a cluttered environment. In contrast to current state-of-the-art object recognition solutions which are evaluated on databases of static images, the system described in this paper employs an active strategy based on identifying potential objects using an attention mechanism and planning to obtain images of these objects from numerous viewpoints. We demonstrate the use of a bag-of-features technique for ranking potential objects, and show that this measure outperforms geometric matching for invariance across viewpoints. Our system implements informed visual search by prioritising map locations and re-examining promising locations first. Experimental results demonstrate that our system is a highly competent object recognition system that is capable of locating numerous challenging objects amongst distractors.},
-  booktitle    = {2008 IEEE International Conference on Robotics and Automation},
-  author       = {Forssen, Per-Erik and Meger, David and Lai, Kevin and Helmer, Scott and Little, James J. and Lowe, David G.},
-  year         = {2008},
-  month        = {May},
-  pages        = {935–942}
-}
-
-@article{kingma_ba_2017,
-  title        = {Adam: A Method for Stochastic Optimization},
-  url          = {http://arxiv.org/abs/1412.6980},
-  abstractnote = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.},
-  note         = {arXiv: 1412.6980},
-  journal      = {arXiv:1412.6980 [cs]},
-  author       = {Kingma, Diederik P. and Ba, Jimmy},
-  year         = {2017},
-  month        = {Jan}
-}
-
-@article{aydemir_active_2013,
-  title        = {Active Visual Object Search in Unknown Environments Using Uncertain Semantics},
-  volume       = {29},
-  issn         = {1941-0468},
-  doi          = {10.1109/TRO.2013.2256686},
-  abstractnote = {In this paper, we study the problem of active visual search (AVS) in large, unknown, or partially known environments. We argue that by making use of uncertain semantics of the environment, a robot tasked with finding an object can devise efficient search strategies that can locate everyday objects at the scale of an entire building floor, which is previously unknown to the robot. To realize this, we present a probabilistic model of the search environment, which allows for prioritizing the search effort to those parts of the environment that are most promising for a specific object type. Further, we describe a method for reasoning about the unexplored part of the environment for goal-directed exploration with the purpose of object search. We demonstrate the validity of our approach by comparing it with two other search systems in terms of search trajectory length and time. First, we implement a greedy coverage-based search strategy that is found in previous work. Second, we let human participants search for objects as an alternative comparison for our method. Our results show that AVS strategies that exploit uncertain semantics of the environment are a very promising idea, and our method pushes the state-of-the-art forward in AVS.},
-  note         = {65 citations (Crossref) [2022-02-28]},
-  number       = {4},
-  journal      = {IEEE Transactions on Robotics},
-  author       = {Aydemir, Alper and Pronobis, Andrzej and Göbelbecker, Moritz and Jensfelt, Patric},
-  year         = {2013},
-  month        = {Aug},
-  pages        = {986–1002}
-}
-
 
 @article{ghesu_multiscale_2019,
   title        = {Multi-Scale Deep Reinforcement Learning for Real-Time 3D-Landmark Detection in {CT} Scans},
@@ -498,7 +461,6 @@
   month        = {Nov},
   collection   = {Adaptive Computation and Machine Learning series}
 }
-
 
 @article{gupta_cognitive_2019,
   title        = {Cognitive Mapping and Planning for Visual Navigation},
@@ -536,6 +498,7 @@
   month        = {Apr}
 }
 
+
 @inproceedings{henriques_vedaldi_2018,
   place        = {Salt Lake City, UT},
   title        = {MapNet: An Allocentric Spatial Memory for Mapping Environments},
@@ -563,7 +526,6 @@
   month        = {Jul}
 }
 
-
 @article{hochreiter_schmidhuber_lstm_1997,
   title        = {Long Short-Term Memory},
   volume       = {9},
@@ -576,6 +538,21 @@
   year         = {1997},
   month        = {Nov},
   pages        = {1735–1780}
+}
+
+@article{itti_koch_2001,
+  title        = {Computational modelling of visual attention},
+  volume       = {2},
+  issn         = {1471-0048},
+  doi          = {10.1038/35058500},
+  abstractnote = {We review recent work on computational models of focal visual attention, with emphasis on the bottom-up, saliency- or image-based control of attentional deployment. We highlight five important trends that have emerged from the computational literature: First, the perceptual saliency of stimuli critically depends on surrounding context; that is, the same object may or may not appear salient depending on the nature and arrangement of other objects in the scene. Computationally, this means that contextual influences, such as non-classical surround interactions, must be included in models. Second, a unique “saliency map” topographically encoding for stimulus conspicuity over the visual scene has proved to be an efficient and plausible bottom-up control strategy. Many successful models are based on such architecture, and electrophysiological as well as psychophysical studies have recently supported the idea that saliency is explicitly encoded in the brain. Third, inhibition-of-return (IOR), the process by which the currently attended location is transiently inhibited, is a critical element of attentional deployment. Without IOR, attention would endlessly be attracted towards the most salient stimulus. IOR thus implements a memory of recently visited locations, and allows attention to thoroughly scan our visual environment. Fourth, attention and eye movements tightly interplay, posing computational challenges with respect to the coordinate system used to control attention. Understanding the interaction between overt and covert attention is particularly important for models concerned with visual search. Last, scene understanding and object recognition strongly constrain the selection of attended locations. Although several models have approached, in an information-theoretical sense, the problem of optimally deploying attention to analyse a scene, biologically plausible implementations of such a computational strategy remain to be developed.},
+  number       = {33},
+  journal      = {Nature Reviews Neuroscience},
+  publisher    = {Nature Publishing Group},
+  author       = {Itti, Laurent and Koch, Christof},
+  year         = {2001},
+  month        = {Mar},
+  pages        = {194–203}
 }
 
 
@@ -592,6 +569,19 @@
   month        = {May},
   pages        = {99–134}
 }
+
+
+@article{kingma_ba_2017,
+  title        = {Adam: A Method for Stochastic Optimization},
+  url          = {http://arxiv.org/abs/1412.6980},
+  abstractnote = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.},
+  note         = {arXiv: 1412.6980},
+  journal      = {arXiv:1412.6980 [cs]},
+  author       = {Kingma, Diederik P. and Ba, Jimmy},
+  year         = {2017},
+  month        = {Jan}
+}
+
 
 @article{kirk_survey_2022,
   title        = {A Survey of Generalisation in Deep Reinforcement Learning},
@@ -617,6 +607,39 @@
   pages        = {103078}
 }
 
+@inbook{mataric_shaping_1994,
+  place        = {San Francisco (CA)},
+  title        = {Reward Functions for Accelerated Learning},
+  isbn         = {978-1-55860-335-6},
+  url          = {https://www.sciencedirect.com/science/article/pii/B9781558603356500301},
+  doi          = {10.1016/B978-1-55860-335-6.50030-1},
+  abstractnote = {This paper discusses why traditional reinforcement learning methods, and algorithms applied to those models, result in poor performance in situated domains characterized by multiple goals, noisy state, and inconsistent reinforcement. We propose a methodology for designing reinforcement functions that take advantage of implicit domain knowledge in order to accelerate learning in such domains. The methodology involves the use of heterogeneous reinforcement functions and progress estimators, and applies to learning in domains with a single agent or with multiple agents. The methodology is experimentally validated on a group of mobile robots learning a foraging task.},
+  booktitle    = {Machine Learning Proceedings 1994},
+  publisher    = {Morgan Kaufmann},
+  author       = {Mataric, Maja J},
+  editor       = {Cohen, William W. and Hirsh, Haym},
+  year         = {1994},
+  month        = {Jan},
+  pages        = {181–189}
+}
+
+@article{meger_george_2008,
+  series       = {From Sensors to Human Spatial Concepts},
+  title        = {Curious George: An attentive semantic robot},
+  volume       = {56},
+  issn         = {0921-8890},
+  doi          = {10.1016/j.robot.2008.03.008},
+  abstractnote = {State-of-the-art methods have recently achieved impressive performance for recognising the objects present in large databases of pre-collected images. There has been much less focus on building embodied systems that recognise objects present in the real world. This paper describes an intelligent system that attempts to perform robust object recognition in a realistic scenario, where a mobile robot moving through an environment must use the images collected from its camera directly to recognise objects. To perform successful recognition in this scenario, we have chosen a combination of techniques including a peripheral-foveal vision system, an attention system combining bottom-up visual saliency with structure from stereo, and a localisation and mapping technique. The result is a highly capable object recognition system that can be easily trained to locate the objects of interest in an environment, and subsequently build a spatial-semantic map of the region. This capability has been demonstrated during the Semantic Robot Vision Challenge, and is further illustrated with a demonstration of semantic mapping. We also empirically verify that the attention system outperforms an undirected approach even with a significantly lower number of foveations.},
+  number       = {6},
+  journal      = {Robotics and Autonomous Systems},
+  author       = {Meger, David and Forssén, Per-Erik and Lai, Kevin and Helmer, Scott and McCann, Sancho and Southey, Tristram and Baumann, Matthew and Little, James J. and Lowe, David G.},
+  year         = {2008},
+  month        = {Jun},
+  pages        = {503–511},
+  collection   = {From Sensors to Human Spatial Concepts},
+  language     = {en}
+}
+
 @article{minsky_cap_1961,
   title        = {Steps toward Artificial Intelligence},
   volume       = {49},
@@ -630,67 +653,6 @@
   month        = {Jan},
   pages        = {8–30}
 }
-
-@article{andrychowicz_empirical_2020,
-  title        = {What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study},
-  url          = {http://arxiv.org/abs/2006.05990},
-  abstractnote = {In recent years, on-policy reinforcement learning (RL) has been successfully applied to many different continuous control tasks. While RL algorithms are often conceptually simple, their state-of-the-art implementations take numerous low- and high-level design decisions that strongly affect the performance of the resulting agents. Those choices are usually not extensively discussed in the literature, leading to discrepancy between published descriptions of algorithms and their implementations. This makes it hard to attribute progress in RL and slows down overall progress [27]. As a step towards ﬁlling that gap, we implement >50 such “choices” in a uniﬁed on-policy RL framework, allowing us to investigate their impact in a large-scale empirical study. We train over 250’000 agents in ﬁve continuous control environments of different complexity and provide insights and practical recommendations for on-policy training of RL agents.},
-  note         = {arXiv: 2006.05990},
-  journal      = {arXiv:2006.05990 [cs, stat]},
-  author       = {Andrychowicz, Marcin and Raichuk, Anton and Stańczyk, Piotr and Orsini, Manu and Girgin, Sertan and Marinier, Raphael and Hussenot, Léonard and Geist, Matthieu and Pietquin, Olivier and Michalski, Marcin and Gelly, Sylvain and Bachem, Olivier},
-  year         = {2020},
-  month        = {Jun}
-}
-
-
-@article{chen_activevisionsurvey_2011,
-  title        = {Active vision in robotic systems: A survey of recent developments},
-  volume       = {30},
-  issn         = {0278-3649},
-  doi          = {10.1177/0278364911410755},
-  abstractnote = {In this paper we provide a broad survey of developments in active vision in robotic applications over the last 15 years. With increasing demand for robotic automation, research in this area has received much attention. Among the many factors that can be attributed to a high-performance robotic system, the planned sensing or acquisition of perceptions on the operating environment is a crucial component. The aim of sensor planning is to determine the pose and settings of vision sensors for undertaking a vision-based task that usually requires obtaining multiple views of the object to be manipulated. Planning for robot vision is a complex problem for an active system due to its sensing uncertainty and environmental uncertainty. This paper describes such problems arising from many applications, e.g. object recognition and modeling, site reconstruction and inspection, surveillance, tracking and search, as well as robotic manipulation and assembly, localization and mapping, navigation and exploration. A bundle of solutions and methods have been proposed to solve these problems in the past. They are summarized in this review while enabling readers to easily refer solution methods for practical applications. Representative contributions, their evaluations, analyses, and future research trends are also addressed in an abstract level.},
-  number       = {11},
-  journal      = {The International Journal of Robotics Research},
-  publisher    = {SAGE Publications Ltd STM},
-  author       = {Chen, Shengyong and Li, Youfu and Kwok, Ngai Ming},
-  year         = {2011},
-  month        = {Sep},
-  pages        = {1343–1377}
-}
-
-@article{ye_tsotsos_2001,
-  title        = {A Complexity-Level Analysis of the Sensor Planning Task for Object Search},
-  volume       = {17},
-  issn         = {0824-7935, 1467-8640},
-  doi          = {10.1111/0824-7935.00166},
-  abstractnote = {Object search is the task of searching for a given 3D object in a given 3D environment by a controllable camera. Sensor planning for object search refers to the task of how to select the sensing parameters of the camera so as to bring the target into the ﬁeld of view of the camera and to make the image of the target to be easily recognized by the available recognition algorithms. In this paper, we study the task of sensor planning for object search from the theoretical point of view. We formulate the task and point out many of its important properties. We then analyze this task from the complexity level and prove that this task is NP-Complete.},
-  note         = {13 citations (Crossref) [2022-02-28]},
-  number       = {4},
-  journal      = {Computational Intelligence},
-  author       = {Ye, Yiming and Tsotsos, John K.},
-  year         = {2001},
-  month        = {Nov},
-  pages        = {605–620},
-  language     = {en}
-}
-
-
-@article{shubina_visualsearch_2010,
-  series       = {Special issue on Intelligent Vision Systems},
-  title        = {Visual search for an object in a 3D environment using a mobile robot},
-  volume       = {114},
-  issn         = {1077-3142},
-  doi          = {10.1016/j.cviu.2009.06.010},
-  abstractnote = {Consider the problem of visually finding an object in a mostly unknown space with a mobile robot. It is clear that all possible views and images cannot be examined in a practical system. Visual attention is a complex phenomenon; we view it as a mechanism that optimizes the search processes inherent in vision (Tsotsos, 2001; Tsotsos et al., 2008) [1], [2]. Here, we describe a particular example of a practical robotic vision system that employs some of these attentive processes. We cast this as an optimization problem, i.e., optimizing the probability of finding the target given a fixed cost limit in terms of total number of robotic actions required to find the visual target. Due to the inherent intractability of this problem, we present an approximate solution and investigate its performance and properties. We conclude that our approach is sufficient to solve this problem and has additional desirable empirical characteristics.},
-  number       = {5},
-  journal      = {Computer Vision and Image Understanding},
-  author       = {Shubina, Ksenia and Tsotsos, John K.},
-  year         = {2010},
-  month        = {May},
-  pages        = {535–547},
-  collection   = {Special issue on Intelligent Vision Systems}
-}
-
 
 
 @inproceedings{minut_mahadevan_2001,
@@ -717,6 +679,7 @@
   month        = {Jan}
 }
 
+
 @article{mnih_asynchronous_2016,
   title        = {Asynchronous Methods for Deep Reinforcement Learning},
   url          = {http://arxiv.org/abs/1602.01783},
@@ -728,6 +691,8 @@
   month        = {Jun}
 }
 
+
+
 @article{mnih_atari_2013,
   title        = {Playing Atari with Deep Reinforcement Learning},
   url          = {http://arxiv.org/abs/1312.5602},
@@ -737,6 +702,32 @@
   author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Graves, Alex and Antonoglou, Ioannis and Wierstra, Daan and Riedmiller, Martin},
   year         = {2013},
   month        = {Dec}
+}
+
+@article{mnih_attention_2014,
+  title        = {Recurrent Models of Visual Attention},
+  url          = {http://arxiv.org/abs/1406.6247},
+  abstractnote = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-speciﬁc policies. We evaluate our model on several image classiﬁcation tasks, where it signiﬁcantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
+  note         = {arXiv: 1406.6247},
+  journal      = {arXiv:1406.6247 [cs, stat]},
+  author       = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
+  year         = {2014},
+  month        = {Jun}
+}
+
+@article{mnih_human_2015,
+  title        = {Human-level control through deep reinforcement learning},
+  volume       = {518},
+  issn         = {1476-4687},
+  doi          = {10.1038/nature14236},
+  abstractnote = {An artificial agent is developed that learns to play a diverse range of classic Atari 2600 computer games directly from sensory experience, achieving a performance comparable to that of an expert human player; this work paves the way to building general-purpose learning algorithms that bridge the divide between perception and action.},
+  number       = {75407540},
+  journal      = {Nature},
+  publisher    = {Nature Publishing Group},
+  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
+  year         = {2015},
+  month        = {Feb},
+  pages        = {529–533}
 }
 
 @article{nakayama_situating_2011,
@@ -755,46 +746,6 @@
   collection   = {Vision Research 50th Anniversary Issue: Part 2}
 }
 
-
-@article{mnih_attention_2014,
-  title        = {Recurrent Models of Visual Attention},
-  url          = {http://arxiv.org/abs/1406.6247},
-  abstractnote = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-speciﬁc policies. We evaluate our model on several image classiﬁcation tasks, where it signiﬁcantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
-  note         = {arXiv: 1406.6247},
-  journal      = {arXiv:1406.6247 [cs, stat]},
-  author       = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
-  year         = {2014},
-  month        = {Jun}
-}
-
-
-@article{mnih_human_2015,
-  title        = {Human-level control through deep reinforcement learning},
-  volume       = {518},
-  issn         = {1476-4687},
-  doi          = {10.1038/nature14236},
-  abstractnote = {An artificial agent is developed that learns to play a diverse range of classic Atari 2600 computer games directly from sensory experience, achieving a performance comparable to that of an expert human player; this work paves the way to building general-purpose learning algorithms that bridge the divide between perception and action.},
-  number       = {75407540},
-  journal      = {Nature},
-  publisher    = {Nature Publishing Group},
-  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
-  year         = {2015},
-  month        = {Feb},
-  pages        = {529–533}
-}
-
-@article{savinov_topmem_2018,
-  title        = {Semi-parametric Topological Memory for Navigation},
-  url          = {http://arxiv.org/abs/1803.00653},
-  abstractnote = {We introduce a new memory architecture for navigation in previously unseen environments, inspired by landmark-based navigation in animals. The proposed semiparametric topological memory (SPTM) consists of a (non-parametric) graph with nodes corresponding to locations in the environment and a (parametric) deep network capable of retrieving nodes from the graph based on observations. The graph stores no metric information, only connectivity of locations corresponding to the nodes. We use SPTM as a planning module in a navigation system. Given only 5 minutes of footage of a previously unseen maze, an SPTM-based navigation agent can build a topological map of the environment and use it to conﬁdently navigate towards goals. The average success rate of the SPTM agent in goal-directed navigation across test environments is higher than the best-performing baseline by a factor of three.},
-  note         = {arXiv: 1803.00653},
-  journal      = {arXiv:1803.00653 [cs]},
-  author       = {Savinov, Nikolay and Dosovitskiy, Alexey and Koltun, Vladlen},
-  year         = {2018},
-  month        = {Mar}
-}
-
-
 @article{oh_minecraft_2016,
   title        = {Control of Memory, Active Perception, and Action in Minecraft},
   url          = {http://arxiv.org/abs/1605.09128},
@@ -806,25 +757,17 @@
   month        = {May}
 }
 
-@inbook{ghesu_artificial_2016,
-  place        = {Cham},
-  series       = {Lecture Notes in Computer Science},
-  title        = {An Artificial Agent for Anatomical Landmark Detection in Medical Images},
-  volume       = {9902},
-  isbn         = {978-3-319-46725-2},
-  url          = {https://link.springer.com/10.1007/978-3-319-46726-9_27},
-  doi          = {10.1007/978-3-319-46726-9_27},
-  abstractnote = {Fast and robust detection of anatomical structures or pathologies represents a fundamental task in medical image analysis. Most of the current solutions are however suboptimal and unconstrained by learning an appearance model and exhaustively scanning the space of parameters to detect a speciﬁc anatomical structure. In addition, typical feature computation or estimation of meta-parameters related to the appearance model or the search strategy, is based on local criteria or predeﬁned approximation schemes. We propose a new learning method following a fundamentally diﬀerent paradigm by simultaneously modeling both the object appearance and the parameter search strategy as a uniﬁed behavioral task for an artiﬁcial agent. The method combines the advantages of behavior learning achieved through reinforcement learning with eﬀective hierarchical feature extraction achieved through deep learning. We show that given only a sequence of annotated images, the agent can automatically and strategically learn optimal paths that converge to the sought anatomical landmark location as opposed to exhaustively scanning the entire solution space. The method signiﬁcantly outperforms state-ofthe-art machine learning and deep learning approaches both in terms of accuracy and speed on 2D magnetic resonance images, 2D ultrasound and 3D CT images, achieving average detection errors of 1-2 pixels, while also recognizing the absence of an object from the image.},
-  booktitle    = {Medical Image Computing and Computer-Assisted Intervention - MICCAI 2016},
-  publisher    = {Springer International Publishing},
-  author       = {Ghesu, Florin C. and Georgescu, Bogdan and Mansi, Tommaso and Neumann, Dominik and Hornegger, Joachim and Comaniciu, Dorin},
-  editor       = {Ourselin, Sebastien and Joskowicz, Leo and Sabuncu, Mert R. and Unal, Gozde and Wells, William},
-  year         = {2016},
-  pages        = {229–237},
-  collection   = {Lecture Notes in Computer Science}
+
+@article{pardo_timelimits_2022,
+  title        = {Time Limits in Reinforcement Learning},
+  url          = {http://arxiv.org/abs/1712.00378},
+  abstractnote = {In reinforcement learning, it is common to let an agent interact for a fixed amount of time with its environment before resetting it and repeating the process in a series of episodes. The task that the agent has to learn can either be to maximize its performance over (i) that fixed period, or (ii) an indefinite period where time limits are only used during training to diversify experience. In this paper, we provide a formal account for how time limits could effectively be handled in each of the two cases and explain why not doing so can cause state aliasing and invalidation of experience replay, leading to suboptimal policies and training instability. In case (i), we argue that the terminations due to time limits are in fact part of the environment, and thus a notion of the remaining time should be included as part of the agent’s input to avoid violation of the Markov property. In case (ii), the time limits are not part of the environment and are only used to facilitate learning. We argue that this insight should be incorporated by bootstrapping from the value of the state at the end of each partial episode. For both cases, we illustrate empirically the significance of our considerations in improving the performance and stability of existing reinforcement learning algorithms, showing state-of-the-art results on several control tasks.},
+  note         = {arXiv: 1712.00378},
+  journal      = {arXiv:1712.00378 [cs]},
+  author       = {Pardo, Fabio and Tavakoli, Arash and Levdik, Vitaly and Kormushev, Petar},
+  year         = {2022},
+  month        = {Jan}
 }
-
-
 
 
 @article{parisotto_salakhutdinov_2017,
@@ -864,6 +807,67 @@
   date        = {2021}
 }
 
+@inproceedings{russell_beneficial_2022,
+  address      = {New York, NY, USA},
+  series       = {IUI ’22},
+  title        = {Provably Beneficial Artificial Intelligence},
+  isbn         = {978-1-4503-9144-3},
+  url          = {https://doi.org/10.1145/3490099.3519388},
+  doi          = {10.1145/3490099.3519388},
+  abstractnote = {As AI advances in capabilities and moves into the real world, its potential to benefit humanity seems limitless. Yet we see serious problems including racial and gender bias, manipulation by social media, and an arms race in lethal autonomous weapons. Looking further ahead, Alan Turing predicted the eventual loss of human control over machines that exceed human capabilities. I will argue that Turing was right to express concern but wrong to think that doom is inevitable. Instead, we need to develop a new kind of AI that is provably beneficial to humans.},
+  booktitle    = {27th International Conference on Intelligent User Interfaces},
+  publisher    = {Association for Computing Machinery},
+  author       = {Russell, Stuart},
+  year         = {2022},
+  month        = {Mar},
+  pages        = {3},
+  collection   = {IUI ’22}
+}
+
+
+
+
+@article{russell_ethics_2015,
+  volume       = {521},
+  issn         = {1476-4687},
+  doi          = {10.1038/521415a},
+  abstractnote = {Four leading researchers share their concerns and solutions for reducing societal risks from intelligent machines.},
+  number       = {75537553},
+  journal      = {Nature},
+  publisher    = {Nature Publishing Group},
+  year         = {2015},
+  month        = {May},
+  pages        = {415–418},
+  language     = {en}
+}
+
+@article{russell_priorities_2015,
+  title        = {Research Priorities for Robust and Beneficial Artificial Intelligence},
+  volume       = {36},
+  issn         = {2371-9621},
+  doi          = {10.1609/aimag.v36i4.2577},
+  abstractnote = {Success in the quest for artificial intelligence has the potential to bring unprecedented benefits to humanity, and it is therefore worthwhile to investigate how to maximize these benefits while avoiding potential pitfalls. This article gives numerous examples (which should by no means be construed as an exhaustive list) of such worthwhile research aimed at ensuring that AI remains robust and beneficial.},
+  number       = {44},
+  journal      = {AI Magazine},
+  author       = {Russell, Stuart and Dewey, Daniel and Tegmark, Max},
+  year         = {2015},
+  month        = {Dec},
+  pages        = {105–114},
+  language     = {en}
+}
+
+
+@article{savinov_topmem_2018,
+  title        = {Semi-parametric Topological Memory for Navigation},
+  url          = {http://arxiv.org/abs/1803.00653},
+  abstractnote = {We introduce a new memory architecture for navigation in previously unseen environments, inspired by landmark-based navigation in animals. The proposed semiparametric topological memory (SPTM) consists of a (non-parametric) graph with nodes corresponding to locations in the environment and a (parametric) deep network capable of retrieving nodes from the graph based on observations. The graph stores no metric information, only connectivity of locations corresponding to the nodes. We use SPTM as a planning module in a navigation system. Given only 5 minutes of footage of a previously unseen maze, an SPTM-based navigation agent can build a topological map of the environment and use it to conﬁdently navigate towards goals. The average success rate of the SPTM agent in goal-directed navigation across test environments is higher than the best-performing baseline by a factor of three.},
+  note         = {arXiv: 1803.00653},
+  journal      = {arXiv:1803.00653 [cs]},
+  author       = {Savinov, Nikolay and Dosovitskiy, Alexey and Koltun, Vladlen},
+  year         = {2018},
+  month        = {Mar}
+}
+
 @article{schulman_ppo_2017,
   title        = {Proximal Policy Optimization Algorithms},
   url          = {http://arxiv.org/abs/1707.06347},
@@ -876,6 +880,37 @@
 }
 
 
+@article{shubina_visualsearch_2010,
+  series       = {Special issue on Intelligent Vision Systems},
+  title        = {Visual search for an object in a 3D environment using a mobile robot},
+  volume       = {114},
+  issn         = {1077-3142},
+  doi          = {10.1016/j.cviu.2009.06.010},
+  abstractnote = {Consider the problem of visually finding an object in a mostly unknown space with a mobile robot. It is clear that all possible views and images cannot be examined in a practical system. Visual attention is a complex phenomenon; we view it as a mechanism that optimizes the search processes inherent in vision (Tsotsos, 2001; Tsotsos et al., 2008) [1], [2]. Here, we describe a particular example of a practical robotic vision system that employs some of these attentive processes. We cast this as an optimization problem, i.e., optimizing the probability of finding the target given a fixed cost limit in terms of total number of robotic actions required to find the visual target. Due to the inherent intractability of this problem, we present an approximate solution and investigate its performance and properties. We conclude that our approach is sufficient to solve this problem and has additional desirable empirical characteristics.},
+  number       = {5},
+  journal      = {Computer Vision and Image Understanding},
+  author       = {Shubina, Ksenia and Tsotsos, John K.},
+  year         = {2010},
+  month        = {May},
+  pages        = {535–547},
+  collection   = {Special issue on Intelligent Vision Systems}
+}
+
+@article{silver_alphago_2016,
+  title        = {Mastering the game of Go with deep neural networks and tree search},
+  volume       = {529},
+  issn         = {1476-4687},
+  doi          = {10.1038/nature16961},
+  abstractnote = {The game of Go has long been viewed as the most challenging of classic games for artificial intelligence owing to its enormous search space and the difficulty of evaluating board positions and moves. Here we introduce a new approach to computer Go that uses ‘value networks’ to evaluate board positions and ‘policy networks’ to select moves. These deep neural networks are trained by a novel combination of supervised learning from human expert games, and reinforcement learning from games of self-play. Without any lookahead search, the neural networks play Go at the level of state-of-the-art Monte Carlo tree search programs that simulate thousands of random games of self-play. We also introduce a new search algorithm that combines Monte Carlo simulation with value and policy networks. Using this search algorithm, our program AlphaGo achieved a 99.8% winning rate against other Go programs, and defeated the human European Go champion by 5 games to 0. This is the first time that a computer program has defeated a human professional player in the full-sized game of Go, a feat previously thought to be at least a decade away.},
+  number       = {75877587},
+  journal      = {Nature},
+  publisher    = {Nature Publishing Group},
+  author       = {Silver, David and Huang, Aja and Maddison, Chris J. and Guez, Arthur and Sifre, Laurent and van den Driessche, George and Schrittwieser, Julian and Antonoglou, Ioannis and Panneershelvam, Veda and Lanctot, Marc and Dieleman, Sander and Grewe, Dominik and Nham, John and Kalchbrenner, Nal and Sutskever, Ilya and Lillicrap, Timothy and Leach, Madeleine and Kavukcuoglu, Koray and Graepel, Thore and Hassabis, Demis},
+  year         = {2016},
+  month        = {Jan},
+  pages        = {484–489}
+}
+
 @inproceedings{sutton_policygrad_1999,
   title     = {Policy Gradient Methods for Reinforcement Learning with Function Approximation},
   volume    = {12},
@@ -886,6 +921,8 @@
   editor    = {Solla, S. and Leen, T. and Müller, K.},
   year      = {1999}
 }
+
+
 
 @book{sutton_reinforcement_2018,
   location   = {Cambridge, Massachusetts},
@@ -914,8 +951,6 @@
   year    = {1995}
 }
 
-
-
 @article{uzkent_detection_2020,
   title        = {Efficient Object Detection in Large Images using Deep Reinforcement Learning},
   url          = {http://arxiv.org/abs/1912.03966},
@@ -925,6 +960,37 @@
   author       = {Uzkent, Burak and Yeh, Christopher and Ermon, Stefano},
   year         = {2020},
   month        = {Apr}
+}
+
+@article{vinuesa_sustainable_2020,
+  title        = {The role of artificial intelligence in achieving the Sustainable Development Goals},
+  volume       = {11},
+  issn         = {2041-1723},
+  doi          = {10.1038/s41467-019-14108-y},
+  abstractnote = {The emergence of artificial intelligence (AI) and its progressively wider impact on many sectors requires an assessment of its effect on the achievement of the Sustainable Development Goals. Using a consensus-based expert elicitation process, we find that AI can enable the accomplishment of 134 targets across all the goals, but it may also inhibit 59 targets. However, current research foci overlook important aspects. The fast development of AI needs to be supported by the necessary regulatory insight and oversight for AI-based technologies to enable sustainable development. Failure to do so could result in gaps in transparency, safety, and ethical standards.},
+  number       = {11},
+  journal      = {Nature Communications},
+  publisher    = {Nature Publishing Group},
+  author       = {Vinuesa, Ricardo and Azizpour, Hossein and Leite, Iolanda and Balaam, Madeline and Dignum, Virginia and Domisch, Sami and Felländer, Anna and Langhans, Simone Daniela and Tegmark, Max and Fuso Nerini, Francesco},
+  year         = {2020},
+  month        = {Jan},
+  pages        = {233},
+  language     = {en}
+}
+
+@article{vinyals_alphastar_2019,
+  title        = {Grandmaster level in StarCraft II using multi-agent reinforcement learning},
+  volume       = {575},
+  issn         = {1476-4687},
+  doi          = {10.1038/s41586-019-1724-z},
+  abstractnote = {Many real-world applications require artificial agents to compete and coordinate with other agents in complex environments. As a stepping stone to this goal, the domain of StarCraft has emerged as an important challenge for artificial intelligence research, owing to its iconic and enduring status among the most difficult professional esports and its relevance to the real world in terms of its raw complexity and multi-agent challenges. Over the course of a decade and numerous competitions1–3, the strongest agents have simplified important aspects of the game, utilized superhuman capabilities, or employed hand-crafted sub-systems4. Despite these advantages, no previous agent has come close to matching the overall skill of top StarCraft players. We chose to address the challenge of StarCraft using general-purpose learning methods that are in principle applicable to other complex domains: a multi-agent reinforcement learning algorithm that uses data from both human and agent games within a diverse league of continually adapting strategies and counter-strategies, each represented by deep neural networks5,6. We evaluated our agent, AlphaStar, in the full game of StarCraft II, through a series of online games against human players. AlphaStar was rated at Grandmaster level for all three StarCraft races and above 99.8% of officially ranked human players.},
+  number       = {77827782},
+  journal      = {Nature},
+  publisher    = {Nature Publishing Group},
+  author       = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and Mathieu, Michaël and Dudzik, Andrew and Chung, Junyoung and Choi, David H. and Powell, Richard and Ewalds, Timo and Georgiev, Petko and Oh, Junhyuk and Horgan, Dan and Kroiss, Manuel and Danihelka, Ivo and Huang, Aja and Sifre, Laurent and Cai, Trevor and Agapiou, John P. and Jaderberg, Max and Vezhnevets, Alexander S. and Leblond, Rémi and Pohlen, Tobias and Dalibard, Valentin and Budden, David and Sulsky, Yury and Molloy, James and Paine, Tom L. and Gulcehre, Caglar and Wang, Ziyu and Pfaff, Tobias and Wu, Yuhuai and Ring, Roman and Yogatama, Dani and Wünsch, Dario and McKinney, Katrina and Smith, Oliver and Schaul, Tom and Lillicrap, Timothy and Kavukcuoglu, Koray and Hassabis, Demis and Apps, Chris and Silver, David},
+  year         = {2019},
+  month        = {Nov},
+  pages        = {350–354}
 }
 
 @article{wolfe_five_2017,
@@ -969,6 +1035,7 @@
   file         = {Full Text:/home/oslund/Zotero/storage/WBASNPNB/Wolfe - 2021 - Guided Search 6.0 An updated model of visual sear.pdf:application/pdf}
 }
 
+
 @article{wolfe_visual_2010,
   title        = {Visual search},
   volume       = {20},
@@ -987,6 +1054,18 @@
   file         = {Full Text:/home/oslund/Zotero/storage/CLUR5J4F/Wolfe - 2010 - Visual search.pdf:application/pdf;Snapshot:/home/oslund/Zotero/storage/F564KWBK/PMC5678963.html:text/html;Visual search:/home/oslund/Zotero/storage/N56NHYTS/wolfe2010.pdf.pdf:application/pdf}
 }
 
+@article{yang_semantic_2018,
+  title        = {Visual Semantic Navigation using Scene Priors},
+  url          = {http://arxiv.org/abs/1810.06543},
+  abstractnote = {How do humans navigate to target objects in novel scenes? Do we use the semantic/functional priors we have built over years to efficiently search and navigate? For example, to search for mugs, we search cabinets near the coffee machine and for fruits we try the fridge. In this work, we focus on incorporating semantic priors in the task of semantic navigation. We propose to use Graph Convolutional Networks for incorporating the prior knowledge into a deep reinforcement learning framework. The agent uses the features from the knowledge graph to predict the actions. For evaluation, we use the AI2-THOR framework. Our experiments show how semantic knowledge improves performance significantly. More importantly, we show improvement in generalization to unseen scenes and/or objects. The supplementary video can be accessed at the following link: https://youtu.be/otKjuO805dE .},
+  note         = {arXiv: 1810.06543},
+  journal      = {arXiv:1810.06543 [cs]},
+  author       = {Yang, Wei and Wang, Xiaolong and Farhadi, Ali and Gupta, Abhinav and Mottaghi, Roozbeh},
+  year         = {2018},
+  month        = {Oct}
+}
+
+
 @inproceedings{ye_active_2018,
   title      = {Active Object Perceiver: Recognition-Guided Policy Learning for Object Searching on Mobile Robots},
   doi        = {10.1109/IROS.2018.8593720},
@@ -1002,6 +1081,22 @@
   file       = {IEEE Xplore Full Text PDF:/home/oslund/Zotero/storage/YYQI6JBM/Ye et al. - 2018 - Active Object Perceiver Recognition-Guided Policy.pdf:application/pdf;IEEE Xplore Abstract Record:/home/oslund/Zotero/storage/9IX4M2IH/8593720.html:text/html}
 }
 
+@article{ye_tsotsos_2001,
+  title        = {A Complexity-Level Analysis of the Sensor Planning Task for Object Search},
+  volume       = {17},
+  issn         = {0824-7935, 1467-8640},
+  doi          = {10.1111/0824-7935.00166},
+  abstractnote = {Object search is the task of searching for a given 3D object in a given 3D environment by a controllable camera. Sensor planning for object search refers to the task of how to select the sensing parameters of the camera so as to bring the target into the ﬁeld of view of the camera and to make the image of the target to be easily recognized by the available recognition algorithms. In this paper, we study the task of sensor planning for object search from the theoretical point of view. We formulate the task and point out many of its important properties. We then analyze this task from the complexity level and prove that this task is NP-Complete.},
+  note         = {13 citations (Crossref) [2022-02-28]},
+  number       = {4},
+  journal      = {Computational Intelligence},
+  author       = {Ye, Yiming and Tsotsos, John K.},
+  year         = {2001},
+  month        = {Nov},
+  pages        = {605–620},
+  language     = {en}
+}
+
 @article{zeng_survey_2020,
   title        = {A Survey on Visual Navigation for Artificial Agents With Deep Reinforcement Learning},
   volume       = {8},
@@ -1014,24 +1109,6 @@
   pages        = {135426–135442}
 }
 
-@inproceedings{aydemir_real_2011,
-  address      = {Shanghai, China},
-  title        = {Search in the real world: Active visual object search based on spatial relations},
-  isbn         = {978-1-61284-386-5},
-  url          = {http://ieeexplore.ieee.org/document/5980495/},
-  doi          = {10.1109/ICRA.2011.5980495},
-  abstractnote = {Objects are integral to a robot’s understanding of space. Various tasks such as semantic mapping, pick-andcarry missions or manipulation involve interaction with objects. Previous work in the ﬁeld largely builds on the assumption that the object in question starts out within the ready sensory reach of the robot. In this work we aim to relax this assumption by providing the means to perform robust and large-scale active visual object search. Presenting spatial relations that describe topological relationships between objects, we then show how to use these to create potential search actions. We introduce a method for efﬁciently selecting search strategies given probabilities for those relations. Finally we perform experiments to verify the feasibility of our approach.},
-  note         = {48 citations (Crossref) [2022-02-28]},
-  booktitle    = {2011 IEEE International Conference on Robotics and Automation},
-  publisher    = {IEEE},
-  author       = {Aydemir, A. and Sjoo, K. and Folkesson, J. and Pronobis, A. and Jensfelt, P.},
-  year         = {2011},
-  month        = {May},
-  pages        = {2818–2824},
-  language     = {en}
-}
-
-
 @article{zhang_overfitting_2018,
   title        = {A Study on Overfitting in Deep Reinforcement Learning},
   url          = {http://arxiv.org/abs/1804.06893},
@@ -1043,20 +1120,19 @@
   month        = {Apr}
 }
 
-@article{bonin-font_visnav_2008,
-  title        = {Visual Navigation for Mobile Robots: A Survey},
-  volume       = {53},
-  issn         = {0921-0296, 1573-0409},
-  doi          = {10.1007/s10846-008-9235-4},
-  abstractnote = {Mobile robot vision-based navigation has been the source of countless research contributions, from the domains of both vision and control. Vision is becoming more and more common in applications such as localization, automatic map construction, autonomous navigation, path following, inspection, monitoring or risky situation detection. This survey presents those pieces of work, from the nineties until nowadays, which constitute a wide progress in visual navigation techniques for land, aerial and autonomous underwater vehicles. The paper deals with two major approaches: map-based navigation and mapless navigation. Map-based navigation has been in turn subdivided in metric map-based navigation and topological mapbased navigation. Our outline to mapless navigation includes reactive techniques based on qualitative characteristics extraction, appearance-based localization, optical ﬂow, features tracking, plane ground detection/tracking, etc... The recent concept of visual sonar has also been revised.},
-  number       = {3},
-  journal      = {Journal of Intelligent and Robotic Systems},
-  author       = {Bonin-Font, Francisco and Ortiz, Alberto and Oliver, Gabriel},
-  year         = {2008},
+@article{zhao_objectdetection_2019,
+  title        = {Object Detection With Deep Learning: A Review},
+  volume       = {30},
+  issn         = {2162-237X, 2162-2388},
+  doi          = {10.1109/TNNLS.2018.2876865},
+  abstractnote = {Due to object detection’s close relationship with video analysis and image understanding, it has attracted much research attention in recent years. Traditional object detection methods are built on handcrafted features and shallow trainable architectures. Their performance easily stagnates by constructing complex ensembles that combine multiple low-level image features with high-level context from object detectors and scene classiﬁers. With the rapid development in deep learning, more powerful tools, which are able to learn semantic, high-level, deeper features, are introduced to address the problems existing in traditional architectures. These models behave differently in network architecture, training strategy, and optimization function. In this paper, we provide a review of deep learning-based object detection frameworks. Our review begins with a brief introduction on the history of deep learning and its representative tool, namely, the convolutional neural network. Then, we focus on typical generic object detection architectures along with some modiﬁcations and useful tricks to improve detection performance further. As distinct speciﬁc detection tasks exhibit different characteristics, we also brieﬂy survey several speciﬁc tasks, including salient object detection, face detection, and pedestrian detection. Experimental analyses are also provided to compare various methods and draw some meaningful conclusions. Finally, several promising directions and tasks are provided to serve as guidelines for future work in both object detection and relevant neural network-based learning systems.},
+  number       = {11},
+  journal      = {IEEE Transactions on Neural Networks and Learning Systems},
+  author       = {Zhao, Zhong-Qiu and Zheng, Peng and Xu, Shou-Tao and Wu, Xindong},
+  year         = {2019},
   month        = {Nov},
-  pages        = {263–296}
+  pages        = {3212–3232}
 }
-
 
 @article{zhu_target_2016,
   title        = {Target-driven Visual Navigation in Indoor Scenes using Deep Reinforcement Learning},
@@ -1072,68 +1148,3 @@
   keywords     = {Computer Science - Computer Vision and Pattern Recognition},
   file         = {Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:/home/oslund/Zotero/storage/H7ESWWTX/Zhu et al. - 2016 - Target-driven Visual Navigation in Indoor Scenes u.pdf:application/pdf}
 }
-
-@article{russell_priorities_2015,
-  title        = {Research Priorities for Robust and Beneficial Artificial Intelligence},
-  volume       = {36},
-  issn         = {2371-9621},
-  doi          = {10.1609/aimag.v36i4.2577},
-  abstractnote = {Success in the quest for artificial intelligence has the potential to bring unprecedented benefits to humanity, and it is therefore worthwhile to investigate how to maximize these benefits while avoiding potential pitfalls. This article gives numerous examples (which should by no means be construed as an exhaustive list) of such worthwhile research aimed at ensuring that AI remains robust and beneficial.},
-  number       = {44},
-  journal      = {AI Magazine},
-  author       = {Russell, Stuart and Dewey, Daniel and Tegmark, Max},
-  year         = {2015},
-  month        = {Dec},
-  pages        = {105–114},
-  language     = {en}
-}
-
-@article{vinuesa_sustainable_2020,
-  title        = {The role of artificial intelligence in achieving the Sustainable Development Goals},
-  volume       = {11},
-  issn         = {2041-1723},
-  doi          = {10.1038/s41467-019-14108-y},
-  abstractnote = {The emergence of artificial intelligence (AI) and its progressively wider impact on many sectors requires an assessment of its effect on the achievement of the Sustainable Development Goals. Using a consensus-based expert elicitation process, we find that AI can enable the accomplishment of 134 targets across all the goals, but it may also inhibit 59 targets. However, current research foci overlook important aspects. The fast development of AI needs to be supported by the necessary regulatory insight and oversight for AI-based technologies to enable sustainable development. Failure to do so could result in gaps in transparency, safety, and ethical standards.},
-  number       = {11},
-  journal      = {Nature Communications},
-  publisher    = {Nature Publishing Group},
-  author       = {Vinuesa, Ricardo and Azizpour, Hossein and Leite, Iolanda and Balaam, Madeline and Dignum, Virginia and Domisch, Sami and Felländer, Anna and Langhans, Simone Daniela and Tegmark, Max and Fuso Nerini, Francesco},
-  year         = {2020},
-  month        = {Jan},
-  pages        = {233},
-  language     = {en}
-}
-
-@inproceedings{russell_beneficial_2022,
-  address      = {New York, NY, USA},
-  series       = {IUI ’22},
-  title        = {Provably Beneficial Artificial Intelligence},
-  isbn         = {978-1-4503-9144-3},
-  url          = {https://doi.org/10.1145/3490099.3519388},
-  doi          = {10.1145/3490099.3519388},
-  abstractnote = {As AI advances in capabilities and moves into the real world, its potential to benefit humanity seems limitless. Yet we see serious problems including racial and gender bias, manipulation by social media, and an arms race in lethal autonomous weapons. Looking further ahead, Alan Turing predicted the eventual loss of human control over machines that exceed human capabilities. I will argue that Turing was right to express concern but wrong to think that doom is inevitable. Instead, we need to develop a new kind of AI that is provably beneficial to humans.},
-  booktitle    = {27th International Conference on Intelligent User Interfaces},
-  publisher    = {Association for Computing Machinery},
-  author       = {Russell, Stuart},
-  year         = {2022},
-  month        = {Mar},
-  pages        = {3},
-  collection   = {IUI ’22}
-}
-
-@article{russell_ethics_2015,
-  volume       = {521},
-  issn         = {1476-4687},
-  doi          = {10.1038/521415a},
-  abstractnote = {Four leading researchers share their concerns and solutions for reducing societal risks from intelligent machines.},
-  number       = {75537553},
-  journal      = {Nature},
-  publisher    = {Nature Publishing Group},
-  year         = {2015},
-  month        = {May},
-  pages        = {415–418},
-  language     = {en}
-}
-
-@book{brundage_malicious_2018, title={The Malicious Use of Artificial Intelligence: Forecasting, Prevention, and Mitigation}, url={http://arxiv.org/abs/1802.07228}, DOI={10.48550/arXiv.1802.07228}, abstractNote={This report surveys the landscape of potential security threats from malicious uses of AI, and proposes ways to better forecast, prevent, and mitigate these threats. After analyzing the ways in which AI may influence the threat landscape in the digital, physical, and political domains, we make four high-level recommendations for AI researchers and other stakeholders. We also suggest several promising areas for further research that could expand the portfolio of defenses, or make attacks less effective or harder to execute. Finally, we discuss, but do not conclusively resolve, the long-term equilibrium of attackers and defenders.}, note={arXiv:1802.07228 [cs]
-type: article}, number={arXiv:1802.07228}, institution={arXiv}, author={Brundage, Miles and Avin, Shahar and Clark, Jack and Toner, Helen and Eckersley, Peter and Garfinkel, Ben and Dafoe, Allan and Scharre, Paul and Zeitzoff, Thomas and Filar, Bobby and Anderson, Hyrum and Roff, Heather and Allen, Gregory C. and Steinhardt, Jacob and Flynn, Carrick and hÉigeartaigh, Seán Ó and Beard, Simon and Belfield, Haydn and Farquhar, Sebastian and Lyle, Clare and Crootof, Rebecca and Evans, Owain and Page, Michael and Bryson, Joanna and Yampolskiy, Roman and Amodei, Dario}, year={2018}, month={Feb} }

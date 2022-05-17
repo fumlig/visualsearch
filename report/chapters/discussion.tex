@@ -1,13 +1,11 @@
 \chapter{Discussion}
 \label{cha:discussion}
 
-In this chapter, we discuss the chosen method (Section~\ref{sec:discussion-method}) and obtained results (Section~\ref{sec:discussion-results}).
-We also discuss the work in a wider context (Section~\ref{sec:discussion-wider})
+In this chapter, we reflect the obtained results and critically discuss and evaluate the chosen method.
+We also discuss the work from a broader perspective (Section~\ref{sec:discussion-wider})
 
 \section{Results}
 \label{sec:discussion-results}
-
-In this section, we discuss the results of each of the conducted experiments.
 
 \subsection{Reflection on Search Performance}
 
@@ -73,12 +71,25 @@ For larger search spaces, the slight difference is accentuated.
 The temporal memory agent converges to search paths that are longer than needed, suggesting that it is not capable of remembering visited locations.
 In the \(20 \times 20\) search space, it seems to have converged to path lengths of around 800, and has a success rate of less than 50\%.
 By the end of training, the search paths of the spatial memory agent are near the total number of positions and it has a success rate of around 90\%.
-Furthermore, it does not seem to have fully converged.
+Furthermore, the training does not seem to have fully converged.
 
 It seems reasonable to state that the spatial memory scales better to large search spaces in terms of performance, when compared to the temporal memory.
 Searching efficiently in large search spaces places extra emphasis on remembering what has already been explored.
 From our results, it would seem like an LSTM struggles with remembering such precise information over many time steps.
 Similar results where presented by \cite{oh_minecraft_2016}.
+
+An hypothesis is that our temporal memory agent would handle large state spaces better with more parameters.
+We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
+Further analysis is needed to see if such augmentations can make it more comparable to the spatial memory in terms of performance.
+
+Even though we have investigated how our approaches scale to larger search spaces,
+it should be noted that realistic search spaces are often considerably larger.
+This poses a problem for both of our approaches, as the number of trainable parameters scales with the search space size in both of them.
+One solution is to keep search spaces small:
+Large (and continuous) spaces could be discretized into smaller ones at the cost of precision.
+Limit the need for memory could be a viable solution for certain search problems..
+In the case of the temporal memory, it might be sufficient to only remember recent interactions.
+Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_salakhutdinov_2017}.
 
 \subsection{Generalizing from Limited Training Sets}
 
@@ -101,54 +112,65 @@ However, the results do offer insights into how these two architectures compare 
 \section{Method}
 \label{sec:discussion-method}
 
-% This is where the applied method is discussed and criticized.
-% Taking a self-critical stance to the method used is an
-% important part of the scientific approach.
-% 
-% A study is rarely perfect. There are almost always things one
-% could have done differently if the study could be repeated or
-% with extra resources. Go through the most important
-% limitations with your method and discuss potential
-% consequences for the results. Connect back to the method
-% theory presented in the theory chapter. Refer explicitly to
-% relevant sources.
-% 
-% The discussion shall also demonstrate an awareness of methodological
-% concepts such as replicability, reliability, and validity. The concept
-% of replicability has already been discussed in the Method chapter
-% (\ref{cha:method}). Reliability is a term for whether one can expect
-% to get the same results if a study is repeated with the same method. A
-% study with a high degree of reliability has a large probability of
-% leading to similar results if repeated. The concept of validity is,
-% somewhat simplified, concerned with whether a performed measurement
-% actually measures what one thinks is being measured. A study with a
-% high degree of validity thus has a high level of credibility. A
-% discussion of these concepts must be transferred to the actual context
-% of the study.
-% 
-% The method discussion shall also contain a paragraph of
-% source criticism. This is where the authors’ point of view on
-% the use and selection of sources is described.
-% 
-% In certain contexts it may be the case that the most relevant
-% information for the study is not to be found in scientific
-% literature but rather with individual software developers and
-% open source projects. It must then be clearly stated that
-% efforts have been made to gain access to this information,
-% e.g. by direct communication with developers and/or through
-% discussion forums, etc. Efforts must also be made to indicate
-% the lack of relevant research literature. The precise manner
-% of such investigations must be clearly specified in a method
-% section. The paragraph on source criticism must critically
-% discuss these approaches.
-% 
-% Usually however, there are always relevant related research.
-% If not about the actual research questions, there is certainly
-% important information about the domain under study.
+\subsection{Observations and Detections}
+
+The observations in the three environments in this work contain the position and an image of the current view.
+It seems reasonable to assume that the position can be provided to the agent.
+In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
+
+In many cases, a \(64 \times 64\) images are not sufficient to convey the full meaning of a scene.
+While we explicitly delimit ourselves from difficult detection problems in this work,
+detection is likely to be difficult in most real-world search scenarios.
+Further investigations are needed to evaluate how viable our approach is for more realistic scenes,
+where variance is higher and it is more difficult to interpret image observations.
+
+Related to the detection problem is our choice of including an indication action.
+It could be argued that explicitly indicating when targets are in view is redundant.
+Indications could instead happen implicitly when targets are in view.
+This is true if the focus is only on how environment cues can be used to guide visual attention during search.
+Including explicit indication actions is in our view more interesting, as it requires some form of intentionality and is necessary for actually locating targets.
+
+Furthermore, the indication action has several interesting applications.
+One can imagine a task in which target detection is done through some external object detection that is expensive to run.
+In such a case, the indication could be used by the agent to convey that it is likely that a target is in view, and it is worth spending resources on running the detection process.
+
+\subsection{Actions and Search Space Dimensionality}
+
+The action space we chose in this work contains four different moving actions that change the position of the agent in two dimensions.
+This is reasonable for several real-world search tasks such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction.
+Another example is surveillance with a pan-tilt-camera, where the actions could correspond to pitch and yaw rotations.
+
+Many vision systems have more degrees of freedom.
+Camera sensors often have zoom functionality, which in practice requires additional actions for zooming in and out, and adds an extra dimension to the search space.
+Similarly, if an agent is able to both move and look around we get additional dimensions to consider.
+
+Nothing suggests that our two approaches would be unable to handle more than two dimensions.
+The temporal memory simply has to encode an additional component of the agent's position.
+The spatial memory can store a higher dimensional feature map.
+Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_salakhutdinov_2017}.
+
+\subsection{Implications of Reward Signal}
+
+Finally, our reward signal assumes certain knowledge of the scenes:
+The environment (or the provider of the reward signal) has to keep track of visited positions.
+It also has to know where targets are located -- even when they are not visible.
+While the reward is not needed when acting according to the policy, it is needed when learning.
+This has implications for what kind of environments can be used for learning.
+One can imagine a scenario where the locations of targets are not known, but a black-box system is responsible for detecting them and providing positive feedback to the RL agent.
+In this case, the bonus for moving towards targets is not computable.
+
+In the gaussian environment, we found that the additional reward bonuses where required for convergence to good policies.
+One reason for this could be that it is difficult to interpret compared to the other environment.
+With a small bonus for desired behavior, reinforcements are more frequent and may aid with picking up subtle patterns.
+However, a specialized reward like ours risks introducing bias that inhibit learning by leading to poor local optima.
+Several works argue for minimizing such biases, as learning systems can sometimes find better solutions without them~\cite{hessel_inductive_2019}.
+There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
+For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.
 
 \subsection{Reinforcement Learning for Visual Search}
 
-It is worth considering whether using a learning agent like this is suitable for visual search problems.
+It is worth considering whether using a learning agent is suitable for visual search problems.
 Several of the works which we cover in Section ~\ref{sec:relatedwork} utilize other solution methods with apparent success.
 Such methods can sometimes be probably correct and efficient.
 It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
@@ -165,80 +187,6 @@ We would argue that RL is a suitable framework for implementing such learning ag
 Our approach seems to be able to utilize environment appearance to search more efficiently.
 It is less clear if their behavior is close to optimality or not.
 
-\subsection{Design of Environments}
-
-The three environments we have used to train and test searching agents are all quite different.
-
-Notably, the camera environment does not follow the same 
-
-The image observations are low-dimensional and likely not sufficient for real-world scenarios\dots
-
-Position observations are\dots
-In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
-
-The action space is realistic for many real-world search tasks,
-such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction,
-and surveillance with a pan-tilt-camera, where the actions correspond to pitch and yaw rotations.
-
-In some cases, like human eye movements, \dots
-
-
-\begin{itemize}
-    \item Reward signal requires good knowledge of scene.
-    \item As long as we have labelled scenes, we can use the reward.
-    \item However, we could make the observation space clearer (for example, give the agent visited position directly).
-    \item The difficulty of each environment is related to the potential region targets can appear in. We can measure this in the environments themselves.
-    \item The scene characteristics matter - in some cases, amortized probability of targets is not uniform, and patterns are more complex. We need more types of environments.
-    \item The more specialized the reward, the higher the risk that it is good for some environments and bad for some. We saw with the unspecialized reward that it did not work well for the terrain environment. If we end up using only a specialized reward, discuss cases when it would not be able to find an optimal solution.
-    \item Discuss lack of completion action (as suggested in related work).
-
-\end{itemize}
-
-
-\subsection{Implicit or Explicit Indications}
-
-\dots
-
-
-\subsection{Evaluation and Comparison of Agents}
-
-\begin{itemize}
-    \item Is the comparison between spatial and temporal memory meaningful?
-    \item Would have been nice with a comparison to a close-to-optimal rule-based baseline in each environment.
-    \item Discussion about metrics, like SPL.
-    \item What does the difference in SPL mean?
-\end{itemize}
-
-%Batra et al.~\cite{batra_evaluation_2020} revisit the problem of evaluating embodied navigation agents.
-%They note some issues with the SPL metric.
-%It fails to consider the fact that some failures are less of a failure than others.
-%Some failures might in fact be close to reaching the goal while some fail completely.
-%The binary success introduces high variance in average SPL computation.
-%Furthermore, SPL is not particularly suitable for comparison across different datasets,
-%as obtaining a high SPL is more difficult for short paths than for long paths.
-%They suggest that SPL should be replaced by some metric that takes these issues into account.
-%However, to our knowledge such a metric is yet to be proposed and widely adopted.
-
-
-\subsection{Higher-dimensional Search Spaces}
-
-Also continuous\dots
-
-\begin{itemize}
-    \item Larger search space could correspond to larger area or higher granularity.
-    \item Neither scales well (weights in map scale increase quadratically with search space size -- fine for fixed positions, bad for movable cameras).
-    \item An ego-centric architecture might be more general, does not need the position and can work over larger territories (although not take whole territory into account).
-\end{itemize}
-
-
-\subsection{Scaling up Model Sizes}
-
-\begin{itemize}
-    \item Stacked LSTM unstable, even with dropout. More weights could be used.
-    \item Early experiments with stacking multiple LSTM layers lead to heavy overfitting and unstable learning curves.
-\end{itemize}
-
 \subsection{Replicability, Reliability and Validity}
 
 As discussed in Section~\ref{sec:theory-evaluation}, reproducibility is a problem in current deep RL research.
@@ -248,94 +196,51 @@ In this work, we have taken certain precautions to avoid such problems.
 For each experiment, we have collected results across at least 3 runs.
 While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhiker_2019,agarwal_rlliable_2022},
 such undertakings are not feasible without sufficient compute resources.
-We feel that 
+Our hope is that 3 runs gives a sense for the variance involved in our approach.
+However, more runs would be preferred.
 
-Finally, we have provided source code for our implementation, and invite others to reproduce our results.
+We have placed emphasis on evaluating our approach on samples that have not been seen previously.
+This ensures that our agents have not simply remembered the training levels, but actually generalized to unseen samples.
+One issue we would like to note is that we have used a relatively small number of test samples when measuring search performance.
+This is to make it feasible to collect results for human searchers.
+Ideally, we would have tested on a larger set.
 
-\begin{itemize}
-    \item We have published source code.
-    \item Reinforcement learning is inherently unreliable.
-    \item Stochasticity necessary to avoid getting stuck, leads to less precise paths.
-    \item Possibility of implementation errors.
-    \item Low number of runs, quite high variance.
-    \item Few samples during testing.
-\end{itemize}
+The three metrics we have used (success rate, average search path length, and SPL) all offer different insights into the performance of agents.
+They should not be used as absolute measures, but rather to compare different agents in the same environments.
+The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_semantic_2018}.
+SPL considers both search path length, shortest path length and whether the agent was successful in each episode,
+and is useful as a measure for the quality of the search paths chosen by an agent.
 
-\subsection{Applicability to Real-world Search Scenarios}
+However, SPL is not a perfect metric. As noted by \cite{batra_evaluation_2020}, it fails to consider the fact that some failures are less of a failure than others.
+For example, an agent might have been close to discovering a target at some time step but missed it.
+It might be desirable to give a higher score to such search paths than ones that are never close to targets.
+The binary success indicator introduces high variance into the metric.
+They also note that it is not suitable for comparison across different datasets, as obtaining high SPL scores is more difficult for short paths.
+All of our agents have achieved relatively high success rates, so the issue of failure does not seem like a major concern.
+We have also only compared SPL within the same datasets.
 
-\begin{itemize}
-    \item Do the environments test realistic tasks?
-    \item Is the needed number of training samples realistic?
-    \item What happens when detection is more difficult?
-    \item Real-world search has higher variance.
-\end{itemize}
-
+Finally, there is a possibility that there are errors in our implementation.
+We have tested our PPO implementation against standard tasks, but there is still the possibility of errors in the algorithm, environments or evaluation.
+We have provided source code for our implementation and invite others to reproduce or scrutinize our results.
 
 \subsection{Source Criticism}
 
 \begin{itemize}
-    \item We have based most of our work on known theory
+    \item Some cited papers are preprints.
+    \item Several of the cited preprints have actually been published in journals, replace these.
 \end{itemize}
-
-
 
 \section{The work in a wider context}
 \label{sec:discussion-wider}
 
-% There must be a section discussing ethical and societal
-% aspects related to the work. This is important for the authors
-% to demonstrate a professional maturity and also for achieving
-% the education goals. If the work, for some reason, completely
-% lacks a connection to ethical or societal aspects this must be
-% explicitly stated and justified in the section Delimitations in
-% the introduction chapter.
-% 
-% In the discussion chapter, one must explicitly refer to sources
-% relevant to the discussion.
-
-Furthermore, automating manual tasks has societal implications.
-
-
-\subsection{Ethics of Autonomous Agents}
-
-Russell et al.~\cite{russell_priorities_2015}
-
-\cite{vinuesa_sustainable_2020}, \cite{russell_ethics_2015}, \cite{russell_beneficial_2022}, \cite{brundage_malicious_2018}
-
-Several applications are positive, like search-and-rescue and fire detection.
-In such scenarios, a short search time can be the difference between life and death.
-
-
-However, there automated visual search systems also have destructive applications.
-A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems for 
-
-The widely discussed topic of autonomous weapon systems
-
-% https://people.eecs.berkeley.edu/~russell/research/LAWS.html
-
-As the authors of this work, we explicitly condemn its use for lethal weaponry.
-
-\subsection{Trustworthiness for Safety-Critical Applications}
-
-How can we trust an autonomous visual search system?
-For safety critical applications, certain requirements when it comes to robustness are needed.
-Things to consider before deploying a system for such a scenario include verification, validity, security, control
-
-% what can this be used for? good and bad things?
-
-%While automated search systems have many positive uses, like XXX, there are certainly other use cases that could be considered negative.
-%Mass surveillance, XXX, are both very relevant today.
-
-
-\rule{5cm}{1pt}
+A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems\dots
 
 \begin{itemize}
-    \item The less bias we introduce, the more general the method has the potential to be.
-    \item Not just visual search -- also a practical example of RL for exploration, generalization, \dots
-    \item Discuss the generality of the proposed approach - what types of cues can it pick up? Spatial and semantic relationships, non-uniform probabilities, etc. 
-    \item Show some search paths and discuss them?
-    \item We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
+    \item \cite{russell_priorities_2015}, \cite{vinuesa_sustainable_2020}, \cite{russell_ethics_2015}, \cite{russell_beneficial_2022}, \cite{brundage_malicious_2018}
+    \item \url{https://people.eecs.berkeley.edu/~russell/research/LAWS.html}
+    \item Dangers of lethal autonomous weapon systems
+    \item Search-and-rescue and fire detection require high reliability, and a short search time can be the difference between life and death.
+    \item Things to consider before deploying a system for such a scenario include verification, validity, security, control, human intervention, etc.
 \end{itemize}
 
-% learning actions, recognition and localization simultaneously feels in itself interesting
-% how do we interpret such a model? are there papers for visualizing reinforcement learning weights
+``As the authors of this work, we explicitly condemn its use for lethal weaponry.''

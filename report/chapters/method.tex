@@ -13,7 +13,7 @@ Section \ref{sec:experiments} describes the experiments conducted to answer rese
 We can now formally define the problem of searching for targets in unknown environments,
 adopting the CMDP formalism \cite{kirk_survey_2022}.
 Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the context \(c\), which we refer to as the \textit{seed}.
-The state includes a space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+The state includes the searched space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
 At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
 If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
@@ -210,7 +210,6 @@ While a temporal memory can retain location and appearance information over time
 We hypothesize that agents using temporal memories may struggle with learning good policies in large search spaces and those that require scene understanding, such as reasoning over previously visited locations.
 Several results from works in embodied visual navigation indicate that spatial memories can give better results than temporal ones~\cite{parisotto_salakhutdinov_2017,henriques_vedaldi_2018,gupta_cognitive_2019,chaplot_semantic_2020}.
 Taking inspiration from this, we investigate whether a spatial memory can be more useful than a temporal one when searching for targets.
-The hyperparameters for the two RNN architectures are chosen so that they have a comparable number of trainable parameters.
 
 \subsubsection{Temporal Memory}
 

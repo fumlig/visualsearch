@@ -3,9 +3,12 @@
 
 This chapter presents the results for each of the experiments described in Section ~\ref{sec:experiments}.
 In addition to the results here, we present learning curves for all environments in Appendix ~\ref{app:learning} and some search path examples for our approaches and baselines in Appendix ~\ref{app:paths}.
+% todo: We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
+
 
 \section{Search Performance and Behavior}
 
+% todo: run for 1000 samples?
 Table ~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
 The average search path length is computed from episodes in which the agents successfully finds all targets.
 These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the four baselines and human searchers.
@@ -29,7 +32,7 @@ Its SPL score, however, is only higher than the those of the other two baselines
 \begin{table}
     \centering
     \label{tab:metrics}
-    \caption[Performance metrics for each environment.]{SPL, search path length and success rate from three runs on a fixed set of a 100 samples from each environment.}
+    \caption[Performance metrics for each environment.]{SPL, success rate and average search path length on successful episodes from three runs on a fixed set of a 100 samples from each environment.}
     Gaussian environment\par\vspace{0.5em}
     \input{tables/metrics-gaussian}
     \par\vspace{1em}Terrain environment\par\vspace{0.5em}

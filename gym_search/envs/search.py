@@ -61,6 +61,7 @@ class SearchEnv(gym.Env):
         self.hits = [False for _ in range(len(self.targets))]
         self.path = [tuple(self.position)]
         self.visited = {tuple(self.position)}
+        self.actions = []
         self.num_steps = 0
         self.counters = defaultdict(int)
         
@@ -97,6 +98,7 @@ class SearchEnv(gym.Env):
         #if not trigger:
         self.path.append(tuple(self.position))
         self.visited.add(tuple(self.position))
+        self.actions.append(action)
 
         obs = self.observation()
         rew = hits
@@ -108,6 +110,7 @@ class SearchEnv(gym.Env):
             "targets": self.targets,
             "hits": self.hits,
             "path": self.path,
+            "actions": self.actions,
             "success": all(self.hits),
             "counter": self.counters
         }

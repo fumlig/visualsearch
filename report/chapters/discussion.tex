@@ -11,12 +11,16 @@ In this section, we discuss the results of each of the conducted experiments.
 
 \subsection{Reflection on Search Quality}
 
-To evaluate the search quality, we first look at the average search path length of each agent.
+To evaluate the search quality, we first consider the at the average search path length of each agent.
 It is useful to compare the path length to the number of points in each search space.
 The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
 A search path length above this suggests many revisited positions.
 The exhaustive baseline policy provides a good measure for what sort of path lengths can be achieved when only avoiding revisiting positions.
 Both the random and greedy baseline policies select search paths that are on average much longer than the number of positions, suggesting several redundant steps.
+
+This is further reinforced by the sample search paths in Figures \ref{fig:path-random}, \ref{fig:path-greedy} and \ref{fig:path-exhaustive}.
+By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
+Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well.
 
 Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
 This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
@@ -35,7 +39,6 @@ Our temporal memory agent performs very well in the camera environment.
 We suspect that this is due to the fact that less emphasis is placed on remembering over many time steps.
 Search in this environment can be more reactive.
 When inspecting the search patterns used by our temporal memory agent in this environment, we see that it has learned to alternate between scanning across the horizon and locating targets in its periphery.
-
 The baselines are unable to utilize this imbalance in target distributions.
 The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
 
@@ -54,7 +57,7 @@ While the exhaustive baseline policy achieves average path lengths that are clos
 In all three environments, one of our approaches achieve a higher SPL score,
 although we would not consider this significant due to the large variance.
 
-Under these metrics, both approaches achieve comparable performance to that of a human searcher.
+Under these metrics, both approaches achieve comparable performance to that of a human searcher. 
 Overall, it would seem like our spatial memory approach is most suited where large search spaces have to be explored strategically, while our temporal memory approach is sufficient for search problems where search spaces can be explored reactively.
 
 \subsection{Scalability To Different Search Space Sizes}
@@ -146,10 +149,19 @@ However, the results do offer insights into how these two architectures compare 
     \item Is it a good idea to begin with?
     \item Other methods can potentially provide more guarantees.
     \item Connect back to \cite{dhiman_critical_2019}, who find that deep RL is not able to exploit environment information to navigate more efficiently.
+    \item Are the solutions close to optimal?
 \end{itemize}
 
-It is worth considering whether using a learning agent like this is suitable for this task.
+It is worth considering whether using a learning agent like this is suitable for visual search problems.
+Several of the works which we cover in Section ~\label{sec:relatedwork} utilize other solution methods with apparent success.
+Such methods can sometimes be probably correct and efficient.
+It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
 One could imagine that it is possible to compute an optimal strategy for certain environments.
+
+The perspective we take in this work is that non-learning solution methods,
+However, it is worth exploring whether learning methods can compete.
+We argue that RL is a suitable framework for implementing agents that learn to search.
+
 However, this quickly falls apart.
 The dynamics of environments can vary considerably which may drastically affect how a manual approach is implemented.
 

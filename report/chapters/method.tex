@@ -49,7 +49,7 @@ The position and image observations are
 \begin{align}
     o_t & = \left\langle x_t, p_t \right\rangle \text{, where} \\
     x_t & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
-    p_t & \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
+    p_t & = \left\langle p_{0,t}, p_{1,t} \right\rangle \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
 \end{align}
 
 All image observations are \(64 \times 64\) RGB images.
@@ -108,7 +108,7 @@ It should be able to use the gradient of the underlying Gaussian function to mov
     \centering
     \input{figures/gaussian.pgf}
     \label{fig:gaussian}
-    \caption[Gaussian environment]{Four samples of the first environment. There are three blue spots and three red targets in each scene. Targets are more likely where the intensity of the spots is high.}
+    \caption[Gaussian environment]{Four samples of the first environment. Agent observes \(64 \times 64\) image at position \((2, 6)\). There are three blue spots and three red targets in each scene. Targets are more likely where the intensity of the spots is high.}
 \end{figure}
 
 \subsection{Terrain Environment}
@@ -134,7 +134,7 @@ One can draw parallels to search-and-rescue scenarios with UAVs or fire detectio
     \centering
     \input{figures/terrain.pgf}
     \label{fig:terrain}
-    \caption[Terrain environment]{Four samples of the second environment. Terrain seen from above with red targets scattered and green trees scattered along shores.}
+    \caption[Terrain environment]{Four samples of the second environment. Terrain seen from above with red targets scattered and green trees scattered along shores. Agent observes \(64 \times 64\) image at position \((4, 3)\)}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -228,12 +228,12 @@ It is defined by the following set of operations:
 \begin{align}
     \rho_t &= \text{CNN}_\text{read}(z_t) \\
     \omega_t &= \text{MLP}_\text{write}(\left\lbrack h_t, \rho_t, z_t^{(p_t)} \right\rbrack) \\
-    q_t &= \text{MLP}_\text{position}(\text{onehot}(p_t)) \\
+    q_t &= \text{MLP}_\text{position}(\left\lbrack \text{onehot}(p_{0,t}), \text{onehot}(p_{1,t}) \right\rbrack) \\
     y_t &= \left\lbrack \rho_t, \omega_t, q_t \right\rbrack \\
     z_{t+1}^{(p')} &=
     \begin{cases}
         \omega_t & \text{if } p' = p_t \\
-        z_{t}^{(p')} & \text{if} p' \neq p_t
+        z_{t}^{(p')} & \text{if } p' \neq p_t
     \end{cases}
 \end{align}
 
@@ -303,7 +303,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
         \If{there is a target at \(p_t\)}
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
             \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
         \EndIf
     \end{algorithmic}
@@ -317,7 +317,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
             \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
             \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
             \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
                 \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{explore}}\)
@@ -336,10 +336,10 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
             \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
             \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
             \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(a_t \leftarrow \text{the first } a \text{ in } \langle \mathtt{LEFT}, \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN} \rangle \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
+                \State \(a_t \leftarrow \text{the first } a \text{ in } \langle \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT} \rangle \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
             \Else
                 \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
             \EndIf

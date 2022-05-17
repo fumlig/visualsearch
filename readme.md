@@ -5,6 +5,14 @@
 
 todo
 
+## Videos
+
+Indicate episode, actions, hits...
+
+## Search Paths
+
+Plot over time
+
 ## To do
 
 - Finish results
@@ -12,6 +20,7 @@ todo
 - Train in camera environment
 - Collect metrics for baselines and agents
 - Write abstract
+- Skruva på temperaturen
 
 ## Overview
 

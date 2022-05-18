@@ -5,24 +5,22 @@
 
 todo
 
-## Videos
-
-Indicate episode, actions, hits...
-
-## Search Paths
-
-Plot over time
-
 ## To do
 
-- Finish results
-- Update plots
-- Train in camera environment
-- Collect metrics for baselines and agents
-- Write abstract
-- Skruva på temperaturen
-
-## Overview
+- Abstract
+- Conclusion
+- Source criticism
+- Wider context
+- Learning curves
+- Update search paths
+- Illustrate memory
+- Update camera metrics
+- Softmax temperature
+- Send to Fredrik
+- Visualize actions and scene
+- Show attention
+- Update presentation
+- Dumb baseline
 
 ## Reproduce
 

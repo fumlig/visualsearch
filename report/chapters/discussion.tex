@@ -112,7 +112,7 @@ However, the results do offer insights into how these two architectures compare 
 \section{Method}
 \label{sec:discussion-method}
 
-\subsection{Observations and Detections}
+\subsection{Image Observations, Detections and Indications}
 
 The observations in the three environments in this work contain the position and an image of the current view.
 It seems reasonable to assume that the position can be provided to the agent.
@@ -135,7 +135,7 @@ Furthermore, the indication action has several interesting applications.
 One can imagine a task in which target detection is done through some external object detection that is expensive to run.
 In such a case, the indication could be used by the agent to convey that it is likely that a target is in view, and it is worth spending resources on running the detection process.
 
-\subsection{Actions and Search Space Dimensionality}
+\subsection{Positions, Movements and Search Space Dimensionality}
 
 The action space we chose in this work contains four different moving actions that change the position of the agent in two dimensions.
 This is reasonable for several real-world search tasks such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction.
@@ -163,6 +163,7 @@ In this case, the bonus for moving towards targets is not computable.
 In the gaussian environment, we found that the additional reward bonuses where required for convergence to good policies.
 One reason for this could be that it is difficult to interpret compared to the other environment.
 With a small bonus for desired behavior, reinforcements are more frequent and may aid with picking up subtle patterns.
+
 However, a specialized reward like ours risks introducing bias that inhibit learning by leading to poor local optima.
 Several works argue for minimizing such biases, as learning systems can sometimes find better solutions without them~\cite{hessel_inductive_2019}.
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
@@ -225,10 +226,14 @@ We have provided source code for our implementation and invite others to reprodu
 
 \subsection{Source Criticism}
 
-\begin{itemize}
-    \item Some cited papers are preprints.
-    \item Several of the cited preprints have actually been published in journals, replace these.
-\end{itemize}
+This work is based on several scientific works from past and present.
+
+Our chosen architecture is inspired by several previous works.
+
+A few of the referenced works are preprints.
+Although this usually means that it is not peer reviewed.
+Citing preprints is common practice nowadays.
+All of the preprints we have used are well-cited and 
 
 \section{The work in a wider context}
 \label{sec:discussion-wider}

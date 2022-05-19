@@ -7,6 +7,8 @@ We also discuss the work from a broader perspective (Section~\ref{sec:discussion
 \section{Results}
 \label{sec:discussion-results}
 
+
+
 \subsection{Reflection on Search Performance}
 
 To evaluate the search quality, we first consider the at the average search path length of each agent.
@@ -112,12 +114,14 @@ However, the results do offer insights into how these two architectures compare 
 \section{Method}
 \label{sec:discussion-method}
 
+There are several aspects of the method chosen that are worth discussing.
+
 \subsection{Observations and Detections}
 
 The observations in the three environments in this work contain the position and an image of the current view.
 It seems reasonable to assume that the position can be provided to the agent.
-In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
+In certain scenarios it is possible to determine the global position of an agent with some sensor (e.g. GPS).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one (e.g. motor controlled pan and tilt camera).
 
 In many cases, a \(64 \times 64\) images are not sufficient to convey the full meaning of a scene.
 While we explicitly delimit ourselves from difficult detection problems in this work,
@@ -150,13 +154,6 @@ The temporal memory simply has to encode an additional component of the agent's 
 The spatial memory can store a higher dimensional feature map.
 Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_neural_2017}.
 
-\subsection{Neural Network Architecture}
-
-% todo: oh_role_2004
-
-% bias
-% etc
-
 \subsection{Implications of Reward Signal}
 
 Finally, our reward signal assumes certain knowledge of the scenes:
@@ -174,6 +171,15 @@ However, a specialized reward like ours risks introducing bias that inhibit lear
 Several works argue for minimizing such biases, as learning systems can sometimes find better solutions without them~\cite{hessel_inductive_2019}.
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
 For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.
+
+%\subsection{Choice of Neural Network Architecture}
+
+% todo: oh_role_2004
+
+%We have compared two neural network architectures from the perspective of a particular visual search problem.
+%The choice of architectures and their hyperparameters may seem somewhat arbitrary.
+
+%The CNN architecture was chosen for we use is widely used and likely sufficient for %the visuals in our environments.
 
 \subsection{Reinforcement Learning for Visual Search}
 

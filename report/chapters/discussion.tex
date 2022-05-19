@@ -66,8 +66,9 @@ although we would not consider this significant due to the large variance.
 Under these metrics, both approaches achieve comparable performance to that of a human searcher. 
 Overall, it would seem like our spatial memory approach is most suited where large search spaces have to be explored strategically, while our temporal memory approach is sufficient for search problems where search spaces can be explored reactively.
 
-\subsection{Scalability To Different Search Space Sizes}
+\subsection{Scalability To Larger Search Space Sizes}
 
+In order to be useful for real-world search tasks, an agent should be able to search in sufficiently large spaces.
 In Section~\ref{sec:shape} we saw that both of our approaches achieve comparable performance on the \(10 \times 10\) search space.
 Both quickly converge towards a high success rate and reasonable search path lengths.
 The spatial memory is consistently capable of finding all targets in less steps than the number of searchable positions, and the temporal memory is not far behind.
@@ -98,6 +99,7 @@ Similarly, in the case of the spatial memory, a possibility is to use an ego-cen
 
 \subsection{Generalizing from Limited Training Sets}
 
+The hope that a learning agent can pick up patterns that are not visible to humans (or easily communicated to machines) is only relevant if it can do so from a reasonable number of samples.
 From the results in Section~\ref{sec:sample}, we see that both of our approaches can overfit to small training sets.
 This is in line with what is reported by \cite{cobbe_quantifying_2019}, \cite{cobbe_leveraging_2020} and \cite{zhang_study_2018}.
 Past a certain number of interactions with small a small training set, performance on a held out test set decreases.

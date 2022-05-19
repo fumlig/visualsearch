@@ -10,7 +10,7 @@ Such a system should pick up patterns in the samples seen during training, and g
 We have presented a method for this task for jointly learning control of visual attention, recognition and localization using deep reinforcement learning.
 Our approach can be used to train agents to look around in environments to search for multiple targets.
 
-The agents try to do locate all targets in a minimal number of time steps, by indicating when they are visible.
+The agents try to locate all targets in a minimal number of time steps, by indicating when they are visible.
 They are designed to be capable of integrating visual information over time, and reason over explored parts of their environment.
 This allows them to avoid searching locations multiple times, and prioritize regions where targets are likely to be found.
 
@@ -19,7 +19,10 @@ We have compared two neural network architectures for this purpose - one using a
 In all three environments, the architecture with a spatial memory outperforms all three simple baselines in terms of average search length and success rate.
 Furthermore, its searches are comparable in performance to a human searcher.
 The temporal memory struggles with remembering precise information over many time steps, which is required for efficient search.
+
 By comparing the search paths chosen by both agents to optimal search paths, we show that they on average select paths that are as close or closer to optimal than humans.
+Beyond this, the quality of the searches remains undecided.
+Comparison to provably optimal behavior could give further insights into the performance of the searches.
 
 By comparing both architectures in varying search space sizes, we have shown that a spatial memory scales better to visual search tasks in large search spaces.
 When trained using different numbers of training samples, both architectures overfit to these and perform worse on held out test samples.
@@ -30,27 +33,15 @@ We found that the spatial memory is less prone to overfitting than the temporal 
 \section{Future Work}
 
 Several limitations of this work have been discussed in Chapter~\ref{cha:discussion}.
-Any further work into 
-We suggest that future work in the area of visual search with deep reinforcement learning should look further into a set of 
-
-\subsection{Realistic Search Tasks}
-
-Before a 
+We suggest that future work in the area of visual search with deep reinforcement learning should look closer into the following questions:
 
 \begin{itemize}
-    \item Real search problems are likely to be more difficult to learn.
-    \item There is a lack of datasets and environments for this (AI2 THOR, object detection in large images)
-\end{itemize}
-
-\subsection{Comparison with Hand-crafted Solutions}
-
-\dots
-
-\subsection{Ablation Studies}
-
-\begin{itemize}
-    \item Evaluate the importance of image observations, position observations and memory.
-    \item We could draw some conclusions regarding these from our results\dots
+    \item What are the minimal conditions under which an agent can learn to search optimally?
+    % reward, observations, ablations, memory storage, etc.
+    \item How does the approach presented here compare to provably optimal agents in each environment?
+    % rule-based, handcrafted
+    \item Does the approach scale to real-world search scenarios?
+    % noise, detection, interpretability, patterns
 \end{itemize}
 
 %Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.

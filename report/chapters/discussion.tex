@@ -83,7 +83,7 @@ Searching efficiently in large search spaces places extra emphasis on rememberin
 From our results, it would seem like an LSTM struggles with remembering such precise information over many time steps.
 Similar results where presented by \cite{oh_control_2016}.
 
-An hypothesis is that our temporal memory agent would handle large state spaces better with more parameters.
+An hypothesis is that our temporal memory agent would handle larger search spaces with more parameters.
 We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
 Further analysis is needed to see if such augmentations can make it more comparable to the spatial memory in terms of performance.
 
@@ -219,9 +219,11 @@ This could be investigated further.
 
 Instead, emphasis has been placed on two RNN which serve as the memory of the agent: one spatial, and one temporal.
 This follows from the observation that memory is crucial for effective search in structured and moderately large environments.
-Both were chosen to match the desired properties listed in Section~\ref{sec:aim}:
+The memory represents the agent's beliefs of its environment, and the semantics of the memory constrain the agent's ability to achieve its task.
+Both memory architectures were chosen to match the desired properties listed in Section~\ref{sec:aim}:
 an agent should be able to remember visited positions and their appearance, and use them to prioritize locations where targets are likely to be found.
 We argue that both RNN architectures achieve this as both are capable of remembering positions and encoded images.
+Whether the architectures are sufficient to enable the agent to learn an optimal policy for the task is another question.
 
 Using an LSTM is common for POMDPs~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017}, and has the advantage of being general --
 it can be used to remember any features over time.

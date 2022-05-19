@@ -10,7 +10,7 @@
         \item Move actions transform view to new subspace.
         \item Trigger action indicates that a target is in view.
         \item Select actions that maximize the probability of finding all targets while minimizing cost in time.
-        \item NP complete~\cite{ye_tsotsos_2001}, intractable to solve optimally.
+        \item NP complete~\cite{andreopoulos_theory_2009}, intractable to solve optimally.
     \end{itemize}
 \end{frame}
 
@@ -129,7 +129,7 @@
     \frametitle{Architecture}
 
     \begin{itemize}
-        \item Actor-critic method trained with PPO~\cite{schulman_ppo_2017}.
+        \item Actor-critic method trained with PPO~\cite{schulman_proximal_2017}.
         \item Image \(x_t\) passed through CNN.
         \item Latent image representation \(h_t\) and position \(p_t\) passed through RNN. Two variants:
         \begin{enumerate}
@@ -151,11 +151,11 @@
     \begin{enumerate}
         \item LSTM:
         \begin{itemize}
-            \item Proven to work for POMDPs \cite{hausknecht_stone_2017,mnih_asynchronous_2016,mirowski_navigate_2017,gupta_cognitive_2019}.
+            \item Proven to work for POMDPs \cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
             \item May struggle with remembering over many time steps.
             \item Important for exhaustive search and scene understanding.
         \end{itemize}
-        \item Spatial memory (inspired by \cite{parisotto_salakhutdinov_2017}):
+        \item Spatial memory (inspired by \cite{parisotto_neural_2017}):
         \begin{itemize}
             \item Structured memory \(M_t \in \mathbb{R}^{C \times 10 \times 10}\) as hidden state \\
             (one slot per camera position \(p_t\) / unique view \(V\) / image \(x_t\)).

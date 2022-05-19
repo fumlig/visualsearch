@@ -34,12 +34,12 @@ Each environment have different characteristics that test the applicability of t
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
 
-As \cite{cobbe_procgen_2020} and \cite{mnih_asynchronous_2016}, we leverage procedural generation in all environments.
+As \cite{cobbe_leveraging_2020} and \cite{mnih_asynchronous_2016}, we leverage procedural generation in all environments.
 This gives us control over the difficulty of the environments as well as the number of training and test samples the agent is exposed to.
 A seed determines the appearance of the scene, the location of the targets and the initial position of the agent.
 
 Each episode is terminated when all targets have been found, or after 1000 time steps
-Terminating episodes early this way is common to speed up training~\cite{pardo_timelimits_2022}.
+Terminating episodes early this way is common to speed up training~\cite{pardo_time_2018}.
 
 \subsection{Observations, Actions and Reward}
 
@@ -195,7 +195,7 @@ The architecture of the neural network is presented in Figure ~\ref{fig:architec
     \caption[Network architecture]{The neural network architecture used for estimating the policy and value functions from image and position observations.}
 \end{figure}
 
-For the CNN, we use the same architecture as \cite{mnih_human_2015}.
+For the CNN, we use the same architecture as \cite{mnih_human-level_2015}.
 The input image \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is fed through three convolutional layers: the first layer convolves 32 filters of size \(8 \times 8\) with stride 4, the second convolves 64 filters of size \(4 \times 4\) with stride 2, and the third layer convolves 64 filters of size \(3 \times 3\) with stride 1.
 This is followed by a final fully connected hidden layer with 512 outputs for the latent representation \(h_t \in \mathbb{R}^{512}\).
 
@@ -203,17 +203,17 @@ Both the policy and value network are fully connected networks.
 The value network has one output for the value estimate.
 The policy network has 5 outputs, the logits for each action.
 Applying the softmax operation on this output gives the final action probabilities.
-All network layers have ReLU activation functions, as suggested by \cite{henderson_matters_2018}.
+All network layers have ReLU activation functions, as suggested by \cite{henderson_deep_2018}.
 
 Two RNN architectures are compared: one temporal, and one spatial.
 While a temporal memory can retain location and appearance information over time, it is not cleared how this information is stored and whether it can be utilized properly.
 We hypothesize that agents using temporal memories may struggle with learning good policies in large search spaces and those that require scene understanding, such as reasoning over previously visited locations.
-Several results from works in embodied visual navigation indicate that spatial memories can give better results than temporal ones~\cite{parisotto_salakhutdinov_2017,henriques_vedaldi_2018,gupta_cognitive_2019,chaplot_semantic_2020}.
+Several results from works in embodied visual navigation indicate that spatial memories can give better results than temporal ones~\cite{parisotto_neural_2017,henriques_mapnet_2018,gupta_cognitive_2019,chaplot_object_2020}.
 Taking inspiration from this, we investigate whether a spatial memory can be more useful than a temporal one when searching for targets.
 
 \subsubsection{Temporal Memory}
 
-The temporal memory is a single LSTM~\cite{hochreiter_schmidhuber_lstm_1997} layer, as proposed by \cite{hausknecht_stone_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_navigate_2017}, and \cite{gupta_cognitive_2019}.
+The temporal memory is a single LSTM~\cite{hochreiter_long_1997} layer, as proposed by \cite{hausknecht_deep_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_learning_2017}, and \cite{gupta_cognitive_2019}.
 As input to the LSTM, we use the latent image representation \(h_t\) concatenated with one-hot encodings of each dimension of \(p_t\).
 The LSTM layer has 128 hidden cells so that \(y_t\) has 128 dimensions.
 Finally, \(z_t\) contains the hidden and cell states.
@@ -221,7 +221,7 @@ Finally, \(z_t\) contains the hidden and cell states.
 \subsubsection{Spatial Memory}
 
 The spatial memory is composed of a readable and writable feature map.
-This is a simplified version of the architecture proposed in \cite{parisotto_salakhutdinov_2017}, similar in spirit to the architectures in \cite{henriques_vedaldi_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_semantic_2020}.
+This is a simplified version of the architecture proposed in \cite{parisotto_neural_2017}, similar in spirit to the architectures in \cite{henriques_mapnet_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_object_2020}.
 It is defined by the following set of operations:
 
 \begin{align}
@@ -246,24 +246,26 @@ The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position ve
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
+% todo: oh_role_2004
+
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.
 % Cite paper that advocated for having as little bias as possible (since removing it can lead to better learned strategies).
 
 \subsection{Training}
 
-We train both agents with PPO~\cite{schulman_ppo_2017}, as described in Section~\ref{sec:ppo}.
-Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_empirical_2020}.
-Furthermore, we use similar hyperparameters to \cite{cobbe_procgen_2020}.
+We train both agents with PPO~\cite{schulman_proximal_2017}, as described in Section~\ref{sec:ppo}.
+Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_what_2020}.
+Furthermore, we use similar hyperparameters to \cite{cobbe_leveraging_2020}.
 These are presented in Table~\ref{tab:hyperparameters}.
 Many parallel environments seem to both speed up and stabilize training. 
-As suggested by \cite{andrychowicz_empirical_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
+As suggested by \cite{andrychowicz_what_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
 
 We normalize the reward using a moving average.
 This is done to limit the scale of the error derivatives.
 Early experiments show that not normalizing the reward destabilized learning. % Likely due to time penalty and large variance in rewards
-Similar results have been reported by \cite{andrychowicz_empirical_2020} and \cite{mnih_atari_2013}.
-The Adam optimizer~\cite{kingma_ba_2017} is used in all experiments.
+Similar results have been reported by \cite{andrychowicz_what_2020} and \cite{mnih_playing_2013}.
+The Adam optimizer~\cite{kingma_adam_2017} is used in all experiments.
 Finally, we decay the learning rate linearly so that it is zero at the final time step.
 We find that this helps the agent with finding a better local optimum.
 
@@ -278,7 +280,7 @@ We find that this helps the agent with finding a better local optimum.
 \label{sec:experiments}
 
 We conduct three different experiments to evaluate our approaches and answer the research questions in \ref{sec:questions}. 
-Following the recommendations of \cite{henderson_matters_2018}, \cite{colas_hitchhiker_2019} and \cite{agarwal_rlliable_2022}, we report mean and standard deviation across a handful of seeds.
+Following the recommendations of \cite{henderson_deep_2018}, \cite{colas_hitchhikers_2019} and \cite{agarwal_deep_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Search Performance and Behavior}
 
@@ -375,7 +377,7 @@ It is more likely that there is a limited set of samples for an agent to learn f
 For this reason, it is interesting to quantify how the number of training samples affects generalization to the full distribution.
 
 We do this by training our two agents on 500, 1000, 5000, 10000 and an unlimited number samples of the terrain environment.
-Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_procgen_2020}.
+Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_leveraging_2020}.
 This should illustrate how many samples are needed to generalize, and if overfitting is an issue.
 For each agent and training set size, we report how the average length and success rate changes while learning.
 
@@ -389,8 +391,8 @@ For each agent and training set size, we report how the average length and succe
 
 \section{Implementation}
 
-The environment is implemented with using the Gym~\cite{brockman_gym_2016} interface. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_nodate} for automatic differentiation of the computation graphs.
-PPO~\cite{schulman_ppo_2017} was implemented following the official implementation by OpenAI,
+The environment is implemented with using the Gym~\cite{brockman_openai_2016} interface. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
+PPO~\cite{schulman_proximal_2017} was implemented following the official implementation by OpenAI,
 and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 The source code for environments, models and algorithms is available at \url{https://gitlab.liu.se/osklu414/tqdt33-masters-thesis}.

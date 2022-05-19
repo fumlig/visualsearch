@@ -76,7 +76,7 @@ Furthermore, the training does not seem to have fully converged.
 It seems reasonable to state that the spatial memory scales better to large search spaces in terms of performance, when compared to the temporal memory.
 Searching efficiently in large search spaces places extra emphasis on remembering what has already been explored.
 From our results, it would seem like an LSTM struggles with remembering such precise information over many time steps.
-Similar results where presented by \cite{oh_minecraft_2016}.
+Similar results where presented by \cite{oh_control_2016}.
 
 An hypothesis is that our temporal memory agent would handle large state spaces better with more parameters.
 We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
@@ -89,12 +89,12 @@ One solution is to keep search spaces small:
 Large (and continuous) spaces could be discretized into smaller ones at the cost of precision.
 Limit the need for memory could be a viable solution for certain search problems..
 In the case of the temporal memory, it might be sufficient to only remember recent interactions.
-Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_salakhutdinov_2017}.
+Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_neural_2017}.
 
 \subsection{Generalizing from Limited Training Sets}
 
 From the results in Section~\ref{sec:sample}, we see that both of our approaches can overfit to small training sets.
-This is in line with what is reported by \cite{cobbe_procgen_2020}, \cite{cobbe_generalization_2019} and \cite{zhang_overfitting_2018}.
+This is in line with what is reported by \cite{cobbe_quantifying_2019}, \cite{cobbe_leveraging_2020} and \cite{zhang_study_2018}.
 Past a certain number of interactions with small a small training set, performance on a held out test set decreases.
 This effect is well known in supervised learning, but important to keep in mind for reinforcement learning.
 If any sort of generalization is expected from our agents, they should be tested on held out samples.
@@ -148,7 +148,7 @@ Similarly, if an agent is able to both move and look around we get additional di
 Nothing suggests that our two approaches would be unable to handle more than two dimensions.
 The temporal memory simply has to encode an additional component of the agent's position.
 The spatial memory can store a higher dimensional feature map.
-Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_salakhutdinov_2017}.
+Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_neural_2017}.
 
 \subsection{Implications of Reward Signal}
 
@@ -180,7 +180,7 @@ The perspective we take with this work is that non-learning solution methods may
 The characteristics of environments can vary considerably which may drastically affect how a manual approach is implemented.
 Interpreting and utilizing patterns in arbitrary scenes may even be difficult for us humans.
 If we cannot understand patterns ourselves, we can not expect to communicate how to search to machines.
-Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_alphago_2016,vinyals_alphastar_2019}.
+Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_mastering_2016,vinyals_grandmaster_2019}.
 
 These two points alone are strong arguments for exploring whether learning systems can be good searchers.
 We would argue that RL is a suitable framework for implementing such learning agents.
@@ -190,11 +190,11 @@ It is less clear if their behavior is close to optimality or not.
 \subsection{Replicability, Reliability and Validity}
 
 As discussed in Section~\ref{sec:theory-evaluation}, reproducibility is a problem in current deep RL research.
-This comes with the risk of stagnating the field by inhibiting correct interpretation of results~\cite{henderson_matters_2018}.
+This comes with the risk of stagnating the field by inhibiting correct interpretation of results~\cite{henderson_deep_2018}.
 In this work, we have taken certain precautions to avoid such problems.
 
 For each experiment, we have collected results across at least 3 runs.
-While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhiker_2019,agarwal_rlliable_2022},
+While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhikers_2019,agarwal_deep_2022},
 such undertakings are not feasible without sufficient compute resources.
 Our hope is that 3 runs gives a sense for the variance involved in our approach.
 However, more runs would be preferred.
@@ -207,11 +207,11 @@ Ideally, we would have tested on a larger set.
 
 The three metrics we have used (success rate, average search path length, and SPL) all offer different insights into the performance of agents.
 They should not be used as absolute measures, but rather to compare different agents in the same environments.
-The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_semantic_2018}.
+The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_visual_2018}.
 SPL considers both search path length, shortest path length and whether the agent was successful in each episode,
 and is useful as a measure for the quality of the search paths chosen by an agent.
 
-However, SPL is not a perfect metric. As noted by \cite{batra_evaluation_2020}, it fails to consider the fact that some failures are less of a failure than others.
+However, SPL is not a perfect metric. As noted by \cite{batra_objectnav_2020}, it fails to consider the fact that some failures are less of a failure than others.
 For example, an agent might have been close to discovering a target at some time step but missed it.
 It might be desirable to give a higher score to such search paths than ones that are never close to targets.
 The binary success indicator introduces high variance into the metric.
@@ -236,7 +236,7 @@ We have provided source code for our implementation and invite others to reprodu
 A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems\dots
 
 \begin{itemize}
-    \item \cite{russell_priorities_2015}, \cite{vinuesa_sustainable_2020}, \cite{russell_ethics_2015}, \cite{russell_beneficial_2022}, \cite{brundage_malicious_2018}
+    \item \cite{russell_research_2015}, \cite{vinuesa_role_2020}, \cite{russell_provably_2022}, \cite{brundage_malicious_2018}
     \item \url{https://people.eecs.berkeley.edu/~russell/research/LAWS.html}
     \item Dangers of lethal autonomous weapon systems
     \item Search-and-rescue and fire detection require high reliability, and a short search time can be the difference between life and death.

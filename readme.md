@@ -11,16 +11,19 @@ todo
 - Conclusion
 - Source criticism
 - Wider context
+- Send to Fredrik
+
 - Learning curves
-- Update search paths
+- ~Update search paths~
 - Illustrate memory
 - Update camera metrics
 - Softmax temperature
-- Send to Fredrik
 - Visualize actions and scene
 - Show attention
 - Update presentation
 - Dumb baseline
+- Make it clear that observation is limited
+
 
 ## Reproduce
 

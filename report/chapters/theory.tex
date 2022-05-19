@@ -348,7 +348,7 @@ The full PPO objective for an actor-critic approach is
 \end{equation}
 
 where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the impact of the value loss and entropy bonus,
-\(S\) is an entropy bonus and \(\mathcal{L}_\text{VF}\) is a squared-error loss in the value output. Algorithm ~\ref{alg:ppo} shows the steps of the PPO algorithm.
+\(S\) is an entropy bonus and \(\mathcal{L}_\text{VF}\) is a squared-error loss in the value output. Algorithm~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}
     \caption{Proximal Policy Optimization}
@@ -527,8 +527,8 @@ Augmentations like recurrent update mechanisms add more potential.
 Hausknecht and Stone~\cite{hausknecht_deep_2017} investigate the effects of adding memory in the form of a recurrent step to DQN in order to tackle POMDPs.
 They use the same convolutional network as \cite{mnih_human-level_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM layer.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
-Several other works use a recurrent step to solve tasks that require memory, like ~\cite{mnih_recurrent_2014} and \cite{mnih_asynchronous_2016}.
-General-purpose recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section ~\ref{sec:rnn}.
+Several other works use a recurrent step to solve tasks that require memory, like~\cite{mnih_recurrent_2014} and \cite{mnih_asynchronous_2016}.
+General-purpose recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
 
 Specialized memory architectures can provide better performance for their intended tasks.

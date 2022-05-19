@@ -7,11 +7,13 @@ We also discuss the work from a broader perspective (Section~\ref{sec:discussion
 \section{Results}
 \label{sec:discussion-results}
 
-
+The results of the experiments provide insight into the search performance of our method,
+and how the two approaches compare in terms of search behavior, scalability to larger search spaces and ability to generalize from limited training sets.
+Here, we reflect on the obtained results and evaluate the two approaches.
 
 \subsection{Reflection on Search Performance}
 
-To evaluate the search quality, we first consider the at the average search path length of each agent.
+To evaluate the search performance, we first consider the at the average search path length of each agent.
 It is useful to compare the path length to the number of points in each search space.
 The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
 A search path length above this suggests many revisited positions.
@@ -41,7 +43,8 @@ The exhaustive policy is an exception, where the deterministic ordering of actio
 
 By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
 However, they also tend to revisit positions, and it is not clear that this is good.
-Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well.
+Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well --
+both agents are drawn to areas with high probability but seem to revisit positions redundantly.
 Some of these revisits could be attributed to the stochastic policy.
 Making the policy completely deterministic by selecting the action with the highest probability is not a solution, as it tends to lead to dead states or loops where the agent does not progress.
 
@@ -114,20 +117,28 @@ However, the results do offer insights into how these two architectures compare 
 \section{Method}
 \label{sec:discussion-method}
 
-There are several aspects of the method chosen that are worth discussing.
+The method chosen covers a fairly broad category of visual search problems,
+but focuses on the research questions in Section~\ref{sec:questions}.
+Some of the method details have implications for its applicability and validity, and should be discussed further.
 
 \subsection{Image Observations, Detections and Indications}
 
-The observations in the three environments in this work contain the position and an image of the current view.
-It seems reasonable to assume that the position can be provided to the agent.
-In certain scenarios it is possible to determine the global position of an agent with some sensor (e.g. GPS).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one (e.g. motor controlled pan and tilt camera).
+The image observations are fundamental to the visual search problem.
+We have chosen to test our agents in environments with \(64 \times 64\) image observations.
+In many cases, images of this size are not sufficient to convey the full meaning of a scene.
+Cues that may guide attention or are needed to correctly detect targets could require higher detail.
 
-In many cases, a \(64 \times 64\) images are not sufficient to convey the full meaning of a scene.
+To scale up our approach to such problems, it could be sufficient to modify the CNN architecture.
+CNNs have been used for detection in images of higher resolution~\cite{zhao_object_2019}.
+At a certain point, however, high-dimensional images could become a speed bottleneck.
+This is important to consider in many real-time applications.
+For such cases, some covert attention mechanism such as the one proposed in~\cite{mnih_recurrent_2014} could be considered.
+
 While we explicitly delimit ourselves from difficult detection problems in this work,
 detection is likely to be difficult in most real-world search scenarios.
 Further investigations are needed to evaluate how viable our approach is for more realistic scenes,
 where variance is higher and it is more difficult to interpret image observations.
+One option could be to is to incorporate an existing object detection architectures into our deep RL approach, as in \cite{ye_active_2018}
 
 Related to the detection problem is our choice of including an indication action.
 It could be argued that explicitly indicating when targets are in view is redundant.
@@ -139,20 +150,36 @@ Furthermore, the indication action has several interesting applications.
 One can imagine a task in which target detection is done through some external object detection that is expensive to run.
 In such a case, the indication could be used by the agent to convey that it is likely that a target is in view, and it is worth spending resources on running the detection process.
 
-\subsection{Positions, Movements and Search Space Dimensionality}
+\subsection{Position, Movement and Search Space Dimensionality}
+
+To aid our agents with navigating, we chose to give them access to their current position at each time step.
+An agent can generally not localize itself with just an image of an unseen environment.
+Furthermore, the position is needed to index the spatial memory we chose to use.
+
+An issue with including the position of the agent in its observations is that it becomes reliant on a certain search space shape.
+If our agent is trained in a \(10 \times 10\) search space it will not be able to handle smaller or larger spaces.
+With just image observations, the agent can be deployed in search spaces of arbitrary shape.
+
+Another aspect to consider is whether the position can be provided to the agent.
+It seems reasonable to assume that the position can be provided to the agent.
+In certain scenarios it is possible to determine the global position of an agent with some sensor (e.g. GPS).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one (e.g. motor controlled pan and tilt camera).
+
+There are alternatives to giving the agent its position that achieve similar effects.
+By having the agent observe its last action \(a_{t-1}\) it can learn to navigate relative to its starting position.
+This approach is used in~\cite{mirowski_learning_2017}.
 
 The action space we chose in this work contains four different moving actions that change the position of the agent in two dimensions.
 This is reasonable for several real-world search tasks such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction.
 Another example is surveillance with a pan-tilt-camera, where the actions could correspond to pitch and yaw rotations.
-
-Many vision systems have more degrees of freedom.
+However, many vision systems have more degrees of freedom.
 Camera sensors often have zoom functionality, which in practice requires additional actions for zooming in and out, and adds an extra dimension to the search space.
 Similarly, if an agent is able to both move and look around we get additional dimensions to consider.
 
 Nothing suggests that our two approaches would be unable to handle more than two dimensions.
 The temporal memory simply has to encode an additional component of the agent's position.
 The spatial memory can store a higher dimensional feature map.
-Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_neural_2017}.
+Its read operation can be modified to use convolutions in higher dimensions, as noted by \cite{parisotto_neural_2017}.
 
 \subsection{Implications of Reward Signal}
 
@@ -173,19 +200,48 @@ Several works argue for minimizing such biases, as learning systems can sometime
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
 For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.
 
-%\subsection{Choice of Neural Network Architecture}
+\subsection{Neural Network Architecture and Memory}
 
-% todo: oh_role_2004
+The neural network architecture used in this work consists of a CNN, an RNN and two MLPs for estimating the policy and value function.
+With the exception of a few educated selections, the network parameters are somewhat arbitrary.
+Due to the huge space of possible architecture parameters, it is not feasible to .
 
-%We have compared two neural network architectures from the perspective of a particular visual search problem.
-%The choice of architectures and their hyperparameters may seem somewhat arbitrary.
+Using a CNN is standard when encoding images, and using the encoding to select actions has in a way become synonymous with deep RL.
+The choice of CNN 
+We have chosen to use the same architecture as ~\cite{mnih_playing_2013}, as it is likely to be sufficient for the level of detail in our environments.
+Furthermore, this particular CNN architecture has become common in deep RL literature.
+Still, it is possible that another CNN architecture could have yielded better search performance.
 
-%The CNN architecture was chosen for we use is widely used and likely sufficient for %the visuals in our environments.
+The choice of policy and value MLPs is also somewhat arbitrary.
+We found that small tweaks did not affect performance much.
+Some have reported that a deeper value network yields better performance in some cases~\cite{andrychowicz_what_2020}.
+This could be investigated further.
+
+Instead, emphasis has been placed on two RNN which serve as the memory of the agent: one spatial, and one temporal.
+This follows from the observation that memory is crucial for effective search in structured and moderately large environments.
+Both were chosen to match the desired properties listed in Section~\ref{sec:aim}:
+an agent should be able to remember visited positions and their appearance, and use them to prioritize locations where targets are likely to be found.
+We argue that both RNN architectures achieve this as both are capable of remembering positions and encoded images.
+
+Using an LSTM is common for POMDPs~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017}, and has the advantage of being general --
+it can be used to remember any features over time.
+Its disadvantage is that how it remembers is difficult to predict.
+
+The spatial memory seems like an obvious choice for this particular task.
+It stores visual features of the explored scene in an explicit structure, and is read using an operation that is suited for such information.
+In our experiments we saw that the spatial memory performed better than the temporal one,
+but it has some disadvantages as well.
+
+First of all, it relies on the agent knowing its position so that it can index the memory properly.
+Secondly, the feature map of the memory grows with the size of the search space.
+This is not an inherent feature of the LSTM (although an LSTM may need to grow to be able to act well in large search spaces).
+
+%~\cite{oh_role_2004}
 
 \subsection{Reinforcement Learning for Visual Search}
 
 It is worth considering whether using a learning agent is suitable for visual search problems.
-Several of the works which we cover in Section ~\ref{sec:relatedwork} utilize other solution methods with apparent success.
+Several of the works which we cover in Section~\ref{sec:relatedwork} utilize other solution methods with apparent success.
 Such methods can sometimes be probably correct and efficient.
 It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
 One could imagine that it is possible to compute an optimal strategy for certain environments.
@@ -199,7 +255,8 @@ Furthermore, there have been several examples of learning systems surpassing hum
 These two points alone are strong arguments for exploring whether learning systems can be good searchers.
 We would argue that RL is a suitable framework for implementing such learning agents.
 Our approach seems to be able to utilize environment appearance to search more efficiently.
-It is less clear if their behavior is close to optimality or not.
+It is less clear whether the behavior is close to optimal or not.
+More work is needed to answer this question.
 
 \subsection{Replicability, Reliability and Validity}
 
@@ -242,25 +299,34 @@ We have provided source code for our implementation and invite others to reprodu
 Deep RL is a relatively new research field, with lots of progress in recent years.
 This coupled with known reproducibility problems of published work discussed in Section~\ref{sec:theory-evaluation} means that being critical of sources is of particular importance.
 
-We have based most of our work on sources which we deem trustworthy.
 The used sources are all exclusively scientific literature or textbooks.
 The textbooks used (\cite{russell_artificial_2021}, \cite{sutton_reinforcement_2018} and \cite{goodfellow_deep_2016}) are well-known and themselves well-sourced.
 Most of the scientific literature is published in peer-reviewed journals.
-Some of the referenced works are preprints that have not been through a standard peer review process.
+A few of the referenced works are preprints that have not been through a standard peer review process.
 All of these sources are well cited and can be relied on with some confidence.
 An attempt has been made to find several references each piece of information used in our theory and methodology.
 
 \section{The work in a wider context}
 \label{sec:discussion-wider}
 
-A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems\dots
+The capabilities of artificial intelligence (AI) are growing, and it is having a progressively wider societal impact.
+This progress is expected to continue, and several experts are of the opinion that human-level AI may arrive in this century~\cite{russell_provably_2022}.
+Such an intelligence may be of great benefit.
+AI could help solve some of today's greatest environmental, societal and economic problems~\cite{vinuesa_role_2020}.
 
-\begin{itemize}
-    \item \cite{russell_research_2015}, \cite{vinuesa_role_2020}, \cite{russell_provably_2022}, \cite{brundage_malicious_2018}
-    \item \url{https://people.eecs.berkeley.edu/~russell/research/LAWS.html}
-    \item Dangers of lethal autonomous weapon systems
-    \item Search-and-rescue and fire detection require high reliability, and a short search time can be the difference between life and death.
-    \item Things to consider before deploying a system for such a scenario include verification, validity, security, control, human intervention, etc.
-\end{itemize}
+Crucially, it can also have a negative impact if not designed properly.
+A common definition of an intelligent system is ones that acts rationally by perceiving and acting in order to maximally achieve its objective~\cite{russell_provably_2022}.
+An sufficiently intelligent agent with malicious capabilities and the wrong objective can pose a great danger.
+This is a major concern among many researchers and the broader public~\cite{russell_research_2015,brundage_malicious_2018,vinuesa_role_2020,russell_provably_2022}
 
-``As the authors of this work, we explicitly condemn its use for lethal weaponry.''
+The system presented in this work also exemplifies the duality in utility of AI systems to some extent.
+A system that can search efficiently by utilizing environment cues has positive applications in helping robots, rescue scenarios, fire detection, etc.
+It can also be used for malicious purposes, such as autonomous weapons and mass surveillance.
+
+This poses the question of how to avoid AI systems having negative impact on the world.
+Following the above definition of an intelligent system, such scenarios can be seen as a failures of \textit{value alignment}~\cite{russell_provably_2022}.
+We have to avoid giving intelligent agents purposes that do not align with our own.
+
+In the context of RL, we have to ensure that the reward signal an agent acts according to aligns with our purposes as humans.
+Before a system like ours is deployed it must be verified to act according to this principle, or lack the capabilities of causing harm.
+As the authors of this work, we explicitly condemn its use for malicious use cases.

@@ -3,30 +3,48 @@
 
 Visual search is ubiquitous in our daily lives as humans.
 Automated visual search systems therefore naturally have many potential applications.
-In this work, we have presented a method for jointly learning control of visual attention, recognition and localization using deep reinforcement learning.
+Building an autonomous visual search system can be done using domain knowledge, but implementing efficient searchers in arbitrary environments is not trivial.
 
-Using three environments of varying characteristics, we have
+In this work, we have asked ourselves whether a system can learn to search efficiently from a set of sample scenes with known target locations.
+Such a system should pick up patterns in the samples seen during training, and generalize to similar but unseen test scenes.
+We have presented a method for this task for jointly learning control of visual attention, recognition and localization using deep reinforcement learning.
+Our approach can be used to train agents to look around in environments to search for multiple targets.
 
+The agents try to do locate all targets in a minimal number of time steps, by indicating when they are visible.
+They are designed to be capable of integrating visual information over time, and reason over explored parts of their environment.
+This allows them to avoid searching locations multiple times, and prioritize regions where targets are likely to be found.
 
-\begin{itemize}
-    \item Relate back to research questions.
-    \item Answer them explicitly.
-\end{itemize}
+Using three environments with different characteristics, we have shown that agents trained with our method are capable of utilizing visual cues to guide search and localize targets.
+We have compared two neural network architectures for this purpose - one using a temporal memory and one using a spatial memory.
+In all three environments, the architecture with a spatial memory outperforms all three simple baselines in terms of average search length and success rate.
+Furthermore, its searches are comparable in performance to a human searcher.
+The temporal memory struggles with remembering precise information over many time steps, which is required for efficient search.
+By comparing the search paths chosen by both agents to optimal search paths, we show that they on average select paths that are as close or closer to optimal than humans.
 
-%Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.
-%They argue that a complete artificial agent must include active perception.
-%The goal of artificial intelligence research is the computational generation of intelligent behavior.
-%Agents that choose their behavior based on their context and know why they behave as they do would certainly seem to embody this.
-%In this work, we have introduced such an agent.
+By comparing both architectures in varying search space sizes, we have shown that a spatial memory scales better to visual search tasks in large search spaces.
+When trained using different numbers of training samples, both architectures overfit to these and perform worse on held out test samples.
+This illustrates the need for being mindful of overfitting in reinforcement learning
+With a sufficient number of training samples, they are able to generalize to unseen environment samples.
+We found that the spatial memory is less prone to overfitting than the temporal memory architecture for this particular search task.
 
 \section{Future Work}
 
+Several limitations of this work have been discussed in Chapter~\ref{cha:discussion}.
+Any further work into 
+We suggest that future work in the area of visual search with deep reinforcement learning should look further into a set of 
+
 \subsection{Realistic Search Tasks}
+
+Before a 
 
 \begin{itemize}
     \item Real search problems are likely to be more difficult to learn.
     \item There is a lack of datasets and environments for this (AI2 THOR, object detection in large images)
 \end{itemize}
+
+\subsection{Comparison with Hand-crafted Solutions}
+
+\dots
 
 \subsection{Ablation Studies}
 
@@ -34,3 +52,9 @@ Using three environments of varying characteristics, we have
     \item Evaluate the importance of image observations, position observations and memory.
     \item We could draw some conclusions regarding these from our results\dots
 \end{itemize}
+
+%Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.
+%They argue that a complete artificial agent must include active perception.
+%The goal of artificial intelligence research is the computational generation of intelligent behavior.
+%Agents that choose their behavior based on their context and know why they behave as they do would certainly seem to embody this.
+%In this work, we have introduced such an agent.

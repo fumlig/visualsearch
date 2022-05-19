@@ -186,7 +186,7 @@ This allows the agent to extract translation invariant features from observed im
 The latent representation, as well as the current position of the agent \(p_t\) is used as input to an RNN.
 Feeding both an image representation and the position of the agent to a recurrent step lets the agent remember visited locations and their appearance.
 The output of the recurrent step is in turn is connected to an actor MLP head and a critic MLP head, which approximate the policy \(\pi\) and value function \(v\) respectively.
-The architecture of the neural network is presented in Figure ~\ref{fig:architecture}.
+The architecture of the neural network is presented in Figure~\ref{fig:architecture}.
 
 \begin{figure}
     \centering
@@ -289,10 +289,10 @@ Following the recommendations of \cite{henderson_deep_2018}, \cite{colas_hitchhi
 \subsection{Search Performance and Behavior}
 
 To evaluate the quality of the learned policy, we compare our approaches to a set of baseline policies: one random, one greedy, and one exhaustive.
-The random policy (Algorithm ~\ref{alg:random}), selects random moving actions.
-The greedy policy (Algorithm ~\ref{alg:greedy}) keeps track of visited positions, and greedily selects actions that explore new positions.
+The random policy (Algorithm~\ref{alg:random}), selects random moving actions.
+The greedy policy (Algorithm~\ref{alg:greedy}) keeps track of visited positions, and greedily selects actions that explore new positions.
 If no such actions exist, it selects a random moving action.
-The exhaustive policy (Algorithm ~\ref{alg:exhaustive}) behaves similarly to the second one.
+The exhaustive policy (Algorithm~\ref{alg:exhaustive}) behaves similarly to the second one.
 Instead of sampling exploring actions randomly, it selects exploring actions from a predetermined order.
 In rectangular search spaces without obstacles, this policy leads to search paths that cover the whole search space with a small amount number of revisited positions.
 

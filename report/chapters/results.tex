@@ -64,8 +64,8 @@ Furthermore, the variance across runs increases with the search space size.
     \input{figures/shape-15.pgf}
     \(20 \times 20\)
     \input{figures/shape-20.pgf}
-    \label{fig:shape}
     \caption[Learning curves for different search space sizes.]{Episode length and success rate curves during training for three different search space sizes. Mean and standard deviation across 4 runs.}
+    \label{fig:shape}
 \end{figure}
 
 \section{Number of Training Samples}
@@ -78,8 +78,8 @@ It seems like both architectures can overfit to training sets of as many as 1000
 For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
 Interestingly the LSTM architecture seems to overfit more severely to small training sets.
 Its performance on the test set decreases substantially past a certain time step.
-The spatial memory architecture does not 
-As many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
+The spatial memory architecture does not overfit as severely.
+For both approaches, as many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
 
 \begin{figure}
     \centering
@@ -91,6 +91,6 @@ As many as 10000 training samples are needed to generalize to the full distribut
     \input{figures/sample-5000.pgf}
     \(10000\) samples
     \input{figures/sample-10000.pgf}
-    \label{fig:sample}
     \caption[Learning curves for varying training set sizes.]{Episode length and success rate curves for different training set sizes in terrain environment. Mean and standard deviation across 3 seeds.}
+    \label{fig:sample}
 \end{figure}

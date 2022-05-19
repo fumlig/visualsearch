@@ -107,8 +107,8 @@ It should be able to use the gradient of the underlying Gaussian function to mov
 \begin{figure}
     \centering
     \input{figures/gaussian.pgf}
-    \label{fig:gaussian}
     \caption[Gaussian environment]{Four samples of the first environment. Agent observes \(64 \times 64\) image at position \((2, 6)\). There are three blue spots and three red targets in each scene. Targets are more likely where the intensity of the spots is high.}
+    \label{fig:gaussian}
 \end{figure}
 
 \subsection{Terrain Environment}
@@ -133,8 +133,8 @@ One can draw parallels to search-and-rescue scenarios with UAVs or fire detectio
 \begin{figure}
     \centering
     \input{figures/terrain.pgf}
+    \caption[Terrain environment]{Four samples of the second environment. Terrain seen from above with red targets scattered and green trees scattered along shores. Agent observes \(64 \times 64\) image at position \((4, 3)\).}
     \label{fig:terrain}
-    \caption[Terrain environment]{Four samples of the second environment. Terrain seen from above with red targets scattered and green trees scattered along shores. Agent observes \(64 \times 64\) image at position \((4, 3)\)}
 \end{figure}
 
 \subsection{Camera Environment}
@@ -160,8 +160,8 @@ In some scenarios it can be important that objects are not only localized, but l
 \begin{figure}
     \centering
     \input{figures/camera.pgf}
+    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. Each image shows the image observation at the initial position. The pan and tilt of the camera can be adjusted to move the view around.}
     \label{fig:camera}
-    \caption[Camera environment]{Four samples from the camera environment. Terrain seen from a pan-tilt camera. The pan and tilt of the camera can be adjusted to move the view around.}
 \end{figure}
 
 \section{Approach}
@@ -191,8 +191,8 @@ The architecture of the neural network is presented in Figure ~\ref{fig:architec
 \begin{figure}
     \centering
     \includegraphics{figures/architecture.pdf}
-    \label{fig:architecture}
     \caption[Network architecture]{The neural network architecture used for estimating the policy and value functions from image and position observations.}
+    \label{fig:architecture}
 \end{figure}
 
 For the CNN, we use the same architecture as \cite{mnih_human-level_2015}.
@@ -213,15 +213,21 @@ Taking inspiration from this, we investigate whether a spatial memory can be mor
 
 \subsubsection{Temporal Memory}
 
-The temporal memory is a single LSTM~\cite{hochreiter_long_1997} layer, as proposed by \cite{hausknecht_deep_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_learning_2017}, and \cite{gupta_cognitive_2019}.
+The temporal memory is a single LSTM~\cite{hochreiter_long_1997} layer as proposed by \cite{hausknecht_deep_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_learning_2017}, and \cite{gupta_cognitive_2019}.
+%We refer to this memory as \(\text{RNN}_\text{lstm}\).
 As input to the LSTM, we use the latent image representation \(h_t\) concatenated with one-hot encodings of each dimension of \(p_t\).
 The LSTM layer has 128 hidden cells so that \(y_t\) has 128 dimensions.
-Finally, \(z_t\) contains the hidden and cell states.
+Finally, \(z_t\) contains the hidden state \(y_t\) and cell state \(c_t\) of the LSTM.
+
+\begin{equation}
+    z_t = \left\langle y_t, c_t \right\rangle = \text{LSTM}(\left\lbrack h_t, \text{onehot}(p_{0,t}), \text{onehot}(p_{1,t}) \right\rbrack, y_{t-1}, c_{t-1})
+\end{equation}
 
 \subsubsection{Spatial Memory}
 
 The spatial memory is composed of a readable and writable feature map.
 This is a simplified version of the architecture proposed in \cite{parisotto_neural_2017}, similar in spirit to the architectures in \cite{henriques_mapnet_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_object_2020}.
+%We refer to this recurrent network as \(\text{RNN}_\text{map}\).
 It is defined by the following set of operations:
 
 \begin{align}
@@ -245,8 +251,6 @@ Another MLP takes a one-hot encoding of the position as input and outputs a 64-d
 The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(y_t\) to the value and policy networks.
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
-
-% todo: oh_role_2004
 
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.

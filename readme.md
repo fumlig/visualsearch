@@ -13,16 +13,19 @@ todo
 - Wider context
 - Send to Fredrik
 
-- Learning curves
-- ~Update search paths~
 - Illustrate memory
 - Update camera metrics
+- Learning curves
+
 - Softmax temperature
 - Visualize actions and scene
 - Show attention
 - Update presentation
 - Dumb baseline
-- Make it clear that observation is limited
+
+- ~Resolve naming confusions~
+- ~Update search paths~
+- ~Make it clear that observation is limited~
 
 
 ## Reproduce

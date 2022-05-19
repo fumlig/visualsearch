@@ -200,8 +200,8 @@ Figure \ref{fig:pomdp} illustrates the interaction between agent and environment
 \begin{figure}
     \centering
     \input{figures/pomdp}
-    \label{fig:pomdp}
     \caption[Partially observable Markov decision process]{Interaction between agent and environment in a partially observable Markov decision process.}
+    \label{fig:pomdp}
 \end{figure}
 
 The agent and environment interact over a sequence of discrete time steps \(t = 0, 1, \dots, T\), giving rise to an \textit{episode} of length \(T\).
@@ -539,7 +539,10 @@ This way, the agent can recall information from the past that is useful to the p
 The authors evaluate this architecture in several visual navigation tasks, where image observations are encoded with a CNN.
 In their tests, their memory architecture performs better than LSTM layers, and generalizes better to unseen environments.
 
-Several works propose the use of spatial memories rather than temporal ones, which the agent can address with its location and use to store structured information of its environment.
+LSTM is an example of a temporal memory -- it remembers information across time.
+Several works propose the use of spatial memories rather than temporal ones.
+In these works, the term spatial refers to the fact that they are addressed with a position in the environment.
+Agents can use such memories to write and read structured information of their environment.
 Parisotto and Salakhutdinov~\cite{parisotto_neural_2017} introduce a general-purpose spatial memory architecture.
 They assume that the environment can be discretized into a set of positions.
 The agent retains a feature map with one feature vector per position it can occupy in the environment.

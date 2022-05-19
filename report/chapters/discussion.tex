@@ -7,6 +7,8 @@ We also discuss the work from a broader perspective (Section~\ref{sec:discussion
 \section{Results}
 \label{sec:discussion-results}
 
+
+
 \subsection{Reflection on Search Performance}
 
 To evaluate the search quality, we first consider the at the average search path length of each agent.
@@ -76,7 +78,7 @@ Furthermore, the training does not seem to have fully converged.
 It seems reasonable to state that the spatial memory scales better to large search spaces in terms of performance, when compared to the temporal memory.
 Searching efficiently in large search spaces places extra emphasis on remembering what has already been explored.
 From our results, it would seem like an LSTM struggles with remembering such precise information over many time steps.
-Similar results where presented by \cite{oh_minecraft_2016}.
+Similar results where presented by \cite{oh_control_2016}.
 
 An hypothesis is that our temporal memory agent would handle large state spaces better with more parameters.
 We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
@@ -89,12 +91,12 @@ One solution is to keep search spaces small:
 Large (and continuous) spaces could be discretized into smaller ones at the cost of precision.
 Limit the need for memory could be a viable solution for certain search problems..
 In the case of the temporal memory, it might be sufficient to only remember recent interactions.
-Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_salakhutdinov_2017}.
+Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_neural_2017}.
 
 \subsection{Generalizing from Limited Training Sets}
 
 From the results in Section~\ref{sec:sample}, we see that both of our approaches can overfit to small training sets.
-This is in line with what is reported by \cite{cobbe_procgen_2020}, \cite{cobbe_generalization_2019} and \cite{zhang_overfitting_2018}.
+This is in line with what is reported by \cite{cobbe_quantifying_2019}, \cite{cobbe_leveraging_2020} and \cite{zhang_study_2018}.
 Past a certain number of interactions with small a small training set, performance on a held out test set decreases.
 This effect is well known in supervised learning, but important to keep in mind for reinforcement learning.
 If any sort of generalization is expected from our agents, they should be tested on held out samples.
@@ -112,12 +114,14 @@ However, the results do offer insights into how these two architectures compare 
 \section{Method}
 \label{sec:discussion-method}
 
+There are several aspects of the method chosen that are worth discussing.
+
 \subsection{Image Observations, Detections and Indications}
 
 The observations in the three environments in this work contain the position and an image of the current view.
 It seems reasonable to assume that the position can be provided to the agent.
-In many realistic scenarios it is possible to determine the global position of an agent (GPS, pan/tilt, etc.).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
+In certain scenarios it is possible to determine the global position of an agent with some sensor (e.g. GPS).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one (e.g. motor controlled pan and tilt camera).
 
 In many cases, a \(64 \times 64\) images are not sufficient to convey the full meaning of a scene.
 While we explicitly delimit ourselves from difficult detection problems in this work,
@@ -148,7 +152,7 @@ Similarly, if an agent is able to both move and look around we get additional di
 Nothing suggests that our two approaches would be unable to handle more than two dimensions.
 The temporal memory simply has to encode an additional component of the agent's position.
 The spatial memory can store a higher dimensional feature map.
-Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_salakhutdinov_2017}.
+Its read operation can be modified to use convolutions in higher dimensions, as noted by ~\cite{parisotto_neural_2017}.
 
 \subsection{Implications of Reward Signal}
 
@@ -169,6 +173,15 @@ Several works argue for minimizing such biases, as learning systems can sometime
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
 For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.
 
+%\subsection{Choice of Neural Network Architecture}
+
+% todo: oh_role_2004
+
+%We have compared two neural network architectures from the perspective of a particular visual search problem.
+%The choice of architectures and their hyperparameters may seem somewhat arbitrary.
+
+%The CNN architecture was chosen for we use is widely used and likely sufficient for %the visuals in our environments.
+
 \subsection{Reinforcement Learning for Visual Search}
 
 It is worth considering whether using a learning agent is suitable for visual search problems.
@@ -181,7 +194,7 @@ The perspective we take with this work is that non-learning solution methods may
 The characteristics of environments can vary considerably which may drastically affect how a manual approach is implemented.
 Interpreting and utilizing patterns in arbitrary scenes may even be difficult for us humans.
 If we cannot understand patterns ourselves, we can not expect to communicate how to search to machines.
-Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_alphago_2016,vinyals_alphastar_2019}.
+Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_mastering_2016,vinyals_grandmaster_2019}.
 
 These two points alone are strong arguments for exploring whether learning systems can be good searchers.
 We would argue that RL is a suitable framework for implementing such learning agents.
@@ -191,11 +204,11 @@ It is less clear if their behavior is close to optimality or not.
 \subsection{Replicability, Reliability and Validity}
 
 As discussed in Section~\ref{sec:theory-evaluation}, reproducibility is a problem in current deep RL research.
-This comes with the risk of stagnating the field by inhibiting correct interpretation of results~\cite{henderson_matters_2018}.
+This comes with the risk of stagnating the field by inhibiting correct interpretation of results~\cite{henderson_deep_2018}.
 In this work, we have taken certain precautions to avoid such problems.
 
 For each experiment, we have collected results across at least 3 runs.
-While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhiker_2019,agarwal_rlliable_2022},
+While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhikers_2019,agarwal_deep_2022},
 such undertakings are not feasible without sufficient compute resources.
 Our hope is that 3 runs gives a sense for the variance involved in our approach.
 However, more runs would be preferred.
@@ -208,11 +221,11 @@ Ideally, we would have tested on a larger set.
 
 The three metrics we have used (success rate, average search path length, and SPL) all offer different insights into the performance of agents.
 They should not be used as absolute measures, but rather to compare different agents in the same environments.
-The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_semantic_2018}.
+The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_visual_2018}.
 SPL considers both search path length, shortest path length and whether the agent was successful in each episode,
 and is useful as a measure for the quality of the search paths chosen by an agent.
 
-However, SPL is not a perfect metric. As noted by \cite{batra_evaluation_2020}, it fails to consider the fact that some failures are less of a failure than others.
+However, SPL is not a perfect metric. As noted by \cite{batra_objectnav_2020}, it fails to consider the fact that some failures are less of a failure than others.
 For example, an agent might have been close to discovering a target at some time step but missed it.
 It might be desirable to give a higher score to such search paths than ones that are never close to targets.
 The binary success indicator introduces high variance into the metric.
@@ -226,14 +239,16 @@ We have provided source code for our implementation and invite others to reprodu
 
 \subsection{Source Criticism}
 
-This work is based on several scientific works from past and present.
+Deep RL is a relatively new research field, with lots of progress in recent years.
+This coupled with known reproducibility problems of published work discussed in Section~\ref{sec:theory-evaluation} means that being critical of sources is of particular importance.
 
-Our chosen architecture is inspired by several previous works.
-
-A few of the referenced works are preprints.
-Although this usually means that it is not peer reviewed.
-Citing preprints is common practice nowadays.
-All of the preprints we have used are well-cited and 
+We have based most of our work on sources which we deem trustworthy.
+The used sources are all exclusively scientific literature or textbooks.
+The textbooks used (\cite{russell_artificial_2021}, \cite{sutton_reinforcement_2018} and \cite{goodfellow_deep_2016}) are well-known and themselves well-sourced.
+Most of the scientific literature is published in peer-reviewed journals.
+Some of the referenced works are preprints that have not been through a standard peer review process.
+All of these sources are well cited and can be relied on with some confidence.
+An attempt has been made to find several references each piece of information used in our theory and methodology.
 
 \section{The work in a wider context}
 \label{sec:discussion-wider}
@@ -241,7 +256,7 @@ All of the preprints we have used are well-cited and
 A major concern of artificial intelligence researchers and the broader public today is the implications of autonomous systems\dots
 
 \begin{itemize}
-    \item \cite{russell_priorities_2015}, \cite{vinuesa_sustainable_2020}, \cite{russell_ethics_2015}, \cite{russell_beneficial_2022}, \cite{brundage_malicious_2018}
+    \item \cite{russell_research_2015}, \cite{vinuesa_role_2020}, \cite{russell_provably_2022}, \cite{brundage_malicious_2018}
     \item \url{https://people.eecs.berkeley.edu/~russell/research/LAWS.html}
     \item Dangers of lethal autonomous weapon systems
     \item Search-and-rescue and fire detection require high reliability, and a short search time can be the difference between life and death.

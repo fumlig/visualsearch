@@ -37,11 +37,26 @@ We suggest that future work in the area of visual search with deep reinforcement
 
 \begin{itemize}
     \item What are the minimal conditions under which an agent can learn to search optimally?
-    % reward, observations, ablations, memory storage, etc.
-    \item How does the approach presented here compare to provably optimal agents in each environment?
-    % rule-based, handcrafted
+    
+    It is possible that the presented approach does not satisfy the requirements needed to enable it to learn search behaviors that approach optimal ones.
+    The number of model parameters, memory capacity, reinforcement learning algorithm, reward signal, etc. could limit the ability of the approach to find an optimal policy.
+    This might depend on particular aspects of the search problem, such as action space and observation space.
+    It is interesting to see what the requirements are on these aspects of the problem.
+
+    \item How does the approach presented here compare to rule-based agents in each environment?
+
+    With rule-based agents, we mean non-learning agents that are designed with expert knowledge to act well in a particular environments.
+    This is related to the question above, but not equivalent.
+    We have compared the performance of our approach to humans and three baselines.
+    It is expected that rule-based agent can search more intelligently than these.
+    To see it if viable to deploy a learning-agent instead of a rule-based one, the two should be compared to one another.
+
     \item Does the approach scale to real-world search scenarios?
-    % noise, detection, interpretability, patterns
+
+    We have looked at relatively simple search scenarios, where environment cues follow some clear pattern and target detection is trivial.
+    Real-world search scenarios will exhibit a different level of complexity.
+    Whether the proposed approach scales to such scenarios should be investigated further.
+    Such investigations could use existing simulated visual navigation environments, but specialized environments that offer control of the search difficulty could give more insights into the questions above.
 \end{itemize}
 
 %Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.

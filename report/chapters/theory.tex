@@ -247,6 +247,7 @@ The policy parameters are usually learned based on the gradient of some performa
 As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.~\cite{sutton_policy_1999}
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policy_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
+However, less is known about if and how fast policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}
 In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
@@ -451,10 +452,14 @@ The approach gives a small improvement over the standalone region proposal netwo
 
 \subsubsection{Visual Navigation}
 
-Visual navigation is the process of determining a suitable path between a start point and destination point using visual input~\cite{bonin-font_visual_2008}.
-Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles.
+Visual navigation is the process of determining a suitable path between a start point and destination point using visual input.
+Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles~\cite{bonin-font_visual_2008}.
 The visual search problem can be considered analogous to a visual navigation in unrestricted environments.
+
 In recent years, several works have used deep RL to solve various visual navigation tasks.
+These have mostly been focused on learning navigation between two points in indoor environments,
+where the goal is either specified as an image of a target object or indirectly as a distance from the agent's location.
+There are several simulated environments for such tasks~\cite{kolve_ai2-thor_2019,xia_gibson_2018,savva_habitat_2019}.
 
 Zhu et al.~\cite{zhu_target-driven_2017} create a model for target-driven visual navigation in indoor scenes with deep RL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object in the scene with a minimal number of steps.

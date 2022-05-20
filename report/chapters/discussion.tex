@@ -206,7 +206,8 @@ For our set of environments, this particular reward seems to work well, but this
 
 The neural network architecture used in this work consists of a CNN, an RNN and two MLPs for estimating the policy and value function.
 With the exception of a few educated selections, the network parameters are somewhat arbitrary.
-Due to the huge space of possible architecture parameters, it is not feasible to .
+The space of possible architecture parameters is huge, and infeasible to search exhaustively.
+There is certainly the possibility that some part of our architecture is a capacity bottleneck for search performance.
 
 Using a CNN is standard when encoding images, and using the encoding to select actions has in a way become synonymous with deep RL.
 The choice of CNN 
@@ -257,10 +258,11 @@ If we cannot understand patterns ourselves, we can not expect to communicate how
 Furthermore, there have been several examples of learning systems surpassing humans in specific tasks~\cite{silver_mastering_2016,vinyals_grandmaster_2019}.
 
 These two points alone are strong arguments for exploring whether learning systems can be good searchers.
-We would argue that RL is a suitable framework for implementing such learning agents.
+We would argue that RL is a suitable framework for implementing such learning systems.
 Our approach seems to be able to utilize environment appearance to search more efficiently.
 It is less clear whether the behavior is close to optimal or not.
-More work is needed to answer this question.
+In addition to the points above about neural network architecture and reward signal, it is not known whether policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}.
+More work is needed to evaluate the approaches ability to learn optimal search behavior.
 
 \subsection{Replicability, Reliability and Validity}
 
@@ -332,5 +334,5 @@ Following the above definition of an intelligent system, such scenarios can be s
 We have to avoid giving intelligent agents purposes that do not align with our own.
 
 In the context of RL, we have to ensure that the reward signal an agent acts according to aligns with our purposes as humans.
-Before a system like ours is deployed it must be verified to act according to this principle, or lack the capabilities of causing harm.
-As the authors of this work, we explicitly condemn its use for malicious use cases.
+Before a system like ours is deployed it must be verified to act according to this principle, or lack the capability to cause harm.
+%As the authors of this work, we explicitly condemn its use for malicious use cases.

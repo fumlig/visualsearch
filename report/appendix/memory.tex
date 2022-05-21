@@ -4,6 +4,12 @@
 \begin{figure}
     \centering
     \input{figures/memory.pgf}
-    \caption[Spatial memory visualization]{Visualization of the spatial memory over time. Each memory slot is colored by the infinity norm of its feature vector. The agent seems to store special information in positions that contain targets, and where targets are likely to be found.}
-    \label{fig:path-scene}
+
+    \begin{align*}
+        \left(p_0, \dots, p_9 \right) &= \left\langle 4, 8 \right\rangle, \left\langle 4, 8 \right\rangle, \left\langle 4, 8 \right\rangle, \left\langle 5, 8 \right\rangle, \left\langle 5, 7 \right\rangle, \left\langle 5, 7 \right\rangle, \left\langle 6, 7 \right\rangle, \left\langle 6, 8 \right\rangle, \left\langle 6, 8 \right\rangle, \left\langle 7, 8 \right\rangle\\
+        \left(a_0, \dots, a_8 \right) &= \mathtt{INDICATE}, \mathtt{INDICATE}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{INDICATE}, \mathtt{DOWN}, \mathtt{RIGHT}, \mathtt{INDICATE}, \mathtt{DOWN}\\
+    \end{align*}
+
+    \caption[Spatial memory visualization]{Visualization of the spatial memory feature map after 10 time steps, starting in position Each memory slot is colored by the infinity norm of its feature vector. The agent seems to store special information in positions that contain targets, and where targets are likely to be found.}
+    \label{fig:memory}
 \end{figure}    

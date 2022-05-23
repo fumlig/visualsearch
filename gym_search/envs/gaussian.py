@@ -1,4 +1,5 @@
 import numpy as np
+import cv2 as cv
 from skimage import draw
 
 from gym_search.utils import gaussian_kernel, normalize, sample_coords
@@ -61,3 +62,26 @@ class GaussianEnv(SearchEnv):
 
         return image, position, targets
 
+    def get_handmade_action(self, detect=False):
+        if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
+            return 0
+
+        obs = self.observation()
+        img = obs["image"]
+
+        sobel_x = cv.Sobel(img, cv.CV_64F, 1, 0, ksize=3)
+        sobel_y = cv.Sobel(img, cv.CV_64F, 0, 1, ksize=3)
+
+        dir_x = np.sum(sobel_x)
+        dir_y = np.sum(sobel_y)
+
+        actions = sorted([(dir_x, Action.LEFT), (-dir_x, Action.RIGHT), (dir_y, Action.UP), (-dir_y, Action.DOWN)], reverse=True)
+        
+        for _, action in actions:
+            step = self.get_action_step(action)
+            position, _ = self.get_next_position(step)
+            
+            if not tuple(position) in self.visited:
+                return action
+        
+        return self.get_random_action()

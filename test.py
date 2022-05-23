@@ -26,7 +26,7 @@ KEY_ESC = 27
 KEY_RET = 13
 WINDOW_SIZE = (640, 640)
 
-BASELINES = ["human", "greedy", "random", "exhaustive"]
+BASELINES = ["human", "greedy", "random", "exhaustive", "handmade"]
 
 
 def metrics(infos):
@@ -96,6 +96,8 @@ def play(episodes, env, agent="human", model=None, device=None, hidden=False, ob
                 act = env.get_greedy_action()
             elif agent == "exhaustive":
                 act = env.get_exhaustive_action()
+            elif agent == "handmade":
+                act = env.get_handmade_action()
             else:
                 raise ValueError(f"agent must be one of {','.join(BASELINES)}")
 
@@ -214,3 +216,6 @@ if __name__ == "__main__":
 
         for row in run_metrics:
             results.writerow(row)
+
+            if args.verbose:
+                print(row)

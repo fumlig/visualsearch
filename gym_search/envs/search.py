@@ -272,3 +272,6 @@ class SearchEnv(gym.Env):
             return random.choice(range(1, self.action_space.n))
     
         return valid[0]
+    
+    def get_handmade_action(self, detect=False):
+        raise NotImplementedError

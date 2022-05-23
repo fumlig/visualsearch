@@ -1,0 +1,121 @@
+\section{Experiments}
+
+\begin{frame}
+    \frametitle{Experiment I: Search Performance}
+
+    \begin{itemize}
+        \item Compare to random searcher, exhaustive searcher, human searcher with prior knowledge of scenes.
+        \item Use held out samples as test set.
+        \item Average number of steps on test set.
+        \item SPL metric~\cite{anderson_evaluation_2018}, with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
+    \end{itemize}
+
+    \begin{equation}
+        \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \begin{table}
+        \centering
+        Gaussian Environment\par\vspace{0.5em}
+        \input{tables/metrics-gaussian}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    \begin{table}
+        \centering
+        Terrain Environment\par\vspace{0.5em}
+        \input{tables/metrics-terrain}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    \begin{table}
+        \centering
+        Camera Environment\par\vspace{0.5em}
+        \input{tables/metrics-camera}
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Experiment II: Scaling to Larger Search Spaces}
+
+    \begin{itemize}
+        \item Larger search spaces take longer to train:
+        \begin{itemize}
+            \item More states to explore and exploit.
+            \item Stronger demands on memory (remember searched positions, scene understanding).
+        \end{itemize}
+        \item Investigate impact by comparing agents on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        \(10 \times 10\)
+        \includegraphics[scale=0.8]{figures/shape-10.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        \(15 \times 15\)
+        \includegraphics[scale=0.8]{figures/shape-15.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        \(20 \times 20\)
+        \includegraphics[scale=0.8]{figures/shape-20.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Experiment III: Generalization From Limited Samples}
+
+    \begin{itemize}
+        \item Limit number of scene samples seen during training to 100, 1000, 10 000, \dots.
+        \item Use terrain environment, high appearance variance and somewhat realistic.
+        \item Fix seed pool used to generate scenes seen during training.
+        \item Train agents until convergence (or for a fixed number of time steps).
+        \item Test on held out scenes from full distribution. 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        10000 samples
+        \includegraphics[scale=0.8]{figures/sample-10000.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        5000 samples
+        \includegraphics[scale=0.8]{figures/sample-5000.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        1000 samples
+        \includegraphics[scale=0.8]{figures/sample-1000.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        500 samples
+        \includegraphics[scale=0.8]{figures/sample-500.pdf}
+    \end{figure}
+\end{frame}

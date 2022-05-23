@@ -7,5 +7,4 @@
 \beamer@sectionintoc {3}{Method}{10}{0}{3}
 \beamer@subsectionintoc {3}{1}{Environments}{11}{0}{3}
 \beamer@subsectionintoc {3}{2}{Approach}{16}{0}{3}
-\beamer@subsectionintoc {3}{3}{Experiments}{18}{0}{3}
-\beamer@sectionintoc {4}{Results}{23}{0}{4}
+\beamer@sectionintoc {4}{Experiments}{20}{0}{4}

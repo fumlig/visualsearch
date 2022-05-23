@@ -60,7 +60,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Gaussian Environment}
+    \frametitle{Environment I: Gaussian}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
@@ -80,7 +80,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Terrain Environment}
+    \frametitle{Environment II: Terrain}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
@@ -103,7 +103,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Camera Environment}
+    \frametitle{Environment III: Camera}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
@@ -168,63 +168,23 @@
     \end{enumerate}
 \end{frame}
 
-\subsection{Experiments}
-
 \begin{frame}
     \frametitle{Experiments}
+
+    \begin{enumerate}
+        \item Search Performance
+        \item Scaling to Larger Search Spaces
+        \item Generalization from Limited Samples
+    \end{enumerate}
 
     \begin{itemize}
         \item Train for 25M time steps.
         \item Results reported across 3 runs with different seeds.
-        \item Interval estimates via stratified bootstrap confidence intervals.
         \item Separate training and test sets.
         \item Same hyperparameters in all runs.
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Experiment I: Search Space and Reward Signal}
-
-    \begin{itemize}
-        \item Larger search spaces take longer to train:
-        \begin{itemize}
-            \item Sparse reward might not be sufficient.
-            \item Stronger demands on memory (remember searched positions, scene understanding).
-        \end{itemize}
-        \item Investigate impact by comparing agents on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
-        \item Evaluate two additional reward signals that may speed up training:
-        \begin{itemize}
-            \item \(r'_t = r_t + e\), where \(e=0.1\) if \(a_t \neq \mathtt{TRIGGER}\) moves the view to an unexplored region and \(0\) otherwise.
-            \item \(r''_t = r_t + d\), where \(d=0.1\) if \(a_t \neq \mathtt{TRIGGER}\) moves the view towards the nearest target and \(0\) otherwise.
-        \end{itemize}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Experiment II: Search Performance}
-
-    \begin{itemize}
-        \item Compare to random searcher, exhaustive searcher, human searcher with prior knowledge of scenes.
-        \item Use held out samples as test set.
-        \item Average number of steps on test set.
-        \item SPL metric~\cite{anderson_evaluation_2018}, with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
-    \end{itemize}
-    \[
-        \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
-    \]
-\end{frame}
-
-\begin{frame}
-    \frametitle{Experiment III: Generalization with Limited Training Samples}
-
-    \begin{itemize}
-        \item Limit number of scene samples seen during training to 100, 1000, 10 000, \dots.
-        \item Use terrain environment, high appearance variance and somewhat realistic.
-        \item Fix seed pool used to generate scenes seen during training.
-        \item Train agents until convergence (or for a fixed number of time steps).
-        \item Test on held out scenes from full distribution. 
-    \end{itemize}
-\end{frame}
 
 \begin{frame}
     \frametitle{Implementation}

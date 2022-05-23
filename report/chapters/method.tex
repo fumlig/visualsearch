@@ -49,7 +49,7 @@ The position and image observations are
 \begin{align}
     o_t & = \left\langle x_t, p_t \right\rangle \text{, where} \\
     x_t & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
-    p_t & = \left\langle p_{0,t}, p_{1,t} \right\rangle \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
+    p_t & = \left\langle p_{t,0}, p_{t,1} \right\rangle \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
 \end{align}
 
 All image observations are \(64 \times 64\) RGB images.
@@ -181,9 +181,9 @@ The neural network architecture should reflect the aforementioned requirements.
 \subsection{Architecture}
 
 We design our neural network architecture as follows:
-A CNN takes the observed image \(x_t\) and encodes it into a latent representation \(h_t\).
+A CNN takes the observed image \(x_t\) and encodes it into a latent representation \(y_t\).
 This allows the agent to extract translation invariant features from observed images.
-The latent representation, as well as the current position of the agent \(p_t\) is used as input to an RNN.
+The latent representation, as well as the current position of the agent \(p_t\) is used as input to an RNN with recurrent state \(z_t\) and output \(h_t\).
 Feeding both an image representation and the position of the agent to a recurrent step lets the agent remember visited locations and their appearance.
 The output of the recurrent step is in turn is connected to an actor MLP head and a critic MLP head, which approximate the policy \(\pi\) and value function \(v\) respectively.
 The architecture of the neural network is presented in Figure~\ref{fig:architecture}.
@@ -197,7 +197,7 @@ The architecture of the neural network is presented in Figure~\ref{fig:architect
 
 For the CNN, we use the same architecture as \cite{mnih_human-level_2015}.
 The input image \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is fed through three convolutional layers: the first layer convolves 32 filters of size \(8 \times 8\) with stride 4, the second convolves 64 filters of size \(4 \times 4\) with stride 2, and the third layer convolves 64 filters of size \(3 \times 3\) with stride 1.
-This is followed by a final fully connected hidden layer with 512 outputs for the latent representation \(h_t \in \mathbb{R}^{512}\).
+This is followed by a final fully connected hidden layer with 512 outputs for the latent representation \(y_t \in \mathbb{R}^{512}\).
 
 Both the policy and value network are fully connected networks.
 The value network has one output for the value estimate.
@@ -215,12 +215,12 @@ Taking inspiration from this, we investigate whether a spatial memory can be mor
 
 The temporal memory is a single LSTM~\cite{hochreiter_long_1997} layer as proposed by \cite{hausknecht_deep_2017} and used in \cite{mnih_asynchronous_2016}, \cite{mirowski_learning_2017}, and \cite{gupta_cognitive_2019}.
 %We refer to this memory as \(\text{RNN}_\text{lstm}\).
-As input to the LSTM, we use the latent image representation \(h_t\) concatenated with one-hot encodings of each dimension of \(p_t\).
-The LSTM layer has 128 hidden cells so that \(y_t\) has 128 dimensions.
-Finally, \(z_t\) contains the hidden state \(y_t\) and cell state \(c_t\) of the LSTM.
+As input to the LSTM, we use the latent image representation \(y_t\) concatenated with one-hot encodings of each dimension of \(p_t\).
+The LSTM layer has 128 hidden cells so that \(h_t\) has 128 dimensions.
+Finally, \(z_t\) contains the hidden state \(h_t\) and cell state \(c_t\) of the LSTM.
 
 \begin{equation}
-    z_t = \left\langle y_t, c_t \right\rangle = \text{LSTM}(\left\lbrack h_t, \text{onehot}(p_{0,t}), \text{onehot}(p_{1,t}) \right\rbrack, y_{t-1}, c_{t-1})
+    z_t = \left\langle h_t, c_t \right\rangle = \text{LSTM}(\left\lbrack y_t, \text{onehot}(p_{t,0}), \text{onehot}(p_{t,1}) \right\rbrack, h_{t-1}, c_{t-1})
 \end{equation}
 
 \subsubsection{Spatial Memory}
@@ -232,9 +232,9 @@ It is defined by the following set of operations:
 
 \begin{align}
     \rho_t &= \text{CNN}_\text{read}(z_t) \\
-    \omega_t &= \text{MLP}_\text{write}(\left\lbrack h_t, \rho_t, z_t^{(p_t)} \right\rbrack) \\
-    q_t &= \text{MLP}_\text{position}(\left\lbrack \text{onehot}(p_{0,t}), \text{onehot}(p_{1,t}) \right\rbrack) \\
-    y_t &= \left\lbrack \rho_t, \omega_t, q_t \right\rbrack \\
+    \omega_t &= \text{MLP}_\text{write}(\left\lbrack y_t, \rho_t, z_t^{(p_t)} \right\rbrack) \\
+    q_t &= \text{MLP}_\text{position}(\left\lbrack \text{onehot}(p_{t,0}), \text{onehot}(p_{t,1}) \right\rbrack) \\
+    h_t &= \left\lbrack \rho_t, \omega_t, q_t \right\rbrack \\
     z_{t+1}^{(p')} &=
     \begin{cases}
         \omega_t & \text{if } p' = p_t \\
@@ -246,9 +246,9 @@ Here, \(z_t \in \mathbb{R}^{64 \times 10 \times 10}\) is a feature map with one 
 At each time step, the agent reads from this map using a CNN with three convolutional layers.
 Each layer has 32 filters of size \(3 \times 3\), and uses a padding of 1.
 A final fully connected layer produces a 64-dimensional read vector \(\rho_t\).
-An MLP takes the read vector concatenated with \(h_t\) and the feature vector stored in the map at the current position \(z_t^{(p_t)}\), and produces a 64-dimensional write vector \(\omega_{t}\).
+An MLP takes the read vector concatenated with \(y_t\) and the feature vector stored in the map at the current position \(z_t^{(p_t)}\), and produces a 64-dimensional write vector \(\omega_{t}\).
 Another MLP takes a one-hot encoding of the position as input and outputs a 64-dimensional vector \(q_t\).
-The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(y_t\) to the value and policy networks.
+The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(h_t\) to the value and policy networks.
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 

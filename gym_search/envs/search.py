@@ -130,17 +130,6 @@ class SearchEnv(gym.Env):
     def render(self, mode="rgb_array"):
         image = self.scene.copy()
 
-        for i in range(len(self.targets)):
-            if self.hits[i]:
-                #coords = tuple(draw.rectangle(self.targets[i].position, extent=self.targets[i].shape, shape=self.scale(self.shape)))
-                coords = tuple(draw.rectangle_perimeter(self.scale(self.targets[i]), extent=self.view, shape=self.scale(self.shape)))
-
-                image[coords] = (0, 255, 0)
-
-        #for p in self.path:
-        #    coords = tuple(draw.rectangle_perimeter(self.scale(p), extent=self.view, shape=self.scale(self.shape)))
-        #    image[coords] = (0.5, 0.5, 0.5)
-
         coords = tuple(draw.rectangle_perimeter(self.scale(self.position), extent=self.view, shape=self.scale(self.shape)))
         image[coords] = (0, 0, 0)
         
@@ -148,30 +137,31 @@ class SearchEnv(gym.Env):
         
         return image
 
-    def plot(self, ax, overlay=True, position=None):
+    def plot(self, ax, overlay=True, inset=True, position=None):
         _position = self.position
         if position is not None: self.position = position
 
         img = self.render()
         obs = self.observation()
 
-        ax.grid(color="black", linestyle='--', linewidth=0.25)
-        ax.set_yticks(range(0, img.shape[0], self.view[0]))
-        ax.set_xticks(range(0, img.shape[1], self.view[1]))
-        ax.set_yticklabels(range(self.shape[0]))
-        ax.set_xticklabels(range(self.shape[1]))
-
         ax.imshow(img)
 
         if overlay:
+            ax.grid(color="black", linestyle='--', linewidth=0.25)
+            ax.set_yticks(range(0, img.shape[0], self.view[0]))
+            ax.set_xticks(range(0, img.shape[1], self.view[1]))
+            ax.set_yticklabels(range(self.shape[0]))
+            ax.set_xticklabels(range(self.shape[1]))
+        else:
+            ax.set_yticks([])
+            ax.set_xticks([])
+
+        if inset:
             axins = ax.inset_axes((0.1, 0.1, 0.25, 0.25))
             axins.imshow(obs["image"], origin="upper")
             axins.set_yticks([0, self.view[0]-1])
             axins.set_xticks([0, self.view[1]-1])
             ax.indicate_inset([*self.scale(self.position)[::-1], *self.view[::-1]], axins, edgecolor="black")
-        else:
-            ax.set_yticks([])
-            ax.set_xticks([])
 
         self.position = _position
 

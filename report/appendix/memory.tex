@@ -4,12 +4,6 @@
 \begin{figure}
     \centering
     \input{figures/memory.pgf}
-
-    \begin{align*}
-        \left(p_0, \dots, p_9 \right) &= \left\langle 4, 8 \right\rangle, \left\langle 4, 8 \right\rangle, \left\langle 4, 8 \right\rangle, \left\langle 5, 8 \right\rangle, \left\langle 5, 7 \right\rangle, \left\langle 5, 7 \right\rangle, \left\langle 6, 7 \right\rangle, \left\langle 6, 8 \right\rangle, \left\langle 6, 8 \right\rangle, \left\langle 7, 8 \right\rangle\\
-        \left(a_0, \dots, a_8 \right) &= \mathtt{INDICATE}, \mathtt{INDICATE}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{INDICATE}, \mathtt{DOWN}, \mathtt{RIGHT}, \mathtt{INDICATE}, \mathtt{DOWN}\\
-    \end{align*}
-
-    \caption[Spatial memory visualization]{Visualization of the spatial memory feature map after 10 time steps, starting in position Each memory slot is colored by the infinity norm of its feature vector. The agent seems to store special information in positions that contain targets, and where targets are likely to be found.}
+    \caption[Spatial memory visualization]{Visualization of feature map in spatial memory after episode completion in gaussian environment. To the left is the environment after the spatial memory agent has completed an episode, and to the right is the agent's feature map at the same time step. A PCA decomposition of the entire map is used to determine the color of the feature vector at each position. The agent seems to use the feature map to store information about target locations. Furthermore, the difference between locations with high blue intensity and low blue intensity suggests that the agent differentiates between areas with high probability of targets and low probability of targets.}
     \label{fig:memory}
 \end{figure}    

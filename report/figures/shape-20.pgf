@@ -749,11 +749,11 @@
 \definecolor{currentstroke}{rgb}{0.150000,0.150000,0.150000}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{1.857864in}{0.100000in}}%
-\pgfpathlineto{\pgfqpoint{3.716164in}{0.100000in}}%
-\pgfpathlineto{\pgfqpoint{3.716164in}{0.296419in}}%
-\pgfpathlineto{\pgfqpoint{1.857864in}{0.296419in}}%
-\pgfpathlineto{\pgfqpoint{1.857864in}{0.100000in}}%
+\pgfpathmoveto{\pgfqpoint{1.877829in}{0.100000in}}%
+\pgfpathlineto{\pgfqpoint{3.696199in}{0.100000in}}%
+\pgfpathlineto{\pgfqpoint{3.696199in}{0.296419in}}%
+\pgfpathlineto{\pgfqpoint{1.877829in}{0.296419in}}%
+\pgfpathlineto{\pgfqpoint{1.877829in}{0.100000in}}%
 \pgfpathclose%
 \pgfusepath{stroke,fill}%
 \end{pgfscope}%
@@ -764,16 +764,16 @@
 \definecolor{currentstroke}{rgb}{0.400000,0.760784,0.647059}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{1.902308in}{0.206445in}}%
-\pgfpathlineto{\pgfqpoint{2.013419in}{0.206445in}}%
-\pgfpathlineto{\pgfqpoint{2.124530in}{0.206445in}}%
+\pgfpathmoveto{\pgfqpoint{1.922273in}{0.206445in}}%
+\pgfpathlineto{\pgfqpoint{2.033384in}{0.206445in}}%
+\pgfpathlineto{\pgfqpoint{2.144496in}{0.206445in}}%
 \pgfusepath{stroke}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.150000,0.150000,0.150000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=2.213419in,y=0.167556in,left,base]{\color{textcolor}\rmfamily\fontsize{8.000000}{9.600000}\selectfont Temporal}%
+\pgftext[x=2.233384in,y=0.167556in,left,base]{\color{textcolor}\rmfamily\fontsize{8.000000}{9.600000}\selectfont temporal}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetroundcap%
@@ -782,16 +782,16 @@
 \definecolor{currentstroke}{rgb}{0.988235,0.552941,0.384314}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{2.965155in}{0.206445in}}%
-\pgfpathlineto{\pgfqpoint{3.076266in}{0.206445in}}%
-\pgfpathlineto{\pgfqpoint{3.187377in}{0.206445in}}%
+\pgfpathmoveto{\pgfqpoint{2.964287in}{0.206445in}}%
+\pgfpathlineto{\pgfqpoint{3.075398in}{0.206445in}}%
+\pgfpathlineto{\pgfqpoint{3.186509in}{0.206445in}}%
 \pgfusepath{stroke}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.150000,0.150000,0.150000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=3.276266in,y=0.167556in,left,base]{\color{textcolor}\rmfamily\fontsize{8.000000}{9.600000}\selectfont Spatial}%
+\pgftext[x=3.275398in,y=0.167556in,left,base]{\color{textcolor}\rmfamily\fontsize{8.000000}{9.600000}\selectfont spatial}%
 \end{pgfscope}%
 \end{pgfpicture}%
 \makeatother%

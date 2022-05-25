@@ -20,15 +20,16 @@ In all three environments, the architecture with a spatial memory outperforms al
 Furthermore, its searches are comparable in performance to a human searcher.
 The temporal memory struggles with remembering precise information over many time steps, which is required for efficient search.
 
-By comparing the search paths chosen by both agents to optimal search paths, we show that they on average select paths that are as close or closer to optimal than humans.
-Beyond this, the quality of the searches remains undecided.
-Comparison to provably optimal behavior could give further insights into the performance of the searches.
+By comparing the search paths chosen by both agents to the shortest possible paths, we show that they on average select paths that are better than a set of general baselines that do not utilize environment cues.
+Furthermore, our approaches select paths that are of equal quality or better than those selected by humans.
+Comparison with a simple handcrafted policy suggested that neither approach learns policies that are close to optimal.
+Beyond this, the quality of the searches needs further investigation.
 
 By comparing both architectures in varying search space sizes, we have shown that a spatial memory scales better to visual search tasks in large search spaces.
 When trained using different numbers of training samples, both architectures overfit to these and perform worse on held out test samples.
 This illustrates the need for being mindful of overfitting in reinforcement learning
 With a sufficient number of training samples, they are able to generalize to unseen environment samples.
-We found that the spatial memory is less prone to overfitting than the temporal memory architecture for this particular search task.
+We found that the spatial memory is less prone to overfitting than the temporal memory architecture for chosen search tasks.
 
 \section{Future Work}
 
@@ -39,24 +40,23 @@ We suggest that future work in the area of visual search with deep reinforcement
     \item What are the minimal conditions under which an agent can learn to search optimally?
     
     It is possible that the presented approach does not satisfy the requirements needed to enable it to learn search behaviors that approach optimal ones.
-    The number of model parameters, memory capacity, reinforcement learning algorithm, reward signal, etc. could limit the ability of the approach to find an optimal policy.
-    This might depend on particular aspects of the search problem, such as action space and observation space.
-    It is interesting to see what the requirements are on these aspects of the problem.
-
-    \item How does the approach presented here compare to rule-based agents in each environment?
-
-    With rule-based agents, we mean non-learning agents that are designed with expert knowledge to act well in a particular environments.
-    This is related to the question above, but not equivalent.
-    We have compared the performance of our approach to humans and three baselines.
-    It is expected that rule-based agent can search more intelligently than these.
-    To see it if viable to deploy a learning-agent instead of a rule-based one, the two should be compared to one another.
+    We have illustrated that our two approaches in their current forms do not find optimal policies in at least one of the environments.
+    The ability of our approaches to find optimal policies could be limited by neural network architecture, choice of reinforcement learning algorithm, reward signal, etc.
+    It is interesting to see if and how our approach can be modified slightly to find policies that are closer to optimal.
 
     \item Does the approach scale to real-world search scenarios?
 
     We have looked at relatively simple search scenarios, where environment cues follow some clear pattern and target detection is trivial.
     Real-world search scenarios will exhibit a different level of complexity.
     Whether the proposed approach scales to such scenarios should be investigated further.
-    Such investigations could use existing simulated visual navigation environments, but specialized environments that offer control of the search difficulty could give more insights into the questions above.
+    Such investigations should either train agents in the real world, or in simulated environments that mirror its properties and evaluate them in the real world.
+
+    \item How can the behavior of learning agents be explained and formally verified?
+    
+    In this work, we have used performance on a held out test set to judge the performance of our agents.
+    Beyond this and some qualitative evaluations, we have treated trained agents more or less as black boxes. 
+    Before deploying learning agents in safety-critical scenarios, more guarantees are needed.
+    How can we prove that an agent trained with reinforcement learning acts in a safe way?
 \end{itemize}
 
 %Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.

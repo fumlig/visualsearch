@@ -21,6 +21,10 @@ The exhaustive baseline policy provides a good measure for what sort of path len
 Both the random and greedy baseline policies select search paths that are on average much longer than the number of positions, suggesting several redundant steps.
 This is further reinforced by the sample search paths in Figures \ref{fig:path-random}, \ref{fig:path-greedy} and \ref{fig:path-exhaustive}.
 
+The handcrafted policy for the gaussian environment is relatively simple, and can certainly be improved.
+Despite this, it outperforms all other agents and both of our approaches.
+This indicates that neither of our approaches have found policies that are close to optimal.
+
 Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
 This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
 Our spatial memory agent achieves better average lengths in these two environments.
@@ -42,7 +46,7 @@ The baselines are unable to utilize this imbalance in target distributions.
 The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
 
 By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
-%This claim is supported further by the visualization of the contents of the feature map in Appendix~\ref{app:memory}.
+This claim is supported further by the memory visualization in Appendix~\ref{app:memory}.
 However, they also tend to revisit positions, and it is not clear that this is good.
 Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well --
 both agents are drawn to areas with high probability but seem to revisit positions redundantly.
@@ -66,6 +70,7 @@ although we would not consider this significant due to the large variance.
 
 Under these metrics, both approaches achieve comparable performance to that of a human searcher. 
 Overall, it would seem like our spatial memory approach is most suited where large search spaces have to be explored strategically, while our temporal memory approach is sufficient for search problems where search spaces can be explored reactively.
+As neither approach perform better than a relatively simple handcrafted policy, we suspect that they are not close to optimal.
 
 \subsection{Scalability To Larger Search Space Sizes}
 
@@ -179,7 +184,7 @@ However, many vision systems have more degrees of freedom.
 Camera sensors often have zoom functionality, which in practice requires additional actions for zooming in and out, and adds an extra dimension to the search space.
 Similarly, if an agent is able to both move and look around we get additional dimensions to consider.
 
-Nothing suggests that our two approaches would be unable to handle more than two dimensions.
+There are no inherent limitations in our two approaches that prevent them from handling more than two search dimensions.
 The temporal memory simply has to encode an additional component of the agent's position.
 The spatial memory can store a higher dimensional feature map.
 Its read operation can be modified to use convolutions in higher dimensions, as noted by \cite{parisotto_neural_2017}.
@@ -335,7 +340,10 @@ It can also be used for malicious purposes, such as autonomous weapons and mass 
 This poses the question of how to avoid AI systems having negative impact on the world.
 Following the above definition of an intelligent system, such scenarios can be seen as a failures of \textit{value alignment}~\cite{russell_provably_2022}.
 We have to avoid giving intelligent agents purposes that do not align with our own.
+Furthermore, intelligent agents must be formally verified to act correctly, or we cannot trust that they will maximize the correct objective.
 
 In the context of RL, we have to ensure that the reward signal an agent acts according to aligns with our purposes as humans.
-Before a system like ours is deployed it must be verified to act according to this principle, or lack the capability to cause harm.
+RL agents typically do not provide guarantees of safe operation~\cite{fulton_safe_2018}.
+Before a system like ours is deployed it must be verified to act according to the value alignment principle, or lack the capability to cause harm.
+
 %As the authors of this work, we explicitly condemn its use for malicious use cases.

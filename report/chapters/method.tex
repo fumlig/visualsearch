@@ -29,8 +29,8 @@ Finally, seed \(c\) determines the initial view \(V\), the location of the targe
 \section{Environments}
 \label{sec:environments}
 
-To train an test an agent for the problem, we use three different environments with similar observation spaces, action spaces and reward signal.
-Each environment have different characteristics that test the applicability of the evaluated approaches to different types search problems.
+To train and test an agent for the problem, we use three different environments with the same observation space, action space and reward signal.
+Each environment have different characteristics that test the applicability of the evaluated approaches to different types of search problems.
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
 
@@ -147,10 +147,10 @@ The agent observes the scene through a pan-tilt perspective camera.
 Moving actions rotate the camera instead of translating it.
 The \texttt{LEFT} and \texttt{RIGHT} actions control the yaw of the camera, while \texttt{DOWN} and \texttt{UP} control its pitch.
 
-The yaw is divided into 20 steps between 0 and 360 degrees.
-The yaw angle wraps around, so that the agent can look around freely.
-Similarly, the pitch is divided into 10 steps between 0 (straight forward) and -90 degrees (straight down), but without wrapping around.
-This means that the camera can take 200 different positions.
+The yaw angle is divided into 20 steps between 0 and 360 degrees.
+This angle wraps around, so that the agent can look around freely.
+Similarly, the pitch angle is divided into 10 steps between 0 (straight forward) and -90 degrees (straight down), but without wrapping around.
+This means that the camera can take \(20 \times 10 = 200\) different positions.
 
 Targets are always visible from at least one camera position.
 They may be visible from multiple positions, and the agent is expected to use the \texttt{INDICATE} action only when a target is as close to the center of the view image as possible.
@@ -191,7 +191,7 @@ The architecture of the neural network is presented in Figure~\ref{fig:architect
 \begin{figure}
     \centering
     \includegraphics{figures/architecture.pdf}
-    \caption[Network architecture]{The neural network architecture used for estimating the policy and value functions from image and position observations.}
+    \caption[Neural network architecture]{The neural network architecture used for estimating the policy and value functions from image and position observations.}
     \label{fig:architecture}
 \end{figure}
 
@@ -302,7 +302,7 @@ Having the baselines randomly indicate that targets are visible would lead to ex
 By giving this advantage to the baselines, the emphasis of the comparison is put on the search path planning.
 
 \begin{algorithm}
-    \caption{Random Baseline Policy}
+    \caption{Random baseline policy}
     \label{alg:random}
     \begin{algorithmic}
         \If{there is a target at \(p_t\)}
@@ -315,7 +315,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
 \end{algorithm}
 
 \begin{algorithm}
-    \caption{Greedy Baseline Policy}
+    \caption{Greedy baseline policy}
     \label{alg:greedy}
     \begin{algorithmic}
         \If{there is a target at \(p_t\)}
@@ -334,7 +334,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
 \end{algorithm}
 
 \begin{algorithm}
-    \caption{Exhaustive Baseline Policy}
+    \caption{Exhaustive baseline policy}
     \label{alg:exhaustive}
     \begin{algorithmic}
         \If{there is a target at \(p_t\)}
@@ -344,7 +344,8 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
             \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
             \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
             \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(a_t \leftarrow \text{the first } a \text{ in } \langle \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT} \rangle \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
+                \State \(A_{\text{order}} \leftarrow \langle \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT} \rangle\)
+                \State \(a_t \leftarrow \text{the first } a \text{ in } A_{\text{order}} \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
             \Else
                 \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
             \EndIf
@@ -352,24 +353,33 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
     \end{algorithmic}
 \end{algorithm}
 
+% todo: begin
+
 To get a better sense of how our approaches compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
 This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that move the agent towards bluer regions.
 
 \begin{algorithm}
-    \caption{Handcrafted Baseline Policy}
+    \caption{Handcrafted baseline policy (gaussian environment)}
     \label{alg:handcrafted}
     \begin{algorithmic}
         \If{there is a target at \(p_t\)}
             \State \(a_t \leftarrow \mathtt{INDICATE}\)
         \Else
-            \State \(b_t \leftarrow \text{the blue channel of } x_t\)
-
             \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
             \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
             \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
+            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
+                \State \(b_t \leftarrow \text{the blue channel of } x_t\)
+                \State \(A_{\text{order}} \leftarrow \mathcal{A}_{\text{explore}} \text{ ordered by the directional derivative of } b_t \text{ wrt the action direction}\)
+                \State \(a_t \leftarrow \text{the first } a \text{ in } A_{\text{order}}\)
+            \Else
+                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
+            \EndIf
         \EndIf
     \end{algorithmic}
 \end{algorithm}
+
+% todo: end
 
 For each of the three environments, we train our approaches on the full distribution of samples.
 Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.
@@ -414,7 +424,8 @@ For each agent and training set size, we report how the average length and succe
 
 \section{Implementation}
 
-The environment is implemented with using the Gym~\cite{brockman_openai_2016} interface. The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
+The environment is implemented with the Gym~\cite{brockman_openai_2016} interface.
+The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
 PPO~\cite{schulman_proximal_2017} was implemented following the official implementation by OpenAI,
 and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.

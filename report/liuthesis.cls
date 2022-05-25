@@ -14,16 +14,7 @@
 %% Compatibility:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%%% Commentary:
-%%
-%% Read the README instead...
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%%% Change log:
-%%
-%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% This program is free software; you can redistribute it and/or
@@ -41,10 +32,6 @@
 %% the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 %% Floor, Boston, MA 02110-1301, USA.
 
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%%% Code:
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{liuthesis} [2022/01/25 Thesis class for LiU]
 \typeout{Undergraduate and graduate thesis class for LiU}

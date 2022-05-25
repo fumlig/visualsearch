@@ -151,14 +151,17 @@ A recurrent layer with input \(\mathbf{x}_t\), output \(\mathbf{y}_t\) and hidde
 \end{align}
 
 where \(f_\mathbf{w}\) is the update process for the hidden state and \(g_y\) is the activation function for the hidden layer.
-This model can be turned into a feed-forward network over a sequence of input vectors \(\mathbf{x}_1, \dots \mathbf{x}_T\) and observed outputs \(\mathbf{y}_1, \dots, \mathbf{y}_T\) by \textit{unrolling} it for \(T\) steps. The weights are shared across all time steps. This means that RNNs can operate on inputs of arbitrary lengths.
+This model can be turned into a feed-forward network over a sequence of input vectors \(\mathbf{x}_1, \dots \mathbf{x}_T\) and observed outputs \(\mathbf{y}_1, \dots, \mathbf{y}_T\) by \textit{unrolling} it for \(T\) steps. 
+The weights are shared across all time steps.
+This means that RNNs can operate on inputs of arbitrary lengths.
 The hidden state is used as a summary of all previous items in the sequence.
 Thus, RNNs make a Markov assumption.~\cite{russell_artificial_2021}
 
 In practice, conventional RNNs struggle with learning long-term dependencies.
 During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
 An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_long_1997}.
-LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied from time step to time step, and three soft \textit{gating units} that govern the information flow in the hidden state update process \(f\). This makes LSTMs particularly useful for learning over long sequences.
+LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied from time step to time step, and three soft \textit{gating units} that govern the information flow in the hidden state update process \(f\).
+The memory cell can remember over arbitrary time intervals, making LSTMs particularly useful for problems involving long sequences.
 
 \subsection{Reinforcement Learning}
 \label{sec:reinforcementlearning}
@@ -212,12 +215,11 @@ At each time step \(t\), the goal of the agent is to select the action that maxi
 \end{equation}
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
-Planning in a POMDP is undecidable, and solving one is often computationally intractable.
+This makes finding exact solutions to POMDPs computationally complex, and virtually intractable.
 Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_planning_1998} which is acts on.
 The belief state summarizes the agent's previous experience and is therefore dependent on the full \textit{history} of actions and observations.
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
 From here on we will use the belief state and the environment state \(s\) interchangeably. 
-% Sutton page 467 is better, contains latent state assumption
 
 \subsubsection{Policies and Value Functions}
 \label{sec:policy-value}
@@ -230,8 +232,8 @@ Most RL solutions methods also approximate a \textit{value function}.
 A value function \(V_\pi\) estimates how good it is to be in a state.
 The value function \(V_\pi(s)\) is the expected (discounted) return when starting at state \(s\) and following policy \(\pi\) until the end of the episode.
 There are two common alternative value functions:
-The \textit{quality function} \(Q_\pi(s,a)\) gives the value of state \(s\) under policy \(\pi\) where \(a\) is the first action taken.
-Given a quality function, \textit{action-value} methods choose the action greedily at every state as \(arg\,max Q_\pi(s, a)\).
+The \textit{Q-function} \(Q_\pi(s,a)\) gives the value of state \(s\) under policy \(\pi\) where \(a\) is the first action taken.
+Given a Q-function, \textit{action-value} methods choose the action greedily at every state as \(arg\,max Q_\pi(s, a)\).
 The \textit{advantage function} \(A_\pi(s, a)\) instead represents the relative advantage of actions, \(A_\pi = Q_\pi - V_\pi\).~\cite{sutton_reinforcement_2018}
 
 For problems with large state and action spaces, it is common to represent value functions with \textit{function approximation}.
@@ -252,10 +254,9 @@ In practice, value functions are often still used to learn the policy parameter,
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
 
-One important aspect of function approximation is its interplay with partial observability.
+One important aspect of RL using function approximation is that it is applicable to partially observable problems.
 If there is a state variable that is not observable, as for partially observable environments,
-then the parametrization can be chosen such that the approximate value does not depend on that state variable.
-Because of this, function approximation is applicable to the partially observable case.~\cite{sutton_reinforcement_2018}
+the parametrization can be chosen such that the approximate value does not depend on that state variable.~\cite{sutton_reinforcement_2018}
 
 % {arulkumaran_survey_2017} also gives a good introduction to algorithms
 % https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
@@ -281,7 +282,7 @@ Special care has to be taken to ensure that the reward encourages the desired be
 Here, the problem of \textit{sparse rewards} also comes into play.
 The agent has to be reward frequently enough to allow it to achieve its goal once.
 Often it has to incentivize it to achieve its goal efficiently, with multiple different starting conditions.
-If rewards are too sparse, the agent may explore aimlessly and take too long to find achieve its goal.
+If rewards are too sparse, the agent may explore aimlessly and take too long to achieve its goal.
 If the received reward is temporally distant from the action that caused it, the agent may have difficulty connecting the two.
 This is known as the \textit{credit assignment problem}~\cite{minsky_steps_1961}.
 
@@ -296,10 +297,10 @@ As mentioned in Section~\ref{sec:policy-value}, policies and value functions are
 Neural networks have good properties for function approximation and have been used for RL with success.
 One early example is TD-Gammon~\cite{tesauro_temporal_1995}, a neural network trained with RL that reached expert Backgammon performance in 1995.
 
-More recently, the successes of deep learning have bled over into the field of RL.
+More recently, successes in deep learning have led to significant advancements in the field of RL.
 In 2015, Mnih et al.~\cite{mnih_human-level_2015} extend \cite{mnih_playing_2013} and introduce DQN, which combines deep neural networks with RL.
 DQN successfully plays Atari games using only visual input.
-It approximates the quality function \(q(s, a)\) with a CNN architecture, and selects actions greedily.
+It approximates the Q-function \(Q(s, a)\) with a CNN architecture, and selects actions greedily.
 To incorporate some memory, images from the 4 previous time steps are stacked and used as input to the neural network.
 The input is fed through three convolutional layers and a hidden fully connected layer, all with ReLU activation functions.
 The output layer has one output for each valid action, representing Atari controller buttons.
@@ -378,7 +379,7 @@ There are several rigorous attempts to implement robotic object search systems u
 Forssén et al.~\cite{forssen_informed_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
 Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
 Each objects is examined from several perspectives and ranked by probability of being the queried object.
-Shubina and Tsotsos~\cite{shubina_visual_2010} model the search problem as in \cite{ye_complexity-level_2001}, and solve with a greedy action selection strategy.
+Shubina and Tsotsos~\cite{shubina_visual_2010} model the search problem as in \cite{ye_complexity-level_2001}, and solve it using a greedy action selection strategy.
 They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
 Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_search_2011,aydemir_active_2013}.
 %Meger et al.~\cite{meger_curious_2008} describe a system that performs object recognition in realistic scenarios\dots
@@ -390,7 +391,7 @@ learning systems that are less dependent on expert knowledge have the potential 
 
 \subsubsection{Sequential Visual Attention}
 
-Minut and Mahadevan\cite{minut_reinforcement_2001} propose an sequential model of selective visual attention for visual search tasks.
+Minut and Mahadevan\cite{minut_reinforcement_2001} propose a sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
 A policy for controlling a fixed pan-tilt-zoom camera is learned using reinforcement learning.
 The goal of the agent is to aim the camera at the region where a target is most likely to be found.
@@ -398,7 +399,7 @@ It has to decide where to fixate next based on visual information only.
 Despite being limited to a single environment, this is an early example of visual search modelled as an RL problem.
 
 Mnih et al.~\cite{mnih_recurrent_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
-Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of images pixels.
+Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of image pixels.
 They propose a recurrent model that extracts information from images by adaptively selecting a sequence of smaller regions to process at high resolution.
 At each time step, the agent receives an image observation of the environment.
 Through actions, the agent selects a limited region of this observation to view in high resolution.
@@ -464,10 +465,10 @@ There are several simulated environments for such tasks~\cite{kolve_ai2-thor_201
 Zhu et al.~\cite{zhu_target-driven_2017} create a model for target-driven visual navigation in indoor scenes with deep RL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object in the scene with a minimal number of steps.
 The agent moves forwards, backwards, and turns left and right at constant step lengths.
-They use a reward signal with a small time penalty to incentivize task completion in few steps.
-They compare their approach to random walk and the shortest path and achieve promising results.
+A reward signal with a small time penalty is used to incentivize task completion in few steps.
+They compare their approach to random walk and the shortest path, with promising results.
 This setup is quite similar to the one considered in this report, but the authors make a few assumptions that we do not.
-They a set of 32 scenes, each of which contain a fixed number of object instances.
+Their method is trained and evaluated on 32 scenes, each of which contain a fixed number of object instances.
 They focus on learning spatial relationships between objects in these specific scenes, and have scene-specific layers to achieve this.
 Thus, while they show that they can adapt a trained network to a new scene, their approach is unable to zero-shot generalize to new scenes.
 
@@ -475,7 +476,7 @@ Ye et al.~\cite{ye_active_2018} propose an alternative architecture to \cite{zhu
 Specifically, the output of the localization component is fed as input.
 This allows the agent to know if the target object is in view, and where.
 The object recognition module is trained separately from the policy.
-While requires a set of images of potential target objects labelled with their class and location, it also illustrates how object recognition can be offloaded to a separate module in reinforcement learning agents that benefit from such functionality.
+While this requires a set of images of potential target objects labeled with their class and location, it also illustrates how object recognition can be offloaded to a separate module in reinforcement learning agents that benefit from such functionality.
 
 Yang et al.~\cite{yang_visual_2018} propose to use semantic scene priors to improve navigation towards objects in unseen scenes.
 The agent observes its environment through a camera.
@@ -574,7 +575,7 @@ When the number of training samples exceeds the capacity of the agent, they over
 When exposed to new but statistically similar environments during testing, test performance could vary significantly despite consistent training performance.
 The authors argue that good generalization requires the \textit{inductive bias} of the algorithms to be compatible with the bias of the problems.
 The inductive bias refers to a priori algorithmic preferences, like neural network architecture.
-When comparing MLPs with CNNs, they find that MLPs tend to be better at fitting the training data are worse at generalizing.
+When comparing MLPs with CNNs, they find that MLPs tend to be better at fitting the training data but worse at generalizing.
 When rewards are spatially invariant, CNNs generalize much better than MLPs.
 The authors advocate for carefully designed testing protocols for detecting overfitting.
 The effectiveness of stochastic-based evaluation depends on the properties of the task.
@@ -628,7 +629,7 @@ Evaluation has to be performed on the full distribution of (held out) contexts.
 A problem in state-of-the-art deep RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
-In some cases, training an algorithm in an environment twice can give learning curves that do not fall within the same distribution~\cite{henderson_deep_2018}.
+In some cases, training an algorithm in an environment twice can result in learning curves that do not fall within the same distribution~\cite{henderson_deep_2018}.
 This has meant that reproducing state-of-the-art deep RL results is difficult.
 A common solution is to report average results and variance across multiple different runs.
 

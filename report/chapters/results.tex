@@ -3,15 +3,14 @@
 
 This chapter presents the results for each of the experiments described in Section~\ref{sec:experiments}.
 In addition to the results here, we present learning curves for all environments in Appendix~\ref{app:learning} and some search path examples for our approaches and baselines in Appendix~\ref{app:paths}.
-% todo: We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
 
+% todo: We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
 
 \section{Search Performance and Behavior}
 
-% todo: run for 1000 samples?
 Table~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
 The average search path length is computed from episodes in which the agents successfully finds all targets.
-These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the four baselines and human searchers.
+These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the baselines baselines and human searchers.
 
 Overall, our two approaches and human searchers achieve similar scores.
 Our spatial memory approach achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
@@ -28,6 +27,7 @@ The random baseline policy achieves the worst SPL, success rate and average sear
 The greedy baseline policy is closer to the remaining agents.
 The exhaustive baseline policy achieves an average search path length that is lower than our temporal memory approach.
 Its SPL score, however, is only higher than the those of the other two baselines.
+The handcrafted baseline for the gaussian environment performed better than all other agents in this environment. % todo
 
 \begin{table}
     \centering

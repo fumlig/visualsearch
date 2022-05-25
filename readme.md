@@ -13,7 +13,6 @@ todo
 - Illustrate memory
 - Fix chapter and section introductions
 
-
 - Softmax temperature
 - Visualize actions and scene
 - Show attention

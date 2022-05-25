@@ -38,7 +38,7 @@ Second, targets are not distributed uniformly across many samples of the camera 
 They are most commonly found near the horizon.
 In the gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
 
-Our temporal memory agent performs very well in the camera environment.
+Our temporal memory agent performs especially well in the camera environment.
 We suspect that this is due to the fact that less emphasis is placed on remembering over many time steps.
 Search in this environment can be more reactive.
 When inspecting the search patterns used by our temporal memory agent in this environment, we see that it has learned to alternate between scanning across the horizon and locating targets in its periphery.
@@ -245,8 +245,8 @@ It stores visual features of the explored scene in an explicit structure, and is
 In our experiments we saw that the spatial memory performed better than the temporal one,
 but it has some disadvantages as well.
 
-First of all, it relies on the agent knowing its position so that it can index the memory properly.
-Secondly, the feature map of the memory grows with the size of the search space.
+First, it relies on the agent knowing its position so that it can index the memory properly.
+Second, the feature map of the memory grows with the size of the search space.
 This is not an inherent feature of the LSTM (although an LSTM may need to grow to be able to act well in large search spaces).
 
 %~\cite{oh_role_2004}

@@ -172,7 +172,7 @@ The final agent should be able to recognize targets, regardless of where they ap
 It is likely important for the agent to have access to its location, especially for large search spaces.
 As environments are procedurally generated, a partial image observation of the scene is not sufficient to ground the agent in it.
 It should also be able to integrate features over time in order to remember which locations have been visited.
-Remembering visual features of of these locations may also be of importance, as it can provide clues for what is in their proximity.
+Remembering visual features of these locations may also be of importance, as it can provide clues for what is in their proximity.
 
 Due to the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradient methods.
 Specifically, we employ an actor-critic approach that estimates a policy and value function with a multi-headed neural network.
@@ -411,7 +411,7 @@ For this reason, it is interesting to quantify how the number of training sample
 
 We do this by training our two agents on 500, 1000, 5000 and 10000 samples of the terrain environment.
 Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_leveraging_2020}.
-This should illustrate how many samples are needed to generalize, as well as if and when overfitting occurs.
+This should illustrate how many samples are needed to generalize, as well as whether overfitting occurs.
 For each agent and training set size, we report how the average length and success rate changes while learning.
 
 %\subsection{Ablations}

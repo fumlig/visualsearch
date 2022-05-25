@@ -10,7 +10,7 @@ In addition to the results here, we present learning curves for all environments
 
 Table~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
 The average search path length is computed from episodes in which the agents successfully finds all targets.
-These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the baselines baselines and human searchers.
+These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the baselines and human searchers.
 
 Overall, our two approaches and human searchers achieve similar scores.
 Our spatial memory approach achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
@@ -75,7 +75,7 @@ Figure~\ref{fig:sample} shows how the average length and success rate in the ter
 These metrics are presented for the limited training set and unlimited testing set respectively.
 
 It seems like both architectures can overfit to training sets of as many as 1000 samples,
-For smaller training set sizes, search path lengths on the test get get gradually worse past a certain time step.
+For smaller training set sizes, search path lengths on the test get gradually worse past a certain time step.
 Interestingly the LSTM architecture seems to overfit more severely to small training sets.
 Its performance on the test set decreases substantially past a certain time step.
 The spatial memory architecture does not overfit as severely.

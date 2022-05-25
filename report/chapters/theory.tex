@@ -39,7 +39,7 @@ Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_co
 
 Natural environments are in fact seldom completely random, but instead tend to exhibit some structure.
 When finding targets, there is usually something about this structure that can be utilized to improve search performance.
-Such regularities can learned from past experience and used during future searches.
+Such regularities can learned from experience and used during future searches.
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
 Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
@@ -507,7 +507,7 @@ Dhiman et al.~\cite{dhiman_critical_2019} critically investigate deep RL for nav
 They ask whether deep RL algorithms are inherently able to gather and exploit environmental information for during navigation.
 Experimentally, they find that an agent is able to exploit environment information when trained and tested on the same map.
 When trained and tested on different maps, the agent does not seem to be able to exploit environment information to navigate more effectively.
-The authors use relatively small training set of less than 1000 samples, but do not consider that their agents could have overfit this this set.
+The authors use relatively a small training set of less than 1000 samples, but do not consider that their agents could have overfit to this set.
 Finally, they find that the agent is not able to consistently find optimal navigation paths in seen environments when its starting position is randomized.
 
 %These works all focus on navigation between points in a scene.
@@ -534,7 +534,7 @@ Hausknecht and Stone~\cite{hausknecht_deep_2017} investigate the effects of addi
 They use the same convolutional network as \cite{mnih_human-level_2015}, but only use the most recent frame as input and replace the hidden layer with a recurrent LSTM layer.
 It is found that the agent is able to integrate information over time and achieves comparable performance to the original DQN agent.
 Several other works use a recurrent step to solve tasks that require memory, like~\cite{mnih_recurrent_2014} and \cite{mnih_asynchronous_2016}.
-General-purpose recurrent neural networks can in theory remember anything, but have practical issues like the the ones described in Section~\ref{sec:rnn}.
+General-purpose recurrent neural networks can in theory remember anything, but have practical issues like the ones described in Section~\ref{sec:rnn}.
 Furthermore, they might not be easily trained for all tasks.
 
 Specialized memory architectures can provide better performance for their intended tasks.

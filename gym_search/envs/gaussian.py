@@ -62,7 +62,7 @@ class GaussianEnv(SearchEnv):
 
         return image, position, targets
 
-    def get_handmade_action(self, detect=False):
+    def get_handcrafted_action(self, detect=False):
         if not detect and any([self.visible(target) and not hit for target, hit in zip(self.targets, self.hits)]):
             return 0
 

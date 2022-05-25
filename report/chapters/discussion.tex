@@ -42,13 +42,14 @@ The baselines are unable to utilize this imbalance in target distributions.
 The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
 
 By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
+%This claim is supported further by the visualization of the contents of the feature map in Appendix~\ref{app:memory}.
 However, they also tend to revisit positions, and it is not clear that this is good.
 Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well --
 both agents are drawn to areas with high probability but seem to revisit positions redundantly.
 Some of these revisits could be attributed to the stochastic policy.
 Making the policy completely deterministic by selecting the action with the highest probability is not a solution, as it tends to lead to dead states or loops where the agent does not progress.
 
-Worth noting is that revisiting positions is not always the wrong choice.
+Also worth noting is that revisiting positions is not always the wrong choice.
 One such example is when the current position of the agent is directly between two targets.
 The optimal path to find both of these is to first go to any one of them, and then to go back towards the other one by revisiting positions.
 
@@ -193,11 +194,13 @@ This has implications for what kind of environments can be used for learning.
 One can imagine a scenario where the locations of targets are not known, but a black-box system is responsible for detecting them and providing positive feedback to the RL agent.
 In this case, the bonus for moving towards targets is not computable.
 
-In the gaussian environment, we found that the additional reward bonuses where required for convergence to good policies.
+In the terrain environment, we found that the additional reward bonuses where required for convergence to good policies.
 One reason for this could be that it is difficult to interpret compared to the other environment.
 With a small bonus for desired behavior, reinforcements are more frequent and may aid with picking up subtle patterns.
 
 However, a specialized reward like ours risks introducing bias that inhibit learning by leading to poor local optima.
+One example of such a bias is the bonus reward for moving towards targets.
+In the travelling salesman problem, always picking the nearest node unvisited node does not yield optimal paths in general.
 Several works argue for minimizing such biases, as learning systems can sometimes find better solutions without them~\cite{hessel_inductive_2019}.
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
 For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.

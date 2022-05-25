@@ -61,7 +61,7 @@ The action space is the same in all environments:
     a_t \in \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{INDICATE} \right\rbrace,
 \end{equation}
 
-where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each direction.
+where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each cardinal direction \(\left\langle -1, 0 \right\rangle\), \(\left\langle 1, 0 \right\rangle\), \(\left\langle 0, -1 \right\rangle\), \(\left\langle 0, 1 \right\rangle\).
 The final action, \(\mathtt{INDICATE}\), is used to indicate that a target is in view.
 
 The reward signal should be designed so that the agent learns a policy that achieves the goal of finding all targets with a minimal number of actions.
@@ -78,7 +78,7 @@ The term \(d = 1\) if \(p_t\) is closer to the nearest target than \(p_{t-1}\), 
 Similarly, \(e = 1\) if \(p_t\) has not been explored previously and \(e = 0\) otherwise.
 
 Through experimentation, we find that a larger time penalty than \(-0.01\) dominates the reward for finding targets.
-This is potentially related to the episode time -- with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
+This is potentially related to the number of time steps per episode -- with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
 
 The two next terms are bonus rewards, intended to speed up learning by further encouraging desired behavior.
 Actions that move the agent towards the nearest target and move the view to previously unseen regions are desirable.
@@ -352,6 +352,25 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
     \end{algorithmic}
 \end{algorithm}
 
+To get a better sense of how our approaches compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
+This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that move the agent towards bluer regions.
+
+\begin{algorithm}
+    \caption{Handcrafted Baseline Policy}
+    \label{alg:handcrafted}
+    \begin{algorithmic}
+        \If{there is a target at \(p_t\)}
+            \State \(a_t \leftarrow \mathtt{INDICATE}\)
+        \Else
+            \State \(b_t \leftarrow \text{the blue channel of } x_t\)
+
+            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
+            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
+            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
+
 For each of the three environments, we train our approaches on the full distribution of samples.
 Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.
 When measuring the average search path length, we only include successful searches.
@@ -380,9 +399,9 @@ In realistic scenarios, training agents on an unlimited number of samples is not
 It is more likely that there is a limited set of samples for an agent to learn from.
 For this reason, it is interesting to quantify how the number of training samples affects generalization to the full distribution.
 
-We do this by training our two agents on 500, 1000, 5000, 10000 and an unlimited number samples of the terrain environment.
+We do this by training our two agents on 500, 1000, 5000 and 10000 samples of the terrain environment.
 Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_leveraging_2020}.
-This should illustrate how many samples are needed to generalize, and if overfitting is an issue.
+This should illustrate how many samples are needed to generalize, as well as if and when overfitting occurs.
 For each agent and training set size, we report how the average length and success rate changes while learning.
 
 %\subsection{Ablations}

@@ -625,7 +625,7 @@ Evaluation has to be performed on the full distribution of (held out) contexts.
 \subsection{Evaluation of Agents}
 \label{sec:theory-evaluation}
 
-A problem in state-of-the art deep RL is reproducibility.
+A problem in state-of-the-art deep RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
 In some cases, training an algorithm in an environment twice can give learning curves that do not fall within the same distribution~\cite{henderson_deep_2018}.
@@ -634,7 +634,7 @@ A common solution is to report average results and variance across multiple diff
 
 However, the sample inefficiency of current deep RL algorithms together with the rise in popularity of more challenging benchmarks has led to long training times.
 This has made it less feasible to measure performance over many training runs,
-which in turn has led to a shift to only evaluating a small number of runs (\(N \leq 5\)) per task.~\cite{agarwal_deep_2022}
+which in turn has led to a shift to only evaluating a small number of runs (\(N \leq 5\)) per task~\cite{agarwal_deep_2022}.
 This is problematic, as several analyses indicate that as many as \(N = 20\) runs are required for statistically significant results~\cite{colas_how_2018,colas_hitchhikers_2019}.
 
 Henderson et al.~\cite{henderson_deep_2018} investigate reproducibility methods in deep RL empirically, focusing on policy gradient methods.
@@ -646,8 +646,8 @@ It is found that ReLU activations tend to perform best across environments and a
 For PPO, the use of large networks may require changing other hyperparameters like learning rate.
 Confidence bounds with sample bootstrapping is used to show that PPO is among the more stable algorithms.
 
-For certain environments, learning curves can indicate successful optimization but the learned behavior may not be satisfactory.
-It is therefore important to not only show returns, but also demonstrations of the learned policy in action.
+For certain environments, successful optimization does not always lead to behavior that is satisfactory.
+It is therefore important to not only show returns in learning curves, but also demonstrations of the learned policy in action.
 Interestingly, implementation differences that are not reflected in publications can have a dramatic impact on performance.
 It is therefore necessary to enumerate implementation details and package code bases with publications.
 Performance of baseline experiments should also match original baseline publication code.

@@ -69,7 +69,7 @@
 \pgfpathrectangle{\pgfqpoint{0.302637in}{0.339475in}}{\pgfqpoint{2.406995in}{2.406995in}}%
 \pgfusepath{clip}%
 \pgfsys@transformshift{0.302637in}{0.339475in}%
-\pgftext[left,bottom]{\includegraphics[interpolate=true,width=2.410000in,height=2.410000in]{memory-img0.png}}%
+\pgftext[left,bottom]{\includegraphics[interpolate=true,width=2.410000in,height=2.410000in]{memory-map-img0.png}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfpathrectangle{\pgfqpoint{0.302637in}{0.339475in}}{\pgfqpoint{2.406995in}{2.406995in}}%
@@ -903,7 +903,7 @@
 \pgfpathrectangle{\pgfqpoint{3.050385in}{0.339475in}}{\pgfqpoint{2.406995in}{2.406995in}}%
 \pgfusepath{clip}%
 \pgfsys@transformshift{3.050385in}{0.339475in}%
-\pgftext[left,bottom]{\includegraphics[interpolate=true,width=2.410000in,height=2.410000in]{memory-img1.png}}%
+\pgftext[left,bottom]{\includegraphics[interpolate=true,width=2.410000in,height=2.410000in]{memory-map-img1.png}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetbuttcap%

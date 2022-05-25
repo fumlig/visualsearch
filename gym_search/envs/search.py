@@ -273,5 +273,5 @@ class SearchEnv(gym.Env):
     
         return valid[0]
     
-    def get_handmade_action(self, detect=False):
+    def get_handcrafted_action(self, detect=False):
         raise NotImplementedError

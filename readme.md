@@ -8,25 +8,17 @@ todo
 ## To do
 
 - Abstract
-- Conclusion
-- Source criticism
-- Wider context
-- Send to Fredrik
+- Acknowledgements
 
 - Illustrate memory
-- Update camera metrics
-- Learning curves
+- Fix chapter and section introductions
+
 
 - Softmax temperature
 - Visualize actions and scene
 - Show attention
 - Update presentation
-- Dumb baseline
-
-- ~Resolve naming confusions~
-- ~Update search paths~
-- ~Make it clear that observation is limited~
-
+- Fix readme
 
 ## Reproduce
 

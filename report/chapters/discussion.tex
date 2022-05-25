@@ -200,7 +200,8 @@ One can imagine a scenario where the locations of targets are not known, but a b
 In this case, the bonus for moving towards targets is not computable.
 
 In the terrain environment, we found that the additional reward bonuses where required for convergence to good policies.
-One reason for this could be that it is difficult to interpret compared to the other environment.
+One reason for this could be that a sparse reward led to too subtle connections between environment appearance and good actions.
+This in turn makes assigning credit assignment to the correct actions difficult.
 With a small bonus for desired behavior, reinforcements are more frequent and may aid with picking up subtle patterns.
 
 However, a specialized reward like ours risks introducing bias that inhibit learning by leading to poor local optima.

@@ -254,7 +254,7 @@ In practice, value functions are often still used to learn the policy parameter,
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
 
-One important aspect of RL using function approximation is that it is applicable to partially observable problems.
+One important aspect of RL with function approximation is that it is applicable to partially observable problems.
 If there is a state variable that is not observable, as for partially observable environments,
 the parametrization can be chosen such that the approximate value does not depend on that state variable.~\cite{sutton_reinforcement_2018}
 

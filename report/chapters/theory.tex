@@ -396,7 +396,7 @@ An agent is tasked with finding a particular object in a scene
 A policy for controlling a fixed pan-tilt-zoom camera is learned using reinforcement learning.
 The goal of the agent is to aim the camera at the region where a target is most likely to be found.
 It has to decide where to fixate next based on visual information only.
-Despite being limited to a single environment, this is an early example of visual search modelled as an RL problem.
+Despite being limited to a single environment, this is an early example of visual search modeled as an RL problem.
 
 Mnih et al.~\cite{mnih_recurrent_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
 Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of image pixels.
@@ -615,8 +615,8 @@ If the similarities between training and testing contexts are known, they can be
 When there is not specific inductive bias to encode, standard regularization can be used.
 Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning the invariances from training and hope that these generalize to testing.
 
-They further propose a formalism for collections of problems called contextual CMDPs.
-A CMDP which is an MDP \(\mathcal{M}\) (or POMDP) where the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
+They further propose a formalism for collections of problems called contextual MDPs (CMDPs).
+A CMDP is an MDP \(\mathcal{M}\) (or POMDP) in which the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
 where \(s \in \mathcal{S}\) is the underlying state and \(c \in \mathcal{C}\) is the \textit{context}.
 The context takes the role of a seed and determines the sample drawn from the underlying distribution of task instances.
 In a CMDP, separate train and test tasks can be defined by creating \(\mathcal{C}_\text{train} \subseteq \mathcal{C}\) and \(\mathcal{C}_\text{test} \subseteq \mathcal{C}\) such that \(\mathcal{C}_\text{train} \cap \mathcal{C}_\text{test} = \varnothing\).

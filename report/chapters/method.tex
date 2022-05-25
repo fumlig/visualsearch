@@ -78,7 +78,7 @@ The term \(d = 1\) if \(p_t\) is closer to the nearest target than \(p_{t-1}\), 
 Similarly, \(e = 1\) if \(p_t\) has not been explored previously and \(e = 0\) otherwise.
 
 Through experimentation, we find that a larger time penalty than \(-0.01\) dominates the reward for finding targets.
-This is potentially related to the number of time steps per episode -- with a time penalty thats too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
+This is potentially related to the number of time steps per episode -- with a time penalty that is too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
 
 The two next terms are bonus rewards, intended to speed up learning by further encouraging desired behavior.
 Actions that move the agent towards the nearest target and move the view to previously unseen regions are desirable.
@@ -426,7 +426,8 @@ For each agent and training set size, we report how the average length and succe
 
 The environment is implemented with the Gym~\cite{brockman_openai_2016} interface.
 The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
-PPO~\cite{schulman_proximal_2017} was implemented following the official implementation by OpenAI,
+PPO~\cite{schulman_proximal_2017} was implemented following the official implementation by the original authors,
 and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.
 The source code for environments, models and algorithms is available at \url{https://gitlab.liu.se/osklu414/tqdt33-masters-thesis}.
+.

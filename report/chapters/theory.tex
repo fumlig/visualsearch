@@ -1,15 +1,19 @@
 \chapter{Theory}
 \label{cha:theory}
 
-This chapter introduces background and related work.
+The problem considered in this thesis is at the junction of several fields, each with their own history and recent advancements.
+In this chapter, we cover background theory that is relevant for the topic of this thesis.
+We also survey related work that considers problems similar to ours.
 
 \section{Background}
 \label{sec:background}
 
-In this section, we give background to the tackled problem and outline the theory behind our approach.
-Sections \ref{sec:visualsearch} and \ref{sec:activevision} provide perspective to the problem from neuroscience and machine perception respectively.
-Section \ref{sec:deeplearning} overviews the theory behind function approximation with neural networks, and some common neural network architectures.
-Section \ref{sec:reinforcementlearning} summarizes the foundations of reinforcement learning and deep reinforcement learning.
+What constitutes intelligent search behavior is closely linked to how we humans search.
+This has been an active area of study in neuroscience for a long time~\cite{wolfe_five_2017,eckstein_visual_2011,nakayama_situating_2011}.
+The same is true for machine perception and decision-making~\cite{aloimonos_active_1988,bajcsy_active_1988}.
+In recent years, deep learning has led to great improvements in the ability of machines to perceive sensory input like images~\cite{zhao_object_2019}.
+Somewhere between machine perception and decision-making lies deep reinforcement learning, which is the combination of deep learning~\cite{goodfellow_deep_2016} and reinforcement learning~\cite{sutton_reinforcement_2018}.
+All of these fields provide necessary and useful perspective to our considered problem.
 
 \subsection{Visual Search and Attention}
 \label{sec:visualsearch}
@@ -312,7 +316,6 @@ Such methods are often referred to as deep reinforcement learning (deep RL) meth
 \label{sec:ppo}
 
 Proximal policy optimization (PPO)~\cite{schulman_proximal_2017} is a family of policy-gradient algorithms that have turned out to strike a good balance between simplicity, stability and ease of tuning while achieving strong results on several tasks~\cite{schulman_proximal_2017,henderson_deep_2018,cobbe_leveraging_2020,vinyals_grandmaster_2019,andrychowicz_what_2020}.
-
 PPO alternates between sampling agent-environment interactions over \(T\) time steps and optimizing the policy using those interactions.
 The parameters \(\boldsymbol{\theta}\) of the policy \(\pi\) are updated with the objective
 
@@ -372,10 +375,11 @@ where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the i
 
 Works that consider tasks that are related to searching for targets in unknown environments can be found in several fields under many names.
 In this section we survey some of the more relevant ones, focusing on those that employ RL methods.
+We also cover work that is related our posed research questions.
 
-\subsection{Search with Reinforcement Learning}
+\subsection{Search with Deep Reinforcement Learning}
 
-There are several rigorous attempts to implement robotic object search systems using non-learning methods.
+There have been several rigorous attempts to implement robotic object search systems using non-learning methods.
 Forssén et al.~\cite{forssen_informed_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
 Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
 Each objects is examined from several perspectives and ranked by probability of being the queried object.

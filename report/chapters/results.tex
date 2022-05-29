@@ -1,8 +1,9 @@
 \chapter{Results}
 \label{cha:results}
 
-This chapter presents the results for each of the experiments described in Section~\ref{sec:experiments}.
-In addition to the results here, we present learning curves for all environments in Appendix~\ref{app:learning} and some search path examples for our approaches and baselines in Appendix~\ref{app:paths}.
+This chapter presents the results comparing our two deep RL approaches to baseline and human-controlled agents.
+In addition to the results here, learning curves for all environments are shown in Appendix~\ref{app:learning},
+Some sample search path for our approaches and baselines are shown in Appendix~\ref{app:paths}.
 
 % todo: We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
 
@@ -11,11 +12,12 @@ In addition to the results here, we present learning curves for all environments
 Table~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
 The average search path length is computed from episodes in which the agents successfully finds all targets.
 These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the baselines and human searchers.
+Appendix~\ref{app:learning} contains learning curves for each environment, and Appendix~\ref{app:paths} contains example search paths from each baseline and approach. 
 
-Overall, our two approaches and human searchers achieve similar scores.
+Overall, our two approaches and human searchers achieve similar success rates, path lengths and SPL scores.
 Our spatial memory approach achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
 Our temporal memory agent select search paths that are on average longer than the paths chosen by our spatial memory approach and human searchers.
-In the camera environment, the temporal memory agent is better both in average length and SPL score.
+In the camera environment, the temporal memory agent is better both in terms of average length and SPL score.
 Interestingly, the temporal memory agent achieves SPL scores comparable to that of the spatial memory agent despite choosing much longer path lengths.
 
 Human searchers seemed to be successful in utilizing using environment cues to guide search, but frequently forgot which positions had been visited.

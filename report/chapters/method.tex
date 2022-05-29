@@ -1,19 +1,19 @@
 \chapter{Method}
 \label{cha:method}
 
-In this chapter, the method used to answer the research questions in Section~\ref{sec:questions}
-Section \ref{sec:problem} formalizes the problem solved.
-Section \ref{sec:environments} details the environment used to evaluate solutions.
-Section \ref{sec:approach} describes the approach used to solve the problem with a learning agent.
-Section \ref{sec:experiments} describes the experiments conducted to answer research questions \ref{itm:rq2} and \ref{itm:rq3}.
+In this chapter, we present our proposed methodology for answering the research questions.
+The visual search problem is modelled as a sequential decision making process.
+Two deep RL approaches for solving the problem are presented.
+Finally, we describe a set of experiments to evaluate our approaches.
 
 \section{Problem Statement}
 \label{sec:problem}
 
-We can now formally define the problem of searching for targets in unknown environments,
-adopting the CMDP formalism \cite{kirk_survey_2022}.
-Let the task be a contextual POMDP \(\mathcal{M}\) where the state includes the context \(c\), which we refer to as the \textit{seed}.
-The state includes the searched space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+The problem of searching for targets in unknown environments can be modelled as a sequential decision making process in which an agent alternates between receiving visual sensory input and guiding its attention.
+For the purposes of this thesis, we adopt the CMDP formalism \cite{kirk_survey_2022} and define the problem as follows:
+
+Let the task be a contextual POMDP \(\mathcal{M}\) where the environment's state includes the context \(c\), which we refer to as the \textit{seed}.
+The state also includes the searched space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
 In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
 At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
 If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
@@ -24,12 +24,13 @@ The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rang
 Here, \(x \in \mathbb{R}^{3 \times w \times h}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
 The goal of the agent is to select actions that bring each target into view and indicate that they are visible, while minimizing the number of total steps.
 There is no inherent reward \(\mathcal{R}\) for this problem, so it has to be designed.
-Finally, seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
+Finally, the seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
 
 \section{Environments}
 \label{sec:environments}
 
-To train and test an agent for the problem, we use three different environments with the same observation space, action space and reward signal.
+To implement and evaluate agents that solve the problem, we use three different simulated environments.
+All use the same observation space, action space and reward signal.
 Each environment have different characteristics that test the applicability of the evaluated approaches to different types of search problems.
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
@@ -227,7 +228,6 @@ Finally, \(z_t\) contains the hidden state \(h_t\) and cell state \(c_t\) of the
 
 The spatial memory is composed of a readable and writable feature map.
 This is a simplified version of the architecture proposed in \cite{parisotto_neural_2017}, similar in spirit to the architectures in \cite{henriques_mapnet_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_object_2020}.
-%We refer to this recurrent network as \(\text{RNN}_\text{map}\).
 It is defined by the following set of operations:
 
 \begin{align}

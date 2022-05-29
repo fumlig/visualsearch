@@ -334,8 +334,8 @@
 \pgftext[x=0.236379in,y=1.304096in,,bottom,rotate=90.000000]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont length}%
 \end{pgfscope}%
 \begin{pgfscope}%
-\pgfsys@transformshift{0.680556in}{0.595416in}%
-\pgftext[left,bottom]{\includegraphics[interpolate=true,width=1.958333in,height=1.416667in]{shape-10-img0.png}}%
+\pgfsys@transformshift{0.686667in}{0.598749in}%
+\pgftext[left,bottom]{\includegraphics[interpolate=true,width=1.953333in,height=1.410000in]{shape-10-img0.png}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetrectcap%
@@ -718,8 +718,8 @@
 \pgftext[x=2.997294in,y=1.304096in,,bottom,rotate=90.000000]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont success}%
 \end{pgfscope}%
 \begin{pgfscope}%
-\pgfsys@transformshift{3.416667in}{0.595416in}%
-\pgftext[left,bottom]{\includegraphics[interpolate=true,width=1.958333in,height=1.444444in]{shape-10-img1.png}}%
+\pgfsys@transformshift{3.420000in}{0.598749in}%
+\pgftext[left,bottom]{\includegraphics[interpolate=true,width=1.953333in,height=1.420000in]{shape-10-img1.png}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetrectcap%

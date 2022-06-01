@@ -86,26 +86,30 @@
 \headcommand {\beamer@framepages {30}{30}}
 \headcommand {\slideentry {4}{1}{11}{31/31}{Search Performance}{0}}
 \headcommand {\beamer@framepages {31}{31}}
-\headcommand {\slideentry {4}{1}{12}{32/32}{Search Performance}{0}}
+\headcommand {\beamer@subsectionpages {21}{31}}
+\headcommand {\beamer@subsectionentry {0}{4}{2}{32}{Scaling to Larger Search Spaces}}
+\headcommand {\slideentry {4}{2}{1}{32/32}{Scaling to Larger Search Spaces}{0}}
 \headcommand {\beamer@framepages {32}{32}}
-\headcommand {\slideentry {4}{1}{13}{33/33}{Search Performance}{0}}
+\headcommand {\slideentry {4}{2}{2}{33/33}{Scaling to Larger Search Spaces}{0}}
 \headcommand {\beamer@framepages {33}{33}}
-\headcommand {\slideentry {4}{1}{14}{34/34}{Search Performance}{0}}
+\headcommand {\slideentry {4}{2}{3}{34/34}{Scaling to Larger Search Spaces}{0}}
 \headcommand {\beamer@framepages {34}{34}}
-\headcommand {\slideentry {4}{1}{15}{35/35}{Search Performance}{0}}
+\headcommand {\slideentry {4}{2}{4}{35/35}{Scaling to Larger Search Spaces}{0}}
 \headcommand {\beamer@framepages {35}{35}}
-\headcommand {\slideentry {4}{1}{16}{36/36}{Search Performance}{0}}
+\headcommand {\beamer@subsectionpages {32}{35}}
+\headcommand {\beamer@subsectionentry {0}{4}{3}{36}{Generalization From Limited Samples}}
+\headcommand {\slideentry {4}{3}{1}{36/36}{Generalization From Limited Samples}{0}}
 \headcommand {\beamer@framepages {36}{36}}
-\headcommand {\slideentry {4}{1}{17}{37/37}{Search Performance}{0}}
+\headcommand {\slideentry {4}{3}{2}{37/37}{Generalization From Limited Samples}{0}}
 \headcommand {\beamer@framepages {37}{37}}
-\headcommand {\slideentry {4}{1}{18}{38/38}{Search Performance}{0}}
+\headcommand {\slideentry {4}{3}{3}{38/38}{Generalization From Limited Samples}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\slideentry {4}{1}{19}{39/39}{Search Performance}{0}}
+\headcommand {\slideentry {4}{3}{4}{39/39}{Generalization From Limited Samples}{0}}
 \headcommand {\beamer@framepages {39}{39}}
-\headcommand {\slideentry {4}{1}{20}{40/40}{Search Performance}{0}}
+\headcommand {\slideentry {4}{3}{5}{40/40}{Generalization From Limited Samples}{0}}
 \headcommand {\beamer@framepages {40}{40}}
 \headcommand {\beamer@sectionpages {21}{40}}
-\headcommand {\beamer@subsectionpages {21}{40}}
+\headcommand {\beamer@subsectionpages {36}{40}}
 \headcommand {\sectionentry {5}{Conclusion}{41}{Conclusion}{0}}
 \headcommand {\beamer@subsectionpages {41}{40}}
 \headcommand {\beamer@subsectionentry {0}{5}{1}{41}{Conclusions}}

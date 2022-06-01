@@ -31,24 +31,11 @@
 
     \begin{itemize}
         \item Tasks usually formalized as (partially observable) MDPs.
-        \item Policy \(\pi(a|s)\) is a mapping from states to actions.
+        \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
         \item Find \(\pi\) that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
-        \item Often involves estimating the value \(v_\pi(s)\) of a state under policy \(pi\) (useful for training). 
+        \item Often involves estimating the value \(v_\pi(s)\) of a state under policy \(\pi\) (useful for training). 
     \end{itemize}
 
     Deep RL: Approximate \(\pi\) (and \(v_\pi\)) with deep neural networks.
     Has been used to play Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
-
-\end{frame}
-
-\subsection{Related Work}
-
-\begin{frame}
-    \frametitle{Search with Reinforcement Learning}
-
-    \begin{itemize}
-        \item Object localization (\cite{caicedo_active_2015,ourselin_artificial_2016,chen_spatial_2017}).
-        \item Visual navigation (\dots).
-        \item Todo: add more related work.
-    \end{itemize}
 \end{frame}

@@ -1,14 +1,14 @@
 \section{Method}
 
 \begin{frame}
-    \frametitle{Problem Formulation}
+    \frametitle{Problem Statement}
 
     \begin{itemize}
         \item Agent searches scene \(S \subset \mathbb{R}^d\) .
         \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
         \item Agent perceives view \(V \subset S\).
         \item Move actions transform view to new subspace.
-        \item Trigger action indicates that a target is in view.
+        \item Final action indicates that a target is in view.
         \item Select actions that maximize the probability of finding all targets while minimizing cost in time.
         \item NP complete~\cite{andreopoulos_theory_2009}, intractable to solve optimally.
     \end{itemize}
@@ -20,7 +20,7 @@
     \frametitle{Environments}
     
     \begin{itemize}
-        \item Three environments with varying characteristics.
+        \item Three simulated environments used for experiments.
         \item Search space discretized into \(10 \times 10\) camera positions.
         \item Each camera position has a unique view \(V \subset S\).
         \item Three targets in all scenes.
@@ -46,14 +46,17 @@
             \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image of current view, and
             \item \(p_t \in \{0, \dots, 9\} \times \{0, \dots, 9\}\) is the position of the camera.
         \end{itemize}
-        \item Takes action \(a_t \in \{\texttt{TRIGGER}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
+        \item Takes action \(a_t \in \{\texttt{INDICATE}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
         \begin{itemize}
-            \item \texttt{TRIGGER} indicates that a target is in view, and
+            \item \texttt{INDICATE} indicates that a target is in view, and
             \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move the view in each cardinal direction.
         \end{itemize}
-        \item Receives reward \(r_t = h - 0.001\) where \(h = \left\vert T \cap V \right\vert\) is the number of targets in view.
+        \item Receives reward \(r_t = h - 0.01 + 0.005d + 0.005e\) where
         \begin{itemize}
-            \item Rewarded for finding targets.
+            \item \(h = \left\vert T \cap V \right\vert\) if \(a_t = \texttt{INDICATE}\).
+            \item \(d = 1\) if \(a_t\) moves closer to nearest target.
+            \item \(e = 1\) if \(a_t\) moves to new position.
+            \item Rewarded for finding targets, moving towards them and exploring environment.
             \item Constant penalty encourages quick episode completion.
         \end{itemize}
     \end{itemize}
@@ -131,12 +134,8 @@
     \begin{itemize}
         \item Actor-critic method trained with PPO~\cite{schulman_proximal_2017}.
         \item Image \(x_t\) passed through CNN.
-        \item Latent image representation \(h_t\) and position \(p_t\) passed through RNN. Two variants:
-        \begin{enumerate}
-            \item LSTM with input \(\left\lbrack h_t, p_t \right\rbrack\).
-            \item Spatial memory.
-        \end{enumerate}
-        \item Policy and value heads approximate \(\pi\) and \(v_\pi\) with MLPs.
+        \item Latent image representation \(y_t\) and position \(p_t\) passed through RNN with recurrent state \(z_t\).
+        \item Policy and value heads approximate \(\pi\) and \(v_\pi\) from \(h_t\) with MLPs.
     \end{itemize}
 
     \begin{figure}
@@ -146,8 +145,20 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Recurrent Steps}
+    \frametitle{Memory}
 
+    \begin{itemize}
+        \item Recurrent step serves as memory.
+        \item Necessary to remember features of explored environment.
+        \item Two variants evaluated:
+        \begin{enumerate}
+            \item Temporal memory (LSTM)
+            \item Spatial memory.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
     \begin{enumerate}
         \item LSTM:
         \begin{itemize}

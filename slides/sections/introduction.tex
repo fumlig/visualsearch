@@ -1,27 +1,46 @@
 
 \section{Introduction}
 
-\subsection{Problem Description}
+\subsection{Description}
 
 \begin{frame}
-    \frametitle{Problem Description}
+    \frametitle{Description}
     
-    Autonomous search for a set of targets in an scene with a camera.
+    Autonomous search for a set of targets a visual environment with a camera.
     
     \begin{itemize}
-        \item Limited region of scene visible at any given time. 
-        \item Camera can be moved to change visible region.
-        \item Locate targets by bringing them into view and indicating that they are visible.
-        \item Should locate all targets while minimizing the number of actions.
-        \item Applications in search and rescue, fire detection, surveillance, etc.
+        \item Camera views limited region of environment. 
+        \item Move camera to bring targets into view.
+        \item Detect when targets are visible.
+        \item Locate targets in minimum time.
+        \item Learn control from a set of sample scenarios.
+        \item Use deep reinforcement learning.
     \end{itemize}
 \end{frame}
 
+\subsection{Motivation}
+
 \begin{frame}
+    \frametitle{Motivation}
+    
     \begin{itemize}
-        \item In a small or random scene with uniformly distributed targets, random or exhaustive search is sufficient.
-        \item Most real-world search tasks are not random, but exhibit structure.
-        \item Cues in the searched scene can be used to find targets quicker.
+        \item Autonomous systems may reduce risks and cost.
+        \item Applications in search and rescue, surveillance, home assistance, etc.
+        \item Handcrafted systems difficult to design.
+        \item Learning system applicable as long as data is available. 
+        \item Subtle patterns and difficult planning decisions.
+    \end{itemize}
+\end{frame}
+
+\frametitle{Aspects}
+
+\begin{frame}
+    \frametitle{Aspects}
+
+    \begin{itemize}
+        \item Random or exhaustive search sufficient in small or random environments.
+        \item Most real-world search tasks exhibit structure.
+        \item Visual cues can be used to find targets quicker.
         \begin{itemize}
             \item Books are in bookshelves.
             \item Cars can be found on roads.
@@ -40,6 +59,7 @@
         \item Prioritize regions with high probability of targets based on previous experience.
         \item Learn correlations between scene appearance and target probability.
         \item Search exhaustively while avoiding searching the same region twice.
+        \item Remember features of searched regions.
         \item Real-world tasks have limited number of training samples.
     \end{itemize}
 \end{frame}
@@ -49,8 +69,8 @@
 \begin{frame}
     \frametitle{Research Questions}
     \begin{enumerate}
-        \item How can an agent that learns to intelligently search for targets be implemented with reinforcement learning?
-        \item How does the learning agent compare to random walk, exhaustive search, and a human searcher with prior knowledge of the characteristics of the searched scenes?
-        \item How does the agent's ability to generalize to unseen in-distribution scenes depend on the number of training samples?
+        \item How can an agent that learns to intelligently search for targets be implemented with deep reinforcement learning?
+        \item How does the learning agent compare to random walk, exhaustive search, and a human searcher with prior knowledge of the searched scenes?
+        \item How well does the learning agent generalize from a limited number of training samples to unseen in-distribution search scenarios?
     \end{enumerate}    
 \end{frame}

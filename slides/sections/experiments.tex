@@ -1,5 +1,7 @@
 \section{Experiments}
 
+\subsection{Search Performance}
+
 \begin{frame}
     \frametitle{Experiment I: Search Performance}
 
@@ -21,9 +23,130 @@
         Gaussian Environment\par\vspace{0.5em}
         \input{tables/metrics-gaussian}
     \end{table}
-
-    \href{run:videos/earth.mp4}{Video}
 \end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-random.pdf}
+                \par Random baseline
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-greedy.pdf}
+                \par Greedy baseline
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-exhaustive.pdf}
+                \par Exhaustive baseline
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-handcrafted.pdf}
+                \par Handcrafted baseline
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-lstm.pdf}
+                \par Temporal memory
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-scene.pdf}
+                \par Environment sample
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=0.5]{figures/path-map.pdf}
+                \par Spatial memory 
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        \includegraphics[scale=0.75]{figures/memory-map.pdf}
+        \par PCA decomposition of spatial memory after episode.
+    \end{figure}
+\end{frame}
+
 
 \begin{frame}
     \begin{table}

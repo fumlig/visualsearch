@@ -3,20 +3,18 @@
 
 ## Abstract
 
-todo
-
 ## To do
 
-- Abstract
-- Acknowledgements
+Presentation:
 
-- Illustrate memory
-- Fix chapter and section introductions
+- videos
+- conclusion
+- emphasize reasoning over scene appearance
+- fix reinforcement learning theory
 
 - Softmax temperature
 - Visualize actions and scene
 - Show attention
-- Update presentation
 - Fix readme
 
 ## Reproduce
@@ -26,7 +24,7 @@ To reproduce results, run:
 ```bash
 pip install -r requirements.txt
 
-./run.sh 
+./run.sh
 ```
 
 This will run all experiments that are presented in the report.

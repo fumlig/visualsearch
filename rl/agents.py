@@ -29,9 +29,9 @@ class Agent(nn.Module):
         pi, _, state = self.forward(obs, state, **kwargs)
         
         if deterministic:
-            return th.argmax(pi.probs).item(), state
+            return th.argmax(pi.probs), state
         else:
-            return pi.sample().item(), state
+            return pi.sample(), state
 
 
 class ImageAgent(Agent):

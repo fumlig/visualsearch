@@ -7,9 +7,9 @@
 \beamer@sectionintoc {3}{Method}{10}{0}{3}
 \beamer@subsectionintoc {3}{1}{Environments}{11}{0}{3}
 \beamer@subsectionintoc {3}{2}{Approach}{16}{0}{3}
-\beamer@sectionintoc {4}{Experiments}{21}{0}{4}
-\beamer@subsectionintoc {4}{1}{Search Performance}{21}{0}{4}
-\beamer@subsectionintoc {4}{2}{Scaling to Larger Search Spaces}{32}{0}{4}
-\beamer@subsectionintoc {4}{3}{Generalization From Limited Samples}{36}{0}{4}
-\beamer@sectionintoc {5}{Conclusion}{41}{0}{5}
-\beamer@subsectionintoc {5}{1}{Conclusions}{41}{0}{5}
+\beamer@sectionintoc {4}{Experiments}{22}{0}{4}
+\beamer@subsectionintoc {4}{1}{Experiment I: Search Performance}{22}{0}{4}
+\beamer@subsectionintoc {4}{2}{Experiment II: Scaling to Larger Search Spaces}{34}{0}{4}
+\beamer@subsectionintoc {4}{3}{Experiment III: Generalization From Limited Samples}{38}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{43}{0}{5}
+\beamer@subsectionintoc {5}{1}{Conclusions}{43}{0}{5}

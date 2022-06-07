@@ -50,7 +50,7 @@ class SearchEnv(gym.Env):
         self.observation_space = gym.spaces.Dict(dict(image=gym.spaces.Box(0, 255, (*self.view, 3), dtype=np.uint8), position=gym.spaces.MultiDiscrete(self.shape)))
 
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, return_info=False):
         if seed is not None:
             self.np_random, _ = gym.utils.seeding.np_random(seed)
 
@@ -65,7 +65,23 @@ class SearchEnv(gym.Env):
         self.num_steps = 0
         self.counters = defaultdict(int)
         
-        return self.observation()
+        obs = self.observation()
+
+        if return_info:
+            info = {
+                "position": self.position,
+                "initial": self.initial,
+                "targets": self.targets,
+                "hits": self.hits,
+                "path": self.path,
+                "actions": self.actions,
+                "success": all(self.hits),
+                "counter": self.counters
+            }
+
+            return obs, info
+        else:
+            return obs
 
     def step(self, action):
 

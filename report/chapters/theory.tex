@@ -315,7 +315,7 @@ Such methods are often referred to as deep reinforcement learning (deep RL) meth
 \subsubsection{Proximal Policy Optimization}
 \label{sec:ppo}
 
-Proximal policy optimization (PPO)~\cite{schulman_proximal_2017} is a family of policy-gradient algorithms that have turned out to strike a good balance between simplicity, stability and ease of tuning while achieving strong results on several tasks~\cite{schulman_proximal_2017,henderson_deep_2018,cobbe_leveraging_2020,vinyals_grandmaster_2019,andrychowicz_what_2020}.
+Proximal policy optimization (PPO)~\cite{schulman_proximal_2017} is a family of policy-gradient algorithms that has been reported to strike a good balance between simplicity, stability and ease of tuning while achieving strong results on several tasks~\cite{schulman_proximal_2017,henderson_deep_2018,cobbe_leveraging_2020,vinyals_grandmaster_2019,andrychowicz_what_2020}.
 PPO alternates between sampling agent-environment interactions over \(T\) time steps and optimizing the policy using those interactions.
 The parameters \(\boldsymbol{\theta}\) of the policy \(\pi\) are updated with the objective
 
@@ -486,7 +486,7 @@ Yang et al.~\cite{yang_visual_2018} propose to use semantic scene priors to impr
 The agent observes its environment through a camera.
 Prior knowledge of spatial relations between objects types is encoded as a graph, which is encoded with a graph convolutional network.
 Their agent is also told what object to look for in the form of a word embedding.
-The encoded object graph and word embedding is used as input together with the camera image to an actor critic network that selects actions that navigate towards the target object.
+The encoded object graph and word embedding is used as input together with the camera image to an actor-critic network that selects actions that navigate towards the target object.
 As the agent collects experiences, it also updates its prior knowledge of spatial relationships between objects.
 It is shown that prior knowledge encoded in such a way improves the agents ability to navigate to objects.
 

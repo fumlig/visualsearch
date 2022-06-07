@@ -1,7 +1,7 @@
 venv/
 logs/
 models/
-videos/
+#videos/
 data/
 old/
 

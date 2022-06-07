@@ -86,8 +86,9 @@ def play(episodes, env, agent="human", model=None, device=None, hidden=False, ob
 
             if model is not None:
                 with th.no_grad():
-                    obs = {key: th.tensor(sub_obs).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
-                    act, state = model.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=deterministic).item()
+                    obs = {key: th.tensor(sub_obs.copy()).float().unsqueeze(0).to(device) for key, sub_obs in obs.items()}
+                    act, state = model.predict(obs, state, done=th.tensor(done).float().unsqueeze(0).to(device), deterministic=deterministic)
+                    act = act.item()
             elif agent == "human":
                 act = env.get_keys_to_action().get((key,), 0)
             elif agent == "random":

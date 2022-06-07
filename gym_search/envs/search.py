@@ -173,7 +173,7 @@ class SearchEnv(gym.Env):
             ax.set_xticks([])
 
         if inset:
-            axins = ax.inset_axes((0.1, 0.1, 0.25, 0.25))
+            axins = ax.inset_axes((0.2, 0.2, 0.25, 0.25))
             axins.imshow(obs["image"], origin="upper")
             axins.set_yticks([0, self.view[0]-1])
             axins.set_xticks([0, self.view[1]-1])

@@ -12,4 +12,4 @@
 \beamer@subsectionintoc {4}{2}{Experiment II: Scaling to Larger Search Spaces}{34}{0}{4}
 \beamer@subsectionintoc {4}{3}{Experiment III: Generalization From Limited Samples}{38}{0}{4}
 \beamer@sectionintoc {5}{Conclusion}{43}{0}{5}
-\beamer@subsectionintoc {5}{1}{Conclusions}{43}{0}{5}
+\beamer@subsectionintoc {5}{1}{Conclusion}{43}{0}{5}

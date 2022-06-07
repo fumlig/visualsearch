@@ -171,7 +171,7 @@ class CameraEnv(SearchEnv):
         front = direction.normalized
         self.scene.camera_target = self.scene.camera_position + front
 
-    def plot(self, ax, overlay=True, position=None):
+    def plot(self, ax, overlay=True, position=None, **kwargs):
         if position is not None:
             _position = self.position
             self.position = position

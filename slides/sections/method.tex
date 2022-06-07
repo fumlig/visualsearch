@@ -6,11 +6,10 @@
     \begin{itemize}
         \item Agent searches scene \(S \subset \mathbb{R}^d\) .
         \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
-        \item Agent perceives view \(V \subset S\). % image and position
-        \item Move actions transform view to new subspace.
-        \item Final action indicates that a target is in view.
-        \item Select actions that maximize the probability of finding all targets while minimizing cost in time.
-        \item NP complete~\cite{andreopoulos_theory_2009}, intractable to solve optimally.
+        \item Agent perceives view \(V \subset S\).
+        \item View can be transformed to new subspace.
+        \item Indicate when targets are visible, i.e. \(V \cup T \neq \varnothing\). 
+        \item Maximize the probability of finding all targets while minimizing cost in time (NP-complete~\cite{andreopoulos_theory_2009}). % intractable to solve optimally
     \end{itemize}
 \end{frame}
 
@@ -56,8 +55,8 @@
             \item \(h = \left\vert T \cap V \right\vert\) if \(a_t = \texttt{INDICATE}\).
             \item \(d = 1\) if \(a_t\) moves closer to nearest target.
             \item \(e = 1\) if \(a_t\) moves to new position.
-            \item Rewarded for finding targets, moving towards them and exploring environment.
-            \item Constant penalty encourages quick episode completion.
+            % rewarded for finding targets, moving towards them and exploring environment.
+            % constant penalty encourages quick episode completion.
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -131,6 +130,11 @@
 
 \begin{frame}
     \frametitle{Approach}
+
+    \begin{itemize}
+        \item Deep reinforcement learning.
+        \item Agent should remember visual features and associate them with their spatial location.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}

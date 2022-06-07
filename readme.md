@@ -11,6 +11,13 @@ Presentation:
 - emphasize reasoning over scene appearance
 - fix reinforcement learning theory
 
+Questions:
+
+- what to include?
+- ppo description
+- loss functions
+- 
+
 - Softmax temperature
 - Visualize actions and scene
 - Show attention

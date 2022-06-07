@@ -3,20 +3,20 @@
 \subsection{Background}
 
 \begin{frame}
-    \frametitle{Markov Decision Process (MDP)}
-    
-    Framework for modeling decision making in partly random processes.\\
-    In our case, \textit{partially observable} MDP~\cite{kaelbling_planning_1998}:
+    \frametitle{Partially Observable Markov Decision Process (POMDP)}
+
+    POMDP~\cite{kaelbling_planning_1998}: \textit{Agent} interacts with \textit{environment} over discrete time steps. At each step \(t = 0, 1, 2\dots, T\):
 
     \begin{itemize}
-        \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\).
-        \item Takes \textit{action} \(a_t\) in state \(s_t\).
-        \item Perceives (partial) \textit{observation} of state \(o_t\).
+        \item Environment is in state \(s_t\) that can not be observed by agent.
+        \item Agent takes \textit{action} \(a_t\).
+        \item Perceives partial \textit{observation} \(o_t\) of state.
         \item Receives scalar reward \(r_t\) that indicates whether action is good or bad.
         \item New state \(s_{t+1}\) depends only on history of interactions.
-        \item Agent usually maintains some internal state depending on history \\
-        \(\rightarrow\) memory.
+        \item State not available to agent, must maintain internal state \(\rightarrow\) memory.
     \end{itemize}
+
+    Goal: select actions that maximizes discounted cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
 
     \begin{figure}
         \centering
@@ -27,23 +27,23 @@
 \begin{frame}
     \frametitle{Reinforcement Learning (RL)}
 
-    Paradigm for learning from interactions how to achieve a goal.
+    RL~\cite{sutton_reinforcement_2018}: Paradigm for learning from interactions how to achieve a goal.
 
     \begin{itemize}
-        \item Tasks usually formalized as (partially observable) MDPs.
         \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
-        \item Find \(\pi\) that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
-        \item Often involves estimating the value \(v_\pi(s)\) of a state under policy \(\pi\) (useful for training). 
+        \item Find policy that maximizes cumulative reward by interacting with environment.
+        \item Policy gradient methods learn parametrized policy \(\pi(a|s,\theta)\) by updating it with some loss function \(\mathcal{L(\theta)}\).
+        \item Estimating the value \(v_\pi(s,\theta')\) of a state under policy \(\pi\) can be useful to update policy.
     \end{itemize}
 
-    Deep RL: Approximate \(\pi\) (and \(v_\pi\)) with deep neural networks.
+    Deep RL: Approximate parameters \(\theta\) of \(\pi\) (and \(\theta'\) of \(v_\pi\)) with deep neural networks.
     Has been used to play Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
 \end{frame}
 
 \begin{frame}
     \frametitle{Proximal Policy Optimization}
 
-    
+    \dots
 \end{frame}
 
 \subsection{Related Work}
@@ -51,7 +51,7 @@
 \begin{frame}
     \frametitle{Related Work}
 
-    Deep RL for active vision tasks:
+    Deep RL for similar tasks:
 
     \begin{itemize}
         \item Visual attention:
@@ -61,12 +61,15 @@
         \item Visual navigation:
         \begin{itemize}
             \item Solve random mazes~\cite{mirowski_learning_2017}.
+            \item Find target object in indoor scenes~\cite{zhu_target-driven_2017}.
         \end{itemize}
         \item Object detection:
         \begin{itemize}
             \item Region proposals for object localization~\cite{caicedo_active_2015}.
             \item Contextual reasoning over spatial layout in scenes~\cite{chen_spatial_2017}.
             \item Anatomical landmark detection in medical images~\cite{ghesu_multi-scale_2019}.
-        \end{itemize}        
+        \end{itemize}
     \end{itemize}
+
+    Missing: how visual cues can guide search, overfitting and generalization from limited samples, rigorous performance evaluation.
 \end{frame}

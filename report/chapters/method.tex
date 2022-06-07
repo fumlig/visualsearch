@@ -304,56 +304,20 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
 \begin{algorithm}
     \caption{Random baseline policy}
     \label{alg:random}
-    \begin{algorithmic}
-        \If{there is a target at \(p_t\)}
-            \State \(a_t \leftarrow \mathtt{INDICATE}\)
-        \Else
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
-            \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
-        \EndIf
-    \end{algorithmic}
+    \input{algorithms/random}
 \end{algorithm}
 
 \begin{algorithm}
     \caption{Greedy baseline policy}
     \label{alg:greedy}
-    \begin{algorithmic}
-        \If{there is a target at \(p_t\)}
-            \State \(a_t \leftarrow \mathtt{INDICATE}\)
-        \Else
-            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
-            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
-            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{explore}}\)
-            \Else
-                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
-            \EndIf
-        \EndIf
-    \end{algorithmic}
+    \input{algorithms/greedy}
 \end{algorithm}
 
 \begin{algorithm}
     \caption{Exhaustive baseline policy}
     \label{alg:exhaustive}
-    \begin{algorithmic}
-        \If{there is a target at \(p_t\)}
-            \State \(a_t \leftarrow \mathtt{INDICATE}\)
-        \Else
-            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
-            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
-            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(A_{\text{order}} \leftarrow \langle \mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT} \rangle\)
-                \State \(a_t \leftarrow \text{the first } a \text{ in } A_{\text{order}} \text{ such that } a \in \mathcal{A}_{\text{explore}}\)
-            \Else
-                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
-            \EndIf
-        \EndIf
-    \end{algorithmic}
+    \input{algorithms/exhaustive}
 \end{algorithm}
-
-% todo: begin
 
 To get a better sense of how our approaches compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
 This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that move the agent towards bluer regions.
@@ -361,25 +325,8 @@ This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that
 \begin{algorithm}
     \caption{Handcrafted baseline policy (gaussian environment)}
     \label{alg:handcrafted}
-    \begin{algorithmic}
-        \If{there is a target at \(p_t\)}
-            \State \(a_t \leftarrow \mathtt{INDICATE}\)
-        \Else
-            \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
-            \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
-            \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
-            \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
-                \State \(b_t \leftarrow \text{the blue channel of } x_t\)
-                \State \(A_{\text{order}} \leftarrow \mathcal{A}_{\text{explore}} \text{ ordered by the directional derivative of } b_t \text{ wrt the action direction}\)
-                \State \(a_t \leftarrow \text{the first } a \text{ in } A_{\text{order}}\)
-            \Else
-                \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
-            \EndIf
-        \EndIf
-    \end{algorithmic}
+    \input{algorithms/handcrafted}
 \end{algorithm}
-
-% todo: end
 
 For each of the three environments, we train our approaches on the full distribution of samples.
 Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.

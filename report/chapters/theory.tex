@@ -358,16 +358,7 @@ where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the i
 \begin{algorithm}
     \caption{Proximal Policy Optimization}
     \label{alg:ppo}
-    \begin{algorithmic}
-        \For{\(\text{iteration} = 1,2,\dots\)}
-            \For{\(\text{actor} = 1,2,\dots,N\)}
-                \State \(\text{run policy } \pi_{\theta_\text{old}} \text{ for } T \text{ time steps}\)
-                \State \(\text{compute advantage estimates } \hat{A}_1, \dots \hat{A}_T\)
-            \EndFor
-            \State \(\text{optimize } \mathcal{L} \text{ wrt } \theta, \text{ with } K \text{ epochs and mini-batch size } M \leq NT\)
-            \State \(\theta_{\text{old}} \leftarrow \theta\)
-        \EndFor
-    \end{algorithmic}
+    \input{algorithms/ppo}
 \end{algorithm}
 
 \section{Related Work}

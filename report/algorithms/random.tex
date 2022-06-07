@@ -1,0 +1,8 @@
+\begin{algorithmic}
+    \If{there is a target at \(p_t\)}
+        \State \(a_t \leftarrow \mathtt{INDICATE}\)
+    \Else
+        \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
+        \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
+    \EndIf
+\end{algorithmic}

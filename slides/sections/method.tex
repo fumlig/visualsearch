@@ -6,7 +6,7 @@
     \begin{itemize}
         \item Agent searches scene \(S \subset \mathbb{R}^d\) .
         \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
-        \item Agent perceives view \(V \subset S\).
+        \item Agent perceives view \(V \subset S\). % image and position
         \item Move actions transform view to new subspace.
         \item Final action indicates that a target is in view.
         \item Select actions that maximize the probability of finding all targets while minimizing cost in time.
@@ -21,7 +21,7 @@
     
     \begin{itemize}
         \item Three simulated environments used for experiments.
-        \item Search space discretized into \(10 \times 10\) camera positions.
+        \item Search space discretized into \(H \times W\) camera positions.
         \item Each camera position has a unique view \(V \subset S\).
         \item Three targets in all scenes.
         \item Target probability correlated with scene appearance.
@@ -30,7 +30,7 @@
         \begin{itemize}
             \item Pseudorandom seed determines scene appearance and target positions.
             \item Gives control over difficulty to solve.
-            \item Can vary training and test set sizes.
+            \item Can vary training and test set sizes by limiting seed pool.
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -44,7 +44,7 @@
         \item The agent receives observation \(o_t = \left\langle x_t, p_t \right\rangle\), where
         \begin{itemize}
             \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image of current view, and
-            \item \(p_t \in \{0, \dots, 9\} \times \{0, \dots, 9\}\) is the position of the camera.
+            \item \(p_t \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}\) is the position of the camera.
         \end{itemize}
         \item Takes action \(a_t \in \{\texttt{INDICATE}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
         \begin{itemize}
@@ -67,10 +67,11 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
-                \item 2D scene.
+                \item 2D scene, \(10 \times 10\) search space.
                 \item Three gaussian kernels with random center.
-                \item Sum of kernels determine appearance of scene and probability of targets.
+                \item Sum of kernels determine blue color intensity and probability of targets.
                 \item Clear correlation between appearance and desired behavior.
+                \item Agent should prioritize blue regions.
             \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -200,12 +201,30 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Baselines}
+
+    \begin{itemize}
+        \item Simple handcrafted policies.
+        \item Give a sense of the performance achieved by learning agents.
+        \item All indicate automatically when target visible.
+    \end{itemize}
+
+    \begin{itemize}
+        \item Random: randomly samples actions.
+        \item Greedy: greedily selects actions lead to unvisited positions (random if none).
+        \item Exhaustive: exhaustively covers search space with minimal revisits.
+        \item Human: human searcher with prior knowledge of environment characteristics.
+        \item Handcrafted (gaussian environment): prioritize actions that lead to higher blue intensity.
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
     \frametitle{Implementation}
 
     \begin{itemize}
         \item OpenAI Gym environment interface.
+        \item Custom PPO implementation.
         \item PyTorch for models and automatic differentiation.
         \item Intel Core i9-10900X CPU.
         \item NVIDIA GeForce RTX 2080 Ti GPU.

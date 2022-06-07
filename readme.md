@@ -7,7 +7,6 @@
 
 Presentation:
 
-- videos
 - conclusion
 - emphasize reasoning over scene appearance
 - fix reinforcement learning theory

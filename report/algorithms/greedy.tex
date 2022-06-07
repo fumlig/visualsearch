@@ -1,0 +1,14 @@
+\begin{algorithmic}
+    \If{there is a target at \(p_t\)}
+        \State \(a_t \leftarrow \mathtt{INDICATE}\)
+    \Else
+        \State \(\mathcal{V} \leftarrow \{p_t, p_{t-1}, \dots p_0\}\)
+        \State \(\mathcal{A}_{\text{move}} \leftarrow \{\mathtt{UP}, \mathtt{RIGHT}, \mathtt{DOWN}, \mathtt{LEFT}\}\)
+        \State \(\mathcal{A}_{\text{explore}} \leftarrow \{a | a \in \mathcal{A}_{\text{move}} \text{ moves the agent to an unvisited location } p \notin \mathcal{V}\}\) 
+        \If{\(\mathcal{A}_{\text{explore}} \neq \varnothing\)}
+            \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{explore}}\)
+        \Else
+            \State \(a_t \leftarrow \text{sample from } \mathcal{A}_{\text{move}}\)
+        \EndIf
+    \EndIf
+\end{algorithmic}

@@ -6,7 +6,7 @@
     \frametitle{Experiment I: Search Performance}
 
     \begin{itemize}
-        \item Compare to random searcher, exhaustive searcher, human searcher with prior knowledge of scenes.
+        \item Compare to baselines.
         \item Use held out samples as test set.
         \item Average number of steps on test set.
         \item SPL metric~\cite{anderson_evaluation_2018}, with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
@@ -18,23 +18,15 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Baselines}
-
-    \begin{itemize}
-        \item \dots
-    \end{itemize}
-\end{frame}
-
-
-\begin{frame}
     \begin{table}
         \centering
         Gaussian Environment\par\vspace{0.5em}
         \input{tables/metrics-gaussian}
     \end{table}
 
-    \href{run:videos/gaussian/map/0.gif}{video 1}
-
+    \begin{center}
+        \href{run:videos/gaussian/map/0.gif}{video 1}, \href{run:videos/gaussian/map/0.gif}{video 2}, \href{run:videos/gaussian/map/2.gif}{video 3} (spatial)
+    \end{center}
 \end{frame}
 
 \begin{frame}
@@ -165,6 +157,8 @@
         Terrain Environment\par\vspace{0.5em}
         \input{tables/metrics-terrain}
     \end{table}
+
+    \centering \href{run:videos/terrain/map/0.gif}{video 1}, \href{run:videos/terrain/map/0.gif}{video 2}, \href{run:videos/terrain/map/2.gif}{video 3} (spatial)
 \end{frame}
 
 \begin{frame}
@@ -173,6 +167,8 @@
         Camera Environment\par\vspace{0.5em}
         \input{tables/metrics-camera}
     \end{table}
+
+    \centering \href{run:videos/camera/lstm/0.gif}{video 1}, \href{run:videos/camera/lstm/0.gif}{video 2}, \href{run:videos/camera/lstm/2.gif}{video 3} (temporal)
 \end{frame}
 
 \subsection{Experiment II: Scaling to Larger Search Spaces}
@@ -220,11 +216,11 @@
     \frametitle{Experiment III: Generalization From Limited Samples}
 
     \begin{itemize}
-        \item Limit number of scene samples seen during training to 100, 1000, 10 000, \dots.
+        \item Limit number of scene samples seen during training to 500, 1 000, 5 000, 10 000.
+        \item Test on held out scenes from full distribution. 
         \item Use terrain environment, high appearance variance and somewhat realistic.
         \item Fix seed pool used to generate scenes seen during training.
         \item Train agents until convergence (or for a fixed number of time steps).
-        \item Test on held out scenes from full distribution. 
     \end{itemize}
 \end{frame}
 

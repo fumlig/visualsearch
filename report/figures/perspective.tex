@@ -1,0 +1,52 @@
+\documentclass[margin=10pt]{standalone}    
+
+\usepackage{amsmath}
+\usepackage{tikz,tikz-3dplot}
+
+\begin{document}
+
+\tdplotsetmaincoords{70}{15}
+
+\begin{tikzpicture}[scale=4,tdplot_main_coords]
+    \coordinate (O) at (0,0,0);
+
+    \tdplotsetcoord{X}{1}{90}{0};
+    \tdplotsetcoord{Y}{1}{90}{90};
+    \tdplotsetcoord{Z}{1}{0}{0};
+
+    \draw[-stealth,color=red] (O) -> (X);
+    \draw[-stealth,color=green] (O) -> (Y);
+    \draw[-stealth,color=blue] (O) -> (Z);
+
+    \tdplotsetcoord{A}{1}{75}{30};
+    \tdplotsetcoord{B}{1}{75}{60};
+    \tdplotsetcoord{C}{1}{105}{60};
+    \tdplotsetcoord{D}{1}{105}{30};
+
+    \draw (O) -> (A);
+    \draw (O) -> (B);
+    \draw (O) -> (C);
+    \draw (O) -> (D);
+
+    \draw (A) -- (B) -- (C) -- (D) -- cycle;
+
+    \tdplotsetcoord{A'}{1}{65}{-5};
+    \tdplotsetcoord{B'}{1}{65}{40};
+    \tdplotsetcoord{C'}{1}{115}{40};
+    \tdplotsetcoord{D'}{1}{115}{-5};
+
+    \draw [dotted] (O) -> (A');
+    \draw [dotted] (O) -> (B');
+    \draw [dotted] (O) -> (C');
+    \draw [dotted] (O) -> (D');
+
+    \draw[dotted] (A') -- (B') -- (C') -- (D') -- cycle;
+
+    %\draw[fill=blue,fill opacity=0.5] (O) -- (Px) -- (Pxy) -- (Py) -- cycle;
+    %\draw[fill=yellow,fill opacity=0.5] (O) -- (Px) -- (Pxz) -- (Pz) -- cycle;
+    %\draw[fill=green,fill opacity=0.5] (Pz) -- (Pyz) -- (P) -- (Pxz) -- cycle;
+    %\draw[fill=red,fill opacity=0.5] (Px) -- (Pxy) -- (P) -- (Pxz) -- cycle;
+    %\draw[fill=magenta,fill opacity=0.5] (Py) -- (Pxy) -- (P) -- (Pyz) -- cycle;
+\end{tikzpicture}
+
+\end{document}

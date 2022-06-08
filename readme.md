@@ -5,18 +5,27 @@
 
 ## To do
 
+Report:
+
+- discuss hyperparameter tuning
+
 Presentation:
 
 - conclusion
 - emphasize reasoning over scene appearance
 - fix reinforcement learning theory
+- discuss reward signal, action space etc? one slide per?
 
 Questions:
 
 - what to include?
 - ppo description
 - loss functions
-- 
+- animate slides?
+- should PPO be included?
+- any particular things of importance I should mention?
+
+Other:
 
 - Softmax temperature
 - Visualize actions and scene

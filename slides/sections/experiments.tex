@@ -7,15 +7,37 @@
 
     \begin{itemize}
         \item Compare to baselines.
+        \item Simple reference behaviors.
         \item Use held out samples as test set.
         \item Average number of steps on test set.
-        \item SPL metric~\cite{anderson_evaluation_2018}, with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
+        \item Success weighted by inverse path length (SPL) metric~\cite{anderson_evaluation_2018}.
     \end{itemize}
 
-    \begin{equation}
-        \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
-    \end{equation}
+    \begin{definition}{SPL}
+        with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
+        \(\text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}\)
+    \end{definition}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Baselines}
+
+    \begin{itemize}
+        \item Simple handcrafted policies.
+        \item Give a sense of the performance achieved by learning agents.
+        \item All indicate automatically when target visible.
+    \end{itemize}
+
+    \begin{itemize}
+        \item Random: randomly samples actions.
+        \item Greedy: greedily selects actions lead to unvisited positions (random if none).
+        \item Exhaustive: exhaustively covers search space with minimal revisits.
+        \item Human: human searcher with prior knowledge of environment characteristics.
+        \item Handcrafted (gaussian environment): prioritize actions that lead to higher blue intensity.
+    \end{itemize}
+\end{frame}
+
+%\movie[externalviewer]{\includegraphics{../videos/gaussian/map/0.gif}}{videos/gaussian/map/0.gif}
 
 \begin{frame}
     \begin{table}
@@ -24,8 +46,9 @@
         \input{tables/metrics-gaussian}
     \end{table}
 
+
     \begin{center}
-        \href{run:videos/gaussian/map/0.gif}{video 1}, \href{run:videos/gaussian/map/0.gif}{video 2}, \href{run:videos/gaussian/map/2.gif}{video 3} (spatial)
+        %\href{run:videos/gaussian/map/0.gif}{video 1}, \href{run:videos/gaussian/map/0.gif}{video 2}, \href{run:videos/gaussian/map/2.gif}{video 3} (spatial)
     \end{center}
 \end{frame}
 

@@ -5,7 +5,8 @@
 \begin{frame}
     \frametitle{Partially Observable Markov Decision Process (POMDP)}
 
-    POMDP~\cite{kaelbling_planning_1998}: \textit{Agent} interacts with \textit{environment} over discrete time steps. At each step \(t = 0, 1, 2\dots, T\):
+    % POMDP~\cite{kaelbling_planning_1998}: 
+    \textit{Agent} interacts with \textit{environment} over discrete time steps. At each step \(t = 0, 1, 2\dots, T\):
 
     \begin{itemize}
         \item Environment is in state \(s_t\) that can not be observed by agent.
@@ -16,8 +17,6 @@
         \item State not available to agent, must maintain internal state \(\rightarrow\) memory.
     \end{itemize}
 
-    Goal: select actions that maximizes discounted cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
-
     \begin{figure}
         \centering
         \scalebox{0.75}{\input{figures/pomdp}}
@@ -27,23 +26,16 @@
 \begin{frame}
     \frametitle{Reinforcement Learning (RL)}
 
-    RL~\cite{sutton_reinforcement_2018}: Paradigm for learning from interactions how to achieve a goal.
+    % RL~\cite{sutton_reinforcement_2018}:
+    Paradigm for learning from interactions how to achieve a goal.
 
     \begin{itemize}
         \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
-        \item Find policy that maximizes cumulative reward by interacting with environment.
-        \item Policy gradient methods learn parametrized policy \(\pi(a|s,\theta)\) by updating it with some loss function \(\mathcal{L(\theta)}\).
-        \item Estimating the value \(v_\pi(s,\theta')\) of a state under policy \(\pi\) can be useful to update policy.
+        \item Find policy that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
+        \item Several algorithms with different pros and cons.
     \end{itemize}
 
-    Deep RL: Approximate parameters \(\theta\) of \(\pi\) (and \(\theta'\) of \(v_\pi\)) with deep neural networks.
-    Has been used to play Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
-\end{frame}
-
-\begin{frame}
-    \frametitle{Proximal Policy Optimization}
-
-    \dots
+    Deep RL: Approximate \(\pi\) with deep neural networks. Used for complex tasks like Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
 \end{frame}
 
 \subsection{Related Work}

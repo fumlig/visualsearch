@@ -5,14 +5,30 @@
     \frametitle{Description}
     
     Learned autonomous search for a set of targets in a visual environment with a camera.
-    
+
     \begin{itemize}
-        \item Camera views limited region of environment. 
+        \item Camera views limited region of environment.
         \item Moving camera changes visible region.
         \item Detect when targets are visible.
         \item Locate targets in minimum time.
         \item Utilize visual cues to find targets quicker.
         \item Learn control from a set of sample scenarios.
+        \item Use deep reinforcement learning.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Aspects}
+
+    \begin{itemize}
+        \item Random or exhaustive search sufficient in small or random environments~\cite{nakayama_situating_2011}.
+        \item Most real-world search tasks exhibit structure.
+        \item Visual cues can be used to find targets quicker.
+        \begin{itemize}
+            \item Books are in bookshelves, cars on roads\dots
+            \item Targets spread out/close together\dots
+        \end{itemize}
+        \item Patterns and cues may be subtle and difficult to pick up.
     \end{itemize}
 \end{frame}
 
@@ -20,30 +36,11 @@
     \frametitle{Motivation}
     
     \begin{itemize}
-        \item Autonomous systems may reduce risks and cost.
+        \item Autonomous systems may reduce risk and cost.
         \item Applications in search and rescue, surveillance, home assistance, etc.
-        \item Handcrafted systems difficult to design.
+        \item Handcrafted systems using domain knowledge are difficult to design.
         \item Subtle patterns and difficult planning decisions.
         \item Learning system applicable as long as data is available.
-    \end{itemize}
-\end{frame}
-
-% todo merge above/below
-
-\begin{frame}
-    \frametitle{Motivation}
-
-    \begin{itemize}
-        \item Random or exhaustive search sufficient in small or random environments.
-        \item Most real-world search tasks exhibit structure.
-        \item Visual cues can be used to find targets quicker.
-        \begin{itemize}
-            \item Books are in bookshelves.
-            \item Cars can be found on roads.
-            \item Some targets spread out/close together.
-        \end{itemize}
-        \item Patterns and cues may be subtle and difficult to pick up.
-        \item Manually engineering a searching system with domain knowledge be difficult and costly.
     \end{itemize}
 \end{frame}
 

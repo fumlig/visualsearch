@@ -3,7 +3,7 @@ import gym
 import moderngl as gl
 from gym_search.envs.dataset import DatasetEnv
 
-
+from gym_search.envs.search import Action
 from gym_search.envs.gaussian import GaussianEnv
 from gym_search.envs.terrain import TerrainEnv
 from gym_search.envs.camera import CameraEnv

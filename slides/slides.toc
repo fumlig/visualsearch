@@ -1,12 +1,12 @@
 \beamer@sectionintoc {1}{Introduction}{3}{0}{1}
-\beamer@sectionintoc {2}{Theory}{8}{0}{2}
-\beamer@subsectionintoc {2}{1}{Background}{8}{0}{2}
-\beamer@subsectionintoc {2}{2}{Related Work}{11}{0}{2}
-\beamer@sectionintoc {3}{Method}{12}{0}{3}
-\beamer@subsectionintoc {3}{1}{Environments}{13}{0}{3}
-\beamer@subsectionintoc {3}{2}{Approach}{18}{0}{3}
-\beamer@sectionintoc {4}{Experiments}{25}{0}{4}
-\beamer@subsectionintoc {4}{1}{Experiment I: Search Performance}{25}{0}{4}
-\beamer@subsectionintoc {4}{2}{Experiment II: Scaling to Larger Search Spaces}{36}{0}{4}
-\beamer@subsectionintoc {4}{3}{Experiment III: Generalization From Limited Samples}{40}{0}{4}
-\beamer@sectionintoc {5}{Conclusion}{45}{0}{5}
+\beamer@sectionintoc {2}{Theory}{29}{0}{2}
+\beamer@subsectionintoc {2}{1}{Background}{29}{0}{2}
+\beamer@subsectionintoc {2}{2}{Related Work}{38}{0}{2}
+\beamer@sectionintoc {3}{Method}{47}{0}{3}
+\beamer@subsectionintoc {3}{1}{Environments}{53}{0}{3}
+\beamer@subsectionintoc {3}{2}{Approach}{99}{0}{3}
+\beamer@sectionintoc {4}{Experiments}{132}{0}{4}
+\beamer@subsectionintoc {4}{1}{Experiment I: Search Performance}{132}{0}{4}
+\beamer@subsectionintoc {4}{2}{Experiment II: Scaling to Larger Search Spaces}{168}{0}{4}
+\beamer@subsectionintoc {4}{3}{Experiment III: Generalization From Limited Samples}{175}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{184}{0}{5}

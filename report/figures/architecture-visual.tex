@@ -26,7 +26,7 @@
 
     \draw [->] (img.center) -- (cnn.west);
     \draw [->] (cnn.east) -- node [anchor=south] {$y_t$} (rnn.west);
-    \draw (rnn) edge [loop above] node {$z_t$} (rnn);
+    \draw (rnn) edge [loop above] node {memory state $z_t$} (rnn);
     \draw [->] (p) -- (rnn.south);
     \draw (rnn.east) -- node [anchor=south] {$h_t$} (out.east);
     \draw [->] (out) to [out=0,in=180] (mlp1.west);

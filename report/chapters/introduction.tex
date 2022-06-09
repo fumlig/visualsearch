@@ -64,7 +64,7 @@ Such an agent should learn the characteristics of the environments it is trained
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through an camera whose movements are unrestricted.
 The agent has to actively choose where to look in order to gain new information about the environment.
 
-We postulate that an effective searcher learns how the distribution of targets and prioritizes regions where they are more likely according to previous experience.
+We postulate that an effective searcher learns the distribution of targets, and uses it to prioritize regions where they are more likely according to previous experience.
 The distribution of targets may be correlated with the appearance of the searched scene.
 A good searcher should integrate information over time to build an internal representation of the environment and use it to make informed decisions.
 The agent should be able to search the environment exhaustively while avoiding visiting the same region twice.

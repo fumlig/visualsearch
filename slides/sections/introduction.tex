@@ -13,20 +13,7 @@
         \item Locate targets in minimum time.
         \item Learn control from sample scenarios.
         \item Use deep reinforcement learning.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Aspects}
-
-    \begin{itemize}
-        \item Exhaustive search sufficient in small or random environments~\cite{nakayama_situating_2011}.
-        \item Most real-world search tasks exhibit structure.
-        \item Visual cues can be used to find targets quicker.
-        \begin{itemize}
-            \item Books are in bookshelves, cars on roads\dots
-            \item Targets spread out/close together\dots
-        \end{itemize}
+        \item Focus on search paths, simple detection.
     \end{itemize}
 \end{frame}
 
@@ -38,34 +25,36 @@
     \begin{itemize}
         \item Applications in search and rescue, surveillance, home assistance, etc.
         \item Autonomous systems may reduce risk and cost.
-        \item Handcrafted systems:
+        \item Advantages of learning systems over handcrafted ones:
         \begin{itemize}
-            % alternative to learning
-            \item Difficult to design.
-            \item Communicate how to behave?
-            \item Redesign for new environments.
-            \item Subtle patterns.
-            \item May be suboptimal.
-        \end{itemize}
-        \item Learning systems:
-        \begin{itemize}
-            \item Applicable as long as data is available.
-            \item Can find subtle patterns.
-            \item May find better solutions.
-            \item Deep RL: Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
+            \item May find better solutions (deep RL: Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}).
+            \item Applicable as long as data is available. % Handcrafted systems have to be designed for each specific environment.
+            \item Sufficient to describe problem. % Handcrafted systems must be given a solution, which can be difficult to communicate (subtle visual cues).
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Design Challenges}
+\subsection{Aim}
 
+\begin{frame}
+    \frametitle{Aim}
+    
     \begin{itemize}
-        \item Prioritize regions with high probability of targets based on previous experience.
-        \item Learn correlations between scene appearance and target probability.
-        \item Search exhaustively while avoiding searching the same region twice.
-        \item Remember features of searched regions (avoid revisits, scene understanding).
-        \item Real-world tasks have limited number of training samples.
+        \item Utilize structure in environments:
+        \begin{itemize}
+            \item Books are in bookshelves, cars on roads\dots
+            \item Targets can be spread out/close together\dots
+        \end{itemize}
+        \item Learn distribution of targets from training samples.
+        \begin{itemize}
+            \item Realistically limited training samples available.
+            \item Generalize to similar unseen search tasks.
+        \end{itemize}
+        \item Remember features of explored environment to:
+        \begin{itemize}
+            \item Avoid searching regions twice.
+            \item Prioritize promising regions.
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -75,7 +64,7 @@
     \frametitle{Research Questions}
     \begin{enumerate}
         \item How can an agent that learns to intelligently search for targets be implemented with deep reinforcement learning?
-        \item How does the learning agent compare to random walk, exhaustive search, and a human searcher with prior knowledge of the searched scenes?
+        \item How does the learning agent compare to random, greedy, exhaustive and human searchers with prior knowledge of the searched scenes?
         \item How well does the learning agent generalize from a limited number of training samples to unseen in-distribution search scenarios?
     \end{enumerate}    
 \end{frame}

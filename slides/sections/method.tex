@@ -5,11 +5,16 @@
 
     \begin{itemize}
         \item Agent searches scene \(S \subset \mathbb{R}^d\).
-        \item Scene contains set of targets \(\{t_0, \dots t_n\}\), \(t_i \in S\).
         \item Agent perceives view \(V \subset S\).
         \item View can be transformed to new subspace.
+        \item Targets in scene \(\{t_0, \dots t_n\}\), \(t_i \in S\).
         \item Indicate when targets are visible, i.e. \(V \cup T \neq \varnothing\). 
-        \item Maximize the probability of finding all targets while minimizing cost in time (NP-complete~\cite{andreopoulos_theory_2009}). % intractable to solve optimally
+        \item Goal:
+        \begin{itemize}
+            \item Maximize probability of finding all targets.
+            \item Minimize cost in time.
+            \item NP-complete~\cite{andreopoulos_theory_2009}). % intractable to solve optimally
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -19,18 +24,19 @@
     \frametitle{Environments}
     
     \begin{itemize}
-        \item Three simulated environments used for experiments.
-        \item Search space discretized into \(H \times W\) camera positions.
-        \item Each camera position has a unique view \(V \subset S\).
-        \item Three targets in all scenes.
-        \item Target probability correlated with scene appearance.
-        \item Possible to do better than exhaustive search on average.
-        \item Scenes procedurally generated:
-        \begin{itemize}
-            \item Pseudorandom seed determines scene appearance and target positions.
-            \item Gives control over difficulty to solve.
-            \item Can vary training and test set sizes by limiting seed pool.
-        \end{itemize}
+        \item Three simulated environments.
+        % following the problem statement
+        % gives control over difficulty to solve
+        % more investigative power
+        \item Find three targets in less than 1 000 steps.
+        % otherwise unsuccessful
+        \item Target probability correlated with scene appearance. % possible to do better than exhaustive search on average
+        \item Procedurally generated, conditioned on seed.
+        % seed determines scene appearance and target positions
+        % every scene slightly different
+        % find common characteristics across seeds
+        % can vary number of scenes by limiting seed pool
+        \item New seed after each finished search.
     \end{itemize}
 \end{frame}
 
@@ -40,8 +46,8 @@
     \begin{itemize}
         \item Observations \(o_t = \left\langle x_t, p_t \right\rangle\), where
         \begin{itemize}
-            \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is RGB image,
-            \item \(p_t \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}\) is camera position.
+            \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image,
+            \item \(p_t \in \{0, \dots, H\} \times \{0, \dots, W\}\) is the camera position.
         \end{itemize}
         \item Actions \(a_t \in \{\texttt{INDICATE}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
         \begin{itemize}
@@ -49,12 +55,22 @@
             \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move camera.
         \end{itemize}
         \item Reward \(r_t = h - 0.01 + 0.005d + 0.005e\) where
+        % in general, reward turned out to be tricky thing.
+        % in our case, it was a design parameter
+        % should achieve the goal of minimizing search time
+        % small changes in magnitude let to drastically different results
         \begin{itemize}
             \item \(h = \left\vert T \cap V \right\vert\) if \(a_t = \texttt{INDICATE}\), else \(0\).
+            % rewarded for finding targets
+            % time penalty ensures that agent prioritizes finding targets quickly, as future reward is maximized when time is minimized.
             \item \(d = 1\) if \(a_t\) moves closer to nearest target, else \(0\).
+            % rewarded for moving towards targets
+            % not optimal, as greedily moving towards nearest target does not always yield an optimal travel path
+            % however, not realistic in partially observable environments
+            % experimentation showed that this term helped learning in difficult environments
             \item \(e = 1\) if \(a_t\) moves to new position, else \(0\).
-            % rewarded for finding targets, moving towards them and exploring environment.
-            % constant penalty encourages quick episode completion.
+            % always good to explore environment
+            % important that it is not better than finding targets quickly!
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -103,9 +119,18 @@
         \begin{column}{0.5\textwidth}
             \begin{itemize}
                 \item Terrain seen from perspective projection camera.
+                \item Variance in target appearance.
                 \item Moving actions control pan and tilt.
-                \item Visually complex, difficult to interpret.
+                \begin{itemize}
+                    \item 20 pan angle steps.
+                    \item 10 tilt angle steps.
+                \end{itemize}
             \end{itemize}
+
+            \begin{figure}
+                \centering
+                \includegraphics[scale=1]{figures/perspective.pdf}
+            \end{figure}
         \end{column}
         \begin{column}{0.5\textwidth}
             \begin{figure}
@@ -122,7 +147,7 @@
     \frametitle{Approach}
 
     \begin{itemize}
-        \item Function approximation with deep neural networks:
+        \item Function approximation with deep neural networks.
         \begin{itemize}
             \item Policy \(\pi(a | s, \theta)\).
             \item Value \(v_\pi(s, \theta)\) (predicts future reward).
@@ -134,11 +159,13 @@
             \item Optimize \(\mathcal{L}\) wrt \(\theta\).
             \item Repeat\dots
         \end{enumerate}
-        \item Loss function from proximal policy optimization~\cite{schulman_proximal_2017}.
+        \item Use proximal policy optimization~\cite{schulman_proximal_2017}.
         \begin{itemize}
-            \item Relatively new RL algorithm.
-            \item Stable performance, little hyperparameter tuning~\cite{henderson_deep_2018}
-            \item May lead to non-global optima...
+            \item Clipping loss function \(\mathcal{L_\text{clip}}\).
+            % Limits the magnitude of policy updates.
+            % Has been shown to give stable performance.
+            \item RL algorithm from 2017.
+            \item Stable performance, relatively little tuning~\cite{henderson_deep_2018}.
         \end{itemize}
 
     \end{itemize}
@@ -158,20 +185,26 @@
     \frametitle{Memory}
 
     \begin{itemize}
-        \item \textbf{Agent should remember visual features and associate them with their spatial location}.
+        \item \textit{Agent should remember visual features and associate them with their spatial location.}
+        % this is a hypothesis.
+        % should be useful for visual search in the general case.
+        % make decisions based on whole explored scene so far.
+        % best action depends on history of interactions
         \item Two memory variants:
         \begin{enumerate}
             \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
             \begin{itemize}
-                \item Previously applied to POMDPs \cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
+                \item Previously applied to tasks where memory is required~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
                 \item May struggle with remembering over many time steps.
                 \item Important for exhaustive search and scene understanding.
             \end{itemize}
             \item Spatial memory (inspired by \cite{parisotto_neural_2017}):
             \begin{itemize}
-                \item Map with one slot per camera position.
-                \item Write image representation to current position memory.
+                \item Matrix with one slot per camera position.
+                \item Indexed with current position.
+                \item Stores image representation at each slot.
                 \item Read whole memory with convolutional layers.
+                % Visualization of the memory comes later.
             \end{itemize}
         \end{enumerate}
     \end{itemize}
@@ -182,9 +215,20 @@
 
     \begin{itemize}
         \item Train for 25M time steps.
-        \item Results reported across 3 runs with different seeds.
+        % This was sufficient for convergence in each environment.
+        \item Results reported across 3 training runs.
+        % Deep RL known to have reproducibility problem.
+        % This is a widely discussed topic.
+        % Different runs have been shown to yield learning curves from different distributions.
+        % Important to do multiple runs to get a sense of stability
+        % We report mean and standard deviation.
         \item Separate training and test sets.
+        % Ensures that agents do not simply memorize certain scenarios.
         \item Same hyperparameters in all runs.
+        % Training takes long time
+        % (deep RL is sample-inefficient)
+        % This means that extensive hyperparameter tuning is not an option
+        % (unless sufficient compute resources available)
     \end{itemize}
 \end{frame}
 

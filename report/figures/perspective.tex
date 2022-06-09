@@ -1,52 +1,80 @@
 \documentclass[margin=10pt]{standalone}    
 
 \usepackage{amsmath}
+\usepackage{xcolor}
 \usepackage{tikz,tikz-3dplot}
 
 \begin{document}
 
-\tdplotsetmaincoords{70}{15}
+\tdplotsetmaincoords{70}{35}
 
-\begin{tikzpicture}[scale=4,tdplot_main_coords]
+\begin{tikzpicture}[scale=2,tdplot_main_coords]
     \coordinate (O) at (0,0,0);
+
+    %\node (camera) [left of=O] {camera};
 
     \tdplotsetcoord{X}{1}{90}{0};
     \tdplotsetcoord{Y}{1}{90}{90};
     \tdplotsetcoord{Z}{1}{0}{0};
 
-    \draw[-stealth,color=red] (O) -> (X);
-    \draw[-stealth,color=green] (O) -> (Y);
-    \draw[-stealth,color=blue] (O) -> (Z);
+    \tdplotsetcoord{A}{1}{75}{-15};
+    \tdplotsetcoord{B}{1}{75}{15};
+    \tdplotsetcoord{C}{1}{105}{15};
+    \tdplotsetcoord{D}{1}{105}{-15};
 
-    \tdplotsetcoord{A}{1}{75}{30};
-    \tdplotsetcoord{B}{1}{75}{60};
-    \tdplotsetcoord{C}{1}{105}{60};
-    \tdplotsetcoord{D}{1}{105}{30};
+    \draw[-stealth,color=red!50] (O) -> (X);
+    \draw[-stealth,color=green!50] (O) -> (Y);
+    \draw[-stealth,color=blue!50] (O) -> (Z);
 
-    \draw (O) -> (A);
-    \draw (O) -> (B);
-    \draw (O) -> (C);
-    \draw (O) -> (D);
+    \draw [densely dotted] (O) -> (B);
+    \draw [densely dotted] (O) -> (C);
 
-    \draw (A) -- (B) -- (C) -- (D) -- cycle;
+    \tikzstyle{box} = [draw=black!75,fill=red!75];
 
-    \tdplotsetcoord{A'}{1}{65}{-5};
-    \tdplotsetcoord{B'}{1}{65}{40};
-    \tdplotsetcoord{C'}{1}{115}{40};
-    \tdplotsetcoord{D'}{1}{115}{-5};
+    % box 1
+    \draw [box] (0.6,-0.05,-0.05) -- (0.7,-0.05,-0.05) -- (0.7,0.05,-0.05) -- (0.6,0.05,-0.05) -- cycle; % bottom
+    \draw [box] (0.6,-0.05,0.05) -- (0.7,-0.05,0.05) -- (0.7,0.05,0.05) -- (0.6,0.05,0.05) -- cycle; % top
+    \draw [box] (0.6,-0.05,-0.05) -- (0.6,-0.05,0.05) -- (0.7,-0.05,0.05) -- (0.7,-0.05,-0.05) -- cycle; % right
+    \draw [box] (0.7,-0.05,-0.05) -- (0.7,-0.05,0.05) -- (0.7,0.05,0.05) -- (0.7,0.05,-0.05) -- cycle; % back
 
-    \draw [dotted] (O) -> (A');
-    \draw [dotted] (O) -> (B');
-    \draw [dotted] (O) -> (C');
-    \draw [dotted] (O) -> (D');
+    \draw [densely dotted] (O) -> (A);
+    \draw [densely dotted] (O) -> (D);
 
-    \draw[dotted] (A') -- (B') -- (C') -- (D') -- cycle;
+    \draw [densely dotted] (A) -- (B) -- (C) -- (D) -- cycle;
 
-    %\draw[fill=blue,fill opacity=0.5] (O) -- (Px) -- (Pxy) -- (Py) -- cycle;
-    %\draw[fill=yellow,fill opacity=0.5] (O) -- (Px) -- (Pxz) -- (Pz) -- cycle;
-    %\draw[fill=green,fill opacity=0.5] (Pz) -- (Pyz) -- (P) -- (Pxz) -- cycle;
-    %\draw[fill=red,fill opacity=0.5] (Px) -- (Pxy) -- (P) -- (Pxz) -- cycle;
-    %\draw[fill=magenta,fill opacity=0.5] (Py) -- (Pxy) -- (P) -- (Pyz) -- cycle;
+    % box 2
+    \draw [box] (0.0,-0.7,-0.05) -- (0.1,-0.7,-0.05) -- (0.1,-0.6,-0.05) -- (0.0,-0.6,-0.05) -- cycle; % bottom
+    \draw [box] (0.0,-0.7,0.05) -- (0.1,-0.7,0.05) -- (0.1,-0.6,0.05) -- (0.0,-0.6,0.05) -- cycle; % top
+    \draw [box] (0.0,-0.7,-0.05) -- (0.0,-0.7,0.05) -- (0.1,-0.7,0.05) -- (0.1,-0.7,-0.05) -- cycle; % right
+    \draw [box] (0.1,-0.7,-0.05) -- (0.1,-0.7,0.05) -- (0.1,-0.6,0.05) -- (0.1,-0.6,-0.05) -- cycle; % back
+
+    % box 3
+    \draw [box] (0.2,-0.5,-0.05) -- (0.3,-0.5,-0.05) -- (0.3,-0.4,-0.05) -- (0.2,-0.4,-0.05) -- cycle; % bottom
+    \draw [box] (0.2,-0.5,0.05) -- (0.3,-0.5,0.05) -- (0.3,-0.4,0.05) -- (0.2,-0.4,0.05) -- cycle; % top
+    \draw [box] (0.2,-0.5,-0.05) -- (0.2,-0.5,0.05) -- (0.3,-0.5,0.05) -- (0.3,-0.5,-0.05) -- cycle; % right
+    \draw [box] (0.3,-0.5,-0.05) -- (0.3,-0.5,0.05) -- (0.3,-0.4,0.05) -- (0.3,-0.4,-0.05) -- cycle; % back
+
+
+
+
+    %\tdplotsetcoord{A'}{1}{75}{30};
+    %\tdplotsetcoord{B'}{1}{75}{60};
+    %\tdplotsetcoord{C'}{1}{105}{60};
+    %\tdplotsetcoord{D'}{1}{105}{30};
+
+    %\draw (O) -> (A');
+    %\draw (O) -> (B');
+    %\draw (O) -> (C');
+    %\draw (O) -> (D');
+
+    %\draw (A') -- (B') -- (C') -- (D') -- cycle;
+
+    \tdplotdrawarc[->,color=black]{(0,0,0.7)}{0.1}{0}{350}{anchor=south east,color=black}{pan $p_{t,1}$}
+
+    \tdplotsetthetaplanecoords{0}
+    \tdplotdrawarc[tdplot_rotated_coords,->,color=black]{(0,0,0.7)}{0.1}{110}{460}{anchor=south west,color=black}{tilt $p_{t,0}$}
+    \tdplotsetthetaplanecoords{-90}
+
 \end{tikzpicture}
 
 \end{document}

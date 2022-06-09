@@ -6,17 +6,29 @@
     \frametitle{Experiment I: Search Performance}
 
     \begin{itemize}
-        \item Compare to baselines.
-        \item Simple reference behaviors.
-        \item Use held out samples as test set.
-        \item Average number of steps on test set.
-        \item Success weighted by inverse path length (SPL) metric~\cite{anderson_evaluation_2018}.
+        \item Compare to simple reference behaviors (baselines).
+        \item Test on held out environment samples.
+        \item Metrics:
+        \begin{enumerate}
+            \item Average search path length.
+            \item Average success rate.
+            \item Success weighted by inverse path length (SPL)~\cite{anderson_evaluation_2018}.
+        \end{enumerate}
     \end{itemize}
 
-    \begin{definition}{SPL}
-        with \(N\) as the number of test samples, \(S_i\) indicating success, \(p_i\) as the number of steps and \(l_i\) as the shortest path length:
-        \(\text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}\)
+    \begin{definition}
+        \begin{equation*}
+            \text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
+        \end{equation*}
+        where \(N\) is number of test samples, \(S_i\) is binary success indicator, \(p_i\) is the taken path length \(l_i\) is the shortest path length.
     \end{definition}
+
+    % How good was the taken search path compared to the optimal search path?
+    % How good a path is depends on the environment --
+    % if targets are close together, a good path should be short.
+    % SPL is 1.0 of the agent takes the optimal path in all test samples
+    % SPL is 0.5 if the agent takes the optimal path but is only successful in half of the tests.
+    % etc.
 \end{frame}
 
 \begin{frame}
@@ -30,7 +42,7 @@
         \item [Random:] randomly samples actions.
         \item [Greedy:] greedily selects exploring actions (random if none).
         \item [Exhaustive:] exhaustively covers search space with minimal revisits.
-        \item [Human:] human searcher with knowledge of environment characteristics.
+        \item [Human:] human searcher with knowledge of environment.
         \item[Handcrafted:] prioritize actions that lead to higher blue intensity\\ (gaussian environment only).
     \end{description}
 \end{frame}
@@ -198,12 +210,11 @@
     \frametitle{Experiment II: Scaling to Larger Search Spaces}
 
     \begin{itemize}
-        \item Real-world search often in large environments.
-        \item Larger search spaces more difficult.
-        \item Stronger memory demands:
+        \item Larger search spaces are more difficult.
+        \item Stronger demands on memory:
         \begin{itemize}
-            \item More positions to remember.
-            \item Avoid revisits.
+            \item Remember visited positions.
+            \item Remember appearance of environment.
         \end{itemize}
         \item Compare memories on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
     \end{itemize}
@@ -239,11 +250,11 @@
     \frametitle{Experiment III: Generalization From Limited Samples}
 
     \begin{itemize}
-        \item Limit number of scene samples seen during training to 500, 1 000, 5 000, 10 000.
-        \item Test on held out scenes from full distribution. 
-        \item Use terrain environment, high appearance variance and somewhat realistic.
-        \item Fix seed pool used to generate scenes seen during training.
-        \item Train agents until convergence (or for a fixed number of time steps).
+        \item Real-world use-cases have limited training samples.
+        \item Train on 500, 1 000, 5 000 and 10 000 samples of terrain environment.
+        \item Test on held out samples from full distribution.
+        % high appearance variance and somewhat realistic.
+        %Fix seed pool used to generate scenes seen during training.
     \end{itemize}
 \end{frame}
 
@@ -253,6 +264,7 @@
         10000 samples
         \includegraphics[scale=0.8]{figures/sample-10000.pdf}
     \end{figure}
+    % close to full distribution - equal training and test performance for both agents. seemingly no overfitting and good generalization.
 \end{frame}
 
 \begin{frame}

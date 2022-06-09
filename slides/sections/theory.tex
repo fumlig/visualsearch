@@ -1,24 +1,25 @@
 \section{Theory}
 
-\subsection{Background}
+\subsection{Reinforcement Learning}
 
 \begin{frame}
-    \frametitle{Partially Observable Markov Decision Process (POMDP)}
-
-    % Model the problem
-
-    % POMDP~\cite{kaelbling_planning_1998}: 
+    \frametitle{Reinforcement Learning I} %~\cite{sutton_reinforcement_2018}.
 
     \begin{itemize}
-        \item Formally description of environment.
-        \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\)
-        \item Environment \textit{state} \(s_t\) can not be observed.
-        \item Only partial \textit{observations}.
-        \item Agent takes \textit{action} \(a_t\).
-        \item Perceives partial \textit{observation} \(o_t\) of state.
-        \item Receives scalar reward \(r_t\) that indicates whether action is good or bad.
-        \item New state \(s_{t+1}\) depends only on history of interactions.
-        \item State not available to agent, must maintain internal state \(\rightarrow\) memory.
+        \item Learn from interaction how to achieve a goal.
+        \item Partially Observable Markov Decision Process~\cite{kaelbling_planning_1998}:
+        \begin{itemize}
+            \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\).
+            \item New state \(s_{t+1}\) depends on history \(a_0, o_1, r_1, \dots, a_{t-1}, o_t, r_t\).
+            \item Agent usually maintains internal state \(\rightarrow\) memory.
+        \end{itemize}
+        % Environment is in some state.
+        % Agent can not perceive the underlying state of the environment.
+        % In each time step:
+        % Agent selects an action to take.
+        % It receives some observation from the environment (e.g. image).
+        % Also receives scalar reward that indicates whether action was good or bad.
+        % Goal of agent is to maximize the reward (reward signal communicates the goal of the agent.)
     \end{itemize}
 
     \begin{figure}
@@ -28,28 +29,27 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Reinforcement Learning (RL)}
-
-    % RL~\cite{sutton_reinforcement_2018}:
-    Paradigm for learning from interactions how to achieve a goal.
+    \frametitle{Reinforcement Learning II}
 
     \begin{itemize}
         \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
-        \item Find policy that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
-        \item No inherent reward: design parameter!
-        \item 
+        \item Find policy that maximizes expected future reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
+        \item Reward signal is often a design parameter.
+        \item Deep reinforcement learning: approximate \(\pi\) with deep neural networks.
     \end{itemize}
 
-    Deep RL: Approximate \(\pi\) with deep neural networks.
-    % go into instability etc...
+    % The agent acts according to a policy that is a mapping from states to action probabilities.
+    % Reinforcement learning is concerned with finding a policy that maximized the expected future reward.
+    % In some cases there is some inherent reward signal (the goal is just to maximize the reward signal).
+    % E.g. score in video games or goals in soccer.
+    % Often, there is no reward signal. Instead, the reward signal is a design parameter that should tell the agent what its goal is.
+    % Finally, deep reinforcement learning is an umbrella term for approaches in which the policy is approximated with deep neural networks.
 \end{frame}
 
 \subsection{Related Work}
 
 \begin{frame}
     \frametitle{Related Work}
-
-    Deep RL for similar tasks:
 
     \begin{itemize}
         \item Visual attention:
@@ -68,6 +68,5 @@
             \item Anatomical landmark detection in medical images~\cite{ghesu_multi-scale_2019}.
         \end{itemize}
     \end{itemize}
-
-    Missing: how visual cues can guide search, overfitting and generalization from limited samples, rigorous performance evaluation.
+    % Missing: how visual cues can guide search, overfitting and generalization from limited samples, rigorous performance evaluation.
 \end{frame}

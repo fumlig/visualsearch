@@ -1,6 +1,6 @@
 \section{Experiments}
 
-\subsection{Experiment I: Search Performance}
+\subsection{Search Performance}
 
 \begin{frame}
     \frametitle{Experiment I: Search Performance}
@@ -22,19 +22,17 @@
 \begin{frame}
     \frametitle{Baselines}
 
-    \begin{itemize}
-        \item Simple handcrafted policies.
-        \item Give a sense of the performance achieved by learning agents.
-        \item All indicate automatically when target visible.
-    \end{itemize}
+    % Simple handcrafted policies.
+    % Give a sense of the performance achieved by learning agents.
+    % All indicate automatically when target visible.
 
-    \begin{itemize}
-        \item Random: randomly samples actions.
-        \item Greedy: greedily selects actions lead to unvisited positions (random if none).
-        \item Exhaustive: exhaustively covers search space with minimal revisits.
-        \item Human: human searcher with prior knowledge of environment characteristics.
-        \item Handcrafted (gaussian environment): prioritize actions that lead to higher blue intensity.
-    \end{itemize}
+    \begin{description}
+        \item [Random:] randomly samples actions.
+        \item [Greedy:] greedily selects exploring actions (random if none).
+        \item [Exhaustive:] exhaustively covers search space with minimal revisits.
+        \item [Human:] human searcher with knowledge of environment characteristics.
+        \item[Handcrafted:] prioritize actions that lead to higher blue intensity\\ (gaussian environment only).
+    \end{description}
 \end{frame}
 
 %\movie[externalviewer]{\includegraphics{../videos/gaussian/map/0.gif}}{videos/gaussian/map/0.gif}
@@ -194,18 +192,20 @@
     \centering \href{run:videos/camera/lstm/0.gif}{video 1}, \href{run:videos/camera/lstm/0.gif}{video 2}, \href{run:videos/camera/lstm/2.gif}{video 3} (temporal)
 \end{frame}
 
-\subsection{Experiment II: Scaling to Larger Search Spaces}
+\subsection{Scaling to Larger Search Spaces}
 
 \begin{frame}
     \frametitle{Experiment II: Scaling to Larger Search Spaces}
 
     \begin{itemize}
-        \item Larger search spaces take longer to train:
+        \item Real-world search often in large environments.
+        \item Larger search spaces more difficult.
+        \item Stronger memory demands:
         \begin{itemize}
-            \item More states to explore and exploit.
-            \item Stronger demands on memory (remember searched positions, scene understanding).
+            \item More positions to remember.
+            \item Avoid revisits.
         \end{itemize}
-        \item Investigate impact by comparing agents on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
+        \item Compare memories on \(10 \times 10\), \(15 \times 15\), and \(20 \times 20\) versions of gaussian environment.
     \end{itemize}
 \end{frame}
 
@@ -233,7 +233,7 @@
     \end{figure}
 \end{frame}
 
-\subsection{Experiment III: Generalization From Limited Samples}
+\subsection{Generalization From Limited Samples}
 
 \begin{frame}
     \frametitle{Experiment III: Generalization From Limited Samples}

@@ -5,11 +5,15 @@
 \begin{frame}
     \frametitle{Partially Observable Markov Decision Process (POMDP)}
 
+    % Model the problem
+
     % POMDP~\cite{kaelbling_planning_1998}: 
-    \textit{Agent} interacts with \textit{environment} over discrete time steps. At each step \(t = 0, 1, 2\dots, T\):
 
     \begin{itemize}
-        \item Environment is in state \(s_t\) that can not be observed by agent.
+        \item Formally description of environment.
+        \item \textit{Agent} interacts with \textit{environment} over discrete time steps \(t = 0, 1, 2\dots, T\)
+        \item Environment \textit{state} \(s_t\) can not be observed.
+        \item Only partial \textit{observations}.
         \item Agent takes \textit{action} \(a_t\).
         \item Perceives partial \textit{observation} \(o_t\) of state.
         \item Receives scalar reward \(r_t\) that indicates whether action is good or bad.
@@ -32,10 +36,12 @@
     \begin{itemize}
         \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
         \item Find policy that maximizes cumulative reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
-        \item Several algorithms with different pros and cons.
+        \item No inherent reward: design parameter!
+        \item 
     \end{itemize}
 
-    Deep RL: Approximate \(\pi\) with deep neural networks. Used for complex tasks like Atari~\cite{mnih_human-level_2015}, Go~\cite{silver_mastering_2016}, StarCraft II~\cite{vinyals_grandmaster_2019}, etc.
+    Deep RL: Approximate \(\pi\) with deep neural networks.
+    % go into instability etc...
 \end{frame}
 
 \subsection{Related Work}

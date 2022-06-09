@@ -171,26 +171,6 @@ class CameraEnv(SearchEnv):
         front = direction.normalized
         self.scene.camera_target = self.scene.camera_position + front
 
-    def plot(self, ax, overlay=True, position=None, **kwargs):
-        if position is not None:
-            _position = self.position
-            self.position = position
-
-        img = self.render()
-
-        if position is not None:
-            self.position = _position
-
-        ax.imshow(img)
-
-        if overlay:
-            ax.set_yticks([0, self.view[0]-1])
-            ax.set_xticks([0, self.view[1]-1])
-        else:
-            ax.set_yticks([])
-            ax.set_xticks([])
-            
-
     def observation(self):
         return dict(
             image=self.render(),

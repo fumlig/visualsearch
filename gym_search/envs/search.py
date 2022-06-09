@@ -153,33 +153,6 @@ class SearchEnv(gym.Env):
         
         return image
 
-    def plot(self, ax, overlay=True, inset=True, position=None):
-        _position = self.position
-        if position is not None: self.position = position
-
-        img = self.render()
-        obs = self.observation()
-
-        ax.imshow(img)
-
-        if overlay:
-            ax.grid(color="black", linestyle='--', linewidth=0.25)
-            ax.set_yticks(range(0, img.shape[0], self.view[0]))
-            ax.set_xticks(range(0, img.shape[1], self.view[1]))
-            ax.set_yticklabels(range(self.shape[0]))
-            ax.set_xticklabels(range(self.shape[1]))
-        else:
-            ax.set_yticks([])
-            ax.set_xticks([])
-
-        if inset:
-            axins = ax.inset_axes((0.2, 0.2, 0.25, 0.25))
-            axins.imshow(obs["image"], origin="upper")
-            axins.set_yticks([0, self.view[0]-1])
-            axins.set_xticks([0, self.view[1]-1])
-            ax.indicate_inset([*self.scale(self.position)[::-1], *self.view[::-1]], axins, edgecolor="black")
-
-        self.position = _position
 
     def observation(self):
         y0, x0 = np.array(self.position)*self.view
@@ -187,8 +160,8 @@ class SearchEnv(gym.Env):
         obs = self.scene[y0:y1,x0:x1]
         return dict(image=obs, position=self.position)
 
+
     def visible(self, target):
-        #return Box(*self.scale(self.position), *self.view).overlap(target) > 0
         return np.all(self.position == target)
 
     def generate(self, seed):
@@ -290,4 +263,11 @@ class SearchEnv(gym.Env):
         return valid[0]
     
     def get_handcrafted_action(self, detect=False):
-        raise NotImplementedError
+        raise NotImplemented
+    
+
+    def get_position(self):
+        return self.position
+
+    def set_position(self, position):
+        self.position = position

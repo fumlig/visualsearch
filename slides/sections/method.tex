@@ -37,20 +37,18 @@
 \begin{frame}
     \frametitle{Observation, Action and Reward}
 
-    At each time step \(t\), the agent:
-
     \begin{itemize}
-        \item Receives observation \(o_t = \left\langle x_t, p_t \right\rangle\), where
+        \item Observations \(o_t = \left\langle x_t, p_t \right\rangle\), where
         \begin{itemize}
-            \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is an RGB image of current view, and
-            \item \(p_t \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}\) is the position of the camera.
+            \item \(x_t \in \mathbb{R}^{3 \times 64 \times 64}\) is RGB image,
+            \item \(p_t \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}\) is camera position.
         \end{itemize}
-        \item Takes action \(a_t \in \{\texttt{INDICATE}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
+        \item Actions \(a_t \in \{\texttt{INDICATE}, \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT}\}\), where
         \begin{itemize}
-            \item \texttt{INDICATE} indicates that a target is in view, and
-            \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move the view in each cardinal direction.
+            \item \texttt{INDICATE} identifies targets, and
+            \item \texttt{UP}, \texttt{DOWN}, \texttt{LEFT}, \texttt{RIGHT} move camera.
         \end{itemize}
-        \item Receives reward \(r_t = h - 0.01 + 0.005d + 0.005e\) where
+        \item Reward \(r_t = h - 0.01 + 0.005d + 0.005e\) where
         \begin{itemize}
             \item \(h = \left\vert T \cap V \right\vert\) if \(a_t = \texttt{INDICATE}\), else \(0\).
             \item \(d = 1\) if \(a_t\) moves closer to nearest target, else \(0\).
@@ -66,10 +64,8 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
-                \item 2D scene, \(10 \times 10\) search space.
                 \item Three gaussian kernels with random center.
-                \item Sum of kernels determine blue color intensity and probability of targets.
-                \item Clear correlation between appearance and desired behavior.
+                \item Sum of kernels \(=\) blue color intensity, probability of targets.
                 \item Agent should prioritize blue regions.
             \end{itemize}
         \end{column}
@@ -87,13 +83,9 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
-                \item Similar to previous environment.
-                \item Terrain seen from above.
-                \item Gradient noise used to generate height map.
-                \item Color determined by height.
-                \item Targets placed with uniform probability across coastlines.
+                \item Terrain seen from above (e.g. UAV).
+                \item Targets between ocean and mountains.
                 \item More realistic, higher variance.
-                \item Analogous to search and rescue with UAV.
             \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
@@ -110,10 +102,8 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
-                \item 3D scene viewed from a perspective projection camera.
-                \item Height map from terrain environment turned into mesh, same appearance and target probability as before.
-                \item Camera location fixed at center of scene.
-                \item Moving actions control pan and tilt (pitch and yaw).
+                \item Terrain seen from perspective projection camera.
+                \item Moving actions control pan and tilt.
                 \item Visually complex, difficult to interpret.
             \end{itemize}
         \end{column}
@@ -132,7 +122,6 @@
     \frametitle{Approach}
 
     \begin{itemize}
-        %\item Actor-critic method.
         \item Function approximation with deep neural networks:
         \begin{itemize}
             \item Policy \(\pi(a | s, \theta)\).
@@ -142,11 +131,15 @@
         \begin{enumerate}
             \item Collect interactions with environment.
             \item Compute loss \(\mathcal{L(\theta)}\).
-            \item Optimize \(\theta\) wrt. loss.
             \item Optimize \(\mathcal{L}\) wrt \(\theta\).
             \item Repeat\dots
         \end{enumerate}
         \item Loss function from proximal policy optimization~\cite{schulman_proximal_2017}.
+        \begin{itemize}
+            \item Relatively new RL algorithm.
+            \item Stable performance, little hyperparameter tuning~\cite{henderson_deep_2018}
+            \item May lead to non-global optima...
+        \end{itemize}
 
     \end{itemize}
 \end{frame}
@@ -159,40 +152,33 @@
         \includegraphics[scale=0.75]{figures/architecture-visual.pdf}
     \end{figure}
 
-    \begin{itemize}
-        \item Recurrent step retains state (memory).
-        \item Agent should remember visual features and associate them with their spatial location.
-        \item Two memory variants\dots
-    \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Memory}
 
-    \begin{enumerate}
-        \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
-        \begin{itemize}
-            \item Previously applied to POMDPs \cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
-            \item May struggle with remembering over many time steps.
-            \item Important for exhaustive search and scene understanding.
-        \end{itemize}
-        \item Spatial memory (inspired by \cite{parisotto_neural_2017}):
-        \begin{itemize}
-            \item Map with one slot per camera position.
-            \item Write image representation to current position memory.
-            \item Read whole memory with convolutional layers.
-        \end{itemize}
-    \end{enumerate}
+    \begin{itemize}
+        \item \textbf{Agent should remember visual features and associate them with their spatial location}.
+        \item Two memory variants:
+        \begin{enumerate}
+            \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
+            \begin{itemize}
+                \item Previously applied to POMDPs \cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
+                \item May struggle with remembering over many time steps.
+                \item Important for exhaustive search and scene understanding.
+            \end{itemize}
+            \item Spatial memory (inspired by \cite{parisotto_neural_2017}):
+            \begin{itemize}
+                \item Map with one slot per camera position.
+                \item Write image representation to current position memory.
+                \item Read whole memory with convolutional layers.
+            \end{itemize}
+        \end{enumerate}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Experiments}
-
-    \begin{enumerate}
-        \item Search Performance
-        \item Scaling to Larger Search Spaces
-        \item Generalization from Limited Samples
-    \end{enumerate}
+    \frametitle{Training}
 
     \begin{itemize}
         \item Train for 25M time steps.

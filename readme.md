@@ -8,29 +8,29 @@
 Report:
 
 - discuss hyperparameter tuning
+- proof-read
 
 Presentation:
 
 - conclusion
-- emphasize reasoning over scene appearance
+- future work
+- fix animations
+- emphasize reasoning over scene appearance (beginning of approach)
 - fix reinforcement learning theory
 - discuss reward signal, action space etc? one slide per?
 
 Questions:
 
-- what to include?
-- ppo description
-- loss functions
-- animate slides?
 - should PPO be included?
-- any particular things of importance I should mention?
+
+Repository:
+
+- document code
+- scripts for experiments
 
 Other:
 
-- Softmax temperature
-- Visualize actions and scene
-- Show attention
-- Fix readme
+- talk to fredrik about future work, evaluation of time at FOI
 
 ## Reproduce
 

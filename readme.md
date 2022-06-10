@@ -21,16 +21,12 @@ Presentation:
 
 - fix video scaling
 - collect mp4 videos
-- recollect search paths (better examples)
-
-Questions:
-
-- should PPO be included?
 
 Repository:
 
 - document code
 - scripts for experiments
+- fix permanent link in report (https://zenodo.org/?)
 
 Other:
 

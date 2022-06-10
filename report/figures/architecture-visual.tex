@@ -21,10 +21,9 @@
     \node (mlp1) [s,right=1cm of out,shift=({0,1cm}),align=center] {fully connected};
     \node (mlp2) [s,right=1cm of out,shift=({0,-1cm}),align=center] {fully connected};
     \node (pi) [right=0.5cm of mlp1,align=left] {action probabilities\\$\pi = \left\lbrack 0.7, 0.11, \dots \right\rbrack$};
-    \node (act) [right=0.25cm of pi] {};
     \node (v) [right=0.5cm of mlp2,align=left] {state value\\$v = 3.01$};
 
-    \draw [->] (img.center) -- (cnn.west);
+    \draw [->] ([xshift=-0.1cm]img.east) -- (cnn.west);
     \draw [->] (cnn.east) -- node [anchor=south] {$y_t$} (rnn.west);
     \draw (rnn) edge [loop above] node {memory state $z_t$} (rnn);
     \draw [->] (p) -- (rnn.south);

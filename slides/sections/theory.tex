@@ -34,6 +34,8 @@
     \begin{itemize}
         \item Policy \(\pi(a|s)\) is a mapping from states to action probabilities.
         \item Find policy that maximizes expected future reward \(\mathbb{E} \left\lbrack \sum_{k=0}^{T} \gamma^{k-t-1} r_k \right\rbrack\).
+        % Sum from the current time step.
+        % Gamma is a discount factor.
         \item Reward signal is often a design parameter.
         \item Deep reinforcement learning: approximate \(\pi\) with deep neural networks.
     \end{itemize}

@@ -10,7 +10,28 @@
         \item Architecture affects performance, scaling and generalization.
         \item One approach comparable to human performance.
     \end{itemize}
+
+    \begin{itemize}
+        \item Different architectures good for different purposes:
+        \begin{itemize}
+            \item Temporal memory (long short-term memory) better for smaller, reactive, search spaces.
+            \item Spatial memory (structured feature map) better for larger search spaces, generalizes better.
+        \end{itemize}
+        \item The approach can be used for visual search
+        \begin{itemize}
+            \item Comparable performance to that of a human.
+            \item Not optimal (worse than handcrafted in at least one environment)
+        \end{itemize}
+    \end{itemize}
 \end{frame}
+
+% My spatial memory architecture was better at scaling to larger search spaces and generalizing from fewer training samples. The temporal (lstm) memory was sufficient (and better) in the third environment, which has a smaller search space and is more "reactive".
+
+% What do my results say about RL for visual search, i.e. is it a suitable method? 
+% Managed to utilize visual cues (better than simple baselines.
+% One of my approaches achieved human-level performance, but was worse than a handcrafted policy in the first environment. This indicates that it did not converge to a (close to) optimal solution. What can be said about realistic search scenarios? (which are much larger and more complex)
+
+
 
 \subsection{Future Work}
 

@@ -10,7 +10,7 @@
 \beamer@subsectionintoc {3}{2}{Approach}{16}{0}{3}
 \beamer@sectionintoc {4}{Experiments}{21}{0}{4}
 \beamer@subsectionintoc {4}{1}{Search Performance}{21}{0}{4}
-\beamer@subsectionintoc {4}{2}{Scaling to Larger Search Spaces}{33}{0}{4}
-\beamer@subsectionintoc {4}{3}{Generalization From Limited Samples}{37}{0}{4}
-\beamer@sectionintoc {5}{Conclusion}{42}{0}{5}
-\beamer@subsectionintoc {5}{1}{Future Work}{43}{0}{5}
+\beamer@subsectionintoc {4}{2}{Scaling to Larger Search Spaces}{26}{0}{4}
+\beamer@subsectionintoc {4}{3}{Generalization From Limited Samples}{30}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{35}{0}{5}
+\beamer@subsectionintoc {5}{1}{Future Work}{36}{0}{5}

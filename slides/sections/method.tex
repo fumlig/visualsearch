@@ -130,7 +130,7 @@
 \subsection{Approach}
 
 \begin{frame}
-    \frametitle{Approach}
+    \frametitle{Architecture}
 
     \begin{itemize}
         \item Function approximation with deep neural networks.
@@ -138,25 +138,7 @@
             \item Policy \(\pi(a | s, \theta)\).
             \item Value \(v_\pi(s, \theta)\) (predicts future reward).
         \end{itemize}
-        \item Training procedure:
-        \begin{enumerate}
-            \item Collect interactions with environment.
-            \item Compute loss \(\mathcal{L(\theta)}\).
-            \item Optimize \(\mathcal{L}\) wrt \(\theta\).
-            \item Repeat until \(\pi\) achieves high reward.
-        \end{enumerate}
-        \item Reinforcement learning algorithm:
-        \begin{itemize}
-            \item Proximal policy optimization~\cite{schulman_proximal_2017}.
-            \item Relatively new algorithm.
-            \item Stable performance with little tuning~\cite{henderson_deep_2018}.
-        \end{itemize}
-
     \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Architecture}
 
     \begin{figure}
         \centering
@@ -199,6 +181,20 @@
     \frametitle{Training}
 
     \begin{itemize}
+        \item Training procedure:
+        \begin{enumerate}
+            \item Collect interactions with environment.
+            \item Compute loss \(\mathcal{L(\theta)}\).
+            \item Optimize \(\mathcal{L}\) wrt \(\theta\).
+            \item Repeat until \(\pi\) achieves high reward.
+        \end{enumerate}
+        \item Reinforcement learning algorithm:
+        \begin{itemize}
+            \item Proximal policy optimization~\cite{schulman_proximal_2017}.
+            \item Relatively new algorithm.
+            \item Stable performance with little tuning~\cite{henderson_deep_2018}.
+        \end{itemize}
+
         \item Train for 25M time steps.
         % This was sufficient for convergence in each environment.
         \item Results reported across 3 training runs.

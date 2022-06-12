@@ -20,20 +20,31 @@
 \begin{frame}
     \frametitle{Problem Statement}
 
-    % todo: can we rework/remove?
-    \begin{itemize}
-        \item Searched scene \(S \subset \mathbb{R}^d\).
-        \item Perceived view \(V \subset S\) in the form of an image.
-        \item View can be transformed to new subspace at a cost.
-        \item Targets in scene \(\{t_0, \dots t_n\}\), \(t_i \in S\).
-        \item Detect when targets are visible, i.e. \(V \cap T \neq \varnothing\). 
-        \item Goal:
-        \begin{itemize}
-            \item Maximize probability of finding all targets.
-            \item Minimize cost (time).
-            \item NP-complete~\cite{andreopoulos_theory_2009}. % intractable to solve optimally
-        \end{itemize}
-    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item Searched scene \(S \subset \mathbb{R}^d\).
+                \item Perceived view \(V \subset S\) in the form of an image.
+                \item View can be transformed to new subspace at a cost.
+                \item Targets in scene \(\{t_0, \dots t_n\}\), \(t_i \in S\).
+                \item Detect when targets are visible, i.e. \(V \cap T \neq \varnothing\). 
+                \item Goal:
+                \begin{itemize}
+                    \item Maximize probability of finding all targets.
+                    \item Minimize cost (time).
+                    \item NP-complete~\cite{andreopoulos_theory_2009}. % intractable to solve optimally
+                \end{itemize}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[scale=1.0]{figures/space.pdf}
+            \end{figure}
+        \end{column}
+    \end{columns}   
+
+
 \end{frame}
 
 \subsection{Motivation}

@@ -6,20 +6,20 @@
     \begin{itemize}
         \item Architecture:
         \begin{itemize}
-            \item Spatial memory architecture scales to larger search spaces and generalizes better.
-            \item Temporal memory sufficient (and better) for smaller search spaces.
+            \item Spatial memory: architecture scales to larger search spaces and generalizes better.
+            \item Temporal memory: sufficient (and better) for smaller search spaces.
         \end{itemize}
         \item Approach:
         \begin{itemize}
-            \item Better than simple baselines.
-            \item Comparable to human performance.
-            \item Worse than handcrafted baseline.
-            \begin{itemize}
-                \item Why? Stochasticity, local optima, conditions\dots
-                % Neither agent was as good as a handcrafted baseline in one of the environments.
-                % Why is this? How can we make the agent learn better policies?
-                % Stochasticity? Other reinforcement learning algorithm? Too much bias/bad reward signal? etc.
-            \end{itemize}
+            \item Search performance: better than simple baselines, comparable to human, worse than handcrafted.
+            % was able to utilize visual cues to guide search.
+            % Family of RL algorithms I have used known to converge to local optima.
+            % Could a better reinforcement learning algorithm have been used?
+            % There where some revisits: is stochastic policy suited?
+            % Better than simple baselines, comparable to human, worse than handcrafted.
+            % Does it fulfull the conditions that are needed to learn better behavior, or is something missing?
+            \item Sample efficiency: relatively many samples needed even for simple environments.
+            % sample efficiency: quite many samples where needed even for simple scenarios. known problem with deep RL.
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -37,7 +37,7 @@
             \item Reward signal design.
             % Less bias?
         \end{itemize}
-        \item Realistic search scenarios.
+        \item Evaluate on realistic search scenarios.
         % We have looked at simulated environments which are easier to control.
         % Easier to vary parameters to get a sense of what is feasible.
         % The final goal is to use this for realistic scenarios.

@@ -7,6 +7,7 @@
 
     \begin{itemize}
         \item Compare to simple reference behaviors (baselines).
+        \item Fixed test set from each environment.
         \item Metrics:
         \begin{enumerate}
             \item Average search path length.
@@ -96,7 +97,7 @@
     \frametitle{Experiment II: Scaling to Larger Search Spaces}
 
     \begin{itemize}
-        \item Larger search spaces are more difficult.
+        \item Real-world search tasks usually have large search spaces.
         \item Stronger demands on memory:
         \begin{itemize}
             \item Remember visited positions.
@@ -107,27 +108,30 @@
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         \(10 \times 10\)
-        \includegraphics[scale=0.8]{figures/shape-10.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/shape-10.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         \(15 \times 15\)
-        \includegraphics[scale=0.8]{figures/shape-15.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/shape-15.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         \(20 \times 20\)
-        \includegraphics[scale=0.8]{figures/shape-20.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/shape-20.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \subsection{Generalization From Limited Samples}
@@ -145,34 +149,37 @@
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         10000 samples
-        \includegraphics[scale=0.8]{figures/sample-10000.pdf}
-    \end{figure}
-    % close to full distribution - equal training and test performance for both agents. seemingly no overfitting and good generalization.
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/sample-10000.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         5000 samples
-        \includegraphics[scale=0.8]{figures/sample-5000.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/sample-5000.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         1000 samples
-        \includegraphics[scale=0.8]{figures/sample-1000.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/sample-1000.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}
 
 \begin{frame}
-    \begin{figure}
-        \centering
+    \begin{center}
         500 samples
-        \includegraphics[scale=0.8]{figures/sample-500.pdf}
-    \end{figure}
+        \begin{figure}
+            \includegraphics[scale=0.8]{figures/sample-500.pdf}
+        \end{figure}
+    \end{center}
 \end{frame}

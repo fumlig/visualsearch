@@ -144,7 +144,7 @@
             \item Collect interactions with environment.
             \item Compute loss \(\mathcal{L(\theta)}\).
             \item Optimize \(\mathcal{L}\) wrt \(\theta\).
-            \item Repeat\dots
+            \item Repeat until \(\pi\) is good.
         \end{enumerate}
         \item Use proximal policy optimization~\cite{schulman_proximal_2017}.
         \begin{itemize}
@@ -178,12 +178,12 @@
         \begin{enumerate}
             \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
             \begin{itemize}
-                \item Previously applied successfully to tasks where memory is required~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
+                \item Previously applied successfully to tasks where memory is required~\cite{hausknecht_deep_2017,mnih_asynchronous_2016}.
                 \item How long sequences can be remembered?
                 % Can be important for exhaustive search and scene understanding.
                 % Can it reason over spatial relationships?
             \end{itemize}
-            \item Spatial memory (inspired by \cite{parisotto_neural_2017}):
+            \item Spatial memory (inspired by \cite{parisotto_neural_2017} and \cite{gupta_cognitive_2019}):
             \begin{itemize}
                 \item Feature map with one slot per camera position.
                 \item Indexed with current position.

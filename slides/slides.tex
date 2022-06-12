@@ -1,4 +1,6 @@
-\documentclass[handout,aspectratio=169]{beamer}
+\newcommand{\comment}[1]{}
+
+\documentclass[\comment{handout},aspectratio=169]{beamer}
 
 \usepackage{bibentry}
 \usepackage{booktabs}
@@ -14,6 +16,8 @@
 
 \beamertemplatenavigationsymbolsempty
 \beamerdefaultoverlayspecification{<+->}
+
+\setbeamerfont{subsection in toc}{size=\scriptsize}
 
 \setbeamertemplate{bibliography item}{\insertbiblabel}
 \setbeamerfont{bibliography item}{size=\scriptsize}
@@ -47,8 +51,8 @@
 \input{sections/experiments}
 \input{sections/conclusion}
 
-\section{}
-\subsection{}
+\section*{References}
+
 \begin{frame}[t,allowframebreaks,noframenumbering]
     \frametitle{References}
     \bibliographystyle{ieeetr}

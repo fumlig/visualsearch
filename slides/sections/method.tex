@@ -10,10 +10,7 @@
         % following the problem statement
         % gives control over difficulty to solve
         % more investigative power
-        \item Find three targets in less than 1 000 steps.
-        % otherwise unsuccessful
-        \item There is some structure that can be utilized to find targets quicker.
-        %\item Target probability correlated with scene appearance. 
+        \item Structure can be utilized to find targets quicker.
         % possible to do better than exhaustive search on average
         % at least for a human
         \item Procedurally generated, conditioned on seed.
@@ -21,6 +18,8 @@
         % every scene slightly different
         % find common characteristics across seeds
         % can vary number of scenes by limiting seed pool
+        \item Find three targets in less than 1 000 steps.
+        % otherwise unsuccessful
         \item New seed after each finished search.
     \end{itemize}
 \end{frame}
@@ -66,9 +65,8 @@
         \begin{column}{0.5\textwidth}
             \begin{itemize}
                 % explain better, avoid using math description
-                \item Three gaussian kernels with random center.
-                \item Sum of three gaussian kernels = blue color intensity.
-                \item More blue \rightarrow higher target probability.
+                \item Three gaussian distributions with random center.
+                \item Normalized sum give blue color intensity and target probability.
                 \item Agent should prioritize blue regions.
             \end{itemize}
         \end{column}
@@ -106,12 +104,13 @@
         \begin{column}{0.5\textwidth}
             \begin{itemize}
                 \item Terrain seen from perspective projection camera.
-                \item Variance in target appearance.
                 \item Moving actions control pan and tilt.
                 \begin{itemize}
                     \item 20 pan angle steps.
                     \item 10 tilt angle steps.
                 \end{itemize}
+                \item Variance in target appearance.
+
             \end{itemize}
 
             \begin{figure}
@@ -144,12 +143,13 @@
             \item Collect interactions with environment.
             \item Compute loss \(\mathcal{L(\theta)}\).
             \item Optimize \(\mathcal{L}\) wrt \(\theta\).
-            \item Repeat until \(\pi\) is good.
+            \item Repeat until \(\pi\) achieves high reward.
         \end{enumerate}
-        \item Use proximal policy optimization~\cite{schulman_proximal_2017}.
+        \item Reinforcement learning algorithm:
         \begin{itemize}
-            \item RL algorithm from 2017.
-            \item Stable performance, relatively little tuning~\cite{henderson_deep_2018}.
+            \item Proximal policy optimization~\cite{schulman_proximal_2017}.
+            \item Relatively new algorithm.
+            \item Stable performance with little tuning~\cite{henderson_deep_2018}.
         \end{itemize}
 
     \end{itemize}

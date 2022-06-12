@@ -7,21 +7,20 @@
 
     \begin{itemize}
         \item Compare to simple reference behaviors (baselines).
-        \item Test on held out environment samples.
         \item Metrics:
         \begin{enumerate}
             \item Average search path length.
             \item Average success rate.
-            \item Success weighted by inverse path length (SPL)~\cite{anderson_evaluation_2018}.
+            \item Success weighted by inverse path length (SPL)~\cite{anderson_evaluation_2018}.\\
+            With \(N\) test samples, \(S_i\) as a binary success indicator, \(p_i\) as the taken search path length \(l_i\) is the shortest search path length:
+            \begin{equation*}
+                \text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
+            \end{equation*}
         \end{enumerate}
     \end{itemize}
 
-    \begin{definition}
-        \begin{equation*}
-            \text{SPL} = \frac{1}{N} \sum_{i=1}^N S_i \frac{l_i}{\max(p_i,l_i)}
-        \end{equation*}
-        where \(N\) is number of test samples, \(S_i\) is binary success indicator, \(p_i\) is the taken path length \(l_i\) is the shortest path length.
-    \end{definition}
+    % 1.0 = optimal paths and 100% success rate
+    % otherwise between 0 and 1
 
     % How good was the taken search path compared to the optimal search path?
     % How good a path is depends on the environment --
@@ -57,9 +56,9 @@
     \end{table} 
 
     \begin{center}
-        \href{run:./videos/gaussian/map/0.mp4}{\texttt{video 1}},
+        \href{run:./videos/gaussian/map/2.mp4}{\texttt{video 1}},
         \href{run:./videos/gaussian/map/1.mp4}{\texttt{video 2}},
-        \href{run:./videos/gaussian/map/2.mp4}{\texttt{video 3}}.
+        \href{run:./videos/gaussian/map/0.mp4}{\texttt{video 3}}.
     \end{center}
 \end{frame}
 
@@ -85,9 +84,9 @@
     \end{table}
 
     \begin{center}
-        \href{run:./videos/camera/lstm/1.mp4}{\texttt{video 1}},
+        \href{run:./videos/camera/lstm/1000.mp4}{\texttt{video 1}},
         \href{run:./videos/camera/lstm/500.mp4}{\texttt{video 2}},
-        \href{run:./videos/camera/lstm/1000.mp4}{\texttt{video 3}}.
+        \href{run:./videos/camera/lstm/1.mp4}{\texttt{video 3}}.
     \end{center}
 \end{frame}
 

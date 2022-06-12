@@ -4,34 +4,25 @@
     \frametitle{Conclusion}
 
     \begin{itemize}
-        \item General method for visual search with reinforcement learning.
-        \item Three environments for evaluating visual search agents.
-        \item Two different neural network architectures.
-        \item Architecture affects performance, scaling and generalization.
-        \item One approach comparable to human performance.
-    \end{itemize}
-
-    \begin{itemize}
-        \item Different architectures good for different purposes:
+        \item Architecture:
         \begin{itemize}
-            \item Temporal memory (long short-term memory) better for smaller, reactive, search spaces.
-            \item Spatial memory (structured feature map) better for larger search spaces, generalizes better.
+            \item Spatial memory architecture scales to larger search spaces and generalizes better.
+            \item Temporal memory sufficient (and better) for smaller search spaces.
         \end{itemize}
-        \item The approach can be used for visual search
+        \item Approach:
         \begin{itemize}
-            \item Comparable performance to that of a human.
-            \item Not optimal (worse than handcrafted in at least one environment)
+            \item Better than simple baselines.
+            \item Comparable to human performance.
+            \item Worse than handcrafted baseline.
+            \begin{itemize}
+                \item Why? Stochasticity, local optima, conditions\dots
+                % Neither agent was as good as a handcrafted baseline in one of the environments.
+                % Why is this? How can we make the agent learn better policies?
+                % Stochasticity? Other reinforcement learning algorithm? Too much bias/bad reward signal? etc.
+            \end{itemize}
         \end{itemize}
     \end{itemize}
 \end{frame}
-
-% My spatial memory architecture was better at scaling to larger search spaces and generalizing from fewer training samples. The temporal (lstm) memory was sufficient (and better) in the third environment, which has a smaller search space and is more "reactive".
-
-% What do my results say about RL for visual search, i.e. is it a suitable method? 
-% Managed to utilize visual cues (better than simple baselines.
-% One of my approaches achieved human-level performance, but was worse than a handcrafted policy in the first environment. This indicates that it did not converge to a (close to) optimal solution. What can be said about realistic search scenarios? (which are much larger and more complex)
-
-
 
 \subsection{Future Work}
 
@@ -39,7 +30,14 @@
     \frametitle{Future Work}
 
     \begin{itemize}
-        \item Real-world scenarios.
+        \item Improvements to approach.
+        \begin{itemize}
+            \item Neural network architecture.
+            \item Reinforcement learning algorithm.
+            \item Reward signal design.
+            % Less bias?
+        \end{itemize}
+        \item Realistic search scenarios.
         % We have looked at simulated environments which are easier to control.
         % Easier to vary parameters to get a sense of what is feasible.
         % The final goal is to use this for realistic scenarios.
@@ -48,23 +46,10 @@
         % Is it enough to simply increase number of parameters?
         % Does the approach has to be modified?
         % Example: use a pretrained object detection network?
-        \item Closer to optimal behaviors.
-        % Neither agent was as good as a handcrafted baseline in one of the environments.
-        % Why is this? How can we make the agent learn better policies?
-        % Stochasticity? Other algorithm? Too much bias in reward? etc.
         \item Formal verification (for security-critical applications).
         % Handcrafted systems can offer more guarantees.
         % It is important to verify autonomous systems before deploying them.
         % This is especially true for safety-critical applications.
         % Value alignment etc.
-        \item Hyperparameter tuning (expensive!).
-        % maybe don't include this...
-        % Can give quite different results.
-        % Should be investigated.
-        \item Other RL algorithms.
-        % We have used proximal policy optimization.
-        % A policy gradient algorithm which approximates the policy directly.
-        % Such methods are known to not converge to global optima in general.
-        % There are other algorithms with other characteristics. 
     \end{itemize}
 \end{frame}

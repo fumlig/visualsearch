@@ -1,23 +1,5 @@
 \section{Method}
 
-\begin{frame}
-    \frametitle{Problem Statement}
-
-    \begin{itemize}
-        \item Agent searches scene \(S \subset \mathbb{R}^d\).
-        \item Agent perceives view \(V \subset S\).
-        \item View can be transformed to new subspace.
-        \item Targets in scene \(\{t_0, \dots t_n\}\), \(t_i \in S\).
-        \item Indicate when targets are visible, i.e. \(V \cap T \neq \varnothing\). 
-        \item Goal:
-        \begin{itemize}
-            \item Maximize probability of finding all targets.
-            \item Minimize cost in time.
-            \item NP-complete~\cite{andreopoulos_theory_2009}). % intractable to solve optimally
-        \end{itemize}
-    \end{itemize}
-\end{frame}
-
 \subsection{Environments}
 
 \begin{frame}
@@ -30,7 +12,10 @@
         % more investigative power
         \item Find three targets in less than 1 000 steps.
         % otherwise unsuccessful
-        \item Target probability correlated with scene appearance. % possible to do better than exhaustive search on average
+        \item There is some structure that can be utilized to find targets quicker.
+        %\item Target probability correlated with scene appearance. 
+        % possible to do better than exhaustive search on average
+        % at least for a human
         \item Procedurally generated, conditioned on seed.
         % seed determines scene appearance and target positions
         % every scene slightly different
@@ -80,8 +65,10 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \begin{itemize}
+                % explain better, avoid using math description
                 \item Three gaussian kernels with random center.
-                \item Sum of kernels \(=\) blue color intensity, probability of targets.
+                \item Sum of three gaussian kernels = blue color intensity.
+                \item More blue \rightarrow higher target probability.
                 \item Agent should prioritize blue regions.
             \end{itemize}
         \end{column}
@@ -161,9 +148,6 @@
         \end{enumerate}
         \item Use proximal policy optimization~\cite{schulman_proximal_2017}.
         \begin{itemize}
-            \item Clipping loss function \(\mathcal{L_\text{clip}}\).
-            % Limits the magnitude of policy updates.
-            % Has been shown to give stable performance.
             \item RL algorithm from 2017.
             \item Stable performance, relatively little tuning~\cite{henderson_deep_2018}.
         \end{itemize}
@@ -194,7 +178,7 @@
         \begin{enumerate}
             \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
             \begin{itemize}
-                \item Previously applied to tasks where memory is required~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
+                \item Previously applied successfully to tasks where memory is required~\cite{hausknecht_deep_2017,mnih_asynchronous_2016,mirowski_learning_2017,gupta_cognitive_2019}.
                 \item How long sequences can be remembered?
                 % Can be important for exhaustive search and scene understanding.
                 % Can it reason over spatial relationships?
@@ -225,7 +209,7 @@
         % We report mean and standard deviation.
         \item Separate training and test sets.
         % Ensures that agents do not simply memorize certain scenarios.
-        \item Same hyperparameters in all runs.
+        %\item Same hyperparameters in all runs.
         % Training takes long time
         % (deep RL is sample-inefficient)
         % This means that extensive hyperparameter tuning is not an option
@@ -238,7 +222,7 @@
 
     \begin{itemize}
         \item OpenAI Gym environment interface.
-        \item Custom PPO implementation.
+        \item Custom proximal policy optimization implementation.
         \item PyTorch for models and automatic differentiation.
         \item Intel Core i9-10900X CPU.
         \item NVIDIA GeForce RTX 2080 Ti GPU.

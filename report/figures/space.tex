@@ -1,0 +1,65 @@
+\documentclass[margin=10pt]{standalone}    
+
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{tikz,tikz-3dplot}
+\usetikzlibrary{patterns}
+
+\begin{document}
+
+\tdplotsetmaincoords{45}{130}
+
+\begin{tikzpicture}[scale=2,tdplot_main_coords]
+    
+    % axes
+
+    %\coordinate (O) at (0,0,0);
+    %\draw[-stealth,color=red!50] (O) -> (1,0,0);
+    %\draw[-stealth,color=green!50] (O) -> (0,1,0);
+    %\draw[-stealth,color=blue!50] (O) -> (0,0,1);
+    
+    % scene
+
+    \draw[black] ( 1, 1, 0) -- (-1, 1, 0) -- (-1,-1, 0) -- ( 1,-1, 0) -- cycle;
+    \node (S) at (0.75,-0.75,0) {$S$};
+
+    % view
+
+    \draw[black!50,pattern=north west lines,pattern color=black!50] ( .5, .5, .0) -- (-.5, .5, .00) -- (-.5,-.5, .0) -- ( .5,-.5, .00) -- cycle;
+    \node (V) at (0.30,-0.30,0) {$V$};
+
+    % targets
+
+    \tikzstyle{dot} = [circle,fill,inner sep=1pt];
+    
+    \node (t1) at (-0.1,0.25,0) {$t_1$};
+    \node at (-0.1,0.1,0) [dot] {};
+
+    \node (t2) at (0.75,0.15,0) {$t_2$};
+    \node at (0.75,0,0) [dot] {};
+
+    \node (t3) at (-0.65,0.80,0) {$t_3$};
+    \node at (-0.65,0.65,0) [dot] {};
+
+    % camera
+
+    \tikzstyle{box} = [black,fill=black!75];
+
+    \draw [black,densely dotted] ( 0.0, 0.0,1.00) -- ( 0.5, 0.5,0);
+    \draw [black,densely dotted] ( 0.0, 0.0,1.00) -- (-0.5, 0.5,0);
+    \draw [black,densely dotted] ( 0.0, 0.0,1.00) -- ( 0.5,-0.5,0);
+    \draw [black,densely dotted] ( 0.0, 0.0,1.00) -- (-0.5,-0.5,0);
+
+    \draw [box] ( 0.0, 0.0,1.00) -- ( 0.1, 0.1,0.90) -- (-0.1, 0.1,0.90) -- cycle;
+    \draw [box] ( 0.0, 0.0,1.00) -- ( 0.1, 0.1,0.90) -- ( 0.1,-0.1,0.90) -- cycle;
+    \draw [box] ( 0.0, 0.0,1.00) -- (-0.1,-0.1,0.90) -- ( 0.1,-0.1,0.90) -- cycle;
+    \draw [box] ( 0.0, 0.0,1.00) -- (-0.1,-0.1,0.90) -- (-0.1, 0.1,0.90) -- cycle;
+
+    \draw [box] ( 0.1, 0.1,1.00) -- (-0.1, 0.1,1.00) -- (-0.1,-0.1,1.00) -- ( 0.1,-0.1,1.00) -- cycle;
+    \draw [box] ( 0.1, 0.1,1.25) -- (-0.1, 0.1,1.25) -- (-0.1,-0.1,1.25) -- ( 0.1,-0.1,1.25) -- cycle;
+    \draw [box] ( 0.1, 0.1,1.00) -- (-0.1, 0.1,1.00) -- (-0.1, 0.1,1.25) -- ( 0.1, 0.1,1.25) -- cycle;
+    \draw [box] ( 0.1, 0.1,1.00) -- ( 0.1, 0.1,1.25) -- ( 0.1,-0.1,1.25) -- ( 0.1,-0.1,1.00) -- cycle;
+
+\end{tikzpicture}
+
+\end{document}

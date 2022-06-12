@@ -12,15 +12,8 @@ Report:
 
 Presentation:
 
-- conclusion
-- future work
+- rework conclusion
 - fix animations
-- emphasize reasoning over scene appearance (beginning of approach)
-- fix reinforcement learning theory
-- discuss reward signal, action space etc? one slide per?
-
-- fix video scaling
-- collect mp4 videos
 
 Repository:
 

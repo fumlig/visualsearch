@@ -1,7 +1,7 @@
-<h1 align="center"> Learning to Search for Targets</h1>
 <div align="center">
+<h1>Learning to Search for Targets</h1>
 <p><b>A Deep Reinforcement Learning Approach to Visual Search in Unknown Environments</b></p>
-<p>Oskar Lundin &lt;oskar dot lundin at pm dot me&gt;</p>
+<p>Oskar Lundin<br />&lt;oskar dot lundin at pm dot me&gt;</p>
 </div>
 
 This repository contains the results of a Master's thesis conducted at Linköping University and the Swedish Defence Research Agency.

@@ -1,7 +1,11 @@
 <h1 align="center"> Learning to Search for Targets</h1>
-<p align="center">A Deep Reinforcement Learning Approach to Visual Search in Unknown Environments</p>
+<div align="center">
+<h2>A Deep Reinforcement Learning Approach to Visual Search in Unknown Environments</h2>
+<p>Oskar Lundin &lt;oskar dot lundin at pm dot me&gt;</p>
+</div>
 
-&lt;oskar dot lundin at pm dot me&gt;
+This repository contains the results of a Master's thesis conducted at Linköping University and the Swedish Defence Research Agency.
+
 
 ## Abstract
 
@@ -27,19 +31,6 @@ search performance. It also searches more efficiently than a set of baselines th
 utilize the appearance of the environment, and achieves similar performance to that of a
 human searcher. Finally, the spatial memory scales to larger search spaces and is better at
 generalizing from a limited number of training samples.
-
-## To do
-
-Report:
-
-- discuss hyperparameter tuning
-- proof-read
-- feedback from jose, eric
-
-Repository:
-
-- scripts for experiments
-- fix permanent link in report (https://zenodo.org/?)
 
 ## Overview
 
@@ -69,3 +60,14 @@ Learning information is written to the [results](./results) directory, checkpoin
 Scripts for the individual experiments are located in the [scripts](./scripts) directory.
 If you have hardware available, you may want to modify them script to run multiple jobs in parallel.
 For simpler setup, the [dockerfile](./dockerfile) can be used.
+
+## To do
+
+Report:
+
+- discuss hyperparameter tuning
+- update report according to feedback and proof-read
+
+Repository:
+
+- fix permanent link in report (https://zenodo.org/?)

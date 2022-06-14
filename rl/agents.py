@@ -2,7 +2,6 @@
 import gym
 import numpy as np
 import torch as th
-import cv2 as cv
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -10,19 +9,34 @@ from torch.distributions import Categorical
 
 from rl.models import MLP, NatureCNN, ImpalaCNN, NeuralMap, Map
 from rl.utils import preprocess_image, init_lstm
+from gym_search.envs.search import Observation
 
+from typing import Tuple
+from numpy.typing import ArrayLike
 
 
 class Agent(nn.Module):
-    def __init__(self, envs):
+    """
+    Base class for agents.
+    """
+
+    def __init__(self, envs: gym.Env):
         super().__init__()
         self.observation_space = envs.single_observation_space if envs.is_vector_env else envs.observation_space
         self.action_space = envs.single_action_space if envs.is_vector_env else envs.action_space
 
-    def initial(self, _num_envs):
+    def initial(self, _num_envs: int) -> ArrayLike:
+        """Initial recurrent state for given number of environments."""
         return []
 
-    def forward(self, _obs, _state, **kwargs):
+    def forward(self, _obs: Observation, _state: ArrayLike, **kwargs) -> Tuple[Categorical, ArrayLike, ArrayLike]:
+        """
+        Inference given observation and state from previous time step.
+
+        obs: Observation from environment.
+        state: Previous recurrent state.
+        return: Action probabilities, value, new state.
+        """
         raise NotImplementedError
     
     def predict(self, obs, state, deterministic=False, **kwargs):
@@ -35,9 +49,9 @@ class Agent(nn.Module):
 
 
 class ImageAgent(Agent):
-    # Mnih et al., 2016 (https://arxiv.org/pdf/1602.01783.pdf)
-
-    # this is basically the one from the atari paper
+    """
+    Actor-critic version of architecture from (Mnih et al., 2016, https://arxiv.org/pdf/1602.01783.pdf)
+    """
 
     def __init__(self, envs):
         super().__init__(envs)
@@ -61,60 +75,17 @@ class ImageAgent(Agent):
         return pi, v, state
 
 
-class RecurrentAgent(Agent):    
-    # Mnih et al., 2016 (https://arxiv.org/pdf/1602.01783.pdf)
+class LSTMAgent(Agent):
+    """
+    Temporal memory agent.
 
-    def __init__(self, envs):
-        super().__init__(envs)
-        assert isinstance(self.observation_space, gym.spaces.Dict)
-        assert self.observation_space.get("image") is not None
+    Image part of observation fed through CNN.
+    Position part of observation encoded as two one-hot vectors.
+    Both are fed through LSTM layer.
+    Policy and value approximated with output of LSTM layer.
+    """
 
-        self.cnn = NatureCNN(self.observation_space["image"])
-        self.lstm = nn.LSTM(self.cnn.output_dim, 256, num_layers=1)
-        
-        self.policy = MLP(256, self.action_space.n, out_gain=0.01)
-        self.value = MLP(256, 1, out_gain=1.0)
-
-        init_lstm(self.lstm)
-
-    def initial(self, num_envs):
-        return [th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size), th.zeros(num_envs, self.lstm.num_layers, self.lstm.hidden_size)]
-
-    def remember(self, hidden, state, done):
-        state = [s.transpose(0, 1) for s in state]
-        batch_size = state[0].shape[1]
-        hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
-        done = done.reshape((-1, batch_size))
-        new_hidden = []
-
-        for h, d in zip(hidden, done):
-            h, state = self.lstm(h.unsqueeze(0), ((1.0 - d).view(1, -1, 1) * state[0], (1.0 - d).view(1, -1, 1) * state[1]))
-            new_hidden += [h]
-
-        new_hidden = th.flatten(th.cat(new_hidden), 0, 1)
-        state = [s.transpose(0, 1) for s in state]
-
-        return new_hidden, state
-
-    def forward(self, obs, state, done, **kwargs):
-        x = obs["image"]
-        x = preprocess_image(x)
-        
-        h = self.cnn(x)
-        h, state = self.remember(h, state, done)
-        
-        logits = self.policy(h)
-        pi = Categorical(logits=logits)
-        v = self.value(h)
-
-        return pi, v, state
-
-
-class LSTMAgent(Agent):    
-    # https://arxiv.org/abs/1611.03673
-
-
-    def __init__(self, envs, num_layers=1, dropout=0.0, use_image=True, use_position=True, use_lstm=True):
+    def __init__(self, envs, num_layers=1, dropout=0.0):
         super().__init__(envs)
         assert isinstance(self.observation_space, gym.spaces.Dict)
         assert self.observation_space.get("image") is not None
@@ -172,6 +143,12 @@ class LSTMAgent(Agent):
 
 
 class MapAgent(Agent):
+
+    """
+    Spatial memory agent.
+    
+    Maintains a feature map from one time step to the next.
+    """
 
     def __init__(self, envs, use_position=True):
         super().__init__(envs)

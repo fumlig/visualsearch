@@ -15,13 +15,17 @@ from torch.utils.tensorboard import SummaryWriter
 from argparse import ArgumentParser
 from tqdm import tqdm
 
+"""
+Train a search agent.
+"""
+
 import gym_search
 import rl
-
 
 SEED = 0
 TOT_TIMESTEPS = 10000
 NUM_ENVS = 4
+ENVIRONMENTS = {"gaussian": "Gaussian-v0", "terrain": "Terrain-v0", "camera": "Camera-v0"}
 
 
 def parse_hparams(s):
@@ -31,21 +35,10 @@ def parse_hparams(s):
 
     return yaml.safe_load(s)
 
-def env_default(key, default=None):
-    value = os.environ.get(key)
-
-    if value is None:
-        value = default
-
-    if value is None:
-        return dict()
-    
-    return dict(default=value, nargs='?')
-
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("environment", type=str, **env_default("ENV_ID"))
+    parser.add_argument("environment", type=str, choices=ENVIRONMENTS.keys())
     parser.add_argument("agent", type=str, choices=rl.agents.AGENTS.keys())
     parser.add_argument("algorithm", type=str, choices=rl.algorithms.ALGORITHMS.keys())
 
@@ -82,7 +75,7 @@ if __name__ == "__main__":
         #gym_search.wrappers.LastReward,
     ]
 
-    envs = gym.vector.make(args.environment, args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
+    envs = gym.vector.make(ENVIRONMENTS[args.environment], args.num_envs, asynchronous=False, wrappers=wrappers, **args.env_kwargs)
     envs = gym.wrappers.RecordEpisodeStatistics(envs)
     envs = gym.wrappers.NormalizeReward(envs)
 

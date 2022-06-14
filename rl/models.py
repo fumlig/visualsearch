@@ -149,136 +149,10 @@ class ImpalaCNN(nn.Module):
         return x
 
 
-class Map(nn.Module):
-
-    class MapCNN(nn.Module):
-
-        def __init__(self, observation_shape, output_dim=256):
-            super().__init__()
-            
-            in_channels = observation_shape[2]
-            hidden_channels = 32
-
-            self.convs = nn.Sequential(
-                init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                nn.Flatten(),
-            )
-
-            hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
-
-            self.linear = nn.Sequential(
-                init_weights(nn.Linear(hidden_dim, output_dim)),
-                nn.ReLU()
-            )
-
-            self.output_dim = output_dim
-
-        def forward(self, obs):
-            return self.linear(self.convs(obs))
-
-
-    def __init__(self, map_shape, input_dim, features_dim=64):
-        super().__init__()
-        self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
-        self.write_net = MLP(input_dim + features_dim + features_dim, features_dim)
-        
-        self.features_dim = features_dim
-        self.input_dim = input_dim
-        self.output_dim = features_dim + features_dim
-        self.shape = (features_dim, *map_shape)
-
-    def read(self, state):
-        return self.read_net(state)
-
-    def write(self, x, r, state, index):
-        b = x.shape[0]
-        m = state[th.arange(b),:,index[:,0],index[:,1]]
-        w = self.write_net(th.cat([x, r, m], dim=1))
-        return w
-
-    def forward(self, x, state, index):
-        r = self.read(state)
-        w = self.write(x, r, state, index)
-
-        b = x.shape[0]
-
-        new_state = state.clone()
-        new_state[th.arange(b),:,index[:,0],index[:,1]] = w
-
-        return th.cat([r, w], dim=1), new_state
-
-
-class OurMap(nn.Module):
-
-    class MapCNN(nn.Module):
-
-        def __init__(self, observation_shape, output_dim=256):
-            super().__init__()
-            
-            in_channels = observation_shape[2]
-            hidden_channels = 32
-
-            self.convs = nn.Sequential(
-                init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
-                nn.ReLU(),
-                nn.Flatten(),
-            )
-
-            hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
-
-            self.linear = nn.Sequential(
-                init_weights(nn.Linear(hidden_dim, output_dim)),
-                nn.ReLU()
-            )
-
-            self.output_dim = output_dim
-
-        def forward(self, obs):
-            return self.linear(self.convs(obs))
-
-
-    def __init__(self, map_shape, input_dim, features_dim=64):
-        super().__init__()
-        self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
-        self.write_net = MLP(input_dim + features_dim + features_dim, features_dim)
-        
-        self.features_dim = features_dim
-        self.input_dim = input_dim
-        self.output_dim = features_dim + features_dim
-        self.shape = (features_dim, *map_shape)
-
-    def read(self, state):
-        return self.read_net(state)
-
-    def write(self, x, r, state, index):
-        b = x.shape[0]
-        m = state[th.arange(b),:,index[:,0],index[:,1]]
-        w = self.write_net(th.cat([x, r, m], dim=1))
-        return w
-
-    def forward(self, x, state, index):
-        r = self.read(state)
-        w = self.write(x, r, state, index)
-        b = x.shape[0]
-
-        new_state = state.clone()
-        new_state[th.arange(b),:,index[:,0],index[:,1]] = w
-
-        return th.cat([r, w], dim=1), new_state
-
-
-
 class NeuralMap(nn.Module):
-    # https://arxiv.org/abs/1702.08360
+    """
+    Implementation of Neural Map by Parisotto et al. (https://arxiv.org/abs/1702.08360)
+    """
 
     class MapCNN(nn.Module):
 
@@ -352,4 +226,73 @@ class NeuralMap(nn.Module):
         new_state[th.arange(b),:,index[:,0],index[:,1]] = w
 
         return th.cat([r, c, w], dim=1), new_state
+
+
+class Map(nn.Module):
+    """
+    Modified implementation of NeuralMap.
+    
+    Simplified for search environments (no context read).
+    """
+
+    class MapCNN(nn.Module):
+
+        def __init__(self, observation_shape, output_dim=256):
+            super().__init__()
+            
+            in_channels = observation_shape[2]
+            hidden_channels = 32
+
+            self.convs = nn.Sequential(
+                init_weights(nn.Conv2d(in_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                init_weights(nn.Conv2d(hidden_channels, hidden_channels, 3, padding=1)),
+                nn.ReLU(),
+                nn.Flatten(),
+            )
+
+            hidden_dim = np.prod((*observation_shape[:2], hidden_channels))
+
+            self.linear = nn.Sequential(
+                init_weights(nn.Linear(hidden_dim, output_dim)),
+                nn.ReLU()
+            )
+
+            self.output_dim = output_dim
+
+        def forward(self, obs):
+            return self.linear(self.convs(obs))
+
+
+    def __init__(self, map_shape, input_dim, features_dim=64):
+        super().__init__()
+        self.read_net = self.MapCNN((*map_shape, features_dim), features_dim)
+        self.write_net = MLP(input_dim + features_dim + features_dim, features_dim)
+        
+        self.features_dim = features_dim
+        self.input_dim = input_dim
+        self.output_dim = features_dim + features_dim
+        self.shape = (features_dim, *map_shape)
+
+    def read(self, state):
+        return self.read_net(state)
+
+    def write(self, x, r, state, index):
+        b = x.shape[0]
+        m = state[th.arange(b),:,index[:,0],index[:,1]]
+        w = self.write_net(th.cat([x, r, m], dim=1))
+        return w
+
+    def forward(self, x, state, index):
+        r = self.read(state)
+        w = self.write(x, r, state, index)
+
+        b = x.shape[0]
+
+        new_state = state.clone()
+        new_state[th.arange(b),:,index[:,0],index[:,1]] = w
+
+        return th.cat([r, w], dim=1), new_state
 

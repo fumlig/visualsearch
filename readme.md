@@ -38,7 +38,6 @@ Report:
 
 Repository:
 
-- document code
 - scripts for experiments
 - fix permanent link in report (https://zenodo.org/?)
 
@@ -53,22 +52,20 @@ Repository:
 - [report](./report): Thesis report.
 - [slides](./slides): Thesis slides.
 
-## Training & Testing
+## Running
 
-To train an agent, run:
+Search agents are trained using [train.py](./train.py) (`./train.py --help`) and tested with [test.py](./test.py) (`test.py --help`).
 
-```bash
-./train.py <environment>
-
-## Reproduce
-
-To reproduce results, run:
+To reproduce results from the report, run:
 
 ```bash
 pip install -r requirements.txt
-
 ./run.sh
 ```
 
-This will run all experiments that are presented in the report.
+The script will run all experiments presented in the report.
 Learning information is written to the [results](./results) directory, checkpoints and the final model to [models](./models), and tensorboard logs to [logs](./logs). Plotting is done in the [plot.ipynb](./plot.ipynb) notebook.
+
+Scripts for the individual experiments are located in the [scripts](./scripts) directory.
+If you have hardware available, you may want to modify them script to run multiple jobs in parallel.
+For simpler setup, the [dockerfile](./dockerfile) can be used.

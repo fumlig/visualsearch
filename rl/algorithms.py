@@ -27,6 +27,9 @@ def proximal_policy_optimization(
     """
     Proximal Policy Optimization (Schulman, 2017).
     Implemented following https://github.com/openai/baselines and https://github.com/vwxyzjn/cleanrl.
+
+    Let an agent learn from an environment for a set number of time steps.
+    Continually yields training information as dictionaries.
     """
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps

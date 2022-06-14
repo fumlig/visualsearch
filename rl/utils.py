@@ -26,6 +26,5 @@ def channels_first(image):
     assert image.ndim == 4
     return image.permute(0, 3, 1, 2)
 
-
 def preprocess_image(image):
     return normalize_image(channels_first(image))

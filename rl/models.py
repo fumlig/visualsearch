@@ -7,8 +7,9 @@ import gym
 from rl.utils import init_weights, preprocess_image
 
 
-
 class MLP(nn.Module):
+    """Multi-Layer Perceptron."""
+
     def __init__(self, in_features, out_features, hidden_dims=None, out_gain=np.sqrt(2)):
         super(MLP, self).__init__()
 
@@ -34,8 +35,7 @@ class MLP(nn.Module):
 
 
 class NatureCNN(nn.Module):
-    # Mnih, Volodymyr, et al.
-    # "Human-level control through deep reinforcement learning."
+    """Human-level control through deep reinforcement learning" (Mnih et al., 2015)"""
     
     def __init__(self, observation_space, output_dim=512):
         super().__init__()

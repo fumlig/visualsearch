@@ -1,15 +1,7 @@
-from imp import init_builtin
 import gym
 import numpy as np
 import torch as th
 import torch.nn as nn
-import torch.nn.functional as F
-import random
-
-from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
-from collections import deque
-
 
 def proximal_policy_optimization(
     num_timesteps,
@@ -32,9 +24,13 @@ def proximal_policy_optimization(
     target_kl=None,
     anneal_lr=False
 ):
+    """
+    Proximal Policy Optimization (Schulman, 2017).
+    Implemented following https://github.com/openai/baselines and https://github.com/vwxyzjn/cleanrl.
+    """
     num_envs = envs.num_envs
     batch_size = num_envs * num_steps
-    minibatch_size = batch_size // num_minibatches
+    #minibatch_size = batch_size // num_minibatches
     num_batches = num_timesteps // batch_size
 
     assert isinstance(envs.single_action_space, gym.spaces.Discrete)
@@ -44,8 +40,6 @@ def proximal_policy_optimization(
     timestep = 0
     agent.to(device)
     optimizer = th.optim.Adam(agent.parameters(), lr=learning_rate, eps=1e-5)
-    #pbar = tqdm(total=num_timesteps)
-    #ep_infos = deque(maxlen=num_envs)
 
     obss = {key: th.zeros((num_steps, num_envs) + space.shape).to(device) for key, space in envs.single_observation_space.items()}
     acts = th.zeros((num_steps, num_envs) + envs.single_action_space.shape).to(device)
@@ -71,7 +65,7 @@ def proximal_policy_optimization(
 
         optimizer.param_groups[0]["lr"] = lr
 
-        # for train
+        # initial recurrent state
         initial_state = [s.clone() for s in state]
         
         # rollout steps

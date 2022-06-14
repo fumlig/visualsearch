@@ -1,21 +1,34 @@
 import numpy as np
 from skimage import draw
 
-from gym_search.utils import gaussian_kernel, normalize, sample_coords
-from gym_search.shapes import Box
-from gym_search.palette import add_with_alpha
-from gym_search.envs.search import SearchEnv, Action
+from gym_search.envs.search import SearchEnv
 
+from typing import Tuple
+from torch.utils.data import Dataset
 
 class DatasetEnv(SearchEnv):
+    """
+    Environment for testing search agents on object localization datasets.
     
+    NEEDS UPDATING.
+    """
+
     def __init__(
         self,
-        shape,
-        view,
-        dataset,
+        shape: Tuple[int, int],
+        view: Tuple[int, int],
+        dataset: Dataset,
         **kwargs
     ):
+        """
+        Initialize dataset environment.
+        
+        shape: Shape of search space.
+        view: Shape of image observations (shape*view should be equal to the size of images in the dataset).
+        dataset: Object localization dataset.
+        **kwargs: Passed to super constructor.
+        """
+
         super().__init__(shape, view, False, **kwargs)
         
         self.dataset = dataset
@@ -23,9 +36,11 @@ class DatasetEnv(SearchEnv):
         self.action_space = super().action_space
         self.observation_space = super().observation_space
 
-    def generate(self, seed):
+    def _generate(self, seed):
         random = np.random.default_rng(seed)
         idx = random.choice(len(self.dataset))
         image, targets = self.dataset[idx]
-        return image, [Box(*pos, *shape) for pos, shape in targets]
+        position = np.array([random.integers(0, d) for d in self.shape])
+
+        return image, [(*pos, *shape) for pos, shape in targets], position
 

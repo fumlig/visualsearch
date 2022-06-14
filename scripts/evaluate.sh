@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# run tests
+
 for baseline in random greedy exhaustive
 do
     python3 test.py Gaussian-v0 \

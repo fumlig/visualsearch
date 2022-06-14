@@ -31,34 +31,10 @@ if os.path.exists("data/airbus-oil"):
     )
 """
 
-"""
-def dataset_generator(seed, dataset):
-    shape = dataset[0][0].shape[:2]
-    random = np.random.default_rng(seed)
-    idx = random.choice(len(dataset))
-    image, targets = dataset[idx]
-    return image, [Box(*pos, *shape) for pos, shape in targets]
-"""
-
-
-def generate_dataset(root, generator, num_train, num_test, seed=0):    
-    generator.seed(seed)
-
-    train_items = []
-    train_dir = os.path.join(root, "train")
-    os.makedirs(train_dir, exist_ok=True)
-
-    for i in range(num_train):
-        img, tgts = generator.sample()
-        img_path =  os.path.join(train_dir, f"{i}.png")
-        cv.imwrite(img_path, img)
-        train_items.append({
-            "id": i,
-            "targets": [(tgt.y, tgt.x, tgt.h, tgt.w) for tgt in tgts]
-        })
-
 
 class XViewDataset(Dataset):
+    # http://xviewdataset.org/
+
     def __init__(self, root="data/view"):
         self.root = root
         self.data = geopd.read_file("data/xview/train_labels/xView_train.geojson")

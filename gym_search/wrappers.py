@@ -1,8 +1,6 @@
 import numpy as np
 import cv2 as cv
 import gym
-import os
-import imageio
 
 from gym_search.utils import to_index
 

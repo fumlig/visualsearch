@@ -3,39 +3,48 @@ import moderngl as gl
 import pyrr as pr
 import simple_3dviz as viz
 import pymartini as martini
-import functools
 import time
 
 from gym_search.utils import sample_coords, fractal_noise_2d, normalize
-from gym_search.palette import BLUE_MARBLE, EARTH_TOON, pick_color
-from gym_search.envs.search import SearchEnv, Action
+from gym_search.palette import BLUE_MARBLE, pick_color
+from gym_search.envs.search import SearchEnv
+
+from typing import Tuple
 
 class CameraEnv(SearchEnv):
-
-    #gl_context = gl.create_standalone_context(backend="egl")
-    #gl_context.enable(gl.BLEND)
-    #gl_context.blend_func = (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    """
+    Search environment with a perspective projection camera.
+    """
 
     def __init__(
         self,
-        shape=(10, 20),
-        view=(64, 64),
-        terrain_size=1024,
-        terrain_height=32,
-        num_targets=3,
+        shape: Tuple[int] = (10, 20),
+        view: Tuple[int] = (64, 64),
+        terrain_size: int = 1024,
+        terrain_height: int = 32,
+        num_targets: int = 3,
         **kwargs,
     ):
+        """
+        shape: Shape of search space.
+        view: Shape of image observations.
+        terrain_size: Width and depth of terrain.
+        terrain_height: Height of terrain.
+        num_targets: Number of targets.
+        **kwargs: Passed to super constructor.
+        """
+
         super().__init__(shape, view, (False, True), **kwargs)
 
         self.terrain_size = terrain_size
         self.terrain_height = terrain_height
         self.num_targets = num_targets
 
-        self.scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view)#, ctx=self.gl_context)
-        #self.framebuffer = self.gl_context.framebuffer(self.gl_context.renderbuffer(self.view), self.gl_context.depth_renderbuffer(self.view))
+        self.scene = viz.Scene(background=(0.75, 0.75, 1.0, 1.0), size=self.view)
         self.martini = martini.Martini(self.terrain_size+1)
 
-    def generate(self, seed):
+    def _generate(self, seed: int):
+
         scene = self.scene
         
         scene.clear()

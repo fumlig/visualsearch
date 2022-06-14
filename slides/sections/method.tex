@@ -129,8 +129,9 @@
 
 \subsection{Approach}
 
+
 \begin{frame}
-    \frametitle{Architecture}
+    \frametitle{Approach}
 
     \begin{itemize}
         \item Function approximation with deep neural networks.
@@ -138,7 +139,41 @@
             \item Policy \(\pi(a | s, \theta)\).
             \item Value \(v_\pi(s, \theta)\) (predicts future reward).
         \end{itemize}
+        \item Training procedure:
+        \begin{enumerate}
+            \item Collect interactions with environment.
+            \item Compute loss \(\mathcal{L(\theta)}\).
+            \item Optimize \(\mathcal{L}\) wrt \(\theta\).
+            \item Repeat.
+        \end{enumerate}
+        \item Proximal policy optimization~\cite{schulman_proximal_2017}.
+        \item Train for 25M time steps.
+        % This was sufficient for convergence in each environment.
+        \item Results on 3 training runs.
+        % Deep RL known to have reproducibility problem.
+        % This is a widely discussed topic.
+        % Different runs have been shown to yield learning curves from different distributions.
+        % Important to do multiple runs to get a sense of stability
+        % We report mean and standard deviation.
+        \item Separate training and test sets.
+        % Ensures that agents do not simply memorize certain scenarios.
+        %\item Same hyperparameters in all runs.
+        % Training takes long time
+        % (deep RL is sample-inefficient)
+        % This means that extensive hyperparameter tuning is not an option
+        % (unless sufficient compute resources available)
     \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Architecture}
+
+    Hypothesis: \textit{Agent should remember structured visual features.}
+    % this is a hypothesis.
+    % should be useful for visual search in the general case.
+    % make decisions based on whole explored scene so far.
+    % best action depends on history of interactions
 
     \begin{figure}
         \centering
@@ -151,11 +186,6 @@
     \frametitle{Memory}
 
     \begin{itemize}
-        \item \textit{Agent should remember visual features and associate them with their spatial location.}
-        % this is a hypothesis.
-        % should be useful for visual search in the general case.
-        % make decisions based on whole explored scene so far.
-        % best action depends on history of interactions
         \item Two memory variants:
         \begin{enumerate}
             \item Temporal memory (long short-term memory~\cite{hochreiter_long_1997}):
@@ -174,53 +204,5 @@
                 % Visualization of the memory comes later.
             \end{itemize}
         \end{enumerate}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Training}
-
-    \begin{itemize}
-        \item Training procedure:
-        \begin{enumerate}
-            \item Collect interactions with environment.
-            \item Compute loss \(\mathcal{L(\theta)}\).
-            \item Optimize \(\mathcal{L}\) wrt \(\theta\).
-            \item Repeat until \(\pi\) achieves high reward.
-        \end{enumerate}
-        \item Reinforcement learning algorithm:
-        \begin{itemize}
-            \item Proximal policy optimization~\cite{schulman_proximal_2017}.
-            \item Relatively new algorithm.
-            \item Stable performance with little tuning~\cite{henderson_deep_2018}.
-        \end{itemize}
-
-        \item Train for 25M time steps.
-        % This was sufficient for convergence in each environment.
-        \item Results reported across 3 training runs.
-        % Deep RL known to have reproducibility problem.
-        % This is a widely discussed topic.
-        % Different runs have been shown to yield learning curves from different distributions.
-        % Important to do multiple runs to get a sense of stability
-        % We report mean and standard deviation.
-        \item Separate training and test sets.
-        % Ensures that agents do not simply memorize certain scenarios.
-        %\item Same hyperparameters in all runs.
-        % Training takes long time
-        % (deep RL is sample-inefficient)
-        % This means that extensive hyperparameter tuning is not an option
-        % (unless sufficient compute resources available)
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Implementation}
-
-    \begin{itemize}
-        \item OpenAI Gym environment interface.
-        \item Custom proximal policy optimization implementation.
-        \item PyTorch for models and automatic differentiation.
-        \item Intel Core i9-10900X CPU.
-        \item NVIDIA GeForce RTX 2080 Ti GPU.
     \end{itemize}
 \end{frame}

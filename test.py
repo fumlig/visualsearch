@@ -16,7 +16,7 @@ import datetime as dt
 import pandas as pd
 import glob
 
-import rl
+import rl_library as rl
 import gym_search
 
 from argparse import ArgumentParser

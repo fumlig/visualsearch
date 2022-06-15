@@ -6,6 +6,7 @@ pandas==1.4.2
 pip-chill==1.0.1
 pymartini==0.4.3
 pyyaml==6.0
+scikit-learn==1.0.2
 scikit-image==0.19.2
 simple-3dviz==0.5.0
 tensorboard==2.9.1

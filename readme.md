@@ -34,8 +34,8 @@ generalizing from a limited number of training samples.
 
 ## Overview
 
-- [gym_search](./gym_search): Gym environments for visual search.
-- [rl](./rl): Reinforcement learning library (agents, models and algorithms).
+- [gym_search](./gym_search): Gym environments for visual search ("Gaussian-v0", "Terrain-v0", "Camera-v0").
+- [rl_library](./rl_library): Reinforcement learning library (agents, models and algorithms).
 
 - [results](./results): Files with result metrics.
 - [videos](./videos): Videos of agent behaviors.

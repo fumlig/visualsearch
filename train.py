@@ -20,7 +20,7 @@ Train a search agent.
 """
 
 import gym_search
-import rl
+import rl_library as rl
 
 SEED = 0
 TOT_TIMESTEPS = 10000

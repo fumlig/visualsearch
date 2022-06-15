@@ -48,6 +48,7 @@ do
             --name=$environment/$baseline \
             --episodes=$test_episodes \
             --seed=0 \
+            --runs=3 \
             --hidden 
     done
 done

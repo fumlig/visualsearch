@@ -2,6 +2,7 @@
 
 # search generalization experiment
 
+experiment="generalization"
 training_set_sizes=10000 5000 1000 5000
 environment="terrain"
 agents="lstm" "map"
@@ -21,13 +22,21 @@ do
         do
             # train agent
             python3 train.py $environment $agent $algorithm \
-                --name="$environment/$agent/$seed" \
+                --name="$experiment/$agent/$num_samples/$seed" \
                 --seed=$seed \
-                --num-timesteps=$train_timesteps \
+                --num-timesteps=$num_timesteps \
                 --num-envs=$num_envs \
                 --num-checkpoints=$num_checkpoints \
                 --env-kwargs="{num_samples: $num_samples}" \
                 --alg-kwargs=$alg_hparams
+        
+            # test agent (checkpoints on separate set)
+            python3 test.py $environment \
+                --models=models/$experiment/$agent/$num_samples/$seed/ckpt/*.pt \
+                --name="$experiment/$agent/$num_samples/$seed"
+                --seed=0 \
+                --hidden \
+                --env-kwargs="{first_sample: $num_samples}"
         done
     done
 done

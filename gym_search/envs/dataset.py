@@ -1,5 +1,4 @@
 import numpy as np
-from skimage import draw
 
 from gym_search.envs.search import SearchEnv
 
@@ -8,9 +7,9 @@ from torch.utils.data import Dataset
 
 class DatasetEnv(SearchEnv):
     """
+    NOT UPDATED. COULD BE USEFUL FOR USING AN OBJECT LOCALIZATION DATASET.
+
     Environment for testing search agents on object localization datasets.
-    
-    NEEDS UPDATING.
     """
 
     def __init__(

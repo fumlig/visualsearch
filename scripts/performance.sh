@@ -36,7 +36,6 @@ do
             --name=gaussian/$agent \
             --episodes=$test_episodes \
             --seed=0 \
-            --deterministic \
             --hidden
     done
 

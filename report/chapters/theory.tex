@@ -52,12 +52,12 @@ Furthermore, if targets usually co-occur with other visible elements they tend t
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
 Animal perception, in contrast, is active -- we do not only see, but also decide where to look.
-In the \textit{active vision} paradigm, an the observer has some control of its sensory input.~\cite{aloimonos_active_1988}
+In the \textit{active vision} paradigm, an the observer has some control of its sensory input~\cite{aloimonos_active_1988}.
 
 Active vision, and \textit{active perception} in general, is a problem of intelligent data acquisition.
 An active observer must control its sensory inputs to constrain the interpretation of its environment.
 One of the difficulties of active perception problems is that they are scene and context dependent.
-A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed.~\cite{bajcsy_active_1988}
+A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed~\cite{bajcsy_active_1988}.
 
 %While certain tasks are necessarily active vision tasks, there is an argument to be made that active vision is a means to solve the task more effectively.
 %Indeed, active vision systems have several computational advantages over passive ones~\cite{aloimonos_active_1988}.
@@ -72,13 +72,13 @@ A thorough understanding of the data acquisition parameters and the goal of the 
 
 In active vision, searching for objects with a camera in unknown environments is referred to as \textit{object search} or \textit{active object localization}.
 A searching observer has to both recognize and localize its targets, while controlling its sensory input.
-To search effectively, it must also model its environment and perform path planning.~\cite{chen_active_2011}
+To search effectively, it must also model its environment and perform path planning~\cite{chen_active_2011}.
 
 Solving the object search problem optimally involves determining a sequence of camera controlling actions that maximizes the probability of finding the target while satisfying a cost constraint.
 The state of the searcher is uniquely determined by the control parameters of the camera.
 Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
 Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
-Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions.~\cite{ye_complexity-level_2001,andreopoulos_theory_2009}
+Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions.~\cite{andreopoulos_theory_2009,ye_complexity-level_2001}
 
 \subsection{Deep Learning}
 \label{sec:deeplearning}
@@ -94,7 +94,7 @@ Usually, a loss function \(\mathcal{L}\) is minimized by updating the weights \(
     \mathbf{w} \leftarrow \mathbf{w} - \alpha \nabla_\mathbf{w} \mathcal{L}(\mathbf{w}) 
 \end{equation}
 
-The only requirement on the functions computed by each node is that it is differentiable.
+The only requirement on the function computed by each node is that it is differentiable.
 As long as this holds, layers can be stacked arbitrarily and the gradients can be computed with the chain rule.
 This way, errors in the output can be passed back through the network (\textit{back-propagation}) and used to update the weights.~\cite{russell_artificial_2021,goodfellow_deep_2016}
 
@@ -150,7 +150,7 @@ A recurrent layer with input \(\mathbf{x}_t\), output \(\mathbf{y}_t\) and hidde
 \begin{align}
     \begin{split}
         \mathbf{z}_t &= f_\mathbf{w}(\mathbf{z}_{t-1}, \mathbf{x}_t) \\
-        \mathbf{y}_t &= g_y(\mathbf{W}_{z,y}, \mathbf{z}_t),
+        \mathbf{y}_t &= g_y(\mathbf{w}_{z,y}, \mathbf{z}_t),
     \end{split}
 \end{align}
 
@@ -164,8 +164,24 @@ Thus, RNNs make a Markov assumption.~\cite{russell_artificial_2021}
 In practice, conventional RNNs struggle with learning long-term dependencies.
 During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
 An architecture that addresses this issue is long short-term memory (LSTM)~\cite{hochreiter_long_1997}.
-LSTMs include a \textit{memory cell} \(c\) in the hidden state that is copied from time step to time step, and three soft \textit{gating units} that govern the information flow in the hidden state update process \(f\).
-The memory cell can remember over arbitrary time intervals, making LSTMs particularly useful for problems involving long sequences.
+LSTM units consist of an \textit{input gate}, \textit{forget gate}, \textit{output gate} and \textit{cell}.
+These are defined by the following set of equations:
+
+\begin{align}
+    i_t &= \sigma(\mathbf{w_i} [x_t, h_{t-1}]) \\
+    f_t &= \sigma(\mathbf{w_f} [x_t, h_{t-1}]) \\
+    o_t &= \sigma(\mathbf{w_o} [x_t, h_{t-1}]) \\
+    \tilde{c} &= \tanh(\mathbf{w_c} [x_t, h_{t-1}]) \\
+    c_t &= f_t \circ c_{t-1} + i_t \circ \tilde{c}_t \\
+    h_t &= o_t \circ \tanh(c_t)
+\end{align}
+
+Here, \(x_t \in \mathbb{R}^d\) is the input, \(h_t \in \mathbb{R}^h\) is the \textit{hidden state} and \(c_t \in \mathbb{R}^h\) in the \textit{cell state} of the units.
+The initial values are \(c_0 = 0\) and \(h_0 = 0\) and the operator \(\circ\) is the element-wise product.
+The matrices \(w_i\), \(w_f\), \(w_o\) and \(w_c \in \mathbb{R}^{h \times (h+d)}\) are the weights for the input gate, forget gate, output gate, and cell respectively.
+The hidden state \(h_t\) is used as output of the LSTM and depends on both the input, the previous hidden state and the cell state.
+Because the cell state \(c_t\) is updated using a combination of the previous cell state and a candidate cell state \(\tilde{c}_t\), 
+the cell is able to remember values over arbitrarily many time steps \(t\).
 
 \subsection{Reinforcement Learning}
 \label{sec:reinforcementlearning}
@@ -215,12 +231,12 @@ The agent and environment interact over a sequence of discrete time steps \(t = 
 At each time step \(t\), the goal of the agent is to select the action that maximizes the expected \textit{discounted return}:
 
 \begin{equation}
-    \mathbb{E} \left[ \sum_{k=0}^T \gamma^{k-t-1} r_k \right]
+    \mathbb{E} \left[ \sum_{k=t+1}^T \gamma^{k-t-1} r_k \right]
 \end{equation}
 
 Since the agent receives partial observations of the environment's state, it has to act under uncertainty.
 This makes finding exact solutions to POMDPs computationally complex, and virtually intractable.
-Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_planning_1998} which is acts on.
+Approximate solutions are more common, where the agent usually maintains an internal \textit{belief state}~\cite{kaelbling_planning_1998} which it acts on.
 The belief state summarizes the agent's previous experience and is therefore dependent on the full \textit{history} of actions and observations.
 It does not need to summarize the whole history, but generally only the information that helps the agent maximize the expected reward.
 From here on we will use the belief state and the environment state \(s\) interchangeably. 
@@ -253,7 +269,7 @@ The policy parameters are usually learned based on the gradient of some performa
 As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.~\cite{sutton_policy_1999}
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policy_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
-However, less is known about if and how fast policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}
+However, less is known about if and how fast policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}.
 In practice, value functions are often still used to learn the policy parameter, but they are not needed for action selection.
 Such methods are called \textit{actor-critic} methods, with actor referring to the learned policy and critic referring to the learned value function.
 In these cases, there might also be some overlap between the weights \(\mathbf{w}\) of the value function estimate and \(\boldsymbol{\theta}\) of the policy estimate. 
@@ -284,7 +300,7 @@ Designing rewards is not straight-forward and can often have unintended effects~
 Special care has to be taken to ensure that the reward encourages the desired behavior.
 
 Here, the problem of \textit{sparse rewards} also comes into play.
-The agent has to be reward frequently enough to allow it to achieve its goal once.
+The agent has to be rewarded frequently enough to allow it to achieve its goal once.
 Often it has to incentivize it to achieve its goal efficiently, with multiple different starting conditions.
 If rewards are too sparse, the agent may explore aimlessly and take too long to achieve its goal.
 If the received reward is temporally distant from the action that caused it, the agent may have difficulty connecting the two.
@@ -315,7 +331,7 @@ Such methods are often referred to as deep reinforcement learning (deep RL) meth
 \subsubsection{Proximal Policy Optimization}
 \label{sec:ppo}
 
-Proximal policy optimization (PPO)~\cite{schulman_proximal_2017} is a family of policy-gradient algorithms that has been reported to strike a good balance between simplicity, stability and ease of tuning while achieving strong results on several tasks~\cite{schulman_proximal_2017,henderson_deep_2018,cobbe_leveraging_2020,vinyals_grandmaster_2019,andrychowicz_what_2020}.
+Proximal policy optimization (PPO)~\cite{schulman_proximal_2017} is a family of policy-gradient algorithms that have been reported to strike a good balance between simplicity, stability and ease of tuning while achieving strong results on several tasks~\cite{schulman_proximal_2017,henderson_deep_2018,cobbe_leveraging_2020,vinyals_grandmaster_2019,andrychowicz_what_2020}.
 PPO alternates between sampling agent-environment interactions over \(T\) time steps and optimizing the policy using those interactions.
 The parameters \(\boldsymbol{\theta}\) of the policy \(\pi\) are updated with the objective
 
@@ -331,16 +347,16 @@ The clip range \(\epsilon\) is used to clip the surrogate objective,
 putting a pessimistic bound on the product of the probability ratio and the advantage estimate.
 This in turn ensures that the size of the policy updates is limited.
 
-In an actor-critic approach, the advantage is estimated over using a learned state value function \(V(s)\) as 
+In an actor-critic approach, the advantage is estimated using a learned state value function \(V(s)\) as 
 
 \begin{equation}
     \hat{A}_t = \delta_t + (\gamma\lambda) \delta_{t+1} + \dots + (\gamma\lambda)^{T-t+1} \delta_{T-1}
 \end{equation}
 
-where \(\delta_t = r_t + \gamma V(s_t+1) - V(s_t)\).
+where \(\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)\).
 If the policy and value functions estimations share parameters, for example in a multi-headed neural network architecture, a loss function that combines the policy loss and the value function error term must be used.
 It is also common to introduce an entropy bonus to ensure sufficient exploration.
-The full PPO objective for an actor-critic approach is
+The full PPO objective for an actor-critic approach is:
 
 \begin{equation}
     \mathcal{L}_t(\boldsymbol{\theta}) =
@@ -352,8 +368,11 @@ The full PPO objective for an actor-critic approach is
     \right\rbrack
 \end{equation}
 
-where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the impact of the value loss and entropy bonus,
-\(S\) is an entropy bonus and \(\mathcal{L}_\text{VF}\) is a squared-error loss in the value output. Algorithm~\ref{alg:ppo} shows the steps of the PPO algorithm.
+Here, \(\mathcal{L}_\text{VF}\) is a squared-error loss betwen the value function approximation and the actual state value.
+The coefficient \(c_1\) scales the impact of the value loss on the parameter updates.
+The final term, \(S[\pi]\), denotes the entropy of the action probabilities \(\pi\).
+Policies wth higher entropy, or policies where action probabilities are closer to equal, can be favored by selecting a large coefficient \(c_2\).
+Algorithm~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}
     \caption{Proximal Policy Optimization}
@@ -366,7 +385,7 @@ where the coefficients \(c_1\) and \(c_2\) are hyperparameters determining the i
 
 Works that consider tasks that are related to searching for targets in unknown environments can be found in several fields under many names.
 In this section we survey some of the more relevant ones, focusing on those that employ RL methods.
-We also cover work that is related our posed research questions.
+We also cover work that relates to our posed research questions.
 
 \subsection{Search with Deep Reinforcement Learning}
 
@@ -386,7 +405,7 @@ learning systems that are less dependent on expert knowledge have the potential 
 
 \subsubsection{Sequential Visual Attention}
 
-Minut and Mahadevan\cite{minut_reinforcement_2001} propose a sequential model of selective visual attention for visual search tasks.
+Minut and Mahadevan~\cite{minut_reinforcement_2001} propose a sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
 A policy for controlling a fixed pan-tilt-zoom camera is learned using reinforcement learning.
 The goal of the agent is to aim the camera at the region where a target is most likely to be found.
@@ -476,8 +495,8 @@ While this requires a set of images of potential target objects labeled with the
 Yang et al.~\cite{yang_visual_2018} propose to use semantic scene priors to improve navigation towards objects in unseen scenes.
 The agent observes its environment through a camera.
 Prior knowledge of spatial relations between objects types is encoded as a graph, which is encoded with a graph convolutional network.
-Their agent is also told what object to look for in the form of a word embedding.
-The encoded object graph and word embedding is used as input together with the camera image to an actor-critic network that selects actions that navigate towards the target object.
+Their agent is also told what object to look for in the form of an encoded word.
+The encoded object graph and word is used as input together with the camera image to an actor-critic network that selects actions that navigate towards the target object.
 As the agent collects experiences, it also updates its prior knowledge of spatial relationships between objects.
 It is shown that prior knowledge encoded in such a way improves the agents ability to navigate to objects.
 

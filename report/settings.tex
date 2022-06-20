@@ -44,9 +44,13 @@
 
 \ExecuteBibliographyOptions{maxnames=99}
 
-\DefineBibliographyStrings{english}{%
+\DefineBibliographyStrings{english}{
   backrefpage = {Cited on page},
   backrefpages = {Cited on pages},
+}
+
+\AtEveryBibitem{
+  \clearfield{note}
 }
 
 \addbibresource{references.bib}

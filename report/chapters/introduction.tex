@@ -2,7 +2,7 @@
 \label{cha:introduction}
 
 The ability to search for and locate things in our environments is fundamental to our daily lives as humans.
-We are constantly looking for things, be it be it the right book in the bookshelf, a certain keyword in an article, or birds in the sky.
+We are constantly looking for things, be it the right book in the bookshelf, a certain keyword in an article, or birds in the sky.
 In many cases, it is important that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
@@ -59,20 +59,26 @@ Given a sufficient number of samples, such a system could learn to search in arb
 \section{Aim}
 \label{sec:aim}
 
-The aim of this thesis is to investigate how an intelligent agent that learns to search for targets using visual input can be implemented with deep reinforcement learning.
-Such an agent should learn the characteristics of the environments it is trained on and utilize this knowledge to search strategically in unseen environments.
-Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through an camera whose movements are unrestricted.
-The agent has to actively choose where to look in order to gain new information about the environment.
+The aim of this thesis is to investigate how an agent that learns to search for targets using visual input can be implemented with deep reinforcement learning.
+The goal of the agent is to locate all targets in its environment in minimum time.
+Such an agent should learn the search strategies from a set of training scenarios, and be able to carry out the strategies in unseen environments.
+Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a camera.
+The agent should locate targets by indicating where in the environments they are.
+To do this, it must actively choose where to look in order to gain new information about the environment.
 
-We postulate that an effective searcher learns the distribution of targets, and uses it to prioritize regions where they are more likely according to previous experience.
-The distribution of targets may be correlated with the appearance of the searched scene.
-A good searcher should integrate information over time to build an internal representation of the environment and use it to make informed decisions.
-The agent should be able to search the environment exhaustively while avoiding visiting the same region twice.
-Finally, the agent should be able to locate multiple targets while minimizing the number of steps taken.
+We postulate that an effective searcher is able to learn and utilize structure in the searched environments to find targets quicker.
+In other words, it should try to prioritize searching regions where targets are most likely to be found according to previous experience.
+The distribution of targets can be correlated with the appearance of the searched scene.
+A searcher should be able to pick up such correlations and utilize them.
+Furthermore, a searcher could benefit from being able to integrate information over time.
+Knowledge that was acquired during earlier stages of a search can be useful for making decisions later.
+In most search scenarios, it is desirable that the agent avoids searching the same region multiple times.
+It may also be useful to remember structured visual information of the explored regions of the searched environment.
+This can provide insights into what is in their proximity.
 
-If such a system is to be trained and deployed for a real-world task, there is likely a limited set of samples to learn from.
+If a deep reinforcement learning agent is to be trained and deployed for a real-world search task, there is likely a limited set of samples to learn from.
 Therefore it is also of interest to investigate how many samples are required to infer how to effectively search in similar environments.
-While similar problems have been addressed in the past, both with learning agents~\cite{minut_reinforcement_2001,mirowski_learning_2017,ourselin_artificial_2016,caicedo_active_2015} and non-learning agents~\cite{shubina_visual_2010,forssen_informed_2008}, 
+While similar problems have been addressed in the past, both with learning agents~\cite{minut_reinforcement_2001,mirowski_learning_2017,ourselin_artificial_2016,caicedo_active_2015} and non-learning agents~\cite{shubina_visual_2010,forssen_informed_2008},
 our impression is that this is the first work to address learning to search in unseen environments where emphasis is placed on how arbitrary visual cues can guide search.
 Our contributions are as follows:
 
@@ -81,9 +87,8 @@ Our contributions are as follows:
   %\item We discuss the problem from several angles.
   %\item We compare two memory architectures, one spatial and one temporal.
   \item We provide a set of environments to train and evaluate visual search agents.
-  \item We propose two approaches for solving the visual search task with reinforcement learning.
-  \item We evaluate the performance of the proposed methods qualitatively and quantitatively.
-  \item We investigate how well each agent is able to generalize to unseen environments.
+  \item We propose an approach for solving the visual search task with reinforcement learning.
+  \item We compare two learning agents implemented using the approach qualitatively and quantitavely.
   \item We discuss our method in terms of applicability and usefulness.
 \end{itemize}
 
@@ -105,4 +110,4 @@ We focus on the behavioral and decision-making aspects of the presented problem,
 For this reason, targets will deliberately be made easy to detect once visible.
 Furthermore, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.
-Finally, we are specifically interested in deep reinforcement learning approaches.
+Finally, we are specifically interested in deep reinforcement learning solution methods.

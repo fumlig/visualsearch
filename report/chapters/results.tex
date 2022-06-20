@@ -1,9 +1,9 @@
 \chapter{Results}
 \label{cha:results}
 
-This chapter presents the results comparing our two deep RL approaches to baseline and human-controlled agents.
+This chapter presents the results comparing our two deep RL agents to baseline and human-controlled agents.
 In addition to the results here, learning curves for all environments are shown in Appendix~\ref{app:learning},
-Some sample search path for our approaches and baselines are shown in Appendix~\ref{app:paths}.
+Some sample search path for our agents and baselines are shown in Appendix~\ref{app:paths}.
 
 % todo: We can visualize attention as in "A critical investigation of deep reinforcement learning for navigation"
 
@@ -11,12 +11,12 @@ Some sample search path for our approaches and baselines are shown in Appendix~\
 
 Table~\ref{tab:metrics} shows the average search path length, success rate and SPL metric on a fixed set of 100 levels from each environment.
 The average search path length is computed from episodes in which the agents successfully finds all targets.
-These metrics are presented for our two approaches trained on the full distribution of environments, as well as for the baselines and human searchers.
-Appendix~\ref{app:learning} contains learning curves for each environment, and Appendix~\ref{app:paths} contains example search paths from each baseline and approach. 
+These metrics are presented for our two agents trained on the full distribution of environments, as well as for the baselines and human searchers.
+Appendix~\ref{app:learning} contains learning curves for each environment, and Appendix~\ref{app:paths} contains example search paths from each baseline and learning agent. 
 
-Overall, our two approaches and human searchers achieve similar success rates, path lengths and SPL scores.
-Our spatial memory approach achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
-Our temporal memory agent select search paths that are on average longer than the paths chosen by our spatial memory approach and human searchers.
+Overall, our two agents and human searchers achieve similar success rates, path lengths and SPL scores.
+Our spatial memory agent achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
+Our temporal memory agent select search paths that are on average longer than the paths chosen by our spatial memory agent and human searchers.
 In the camera environment, the temporal memory agent is better both in terms of average length and SPL score.
 Interestingly, the temporal memory agent achieves SPL scores comparable to that of the spatial memory agent despite choosing much longer path lengths.
 
@@ -27,7 +27,7 @@ This is more of a side-effect of the implementation than an indication of poor s
 
 The random baseline policy achieves the worst SPL, success rate and average search path length in all three environments.
 The greedy baseline policy is closer to the remaining agents.
-The exhaustive baseline policy achieves an average search path length that is lower than our temporal memory approach.
+The exhaustive baseline policy achieves an average search path length that is lower than our temporal memory agent.
 Its SPL score, however, is only higher than the those of the other two baselines.
 The handcrafted baseline for the gaussian environment performed better than all other agents in this environment. % todo
 
@@ -51,7 +51,7 @@ Results were collected across four different runs, and the plots show the mean a
 For the search space of \(10 \times 10\), both architectures initially improve their policy quickly.
 Past a certain time step, they keep improving at a reduced pace.
 At the end of training, the spatial memory architecture has reached a policy that seems to find targets quicker than the temporal memory.
-Both seem to be able to find the all three targets in every episode.
+Both seem to be able to find all three targets in every episode.
 
 For the larger search space sizes with \(15 \times 15\) and \(20 \times 20\) the difference between the two architectures is greater.
 While the spatial memory seems to consistently find targets in a number of steps that is comparable to the number of positions in the search space,
@@ -81,7 +81,7 @@ For smaller training set sizes, search path lengths on the test get gradually wo
 Interestingly the LSTM architecture seems to overfit more severely to small training sets.
 Its performance on the test set decreases substantially past a certain time step.
 The spatial memory architecture does not overfit as severely.
-For both approaches, as many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
+For both architectures, as many as 10000 training samples are needed to generalize to the full distribution of scenes and achieve the same performance on the training and test sets. 
 
 \begin{figure}
     \centering

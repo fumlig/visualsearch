@@ -8,12 +8,12 @@ Finally, we briefly consider some ethical and societal concerns when learning sy
 \section{Results}
 \label{sec:discussion-results}
 
-The results of the experiments provide insight into the performance, behavior and scalability of our two approaches.
+The results of the experiments provide insight into the performance, behavior and scalability of our approach.
 By comparing each agent qualitatively and quantitatively, we can answer the research questions in Section~\ref{sec:questions}.
 
 \subsection{Reflection on Search Performance}
 
-To evaluate the search performance, we first consider the at the average search path length of each agent.
+To evaluate the search performance, we first consider the average search path length of each agent.
 It is useful to compare the path length to the number of points in each search space.
 The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
 A search path length above this suggests many revisited positions.
@@ -22,8 +22,8 @@ Both the random and greedy baseline policies select search paths that are on ave
 This is further reinforced by the sample search paths in Figures \ref{fig:path-random}, \ref{fig:path-greedy} and \ref{fig:path-exhaustive}.
 
 The handcrafted policy for the gaussian environment is relatively simple, and can certainly be improved.
-Despite this, it outperforms all other agents and both of our approaches.
-This indicates that neither of our approaches have found policies that are close to optimal.
+Despite this, it outperforms all other agents.
+This indicates that neither of our two learning agents have found policies that are close to optimal.
 
 Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
 This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
@@ -45,7 +45,7 @@ When inspecting the search patterns used by our temporal memory agent in this en
 The baselines are unable to utilize this imbalance in target distributions.
 The exhaustive policy is an exception, where the deterministic ordering of actions happened to favor that distribution. 
 
-By looking at some sample search paths, we see that our two approaches both seem to utilize scene appearance to guide their search.
+By looking at some sample search paths, we see that our two agents both seem to utilize scene appearance to guide their search.
 This claim is supported further by the memory visualization in Appendix~\ref{app:memory}.
 However, they also tend to revisit positions, and it is not clear that this is good.
 Figures \ref{fig:path-lstm} and \ref{fig:path-map} illustrate this well --
@@ -63,19 +63,19 @@ From the definition of the SPL metric in Equation \ref{equ:spl}, we that it favo
 Finding the shortest path in a search scenario such as the one we consider here is not feasible.
 However, it still serves as a useful normalization method as it is an indication of how difficult each sample is to solve.
 
-Both our two approaches and human searchers achieve similar SPL scores in all three environments.
-While the exhaustive baseline policy achieves average path lengths that are close to those of our two approaches and human searchers, its lower SPL score suggests that it is less successful in finding close to optimal solutions.
-In all three environments, one of our approaches achieve a higher SPL score,
+Both our two agents and human searchers achieve similar SPL scores in all three environments.
+While the exhaustive baseline policy achieves average path lengths that are close to those of our two agents and human searchers, its lower SPL score suggests that it is less successful in finding close to optimal solutions.
+In all three environments, one of our agents achieve a higher SPL score,
 although we would not consider this significant due to the large variance.
 
-Under these metrics, both approaches achieve comparable performance to that of a human searcher. 
-Overall, it would seem like our spatial memory approach is most suited where large search spaces have to be explored strategically, while our temporal memory approach is sufficient for search problems where search spaces can be explored reactively.
-As neither approach perform better than a relatively simple handcrafted policy, we suspect that they are not close to optimal.
+Under these metrics, both learning agents achieve comparable performance to that of a human searcher. 
+Overall, it would seem like the spatial memory architeture is most suited where large search spaces have to be explored strategically, while our temporal memory architecture is sufficient for search problems where search spaces can be explored reactively.
+As neither performs better than a relatively simple handcrafted policy, they are not as good as is possible and also not optimal.
 
 \subsection{Scalability To Larger Search Space Sizes}
 
 In order to be useful for real-world search tasks, an agent should be able to search in sufficiently large spaces.
-In Section~\ref{sec:shape} we saw that both of our approaches achieve comparable performance on the \(10 \times 10\) search space.
+In Section~\ref{sec:shape} we saw that both of our learning agents achieve comparable performance on the \(10 \times 10\) search space.
 Both quickly converge towards a high success rate and reasonable search path lengths.
 The spatial memory is consistently capable of finding all targets in less steps than the number of searchable positions, and the temporal memory is not far behind.
 
@@ -94,19 +94,19 @@ An hypothesis is that our temporal memory agent would handle larger search space
 We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
 Further analysis is needed to see if such augmentations can make it more comparable to the spatial memory in terms of performance.
 
-Even though we have investigated how our approaches scale to larger search spaces,
+Even though we have investigated how our learning agents scale to larger search spaces,
 it should be noted that realistic search spaces are often considerably larger.
-This poses a problem for both of our approaches, as the number of trainable parameters scales with the search space size in both of them.
+This poses a problem for both agents, as the number of trainable parameters scales with the search space size in both of them.
 One solution is to keep search spaces small:
 Large (and continuous) spaces could be discretized into smaller ones at the cost of precision.
-Limit the need for memory could be a viable solution for certain search problems..
+It is also possible to modify the architectures so that what they remember is limited.
 In the case of the temporal memory, it might be sufficient to only remember recent interactions.
 Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_neural_2017}.
 
 \subsection{Generalizing from Limited Training Sets}
 
 The hope that a learning agent can pick up patterns that are not visible to humans (or easily communicated to machines) is only relevant if it can do so from a reasonable number of samples.
-From the results in Section~\ref{sec:sample}, we see that both of our approaches can overfit to small training sets.
+From the results in Section~\ref{sec:sample}, we see that both of our learning agents can overfit to small training sets.
 This is in line with what is reported by \cite{cobbe_quantifying_2019}, \cite{cobbe_leveraging_2020} and \cite{zhang_study_2018}.
 Past a certain number of interactions with small a small training set, performance on a held out test set decreases.
 This effect is well known in supervised learning, but important to keep in mind for reinforcement learning.
@@ -144,7 +144,7 @@ For such cases, some covert attention mechanism such as the one proposed in~\cit
 
 While we explicitly delimit ourselves from difficult detection problems in this work,
 detection is likely to be difficult in most real-world search scenarios.
-Further investigations are needed to evaluate how viable our approach is for more realistic scenes,
+Further investigations are needed to evaluate how viable the approach is for more realistic scenes,
 where variance is higher and it is more difficult to interpret image observations.
 One option could be to is to incorporate an existing object detection architectures into our deep RL approach, as in \cite{ye_active_2018}
 
@@ -175,7 +175,7 @@ If how each action moves the agent is well-defined, the relative position can be
 
 There are alternatives to giving the agent its position that achieve similar effects.
 By having the agent observe its last action \(a_{t-1}\) it can learn to navigate relative to its starting position.
-This approach is used in~\cite{mirowski_learning_2017}.
+This technique is used in~\cite{mirowski_learning_2017}.
 
 The action space we chose in this work contains four different moving actions that change the position of the agent in two dimensions.
 This is reasonable for several real-world search tasks such as search and rescue with a UAV, where the actions correspond to translations in each cardinal direction.
@@ -184,7 +184,7 @@ However, many vision systems have more degrees of freedom.
 Camera sensors often have zoom functionality, which in practice requires additional actions for zooming in and out, and adds an extra dimension to the search space.
 Similarly, if an agent is able to both move and look around we get additional dimensions to consider.
 
-There are no inherent limitations in our two approaches that prevent them from handling more than two search dimensions.
+There are no inherent limitations in our two architectures that prevent them from handling more than two search dimensions.
 The temporal memory simply has to encode an additional component of the agent's position.
 The spatial memory can store a higher dimensional feature map.
 Its read operation can be modified to use convolutions in higher dimensions, as noted by \cite{parisotto_neural_2017}.
@@ -196,7 +196,7 @@ The environment (or the provider of the reward signal) has to keep track of visi
 It also has to know where targets are located -- even when they are not visible.
 While the reward is not needed when acting according to the policy, it is needed when learning.
 This has implications for what kind of environments can be used for learning.
-One can imagine a scenario where the locations of targets are not known, but a black-box system is responsible for detecting them and providing positive feedback to the RL agent.
+One can imagine a scenario where the locations of targets are not known, but a black-box system is responsible for detecting them and providing positive feedback to the agent.
 In this case, the bonus for moving towards targets is not computable.
 
 In the terrain environment, we found that the additional reward bonuses where required for convergence to good policies.
@@ -206,7 +206,7 @@ With a small bonus for desired behavior, reinforcements are more frequent and ma
 
 However, a specialized reward like ours risks introducing bias that inhibit learning by leading to poor local optima.
 One example of such a bias is the bonus reward for moving towards targets.
-In the traveling salesman problem, always picking the nearest node unvisited node does not yield optimal paths in general.
+In general, always picking the nearest unvisited node in a graph does not yield the shortest travel path between all nodes.
 Several works argue for minimizing such biases, as learning systems can sometimes find better solutions without them~\cite{hessel_inductive_2019}.
 There is often a trade-off between strong bias/fast learning and weak bias/more general agents.
 For our set of environments, this particular reward seems to work well, but this might not be the case for search in other types of scenes.
@@ -219,7 +219,6 @@ The space of possible architecture parameters is huge, and infeasible to search 
 There is certainly the possibility that some part of our architecture is a capacity bottleneck for search performance.
 
 Using a CNN is standard when encoding images, and using the encoding to select actions has in a way become synonymous with deep RL.
-The choice of CNN 
 We have chosen to use the same architecture as ~\cite{mnih_playing_2013}, as it is likely to be sufficient for the level of detail in our environments.
 Furthermore, this particular CNN architecture has become common in deep RL literature.
 Still, it is possible that another CNN architecture could have yielded better search performance.
@@ -260,7 +259,7 @@ Such methods can sometimes be probably correct and efficient.
 It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
 One could imagine that it is possible to compute an optimal strategy for certain environments.
 
-The perspective we take with this work is that non-learning solution methods may offer these guarantees, but designing such approaches for every search problem is laborious.
+The perspective we take with this work is that non-learning solution methods may offer these guarantees, but designing such solutions for every search problem is laborious.
 The characteristics of environments can vary considerably which may drastically affect how a manual approach is implemented.
 Interpreting and utilizing patterns in arbitrary scenes may even be difficult for us humans.
 If we cannot understand patterns ourselves, we can not expect to communicate how to search to machines.
@@ -271,7 +270,7 @@ We would argue that RL is a suitable framework for implementing such learning sy
 Our approach seems to be able to utilize environment appearance to search more efficiently.
 It is less clear whether the behavior is close to optimal or not.
 In addition to the points above about neural network architecture and reward signal, it is not known whether policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}.
-More work is needed to evaluate the approaches ability to learn optimal search behavior.
+More work is needed to evaluate the ability of the two agents to learn optimal search behavior.
 
 \subsection{Replicability, Reliability and Validity}
 

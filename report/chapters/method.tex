@@ -3,89 +3,123 @@
 
 In this chapter, we present our proposed methodology for answering the research questions.
 The visual search problem is modelled as a sequential decision making process.
-Two deep RL approaches for solving the problem are presented.
-Finally, we describe a set of experiments to evaluate our approaches.
+A set of environments for the visual search problem as well as our approach for solving them with deep RL.
+Finally, we describe a set of experiments to evaluate our approach.
 
-\section{Problem Statement}
-\label{sec:problem}
+%\section{Problem Statement}
+%\label{sec:problem}
 
-The problem of searching for targets in unknown environments can be modelled as a sequential decision making process in which an agent alternates between receiving visual sensory input and guiding its attention.
-For the purposes of this thesis, we adopt the CMDP formalism \cite{kirk_survey_2022} and define the problem as follows:
+%The problem of searching for targets in unknown environments can be modelled as a sequential decision making process in which an agent alternates between receiving visual sensory input and guiding its attention.
+%For the purposes of this thesis, we adopt the CMDP formalism \cite{kirk_survey_2022} and define the problem as follows:
 
-Let the task be a contextual POMDP \(\mathcal{M}\) where the environment's state includes the context \(c\), which we refer to as the \textit{seed}.
-The state also includes the searched space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
-In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
-At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
-If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
+%Let the task be a contextual POMDP \(\mathcal{M}\) where the environment's state includes the context \(c\), which we refer to as the \textit{seed}.
+%The state also includes the searched space \(S \subset \mathbb{R}^d\) which we refer to as the \textit{scene}.
+%In the scene, there is a set of \(N\) targets \(T = \{t_0, t_1, \dots t_N\}\) such that \(t_i \in S\).
+%At each time step, the agent perceives a subspace \(V \subset S\) of the environment which we refer to as the \textit{view}.
+%If \(T \cap V \neq \varnothing\) there are \(\left\lvert T \cap V \right\rvert\) targets in view.
 
-The actions \(a \in \mathcal{A}\) transform the view into a different subset of the scene.
-With a final action, the agent can indicate that there is one or more target in the view.
-The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
-Here, \(x \in \mathbb{R}^{3 \times w \times h}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
-The goal of the agent is to select actions that bring each target into view and indicate that they are visible, while minimizing the number of total steps.
-There is no inherent reward \(\mathcal{R}\) for this problem, so it has to be designed.
-Finally, the seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
+%The actions \(a \in \mathcal{A}\) transform the view into a different subset of the scene.
+%With a final action, the agent can indicate that there is one or more target in the view.
+%The observations \(o \in \Omega\) are tuples \(o = \left\langle x, p \right\rangle\).
+%Here, \(x \in \mathbb{R}^{3 \times w \times h}\) is an RGB image representing the current view, and \(p \in S\) is the position of the agent which uniquely identifies the view.
+%The goal of the agent is to select actions that bring each target into view and indicate that they are visible, while minimizing the number of total steps.
+%There is no inherent reward \(\mathcal{R}\) for this problem, so it has to be designed.
+%Finally, the seed \(c\) determines the initial view \(V\), the location of the targets \(T\), the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
 
 \section{Environments}
 \label{sec:environments}
 
-To implement and evaluate agents that solve the problem, we use three different simulated environments.
-All use the same observation space, action space and reward signal.
-Each environment have different characteristics that test the applicability of the evaluated approaches to different types of search problems.
+To implement and evaluate agents that search for the visual search problem, we use three different simulated environments.
+Each of the environmnents have different characteristics that test the applicability of the evaluated approach to different types of search problems.
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
 
 As \cite{cobbe_leveraging_2020} and \cite{mnih_asynchronous_2016}, we leverage procedural generation in all environments.
 This gives us control over the difficulty of the environments as well as the number of training and test samples the agent is exposed to.
-A seed determines the appearance of the scene, the location of the targets and the initial position of the agent.
+In the next sections, the visual search task that is tested by the environments is stated formally.
+The particulars of each of the three environments are also described.
 
-Each episode is terminated when all targets have been found, or after 1000 time steps
-Terminating episodes early this way is common to speed up training~\cite{pardo_time_2018}.
+\subsection{Problem Statement}
 
-\subsection{Observations, Actions and Reward}
+The problem of searching for targets in unknown environments can be modelled as a sequential decision making process in which an agent alternates between receiving visual sensory input and guiding its attention.
+The goal of the agent is to locate all targets in a minimum amount of time by guiding its attention in the environment and actively detecting when targets are visible.
+For the purposes of this thesis, we adopt the formalism in \cite{kirk_survey_2022} and let the task be a contextual POMDP \(\mathcal{M}\) with states \(\mathcal{S}\), actions \(\mathcal{A}\), reward \(\mathcal{R}\) and observations \(\Omega\).
 
-All three environments use the same observation space, action space and reward signal.
-The position and image observations are
+\subsubsection{State Set}
 
-\begin{align}
-    o_t & = \left\langle x_t, p_t \right\rangle \text{, where} \\
-    x_t & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
-    p_t & = \left\langle p_{t,0}, p_{t,1} \right\rangle \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}
-\end{align}
-
-All image observations are \(64 \times 64\) RGB images.
-The agent moves in a \(H \times W\) grid, and we assume the presence of some oracle that provides the agent with its position.
-
-The action space is the same in all environments:
+The underlying state of the environment at each time step is defined as follows:
 
 \begin{equation}
-    a_t \in \left\lbrace \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT}, \mathtt{INDICATE} \right\rbrace,
-\end{equation}
+    s_t = \left\langle c, S, T_t, V_t \right\rangle \in \mathcal{S}.
+\end{equation}.
 
-where \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\) move the view one step in each cardinal direction \(\left\langle -1, 0 \right\rangle\), \(\left\langle 1, 0 \right\rangle\), \(\left\langle 0, -1 \right\rangle\), \(\left\langle 0, 1 \right\rangle\).
-The final action, \(\mathtt{INDICATE}\), is used to indicate that a target is in view.
+Here, \(c \in \mathbb{M}\) is a \(seed\) that is used to generate samples of each environment.
+\(S \subset \mathbb{R}^d\) is the searched space, which we refer to as the \textit{scene}.
+A set of undetected targets \(T_t = \{t_0, t_1, \dots t_N\}\) are placed in the scene \(t_i \in S\).
+The agent perceives a subspace \(V_t \subset S\) of the environment which we refer to as the \textit{view}.
+If \(T_t \cap V_t \neq \varnothing\) there are \(\left\lvert T_t \cap V_t \right\rvert\) undetected targets in view.
 
-The reward signal should be designed so that the agent learns a policy that achieves the goal of finding all targets with a minimal number of actions.
+% Finally, the \textit{seed} \(c \in \mathcal{N}\) determines the initial view \(V\) and the location of the targets \(T\)
+% and the initial position \(p_0\) as well as the image observations \(x_t\) at each position \(p_t\).
+
+%Each episode is terminated when all targets have been found, or after 1 000 time steps
+%Terminating episodes early this way is common to speed up training~\cite{pardo_time_2018}.
+
+%All three environments use the same observation space, action space and reward signal.
+
+\subsubsection{Action Set}
+
+The set of actions an agent can select between at each time step is:
+
+\begin{equation}
+    a_t \in \left\lbrace \mathtt{INDICATE}, \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT} \right\rbrace
+\end{equation}.
+
+The first action, \(\mathtt{INDICATE}\), is used by the agent to detect that a target is visible.
+Once a target has been detected, it is removed from the set of targets in the next time step \(T_{t+1}\).
+The remaining actions are used to transform the view \(V_t\) of the agent to a new subspace of \(S\).
+In our three environments, the agent may select between four moving actions, \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\), that move the view in each cardinal direction.
+
+\subsubsection{Reward Signal}
+
+The goal of the agent is to select actions that bring each target into view and detect them once they are visible, while minimizing the number of total time steps.
+The reward signal should be designed so that the agent learns this behaviour by maximizing the expected reward.
 We use the following reward signal:
 
 \begin{equation}
-    r_t = h - 0.01 + 0.005d + 0.005e
+    r_t = \mathcal{R}(s_t, a_t) = h - 0.01 + 0.005d + 0.005e
 \end{equation}
 
-Here, \(h = \left\lvert T \cap V \right\rvert\) if \(a_t = \mathtt{INDICATE}\), and \(h = 0\) otherwise.
+The reward signal consists of four different terms.
+The first term is set to \(h = \left\lvert T_t \cap V_t \right\rvert\) if \(a_t = \mathtt{INDICATE}\), and \(h = 0\) otherwise.
 This term is equal to the number of targets that were found at this time step.
-The constant penalty of \(-0.01\) ensures that the agent is rewarded for quick episode completion.
-The term \(d = 1\) if \(p_t\) is closer to the nearest target than \(p_{t-1}\), otherwise \(d = 0\).
-Similarly, \(e = 1\) if \(p_t\) has not been explored previously and \(e = 0\) otherwise.
-
+The second term, \(-0.01\), is a constant time penalty ensures that the agent is rewarded for quick episode completion.
 Through experimentation, we find that a larger time penalty than \(-0.01\) dominates the reward for finding targets.
 This is potentially related to the number of time steps per episode -- with a time penalty that is too large, the reward \(h\) for finding targets has a relatively small impact on episode return for long episodes.
 
 The two next terms are bonus rewards, intended to speed up learning by further encouraging desired behavior.
-Actions that move the agent towards the nearest target and move the view to previously unseen regions are desirable.
-Importantly, the sum of these bonuses is not larger than the magnitude of the time penalty.
+The term \(d = 1\) if \(a_t\) moves the view \(V_t\) is closer to then nearest target in \(T_t\) than \(V_{t-1}\) and \(d = 0\) otherwise.
+Similarly, \(e = 1\) if \(a_t\) moves the view \(V_t\) to a previously unexplored subspace of \(S\), otherwise \(e = 0\).
+Importantly, the coefficients of \(0.005\) on these bonuses ensure that their sum is not larger than the magnitude of the time penalty.
 This is to ensure that exploration and moving towards targets does not seem more important to the agent than finishing the episode quickly.
 Therefore, the bonuses may guide the agent towards finding targets but do not cause it to steer away from the underlying goal.
+
+\subsubsection{Observation Set}
+
+The observations that the agent receives at each time step are:
+
+\begin{align}
+    o_t & = \left\langle x_t, p_t \right\rangle \in \Omega \text{, where} \\
+    x_t & \in \mathbb{R}^{3 \times 64 \times 64} \text{, and} \\
+    p_t & = \left\langle p_{t,0}, p_{t,1} \right\rangle \in \{0, \dots, H-1\} \times \{0, \dots, W-1\}.
+\end{align}
+
+The first part of each observation, \(x_t\), is a \(64 \times 64\) RGB image of the current view \(V_t\) as it is perceived by the agent.
+The second part of each observation, \(p_t\), is the current position of the agent that uniquely identifies the view \(V_t\).
+For each possible view \(V\) there is a position \(p\) that represents the position of the camera.
+In our environments, the camera can take any position in a two-dimensional grid. 
+As the seed determines the initial view \(V_0\), it also determines the initial position \(p_0\).
+Finally, the seed determines the appearance of the searched scene and therefore the image observations that the agent perceives.
 
 \subsection{Gaussian Environment}
 
@@ -95,7 +129,7 @@ The image contains three blue spots, whose intensity is highest towards their ce
 The intensity wears off as an (approximate) Gaussian function.
 The sum of the intensity in the blue channel in the image is used as a probability density function to select the location of three targets.
 Targets are characterized by red \(8 \times 8\) squares.
-The higher the intensity in the blue channel, the more likely that there is a target there.
+The higher the intensity in the blue channel, the more likely it is that a target is there.
 
 The image is divided into a grid of \(10 \times 10\) steps, one per position \(p_t\).
 The image \(x_t\) is the \(64 \times 64\) sub-image at the current position in the grid.
@@ -125,11 +159,9 @@ Green trees are also scattered around each scene, whose positions are sampled fr
 While this environment is similar to the first environment, it is less clear how to search efficiently in it.
 There is higher variance between scene samples.
 It is also less clear how the scene appearance is correlated to the probability of targets.
-It is desirable that a searching agent should learn to not search oceans and mountains.
-Instead it should prioritize searching along the edges of land masses.
-For some scene samples, there are multiple islands with small patches of land between them.
-These patches could be used to quickly prioritize land while avoiding water.
-One can draw parallels to search-and-rescue scenarios with UAVs or fire detection.
+Although targets are never located in oceans or on mounains, these may still have to be traversed during searches.
+For instance, if two targets are on separate islands the agent must travel over ocean to find both.
+One can draw parallels between this environment and search-and-rescue scenarios with UAVs.
 
 \begin{figure}
     \centering
@@ -165,17 +197,17 @@ In some scenarios it can be important that objects are not only localized, but l
     \label{fig:camera}
 \end{figure}
 
-\section{Approach}
-\label{sec:approach}
+\section{Agents}
+\label{sec:agents}
 
-To design an agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
+To design a reinforcement learning agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
 The final agent should be able to recognize targets, regardless of where they appear in view.
 It is likely important for the agent to have access to its location, especially for large search spaces.
 As environments are procedurally generated, a partial image observation of the scene is not sufficient to ground the agent in it.
 It should also be able to integrate features over time in order to remember which locations have been visited.
 Remembering visual features of these locations may also be of importance, as it can provide clues for what is in their proximity.
 
-Due to the advantages described in Section \ref{sec:policy-value}, we limit our approaches to policy gradient methods.
+Due to the advantages described in Section \ref{sec:policy-value}, we limit ourselves to policy gradient methods.
 Specifically, we employ an actor-critic approach that estimates a policy and value function with a multi-headed neural network.
 The neural network architecture should reflect the aforementioned requirements.
 
@@ -206,7 +238,7 @@ The policy network has 5 outputs, the logits for each action.
 Applying the softmax operation on this output gives the final action probabilities.
 All network layers have ReLU activation functions, as suggested by \cite{henderson_deep_2018}.
 
-Two RNN architectures are compared: one temporal, and one spatial.
+Two agents with different RNN architectures are compared: one temporal, and one spatial.
 While a temporal memory can retain location and appearance information over time, it is not cleared how this information is stored and whether it can be utilized properly.
 We hypothesize that agents using temporal memories may struggle with learning good policies in large search spaces and those that require scene understanding, such as reasoning over previously visited locations.
 Several results from works in embodied visual navigation indicate that spatial memories can give better results than temporal ones~\cite{parisotto_neural_2017,henriques_mapnet_2018,gupta_cognitive_2019,chaplot_object_2020}.
@@ -243,14 +275,20 @@ It is defined by the following set of operations:
 \end{align}
 
 Here, \(z_t \in \mathbb{R}^{64 \times 10 \times 10}\) is a feature map with one 64-dimensional feature vector per possible position \(p_t\).
+The initial feature map is \(z_0 = 0\).
 At each time step, the agent reads from this map using a CNN with three convolutional layers.
 Each layer has 32 filters of size \(3 \times 3\), and uses a padding of 1.
 A final fully connected layer produces a 64-dimensional read vector \(\rho_t\).
 An MLP takes the read vector concatenated with \(y_t\) and the feature vector stored in the map at the current position \(z_t^{(p_t)}\), and produces a 64-dimensional write vector \(\omega_{t}\).
 Another MLP takes a one-hot encoding of the position as input and outputs a 64-dimensional vector \(q_t\).
 The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(h_t\) to the value and policy networks.
-This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
+
+By storing a representation of the observed image at its corresponding position in the feature map, the agent builds up a internal representation of the explored scene while searching.
+Passing this structured representation through a set of convolutional layers yields an encoding of the entire explored explored scene which retains structured visual information.
+This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent when approximating the policy and value function.
+Since writes to the feature map are dependent on the previously stored feature vector at each position, the agent is also able to store new information every time it visits a position.
+\footnote{The contents of the feature map \(z_t\) after one episode is illustrated in Appendix~\ref{app:memory}.}
 
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.
@@ -258,7 +296,7 @@ Finally, the feature map is updated so that \(z_{t+1}\) contains the write vecto
 
 \subsection{Training}
 
-We use train our neural networks with PPO~\cite{schulman_proximal_2017}, as described in Section~\ref{sec:ppo}.
+We train our neural networks with PPO~\cite{schulman_proximal_2017}, as described in Section~\ref{sec:ppo}.
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_what_2020}.
 Furthermore, we use similar hyperparameters to \cite{cobbe_leveraging_2020}.
 These are presented in Table~\ref{tab:hyperparameters}.
@@ -283,12 +321,13 @@ We find that this helps the agent with finding a better local optimum.
 \section{Experiments}
 \label{sec:experiments}
 
-We conduct three different experiments to evaluate our approaches and answer the research questions in \ref{sec:questions}. 
+We conduct three different experiments to evaluate our architectures and answer the research questions in \ref{sec:questions}. 
 Following the recommendations of \cite{henderson_deep_2018}, \cite{colas_hitchhikers_2019} and \cite{agarwal_deep_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Search Performance and Behavior}
 
-To evaluate the quality of the learned policy, we compare our approaches to a set of baseline policies: one random, one greedy, and one exhaustive.
+To evaluate the quality of the learned policy, we compare the policies learned by our two architectures to a set of baseline policies: 
+one random, one greedy, and one exhaustive.
 The random policy (Algorithm~\ref{alg:random}), selects random moving actions.
 The greedy policy (Algorithm~\ref{alg:greedy}) keeps track of visited positions, and greedily selects actions that explore new positions.
 If no such actions exist, it selects a random moving action.
@@ -319,7 +358,7 @@ By giving this advantage to the baselines, the emphasis of the comparison is put
     \input{algorithms/exhaustive}
 \end{algorithm}
 
-To get a better sense of how our approaches compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
+To get a better sense of how our agents compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
 This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that move the agent towards bluer regions.
 
 \begin{algorithm}
@@ -328,8 +367,8 @@ This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that
     \input{algorithms/handcrafted}
 \end{algorithm}
 
-For each of the three environments, we train our approaches on the full distribution of samples.
-Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each approach and baseline.
+For each of the three environments, we train our learning agents on the full distribution of samples.
+Using a fixed set of 100 held out test samples, we measure the search path length and success rate of each learning agent and baseline.
 When measuring the average search path length, we only include successful searches.
 Finally, we investigate how the search performance of our approach compares to that of a human with prior knowledge of each environment.
 
@@ -344,9 +383,9 @@ The number of steps required to locate all targets in a scene is dependent on th
 In small search spaces, the difference in performance between an intelligent searcher and a less intelligent one may be difficult to quantify.
 Furthermore, a large scene is more difficult to search intelligently - more capacity is needed to remember visited locations and plan future steps.
 
-To investigate how well our approach scales to different search space sizes, we train our approaches on three variants of the gaussian environment.
+To investigate how well each architecture scales to different search space sizes, we train them on three variants of the gaussian environment.
 The scene image is scaled up so that there are \(10 \times 10\), \(15 \times 15\) and \(20 \times 20\) possible camera positions in each environment.
-We train and test both approaches on the full distribution of samples from all three search space sizes respectively.
+We train and test both agents on the full distribution of samples from all three search space sizes respectively.
 By varying the search space size in each environment, we can get a feel for how the size affects training times and the quality of the learned policies.
 For each agent and search space size, we report how the average length and success rate changes while learning.
 
@@ -364,7 +403,7 @@ For each agent and training set size, we report how the average length and succe
 \section{Implementation}
 
 The environment is implemented with the Gym~\cite{brockman_openai_2016} interface.
-The agent is implemented and RL algorithms are implemented with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
+The agents and RL algorithms are implemented in Python, with PyTorch~\cite{paszke_pytorch_2019} for automatic differentiation of the computation graphs.
 PPO~\cite{schulman_proximal_2017} was implemented following the official implementation by the original authors,
 and verified by testing on the benchmarks used in the original paper.
 All experiments are conducted on an Intel Core i9-10900X CPU and an NVIDIA GeForce RTX 2080 Ti GPU.

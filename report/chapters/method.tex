@@ -3,7 +3,7 @@
 
 In this chapter, we present our proposed methodology for answering the research questions.
 The visual search problem is modelled as a sequential decision making process.
-A set of environments for the visual search problem as well as our approach for solving them with deep RL.
+A set of environments for the visual search problem is presented together with an approach for solving them with deep RL.
 Finally, we describe a set of experiments to evaluate our approach.
 
 %\section{Problem Statement}
@@ -30,7 +30,7 @@ Finally, we describe a set of experiments to evaluate our approach.
 \label{sec:environments}
 
 To implement and evaluate agents that search for the visual search problem, we use three different simulated environments.
-Each of the environmnents have different characteristics that test the applicability of the evaluated approach to different types of search problems.
+Each of the environments have different characteristics that test the applicability of the evaluated approach to different types of search problems.
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
 
@@ -47,7 +47,7 @@ For the purposes of this thesis, we adopt the formalism in \cite{kirk_survey_202
 
 \subsubsection{State Set}
 
-The underlying state of the environment at each time step is defined as follows:
+The underlying state of the environment at each time step \(t\) is defined as follows:
 
 \begin{equation}
     s_t = \left\langle c, S, T_t, V_t \right\rangle \in \mathcal{S}.
@@ -55,7 +55,7 @@ The underlying state of the environment at each time step is defined as follows:
 
 Here, \(c \in \mathbb{M}\) is a \(seed\) that is used to generate samples of each environment.
 \(S \subset \mathbb{R}^d\) is the searched space, which we refer to as the \textit{scene}.
-A set of undetected targets \(T_t = \{t_0, t_1, \dots t_N\}\) are placed in the scene \(t_i \in S\).
+A set of undetected targets \(T_t = \{t_0, t_1, \dots t_N\}\) are placed in the scene so that \(t_i \in S\).
 The agent perceives a subspace \(V_t \subset S\) of the environment which we refer to as the \textit{view}.
 If \(T_t \cap V_t \neq \varnothing\) there are \(\left\lvert T_t \cap V_t \right\rvert\) undetected targets in view.
 
@@ -69,15 +69,15 @@ If \(T_t \cap V_t \neq \varnothing\) there are \(\left\lvert T_t \cap V_t \right
 
 \subsubsection{Action Set}
 
-The set of actions an agent can select between at each time step is:
+The agent selects between the following set of actions:
 
 \begin{equation}
     a_t \in \left\lbrace \mathtt{INDICATE}, \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT} \right\rbrace
 \end{equation}.
 
 The first action, \(\mathtt{INDICATE}\), is used by the agent to detect that a target is visible.
-Once a target has been detected, it is removed from the set of targets in the next time step \(T_{t+1}\).
-The remaining actions are used to transform the view \(V_t\) of the agent to a new subspace of \(S\).
+Once a target has been detected, it is removed from the set of targets in the next time step, \(T_{t+1}\).
+The remaining actions are used to transform the view in the next time step, \(V_{t+1}\), to a new subspace of \(S\).
 In our three environments, the agent may select between four moving actions, \(\mathtt{UP}\), \(\mathtt{DOWN}\), \(\mathtt{LEFT}\), and \(\mathtt{RIGHT}\), that move the view in each cardinal direction.
 
 \subsubsection{Reward Signal}
@@ -284,11 +284,10 @@ Another MLP takes a one-hot encoding of the position as input and outputs a 64-d
 The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(h_t\) to the value and policy networks.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
-By storing a representation of the observed image at its corresponding position in the feature map, the agent builds up a internal representation of the explored scene while searching.
-Passing this structured representation through a set of convolutional layers yields an encoding of the entire explored explored scene which retains structured visual information.
+By storing a representation of the observed image at its corresponding position in the feature map, the agent builds up a internal representation of the explored scene while searching\footnote{An illustration of the contents of the feature map \(z_t\) of a trained agent after a finished search can be found in Appendix~\ref{app:memory}.}.
+Passing this structured representation through a set of convolutional layers yields an encoding of the entire explored scene which retains structured visual information.
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent when approximating the policy and value function.
 Since writes to the feature map are dependent on the previously stored feature vector at each position, the agent is also able to store new information every time it visits a position.
-\footnote{The contents of the feature map \(z_t\) after one episode is illustrated in Appendix~\ref{app:memory}.}
 
 % Inhibition of return could be done programmatically, but there are advantages to learning it:
 % In some cases it is good to return to visited locations, such as when traversing a visited region to reach an area with high probability.

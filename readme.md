@@ -61,12 +61,7 @@ Scripts for the individual experiments are located in the [scripts](./scripts) d
 If you have hardware available, you may want to modify them script to run multiple jobs in parallel.
 For simpler setup, the [dockerfile](./dockerfile) can be used.
 
-## To do
 
-Report:
-
-- discuss hyperparameter tuning
-- update report according to feedback and proof-read
 
 Repository:
 

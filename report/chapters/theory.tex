@@ -26,8 +26,7 @@ Two big limitations of performance in visual search are processing power, and li
 Processing high-dimensional sensory input like images is expensive, and environments are often too large and complex to view all at once.
 An observer that searches a scene for targets has to direct its \textit{visual attention} to one region at a time.
 Humans scan environments by directing their gaze (\textit{overt attention}) and shifts of attention in the current visible region (\textit{covert attention})~\cite{itti_computational_2001}.
-While covert attention tends to be reactionary, overt attention usually integrates more features over time.
-In this work we focus specifically on the former, moving the gaze to bring targets into view.
+While covert attention tends to be reactionary, overt attention usually more strategic.
 
 Humans control overt attention through both eye movements and head movements.
 Eye movement is almost instant between locations, and the cost of directing attention with eye movements is constant regardless of distance.
@@ -78,7 +77,7 @@ Solving the object search problem optimally involves determining a sequence of c
 The state of the searcher is uniquely determined by the control parameters of the camera.
 Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
 Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
-Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions.~\cite{andreopoulos_theory_2009,ye_complexity-level_2001}
+Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions~\cite{andreopoulos_theory_2009,ye_complexity-level_2001}.
 
 \subsection{Deep Learning}
 \label{sec:deeplearning}
@@ -178,7 +177,7 @@ These are defined by the following set of equations:
 
 Here, \(x_t \in \mathbb{R}^d\) is the input, \(h_t \in \mathbb{R}^h\) is the \textit{hidden state} and \(c_t \in \mathbb{R}^h\) in the \textit{cell state} of the units.
 The initial values are \(c_0 = 0\) and \(h_0 = 0\) and the operator \(\circ\) is the element-wise product.
-The matrices \(w_i\), \(w_f\), \(w_o\) and \(w_c \in \mathbb{R}^{h \times (h+d)}\) are the weights for the input gate, forget gate, output gate, and cell respectively.
+The matrices \(w_i\), \(w_f\), \(w_o\) and \(w_c \in \mathbb{R}^{h \times (h+d)}\) are the weights for the input gate, forget gate, output gate, and cell respectively (with implicit biases).
 The hidden state \(h_t\) is used as output of the LSTM and depends on both the input, the previous hidden state and the cell state.
 Because the cell state \(c_t\) is updated using a combination of the previous cell state and a candidate cell state \(\tilde{c}_t\), 
 the cell is able to remember values over arbitrarily many time steps \(t\).
@@ -371,7 +370,7 @@ The full PPO objective for an actor-critic approach is:
 Here, \(\mathcal{L}_\text{VF}\) is a squared-error loss betwen the value function approximation and the actual state value.
 The coefficient \(c_1\) scales the impact of the value loss on the parameter updates.
 The final term, \(S[\pi]\), denotes the entropy of the action probabilities \(\pi\).
-Policies wth higher entropy, or policies where action probabilities are closer to equal, can be favored by selecting a large coefficient \(c_2\).
+Policies with higher entropy, or policies where action probabilities are closer to equal, can be favored by selecting a large coefficient \(c_2\).
 Algorithm~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}

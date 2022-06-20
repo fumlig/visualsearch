@@ -2,7 +2,7 @@
 \label{cha:introduction}
 
 The ability to search for and locate things in our environments is fundamental to our daily lives as humans.
-We are constantly looking for things, be it the right book in the bookshelf, a certain keyword in an article, or birds in the sky.
+We are constantly looking for things, be it the right book in a bookshelf, a certain keyword in an article, or birds in the sky.
 In many cases, it is important that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
@@ -13,7 +13,7 @@ Humans are able to utilize features of the environment to guide our search~\cite
 For example, we know to look for berries at the forest floor, and not to look for boats on land.
 
 This thesis investigates the implementation of agent that learn to locate targets in their environments.
-Specifically, we look at how agents that learn to utilize environment cues to search more efficiently can be implemented with deep reinforcement learning.
+Specifically, we look at how agents that learn to utilize visual cues to search more efficiently can be implemented with deep reinforcement learning.
 
 \section{Outline}
 \label{sec:outline}
@@ -21,25 +21,25 @@ Specifically, we look at how agents that learn to utilize environment cues to se
 The motivation and aim of the thesis are introduced in the remainder of this chapter. 
 Relevant theory, such as background information and related work, is covered in Chapter~\ref{cha:theory}.
 Methodology for answering the research questions is laid out in Chapter~\ref{cha:method}.
-Experimental results are covered in Chapter~\ref{cha:results}, and discussed in Chapter~\ref{cha:discussion}.
+Experimental results are covered in Chapter~\ref{cha:results} and discussed in Chapter~\ref{cha:discussion}.
 Finally, Chapter~\ref{cha:conclusion} concludes the thesis with some remarks and suggestions for future work.
 
 \section{Motivation}
 \label{sec:motivation}
 
-Automated visual search has applications in several areas including search-and-rescue, surveillance, fire detection and home assistance.
+Automated visual search has applications in several areas, such as search-and-rescue, surveillance, fire detection and home assistance.
 Employing autonomous vehicles instead of human-controlled ones for such tasks can both reduce risk and cost of labour.
 Additionally, autonomous agents can potentially search more efficiently.
 
 However, while visual search is often seemingly effortless to us humans, it is a complex process.
 Understanding human visual search and recreating it in machines has proven to be a great challenge~\cite{eckstein_visual_2011}.
-An autonomous searcher has to both be able to recognize useful features and know how to use them to efficiently guide its search.
+An autonomous searcher has to both be able to recognize useful features and know how to use them to guide its search.
 Doing this requires some contextual scene understanding.
 
-Although we can teach machines to search by encoding human knowledge, this is a difficult and expensive process.
-Communicating to a machine how to pick up these features understand its visual input is difficult.
-Useful features may be subtle and difficult to pick up, even for humans.
-Furthermore, properly utilizing the features to minimize search time is not trivial~\cite{ye_complexity-level_2001}.
+Although we can teach machines to search by encoding human knowledge, this is often a complex and laborious process.
+Communicating to a machine how to acquire and understand visual information is difficult.
+Useful features may be subtle and tricky to pick up, even for humans.
+Furthermore, properly utilizing such features to minimize search time is not trivial~\cite{ye_complexity-level_2001,andreopoulos_theory_2009}.
 
 Systems that rely on handcrafted rules for search are also restricted to the contexts they were designed for.
 Visual features that can be used to search efficiently in one environment may not be present in the next.
@@ -47,26 +47,26 @@ Before deploying such a system in a new environment, the particulars of that env
 Real-world search scenarios exhibit high variance that can be infeasible to teach to a machine.
 
 An alternative to manually encoding search strategies in machines is to instead use a learning system.
-Reinforcement learning~\cite{sutton_reinforcement_2018} (RL) is a general paradigm for learning how to act in order to achieve some goal.
-In recent years, RL has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success.
-RL agents have surpassed human performance in arcade games~\cite{mnih_human-level_2015}, board games~\cite{silver_mastering_2016}, and even complex real-time strategy games~\cite{vinyals_grandmaster_2019}. 
-Several works have also applied RL to tasks involving complex control problems with visual input~\cite{minut_reinforcement_2001,mnih_recurrent_2014,zhu_target-driven_2017,mirowski_learning_2017}.
+Reinforcement learning~\cite{sutton_reinforcement_2018} (RL) is a general paradigm for implementing agents that learn how to act in order to achieve some goal.
+In recent years RL has been combined with deep learning~\cite{goodfellow_deep_2016} with tremendous success, forming the field of deep RL.
+Deep RL agents have surpassed human performance in arcade games~\cite{mnih_human-level_2015}, board games~\cite{silver_mastering_2016}, and even complex real-time strategy games~\cite{vinyals_grandmaster_2019}. 
+Several works have also applied deep RL to tasks involving complex control problems with visual input~\cite{minut_reinforcement_2001,mnih_recurrent_2014,zhu_target-driven_2017,mirowski_learning_2017}.
 
-This makes it interesting to see whether RL can also be applied to visual search.
+This makes it interesting to see whether deep RL can also be applied to visual search.
 A learning system could learn patterns and strategies that are difficult for humans to pick up and utilize to minimize search times.
 Given a sufficient number of samples, such a system could learn to search in arbitrary environments.
 
 \section{Aim}
 \label{sec:aim}
 
-The aim of this thesis is to investigate how an agent that learns to search for targets using visual input can be implemented with deep reinforcement learning.
+The aim of this thesis is to investigate how an agent that learns to search for targets using visual input can be implemented with deep RL.
 The goal of the agent is to locate all targets in its environment in minimum time.
 Such an agent should learn the search strategies from a set of training scenarios, and be able to carry out the strategies in unseen environments.
 Specifically, we consider scenarios where the agent can only observe a small portion of its environment at any given time through a camera.
 The agent should locate targets by indicating where in the environments they are.
 To do this, it must actively choose where to look in order to gain new information about the environment.
 
-We postulate that an effective searcher is able to learn and utilize structure in the searched environments to find targets quicker.
+We postulate that an efficient searcher is able to learn and utilize structure in the searched environments to find targets quicker.
 In other words, it should try to prioritize searching regions where targets are most likely to be found according to previous experience.
 The distribution of targets can be correlated with the appearance of the searched scene.
 A searcher should be able to pick up such correlations and utilize them.
@@ -78,26 +78,25 @@ This can provide insights into what is in their proximity.
 
 If a deep reinforcement learning agent is to be trained and deployed for a real-world search task, there is likely a limited set of samples to learn from.
 Therefore it is also of interest to investigate how many samples are required to infer how to search efficiently in similar environments.
+
 In contrast to several past works addressing similar problems~\cite{minut_reinforcement_2001,mirowski_learning_2017,ourselin_artificial_2016,caicedo_active_2015,shubina_visual_2010,forssen_informed_2008},
 we are interested the implementation of agents that learn to utilize arbitrary visual structure to search more efficiently.
+This thesis contributes with:
 
 \begin{itemize}
-  %\item We formally introduce the visual search problem for reinforcement learning.
-  %\item We discuss the problem from several angles.
-  %\item We compare two memory architectures, one spatial and one temporal.
-  \item We provide a set of environments to train and evaluate visual search agents.
-  \item We propose an approach for solving the visual search task with reinforcement learning.
-  \item We compare two learning agents implemented using the approach qualitatively and quantitavely.
-  \item We discuss our method in terms of applicability and usefulness.
+  \item A set of environments to train and evaluate visual search agents.
+  \item An approach for learning efficient visual search task with deep reinforcement learning.
+  \item A thorough evaluation of two learning agents with different neural network architectures.
+  \item A discussion of the proposed method in terms of applicability and usefulness.
 \end{itemize}
 
 \section{Research Questions}
 \label{sec:questions}
 
-This thesis will address the following questions:
+The following research questons are addressed in the thesis:
 
 \begin{enumerate}
-  \item \label{itm:rq1} How can an agent that learns to intelligently search for targets be implemented with reinforcement learning?
+  \item \label{itm:rq1} How can an agent that learns to efficiently search for targets be implemented with reinforcement learning?
   \item \label{itm:rq2} How does the learning agent compare to random walk, greedy search, and a human searcher with prior knowledge of the searched environment?
   \item \label{itm:rq3} How well does the learning agent generalize from a limited number of training samples to unseen in-distribution scene samples?
 \end{enumerate}

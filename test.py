@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Test a search agent.
+"""
+
 import os
 import cv2 as cv
 import csv
@@ -12,7 +16,7 @@ import datetime as dt
 import pandas as pd
 import glob
 
-import rl
+import rl_library as rl
 import gym_search
 
 from argparse import ArgumentParser
@@ -27,6 +31,7 @@ KEY_RET = 13
 WINDOW_SIZE = (640, 640)
 
 BASELINES = ["human", "greedy", "random", "exhaustive", "handcrafted"]
+ENVIRONMENTS = {"gaussian": "Gaussian-v0", "terrain": "Terrain-v0", "camera": "Camera-v0"}
 
 
 def metrics(infos):
@@ -129,7 +134,7 @@ def play(episodes, env, agent="human", model=None, device=None, hidden=False, ob
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("environment", type=str)
+    parser.add_argument("environment", type=str, choices=ENVIRONMENTS.keys())
     parser.add_argument("--env-kwargs", type=parse_hparams, default={})
 
     parser.add_argument("--episodes", type=int, default=100)
@@ -164,7 +169,7 @@ if __name__ == "__main__":
         gym_search.wrappers.LastAction
     ]
 
-    env = gym.make(args.environment, **args.env_kwargs)
+    env = gym.make(ENVIRONMENTS[args.environment], **args.env_kwargs)
     for wrapper in wrappers:
         env = wrapper(env)
 

@@ -1,7 +1,13 @@
 import numpy as np
 from gym_search.utils import lerp
 
+
 def pick_color(c, palette):
+    """Pick colors for array from palette.
+    
+    c: Array of scalars.
+    palette: List of colors.
+    """
     c = np.array(c)
     c /= c.max()
     i = lerp(0, len(palette)-1, c).astype(int)
@@ -10,12 +16,17 @@ def pick_color(c, palette):
 
 
 def add_with_alpha(bg, fg, alpha):
+    """Add RGB colors with alpha channel."""
+
     bg = np.array(bg, dtype=np.uint8)
     fg = np.array(fg, dtype=np.uint8)
 
     return (1-alpha)*bg + alpha*fg
 
 
+"""
+Color palette for earth seen from space.
+"""
 BLUE_MARBLE = [
     (0, 0, 0),
     (0, 0, 46),
@@ -259,4 +270,7 @@ BLUE_MARBLE = [
     (255, 255, 255),
 ]
 
+"""
+Reduced earth color palette.
+"""
 EARTH_TOON = [BLUE_MARBLE[i] for i in range(10, len(BLUE_MARBLE), 5)]

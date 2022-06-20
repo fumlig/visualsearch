@@ -1,6 +1,5 @@
 import numpy as np
 import itertools
-import functools
 
 
 def to_point(i, w):

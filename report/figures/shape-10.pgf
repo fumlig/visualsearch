@@ -20,9 +20,9 @@
 %%
 %% Matplotlib used the following preamble
 %%   \usepackage{fontspec}
-%%   \setmainfont{DejaVuSerif.ttf}[Path=\detokenize{/usr/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/}]
-%%   \setsansfont{DejaVuSans.ttf}[Path=\detokenize{/usr/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/}]
-%%   \setmonofont{DejaVuSansMono.ttf}[Path=\detokenize{/usr/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/}]
+%%   \setmainfont{DejaVuSerif.ttf}[Path=\detokenize{/home/oslund/thesis/venv/lib/python3.8/site-packages/matplotlib/mpl-data/fonts/ttf/}]
+%%   \setsansfont{DejaVuSans.ttf}[Path=\detokenize{/home/oslund/thesis/venv/lib/python3.8/site-packages/matplotlib/mpl-data/fonts/ttf/}]
+%%   \setmonofont{DejaVuSansMono.ttf}[Path=\detokenize{/home/oslund/thesis/venv/lib/python3.8/site-packages/matplotlib/mpl-data/fonts/ttf/}]
 %%
 \begingroup%
 \makeatletter%
@@ -32,8 +32,6 @@
 \begin{pgfscope}%
 \pgfsetbuttcap%
 \pgfsetmiterjoin%
-\definecolor{currentfill}{rgb}{1.000000,1.000000,1.000000}%
-\pgfsetfillcolor{currentfill}%
 \pgfsetlinewidth{0.000000pt}%
 \definecolor{currentstroke}{rgb}{1.000000,1.000000,1.000000}%
 \pgfsetstrokecolor{currentstroke}%
@@ -45,7 +43,7 @@
 \pgfpathlineto{\pgfqpoint{0.000000in}{2.178749in}}%
 \pgfpathlineto{\pgfqpoint{0.000000in}{0.000000in}}%
 \pgfpathclose%
-\pgfusepath{fill}%
+\pgfusepath{}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetbuttcap%

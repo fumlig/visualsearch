@@ -15,7 +15,7 @@ These metrics are presented for our two agents trained on the full distribution 
 Appendix~\ref{app:learning} contains learning curves for each environment, and Appendix~\ref{app:paths} contains example search paths from each baseline and learning agent. 
 
 Overall, our two agents and human searchers achieve similar success rates, path lengths and SPL scores.
-Our spatial memory agent achieves the most competitive search path lengths and SPL scores in the gaussian and terrain environments.
+Our spatial memory agent achieves the most competitive search path lengths and SPL scores in the Gaussian and terrain environments.
 Our temporal memory agent select search paths that are on average longer than the paths chosen by our spatial memory agent and human searchers.
 In the camera environment, the temporal memory agent is better both in terms of average length and SPL score.
 Interestingly, the temporal memory agent achieves SPL scores comparable to that of the spatial memory agent despite choosing much longer path lengths.
@@ -23,13 +23,13 @@ Interestingly, the temporal memory agent achieves SPL scores comparable to that 
 Human searchers seemed to be successful in utilizing using environment cues to guide search, but frequently forgot which positions had been visited.
 In the camera environment, human searchers found it difficult to identify when targets should be indicated,
 as the discretization of the search space did not always align targets closely to the center of the screen.
-This is more of a side-effect of the implementation than an indication of poor search performance.
+This is more of a side effect of the implementation than an indication of poor search performance.
 
 The random baseline policy achieves the worst SPL, success rate and average search path length in all three environments.
 The greedy baseline policy is closer to the remaining agents.
 The exhaustive baseline policy achieves an average search path length that is lower than our temporal memory agent.
 Its SPL score, however, is only higher than the those of the other two baselines.
-The handcrafted baseline for the gaussian environment performed better than all other agents in this environment. % todo
+The handcrafted baseline for the Gaussian environment performed better than all other agents in this environment. % todo
 
 \begin{table}
     \centering
@@ -46,7 +46,7 @@ The handcrafted baseline for the gaussian environment performed better than all 
 \section{Size of Search Space}
 \label{sec:shape}
 
-The results of the search space experiments in the gaussian environment are presented in Figure~\ref{fig:shape}.
+The results of the search space experiments in the Gaussian environment are presented in Figure~\ref{fig:shape}.
 Results were collected across four different runs, and the plots show the mean and standard deviation.
 For the search space of \(10 \times 10\), both architectures initially improve their policy quickly.
 Past a certain time step, they keep improving at a reduced pace.

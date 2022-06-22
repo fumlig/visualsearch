@@ -26,7 +26,7 @@ Two big limitations of performance in visual search are processing power, and li
 Processing high-dimensional sensory input like images is expensive, and environments are often too large and complex to view all at once.
 An observer that searches a scene for targets has to direct its \textit{visual attention} to one region at a time.
 Humans scan environments by directing their gaze (\textit{overt attention}) and shifts of attention in the current visible region (\textit{covert attention})~\cite{itti_computational_2001}.
-While covert attention tends to be reactionary, overt attention usually more strategic.
+While covert attention tends to be reactionary, overt attention is often more strategic.
 
 Humans control overt attention through both eye movements and head movements.
 Eye movement is almost instant between locations, and the cost of directing attention with eye movements is constant regardless of distance.
@@ -42,20 +42,20 @@ Simple memory mechanisms, like some inhibition-of return mechanism~\cite{itti_co
 
 Natural environments are in fact seldom completely random, but instead tend to exhibit some structure.
 When finding targets, there is usually something about this structure that can be utilized to improve search performance.
-Such regularities can learned from experience and used during future searches.
+Such regularities can be learned from experience and used during future searches.
 Improvements in human search performance have been measured when certain locations have higher probabilities of containing targets~\cite{eckstein_visual_2011,wolfe_five_2017}.
-Furthermore, if targets usually co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
+Furthermore, if targets often co-occur with other visible elements they tend to be easier to find~\cite{eckstein_visual_2011,wolfe_five_2017}.
 
 \subsection{Active Vision and Object Search} 
 \label{sec:activevision}
 
 Much of past and present research in machine perception involves a passive observer which samples and perceives images from a fixed distribution.
 Animal perception, in contrast, is active -- we do not only see, but also decide where to look.
-In the \textit{active vision} paradigm, an the observer has some control of its sensory input~\cite{aloimonos_active_1988}.
+In the \textit{active vision} paradigm, the observer has some control of its sensory input~\cite{aloimonos_active_1988}.
 
 Active vision, and \textit{active perception} in general, is a problem of intelligent data acquisition.
 An active observer must control its sensory inputs to constrain the interpretation of its environment.
-One of the difficulties of active perception problems is that they are scene and context dependent.
+One of the difficulties of active perception tasks is that they are scene and context dependent.
 A thorough understanding of the data acquisition parameters and the goal of the visual processing is needed~\cite{bajcsy_active_1988}.
 
 %While certain tasks are necessarily active vision tasks, there is an argument to be made that active vision is a means to solve the task more effectively.
@@ -77,7 +77,7 @@ Solving the object search problem optimally involves determining a sequence of c
 The state of the searcher is uniquely determined by the control parameters of the camera.
 Actions that adjust these parameters and adjust the observed region come at some cost in time or energy.
 Finally, the agent has some prior knowledge of the probability of targets which it updates after each observation.
-Finding an optimal solution in three dimensional search spaces has been shown to be NP-complete, necessitating approximate solutions~\cite{andreopoulos_theory_2009,ye_complexity-level_2001}.
+Finding an optimal solution in three-dimensions has been shown to be NP-complete, necessitating approximate solutions~\cite{andreopoulos_theory_2009,ye_complexity-level_2001}.
 
 \subsection{Deep Learning}
 \label{sec:deeplearning}
@@ -97,7 +97,7 @@ The only requirement on the function computed by each node is that it is differe
 As long as this holds, layers can be stacked arbitrarily and the gradients can be computed with the chain rule.
 This way, errors in the output can be passed back through the network (\textit{back-propagation}) and used to update the weights.~\cite{russell_artificial_2021,goodfellow_deep_2016}
 
-The architecture of a neural network imposes some bias onto the learning that its expected to be useful for generalizing to unseen samples.
+The architecture of a neural network imposes some bias onto the learning that is expected to be useful for generalizing to unseen samples.
 We now describe three neural network architectures that will be used in this work.
 
 \subsubsection{Feedforward Neural Network}
@@ -126,7 +126,7 @@ With some input vector \(\mathbf{x}\) of size \(n\) and a vector kernel \(\mathb
 \end{equation}
 
 where \(s\) is the \textit{stride}.
-This operations can be generalized up to more than one dimension, such as 2 dimensions for images and 3 dimensions for volumes.
+This operation can be generalized up to more than one dimension, such as 2 dimensions for images and 3 dimensions for volumes.
 With multiple input channels, kernels are stacked into a \textit{filter}.
 The outputs of each kernel are then summed over, giving one output channel per filter.
 
@@ -252,7 +252,7 @@ A value function \(V_\pi\) estimates how good it is to be in a state.
 The value function \(V_\pi(s)\) is the expected (discounted) return when starting at state \(s\) and following policy \(\pi\) until the end of the episode.
 There are two common alternative value functions:
 The \textit{Q-function} \(Q_\pi(s,a)\) gives the value of state \(s\) under policy \(\pi\) where \(a\) is the first action taken.
-Given a Q-function, \textit{action-value} methods choose the action greedily at every state as \(arg\,max Q_\pi(s, a)\).
+Given a Q-function, \textit{action-value} methods choose the action greedily at every state as \(\argmax_a Q_\pi(s, a)\).
 The \textit{advantage function} \(A_\pi(s, a)\) instead represents the relative advantage of actions, \(A_\pi = Q_\pi - V_\pi\).~\cite{sutton_reinforcement_2018}
 
 For problems with large state and action spaces, it is common to represent value functions with \textit{function approximation}.
@@ -265,7 +265,7 @@ An alternative to action-value methods is to approximate the policy itself.
 \textit{Policy gradient} methods learn a parametrized policy that select actions without a value function.
 We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
 The policy parameters are usually learned based on the gradient of some performance measure \(L(\boldsymbol{\theta})\).
-As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated so as to optimize for the objective.~\cite{sutton_policy_1999}
+As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated to optimize for the objective.~\cite{sutton_policy_1999}
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policy_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
 However, less is known about if and how fast policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}.
@@ -300,19 +300,18 @@ Special care has to be taken to ensure that the reward encourages the desired be
 
 Here, the problem of \textit{sparse rewards} also comes into play.
 The agent has to be rewarded frequently enough to allow it to achieve its goal once.
-Often it has to incentivize it to achieve its goal efficiently, with multiple different starting conditions.
 If rewards are too sparse, the agent may explore aimlessly and take too long to achieve its goal.
 If the received reward is temporally distant from the action that caused it, the agent may have difficulty connecting the two.
 This is known as the \textit{credit assignment problem}~\cite{minsky_steps_1961}.
 
-In practice, rewards are often designed through trial-and-error.
+In practice, rewards are typically designed through trial-and-error.
 Through \textit{reward shaping}~\cite{mataric_reward_1994},
-the reward is designed so as to guide the agent towards achieving its goal by giving additional rewards along the way.
+the reward is designed to guide the agent towards achieving its goal by giving additional rewards along the way.
 Several iterations of a reward signal are tried until one yields expected and sufficient results.
 
 \subsubsection{Deep Reinforcement Learning}
 
-As mentioned in Section~\ref{sec:policy-value}, policies and value functions are often approximated.
+As mentioned in Section~\ref{sec:policy-value}, RL usually involves approximating policies and value functions.
 Neural networks have good properties for function approximation and have been used for RL with success.
 One early example is TD-Gammon~\cite{tesauro_temporal_1995}, a neural network trained with RL that reached expert Backgammon performance in 1995.
 
@@ -367,14 +366,14 @@ The full PPO objective for an actor-critic approach is:
     \right\rbrack
 \end{equation}
 
-Here, \(\mathcal{L}_\text{VF}\) is a squared-error loss betwen the value function approximation and the actual state value.
+Here, \(\mathcal{L}_\text{VF}\) is a squared-error loss between the value function approximation and the actual state value.
 The coefficient \(c_1\) scales the impact of the value loss on the parameter updates.
 The final term, \(S[\pi]\), denotes the entropy of the action probabilities \(\pi\).
 Policies with higher entropy, or policies where action probabilities are closer to equal, can be favored by selecting a large coefficient \(c_2\).
 Algorithm~\ref{alg:ppo} shows the steps of the PPO algorithm.
 
 \begin{algorithm}
-    \caption{Proximal Policy Optimization}
+    \caption{Proximal Policy Optimization.}
     \label{alg:ppo}
     \input{algorithms/ppo}
 \end{algorithm}
@@ -388,10 +387,10 @@ We also cover work that relates to our posed research questions.
 
 \subsection{Search with Deep Reinforcement Learning}
 
-There have been several rigorous attempts to implement robotic object search systems using non-learning methods.
+There have been numerous rigorous attempts to implement robotic object search systems using non-learning methods.
 Forssén et al.~\cite{forssen_informed_2008} implement a mobile robot that searches for specific objects within a cluttered environment.
 Their robot explores by moving towards unexplored regions and looks around to identify potential objects.
-Each objects is examined from several perspectives and ranked by probability of being the queried object.
+Each object is examined from multiple perspectives and ranked by probability of being the queried object.
 Shubina and Tsotsos~\cite{shubina_visual_2010} model the search problem as in \cite{ye_complexity-level_2001}, and solve it using a greedy action selection strategy.
 They do not take environment appearance into account, and rely on prior knowledge of target distribution being provided as a spatial probability map.
 Some works also take appearance and semantics of the environment into account to search more efficiently~\cite{aydemir_search_2011,aydemir_active_2013}.
@@ -406,14 +405,14 @@ learning systems that are less dependent on expert knowledge have the potential 
 
 Minut and Mahadevan~\cite{minut_reinforcement_2001} propose a sequential model of selective visual attention for visual search tasks.
 An agent is tasked with finding a particular object in a scene
-A policy for controlling a fixed pan-tilt-zoom camera is learned using reinforcement learning.
+A policy for controlling a fixed pan-tilt-zoom camera is learned with reinforcement learning.
 The goal of the agent is to aim the camera at the region where a target is most likely to be found.
 It has to decide where to fixate next based on visual information only.
 Despite being limited to a single environment, this is an early example of visual search modeled as an RL problem.
 
 Mnih et al.~\cite{mnih_recurrent_2014} take inspiration from visual attention and foveated vision found in humans and propose to use a similar mechanism for computer vision tasks.
-Applying a CNN to a large images can be expensive, as the complexity scales linearly with the number of image pixels.
-They propose a recurrent model that extracts information from images by adaptively selecting a sequence of smaller regions to process at high resolution.
+Applying a CNN to large images can be expensive, as the complexity scales linearly with the number of image pixels.
+They introduce a recurrent model that extracts information from images by adaptively selecting a sequence of smaller regions to process at high resolution.
 At each time step, the agent receives an image observation of the environment.
 Through actions, the agent selects a limited region of this observation to view in high resolution.
 It is given a reward that is dependent on the task the agent should perform.
@@ -428,15 +427,15 @@ This is attributed to its ability to focus its attention on important regions.
 
 In computer vision, \textit{object detection} is the task of detecting semantic objects of a certain class in images.
 Detecting an object entails \textit{recognizing} that it is present in an image, and \textit{localizing} it by determining its bounding box.
-State of the art object detection use deep learning techniques and usually involve a deep convolutional architecture to recognize objects~\cite{zhao_object_2019}.
+State-of-the-art object detection methods employ deep learning techniques, usually a convolutional architecture, to recognize objects~\cite{zhao_object_2019}.
 For localization, a region proposal process considers the whole image and returns a set of bounding box candidates.
 The object recognizer is then run on each region proposal.
 Region proposals are akin to visual attention, as they limit the region of the image that is processed by the recognizer.
 
 Although we do not focus on difficult recognition problems in this work, object localization is highly relevant.
 The difference is that images in object detection are passively sampled - they are drawn from some distribution and all are independent.
-Furthermore, the whole scene that is searched for objects is visible in the image.
-In \textit{active object detection}, the analyzed images are instead chosen so as to help the detector perform its task better.
+Furthermore, the entire scene that is searched for objects is visible in the image.
+In \textit{active object detection}, the analyzed images are instead chosen to help the detector perform its task better.
 
 Caicedo and Lazebnik~\cite{caicedo_active_2015} propose to use deep reinforcement learning for active object localization in images where the object to be localized is fully visible.
 An agent is trained to successively improve a bounding box using translating and scaling transformations.
@@ -467,18 +466,18 @@ The approach gives a small improvement over the standalone region proposal netwo
 \subsubsection{Visual Navigation}
 
 Visual navigation is the process of determining a suitable path between a start point and destination point using visual input.
-Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, as well as for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles~\cite{bonin-font_visual_2008}.
-The visual search problem can be considered analogous to a visual navigation in unrestricted environments.
+Visual navigation has been studied for use in both autonomous ground vehicles, where obstacles have to be avoided, and for unmanned aerial vehicles which typically don't have the problem of avoiding obstacles~\cite{bonin-font_visual_2008}.
+Visual search can be considered analogous to a visual navigation in unrestricted environments.
 
 In recent years, several works have used deep RL to solve various visual navigation tasks.
 These have mostly been focused on learning navigation between two points in indoor environments,
 where the goal is either specified as an image of a target object or indirectly as a distance from the agent's location.
-There are several simulated environments for such tasks~\cite{kolve_ai2-thor_2019,xia_gibson_2018,savva_habitat_2019}.
+There are multiple simulated environments for such tasks~\cite{kolve_ai2-thor_2019,xia_gibson_2018,savva_habitat_2019}.
 
 Zhu et al.~\cite{zhu_target-driven_2017} create a model for target-driven visual navigation in indoor scenes with deep RL.
 An observer is given a partial image of its scene as well as an image of the target object, and is tasked with navigating to the object in the scene with a minimal number of steps.
 The agent moves forwards, backwards, and turns left and right at constant step lengths.
-A reward signal with a small time penalty is used to incentivize task completion in few steps.
+A reward signal with a constant time penalty is used to incentivize task completion in few steps.
 They compare their approach to random walk and the shortest path, with promising results.
 This setup is quite similar to the one considered in this report, but the authors make a few assumptions that we do not.
 Their method is trained and evaluated on 32 scenes, each of which contain a fixed number of object instances.
@@ -497,7 +496,7 @@ Prior knowledge of spatial relations between objects types is encoded as a graph
 Their agent is also told what object to look for in the form of an encoded word.
 The encoded object graph and word is used as input together with the camera image to an actor-critic network that selects actions that navigate towards the target object.
 As the agent collects experiences, it also updates its prior knowledge of spatial relationships between objects.
-It is shown that prior knowledge encoded in such a way improves the agents ability to navigate to objects.
+It is shown that prior knowledge encoded in such a way improves the agent's ability to navigate to objects.
 
 Mnih et al.~\cite{mnih_asynchronous_2016} use a recurrent policy with only RGB images to navigate in a labyrinth.
 3D labyrinths are randomly generated, and an agent is tasked with finding objects in them.
@@ -559,18 +558,19 @@ The authors evaluate this architecture in several visual navigation tasks, where
 In their tests, their memory architecture performs better than LSTM layers, and generalizes better to unseen environments.
 
 LSTM is an example of a temporal memory -- it remembers information across time.
-Several works propose the use of spatial memories rather than temporal ones.
+Many works in visual navigation investigate the use of spatial memories rather than temporal ones.
 In these works, the term spatial refers to the fact that they are addressed with a position in the environment.
 Agents can use such memories to write and read structured information of their environment.
 Parisotto and Salakhutdinov~\cite{parisotto_neural_2017} introduce a general-purpose spatial memory architecture.
 They assume that the environment can be discretized into a set of positions.
 The agent retains a feature map with one feature vector per position it can occupy in the environment.
 At each time step, the agent reads the feature map from the previous time step and writes information to the slot for its current position.
-This architecture is shown to outperform LSTM and the architecture in \cite{oh_control_2016} in several navigation tasks which require remembering over many time steps. Several similar architectures have been proposed~\cite{henriques_mapnet_2018,gupta_cognitive_2019,chaplot_object_2020}.
+This architecture is shown to outperform LSTM and the architecture in \cite{oh_control_2016} on a set of navigation tasks which require remembering over many time steps.
+Several similar architectures have been proposed~\cite{henriques_mapnet_2018,gupta_cognitive_2019,chaplot_object_2020}.
 
 \subsection{Generalization and Inductive Bias}
 
-In RL, generalization refers to an agents ability to act well in environments that have not been seen during training.
+In RL, generalization refers to an agent's ability to act well in environments that have not been seen during training.
 This is vital if RL is to be applied to real-world problems where conditions are diverse and unpredictable.
 Agents have to be robust to such variations without being trained on them (\textit{zero-shot} policy transfer).
 In the case of visual search, we want a system that can search in novel environments by generalizing from those seen during training.
@@ -625,8 +625,8 @@ Kirk et al.~\cite{kirk_survey_2022} survey generalization in deep RL.
 They distinguish between methods that try to generalize from training to testing sets by increasing their similarity, and those that attempt to handle their differences.
 To handle differences between training and test sets, an agent's policy should rely only on features which will behave similarly in the training and testing context.
 If the similarities between training and testing contexts are known, they can be encoded as inductive bias for stronger generalization.
-When there is not specific inductive bias to encode, standard regularization can be used.
-Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning the invariances from training and hope that these generalize to testing.
+When there is no specific inductive bias to encode, standard regularization can be used.
+Finally, when we can not rely on specific inductive biases or standard regularization, we have to rely on learning invariances from training and hope that these generalize to testing.
 
 They further propose a formalism for collections of problems called contextual MDPs (CMDPs).
 A CMDP is an MDP \(\mathcal{M}\) (or POMDP) in which the state can be decomposed into \(s = \left\langle c, s' \right\rangle\),
@@ -639,7 +639,7 @@ Evaluation has to be performed on the full distribution of (held out) contexts.
 \subsection{Evaluation of Agents}
 \label{sec:theory-evaluation}
 
-A problem in state-of-the-art deep RL is reproducibility.
+An issue in state-of-the-art deep RL is reproducibility.
 There is often non-determinism, both in the methods and environments used.
 Furthermore, many methods have intrinsic variance which can make published results difficult to interpret.
 In some cases, training an algorithm in an environment twice can result in learning curves that do not fall within the same distribution~\cite{henderson_deep_2018}.
@@ -648,13 +648,13 @@ A common solution is to report average results and variance across multiple diff
 
 However, the sample inefficiency of current deep RL algorithms together with the rise in popularity of more challenging benchmarks has led to long training times.
 This has made it less feasible to measure performance over many training runs,
-which in turn has led to a shift to only evaluating a small number of runs (\(N \leq 5\)) per task~\cite{agarwal_deep_2022}.
+which in turn has led to a shift to only evaluating a few runs (\(N \leq 5\)) per task~\cite{agarwal_deep_2022}.
 This is problematic, as several analyses indicate that as many as \(N = 20\) runs are required for statistically significant results~\cite{colas_how_2018,colas_hitchhikers_2019}.
 
 Henderson et al.~\cite{henderson_deep_2018} investigate reproducibility methods in deep RL empirically, focusing on policy gradient methods.
 They try to reproduce results in works with published code bases, and investigate how various modifications affect results.
 
-They find that hyperparameters and the choice of network architecture for policy and value function approximation can affect performance significantly.
+They find that hyperparameters and the choice of network architecture for policy and value function approximation can influence performance significantly.
 Furthermore, rescaling rewards can have a large effect, although it is difficult to predict how.
 It is found that ReLU activations tend to perform best across environments and algorithms.
 For PPO, the use of large networks may require changing other hyperparameters like learning rate.

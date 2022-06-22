@@ -15,18 +15,18 @@ By comparing each agent qualitatively and quantitatively, we can answer the rese
 
 To evaluate the search performance, we first consider the average search path length of each agent.
 It is useful to compare the path length to the number of points in each search space.
-The gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
+The Gaussian and terrain environments contain \(10 \times 10 = 100\) searchable positions, and the camera environment contains \(10 \times 20 = 200\) searchable positions.
 A search path length above this suggests many revisited positions.
 The exhaustive baseline policy provides a good measure for what sort of path lengths can be achieved when only avoiding revisiting positions.
 Both the random and greedy baseline policies select search paths that are on average much longer than the number of positions, suggesting several redundant steps.
 This is further reinforced by the sample search paths in Figures \ref{fig:path-random}, \ref{fig:path-greedy} and \ref{fig:path-exhaustive}.
 
-The handcrafted policy for the gaussian environment is relatively simple, and can certainly be improved.
+The handcrafted policy for the Gaussian environment is relatively simple, and can certainly be improved.
 Despite this, it outperforms all other agents.
 This indicates that neither of our two learning agents have found policies that are close to optimal.
 
 Notably, our temporal memory agent chooses search paths that are substantially longer than those selected by our spatial memory agent and human searchers.
-This is especially true for the gaussian and terrain environments, which suggests several redundant steps.
+This is especially true for the Gaussian and terrain environments, which indicates that redundant have been taken.
 Our spatial memory agent achieves better average lengths in these two environments.
 
 We see that search paths are particularly short in the camera environment,
@@ -36,7 +36,7 @@ First, targets may be visible in the periphery from a large set of camera positi
 Once targets are visible, it is simpler for an agent to select actions that center them.
 Second, targets are not distributed uniformly across many samples of the camera environment.
 They are most commonly found near the horizon.
-In the gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
+In the Gaussian and terrain environments, where the distribution is approximately uniform over many samples, the search path lengths are closer to the number of positions in the search space.
 
 Our temporal memory agent performs especially well in the camera environment.
 We suspect that this is due to the fact that less emphasis is placed on remembering over many time steps.
@@ -53,7 +53,7 @@ both agents are drawn to areas with high probability but seem to revisit positio
 Some of these revisits could be attributed to the stochastic policy.
 Making the policy completely deterministic by selecting the action with the highest probability is not a solution, as it tends to lead to dead states or loops where the agent does not progress.
 
-Also worth noting is that revisiting positions is not always the wrong choice.
+Worth noting is that revisiting positions is not always the wrong choice.
 One such example is when the current position of the agent is directly between two targets.
 The optimal path to find both of these is to first go to any one of them, and then to go back towards the other one by revisiting positions.
 
@@ -69,7 +69,7 @@ In all three environments, one of our agents achieve a higher SPL score,
 although we would not consider this significant due to the large variance.
 
 Under these metrics, both learning agents achieve comparable performance to that of a human searcher. 
-Overall, it would seem like the spatial memory architeture is most suited where large search spaces have to be explored strategically, while our temporal memory architecture is sufficient for search problems where search spaces can be explored reactively.
+Overall, it would seem like the spatial memory architecture is most suited where large search spaces have to be explored strategically, while our temporal memory architecture is sufficient for search problems where search spaces can be explored reactively.
 As neither performs better than a relatively simple handcrafted policy, they are not as good as is possible and also not optimal.
 
 \subsection{Scalability To Larger Search Space Sizes}
@@ -82,7 +82,7 @@ The spatial memory is consistently capable of finding all targets in less steps 
 For larger search spaces, the slight difference is accentuated.
 The temporal memory agent converges to search paths that are longer than needed, suggesting that it is not capable of remembering visited locations.
 In the \(20 \times 20\) search space, it seems to have converged to path lengths of around 800, and has a success rate of less than 50\%.
-By the end of training, the search paths of the spatial memory agent are near the total number of positions and it has a success rate of around 90\%.
+By the end of training, the search paths of the spatial memory agent are near the total number of positions, and it has a success rate of around 90\%.
 Furthermore, the training does not seem to have fully converged.
 
 It seems reasonable to state that the spatial memory scales better to large search spaces in terms of performance, when compared to the temporal memory.
@@ -90,7 +90,7 @@ Searching efficiently in large search spaces places extra emphasis on rememberin
 From our results, it would seem like an LSTM struggles with remembering such precise information over many time steps.
 Similar results where presented by \cite{oh_control_2016}.
 
-An hypothesis is that our temporal memory agent would handle larger search spaces with more parameters.
+A hypothesis is that our temporal memory agent would handle larger search spaces with more parameters.
 We experimented with stacking multiple LSTM layers, but found that it led to overfitting and unstable learning, even with dropout.
 Further analysis is needed to see if such augmentations can make it more comparable to the spatial memory in terms of performance.
 
@@ -101,13 +101,13 @@ One solution is to keep search spaces small:
 Large (and continuous) spaces could be discretized into smaller ones at the cost of precision.
 It is also possible to modify the architectures so that what they remember is limited.
 In the case of the temporal memory, it might be sufficient to only remember recent interactions.
-Similarly, in the case of the spatial memory, a possibility is to use an ego-centric recurrent feature map and only remember proximous interactions~\cite{parisotto_neural_2017}.
+Similarly, in the case of the spatial memory, a possibility is to use an egocentric recurrent feature map and only remember interactions in close proximity of the agent~\cite{parisotto_neural_2017}.
 
 \subsection{Generalizing from Limited Training Sets}
 
 The hope that a learning agent can pick up patterns that are not visible to humans (or easily communicated to machines) is only relevant if it can do so from a reasonable number of samples.
 From the results in Section~\ref{sec:sample}, we see that both of our learning agents can overfit to small training sets.
-This is in line with what is reported by \cite{cobbe_quantifying_2019}, \cite{cobbe_leveraging_2020} and \cite{zhang_study_2018}.
+This is in line with what is reported by \cite{cobbe_quantifying_2019,cobbe_leveraging_2020,zhang_study_2018}.
 Past a certain number of interactions with small a small training set, performance on a held out test set decreases.
 This effect is well known in supervised learning, but important to keep in mind for reinforcement learning.
 If any sort of generalization is expected from our agents, they should be tested on held out samples.
@@ -117,26 +117,26 @@ for 500 and 1000 samples, its performance on the test set does not decrease as s
 Furthermore, the test performance of our spatial memory agent is strictly better than that of our temporal memory agent in all training set sizes.
 This suggests that the spatial memory provides a more suitable inductive bias for the considered problem.
 
-It should be stated that these numbers are not representative of all search problems.
-The number of samples needed to generalize to other search tasks may be different than for the terrain environment we used in Section~\ref{sec:sample}.
-While the terrain environment exhibits more subtle patterns than the gaussian environment, it is free from noise and is relatively low in variance compared to realistic scenarios.
+It should be stated that these numbers are not representative of all visual search scenarios.
+The amount of samples needed to generalize to other search tasks may be different from the amount needed for the terrain environment we used in Section~\ref{sec:sample}.
+While the terrain environment exhibits more subtle patterns than the Gaussian environment, it is free from noise and is relatively low in variance compared to realistic scenarios.
 However, the results do offer insights into how these two architectures compare when it comes to generalization from a limited number of samples.
 
 \section{Method}
 \label{sec:discussion-method}
 
-The method chosen covers a fairly broad category of visual search problems,
+The method chosen covers a fairly broad category of visual search tasks,
 but focuses on the research questions in Section~\ref{sec:questions}.
-Some of the details of the chosen methodology have implications for its applicability and validity.
+Some details of the chosen methodology have implications for its applicability and validity.
 
 \subsection{Image Observations, Detections and Indications}
 
 The image observations are fundamental to the visual search problem.
-We have chosen to test our agents in environments with \(64 \times 64\) image observations.
+We have elected to test our agents in environments with \(64 \times 64\) image observations.
 In many cases, images of this size are not sufficient to convey the full meaning of a scene.
 Cues that may guide attention or are needed to correctly detect targets could require higher detail.
 
-To scale up our approach to such problems, it could be sufficient to modify the CNN architecture.
+To scale up our approach to such scenarios, it could be sufficient to modify the CNN architecture.
 CNNs have been used for detection in images of higher resolution~\cite{zhao_object_2019}.
 At a certain point, however, high-dimensional images could become a speed bottleneck.
 This is important to consider in many real-time applications.
@@ -145,16 +145,16 @@ For such cases, some covert attention mechanism such as the one proposed in~\cit
 While we explicitly delimit ourselves from difficult detection problems in this work,
 detection is likely to be difficult in most real-world search scenarios.
 Further investigations are needed to evaluate how viable the approach is for more realistic scenes,
-where variance is higher and it is more difficult to interpret image observations.
+where variance is higher, and it is more difficult to interpret image observations.
 One option could be to is to incorporate an existing object detection architectures into our deep RL approach, as in \cite{ye_active_2018}
 
-Related to the detection problem is our choice of including an indication action.
+Related to the detection of targets is our choice of including an indication action.
 It could be argued that explicitly indicating when targets are in view is redundant.
 Indications could instead happen implicitly when targets are in view.
 This is true if the focus is only on how environment cues can be used to guide visual attention during search.
 Including explicit indication actions is in our view more interesting, as it requires some form of intentionality and is necessary for actually locating targets.
 
-Furthermore, the indication action has several interesting applications.
+Furthermore, the indication action has several useful applications.
 One can imagine a task in which target detection is done through some external object detection that is expensive to run.
 In such a case, the indication could be used by the agent to convey that it is likely that a target is in view, and it is worth spending resources on running the detection process.
 
@@ -162,7 +162,7 @@ In such a case, the indication could be used by the agent to convey that it is l
 
 To aid our agents with navigating, we chose to give them access to their current position at each time step.
 An agent can generally not localize itself with just an image of an unseen environment.
-Furthermore, the position is needed to index the spatial memory we chose to use.
+Furthermore, the position is needed to index the spatial memory architecture.
 
 An issue with including the position of the agent in its observations is that it becomes reliant on a certain search space shape.
 If our agent is trained in a \(10 \times 10\) search space it will not be able to handle smaller or larger spaces.
@@ -170,8 +170,9 @@ With just image observations, the agent can be deployed in search spaces of arbi
 
 Another aspect to consider is whether the position can be provided to the agent.
 It seems reasonable to assume that the position can be provided to the agent.
-In certain scenarios it is possible to determine the global position of an agent with some sensor (e.g. GPS).
-If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one (e.g. motor controlled pan and tilt camera).
+In certain scenarios it is possible to determine the global position of an agent with some sensor (for example using GPS).
+If how each action moves the agent is well-defined, the relative position can be used instead of the absolute one.
+This could be the case with a motor controlled pan and tilt camera.
 
 There are alternatives to giving the agent its position that achieve similar effects.
 By having the agent observe its last action \(a_{t-1}\) it can learn to navigate relative to its starting position.
@@ -214,7 +215,7 @@ For our set of environments, this particular reward seems to work well, but this
 \subsection{Neural Network Architecture and Memory}
 
 The neural network architecture used in this work consists of a CNN, an RNN and two MLPs for estimating the policy and value function.
-With the exception of a few educated selections, the network parameters are somewhat arbitrary.
+This network architecture has many configurable parameters, whose values have been chosen somewhat arbitrarily.
 The space of possible architecture parameters is huge, and infeasible to search exhaustively.
 There is certainly the possibility that some part of our architecture is a capacity bottleneck for search performance.
 
@@ -259,7 +260,7 @@ Such methods can sometimes be probably correct and efficient.
 It is not obvious that RL is a good choice, and it has even been shown experimentally to struggle with generalizing to unseen samples in certain navigation scenarios~\cite{dhiman_critical_2019}.
 One could imagine that it is possible to compute an optimal strategy for certain environments.
 
-The perspective we take with this work is that non-learning solution methods may offer these guarantees, but designing such solutions for every search problem is laborious.
+The perspective we take with this work is that non-learning solution methods may offer these guarantees, but designing such solutions for every search scenario is laborious.
 The characteristics of environments can vary considerably which may drastically affect how a manual approach is implemented.
 Interpreting and utilizing patterns in arbitrary scenes may even be difficult for us humans.
 If we cannot understand patterns ourselves, we can not expect to communicate how to search to machines.
@@ -276,7 +277,7 @@ More work is needed to evaluate the ability of the two agents to learn optimal s
 
 As discussed in Section~\ref{sec:theory-evaluation}, reproducibility is a problem in current deep RL research.
 This comes with the risk of stagnating the field by inhibiting correct interpretation of results~\cite{henderson_deep_2018}.
-In this work, we have taken certain precautions to avoid such problems.
+In this work, we have taken certain precautions to avoid such issues.
 
 For each experiment, we have collected results across at least 3 runs.
 While several sources state that as many as 10 runs are needed for significant results~\cite{colas_hitchhikers_2019,agarwal_deep_2022},
@@ -293,8 +294,8 @@ Ideally, we would have tested on a larger set.
 The three metrics we have used (success rate, average search path length, and SPL) all offer different insights into the performance of agents.
 They should not be used as absolute measures, but rather to compare different agents in the same environments.
 The SPL metric has been used in several previous works for navigation tasks~\cite{anderson_evaluation_2018,yang_visual_2018}.
-SPL considers both search path length, shortest path length and whether the agent was successful in each episode,
-and is useful as a measure for the quality of the search paths chosen by an agent.
+SPL considers both the taken search path length, the shortest path length and whether the agent was successful in each episode.
+This makes it a useful measure of the quality of the search paths chosen by an agent.
 
 However, SPL is not a perfect metric. As noted by \cite{batra_objectnav_2020}, it fails to consider the fact that some failures are less of a failure than others.
 For example, an agent might have been close to discovering a target at some time step but missed it.
@@ -307,7 +308,7 @@ We have also only compared SPL within the same datasets.
 %Finally, extensive hyperparameter tuning could yield improved results.
 Finally, it is possible that there are errors in our implementation.
 We have tested our PPO implementation against standard tasks, but there is still the possibility of errors in the algorithm, environments or evaluation.
-Source code code has been made available so that others can reproduce and scrutinize our results.
+Source code has been made available so that others can reproduce and scrutinize our results.
 
 \subsection{Source Criticism}
 
@@ -315,7 +316,7 @@ Deep RL is a relatively new research field, with lots of progress in recent year
 This coupled with known reproducibility problems of published work discussed in Section~\ref{sec:theory-evaluation} means that being critical of sources is of particular importance.
 
 The used sources are all exclusively scientific literature or textbooks.
-The textbooks used (\cite{russell_artificial_2021}, \cite{sutton_reinforcement_2018} and \cite{goodfellow_deep_2016}) are well-known and themselves well-sourced.
+The textbooks used \cite{russell_artificial_2021,sutton_reinforcement_2018,goodfellow_deep_2016} are well-known and themselves well-sourced.
 Most of the scientific literature is published in peer-reviewed journals.
 A few of the referenced works are preprints that have not been through a standard peer review process.
 All of these sources are well cited and can be relied on with some confidence.
@@ -325,13 +326,13 @@ An attempt has been made to find several references each piece of information us
 \label{sec:discussion-wider}
 
 The capabilities of artificial intelligence (AI) are growing, and it is having a progressively wider societal impact.
-This progress is expected to continue, and several experts are of the opinion that human-level AI may arrive in this century~\cite{russell_provably_2022}.
+This progress is expected to continue, and many are of the opinion that human-level AI may arrive in this century~\cite{russell_provably_2022}.
 Such an intelligence may be of great benefit.
 AI could help solve some of today's greatest environmental, societal and economic problems~\cite{vinuesa_role_2020}.
 
 Crucially, it can also have a negative impact if not designed properly.
 A common definition of an intelligent system is ones that acts rationally by perceiving and acting in order to maximally achieve its objective~\cite{russell_provably_2022}.
-An sufficiently intelligent agent with malicious capabilities and the wrong objective can pose a great danger.
+A sufficiently intelligent agent with malicious capabilities and the wrong objective can pose a great danger.
 This is a major concern among many researchers and the broader public~\cite{russell_research_2015,brundage_malicious_2018,vinuesa_role_2020,russell_provably_2022}
 
 The system presented in this work also exemplifies the duality in utility of AI systems to some extent.
@@ -339,7 +340,7 @@ A system that can search efficiently by utilizing environment cues has positive 
 It can also be used for malicious purposes, such as autonomous weapons and mass surveillance.
 
 This poses the question of how to avoid AI systems having negative impact on the world.
-Following the above definition of an intelligent system, such scenarios can be seen as a failures of \textit{value alignment}~\cite{russell_provably_2022}.
+Following the above definition of an intelligent system, such scenarios can be seen as a failure of \textit{value alignment}~\cite{russell_provably_2022}.
 We have to avoid giving intelligent agents purposes that do not align with our own.
 Furthermore, intelligent agents must be formally verified to act correctly, or we cannot trust that they will maximize the correct objective.
 

@@ -3,12 +3,12 @@
 
 The ability to search for and locate things in our environments is fundamental to our daily lives as humans.
 We are constantly looking for things, be it the right book in a bookshelf, a certain keyword in an article, or birds in the sky.
-In many cases, it is important that this search is strategic, efficient, and fast.
+In many cases, it is critical that this search is strategic, efficient, and fast.
 Animals need to quickly identify predators, and drivers need to be able to search for pedestrians crossing the road they are driving on.
 
 At the root of the visual search problem is partial observability.
 A searcher can only perceive, or pay attention to, a limited region of the searched environment at once.
-Therefore which regions to observe and in what order becomes an important decision. 
+Therefore, which regions to observe and in what order becomes an important decision. 
 Humans are able to utilize features of the environment to guide our search~\cite{wolfe_five_2017,eckstein_visual_2011,nakayama_situating_2011}.
 For example, we know to look for berries at the forest floor, and not to look for boats on land.
 
@@ -28,7 +28,7 @@ Finally, Chapter~\ref{cha:conclusion} concludes the thesis with some remarks and
 \label{sec:motivation}
 
 Automated visual search has applications in several areas, such as search-and-rescue, surveillance, fire detection and home assistance.
-Employing autonomous vehicles instead of human-controlled ones for such tasks can both reduce risk and cost of labour.
+Employing autonomous vehicles instead of human-controlled ones for such tasks can both reduce risk and cost of labor.
 Additionally, autonomous agents can potentially search more efficiently.
 
 However, while visual search is often seemingly effortless to us humans, it is a complex process.
@@ -36,7 +36,7 @@ Understanding human visual search and recreating it in machines has proven to be
 An autonomous searcher has to both be able to recognize useful features and know how to use them to guide its search.
 Doing this requires some contextual scene understanding.
 
-Although we can teach machines to search by encoding human knowledge, this is often a complex and laborious process.
+Although we can teach machines to search by encoding human knowledge, this is typically a complex and laborious process.
 Communicating to a machine how to acquire and understand visual information is difficult.
 Useful features may be subtle and tricky to pick up, even for humans.
 Furthermore, properly utilizing such features to minimize search time is not trivial~\cite{ye_complexity-level_2001,andreopoulos_theory_2009}.
@@ -77,7 +77,7 @@ It may also be useful to remember structured visual information of the explored 
 This can provide insights into what is in their proximity.
 
 If a deep reinforcement learning agent is to be trained and deployed for a real-world search task, there is likely a limited set of samples to learn from.
-Therefore it is also of interest to investigate how many samples are required to infer how to search efficiently in similar environments.
+Therefore, it is also of interest to investigate how many samples are required to infer how to search efficiently in similar environments.
 
 In contrast to several past works addressing similar problems~\cite{minut_reinforcement_2001,mirowski_learning_2017,ourselin_artificial_2016,caicedo_active_2015,shubina_visual_2010,forssen_informed_2008},
 we are interested the implementation of agents that learn to utilize arbitrary visual structure to search more efficiently.
@@ -93,7 +93,7 @@ This thesis contributes with:
 \section{Research Questions}
 \label{sec:questions}
 
-The following research questons are addressed in the thesis:
+The following research questions are addressed in the thesis:
 
 \begin{enumerate}
   \item \label{itm:rq1} How can an agent that learns to efficiently search for targets be implemented with reinforcement learning?
@@ -104,7 +104,7 @@ The following research questons are addressed in the thesis:
 \section{Delimitations}
 \label{sec:delimitations}
 
-We focus on the behavioral and decision-making aspects of the presented problem, and delimit ourselves from difficult detection problems.
+We focus on the behavioral and decision-making aspects of a visual search agent, and delimit ourselves from difficult detection problems.
 For this reason, targets will deliberately be made easy to detect once visible.
 Furthermore, we make the assumption that the searched environment is static.
 The appearance of the environment and the location of the targets does not change from one observation to the next.

@@ -2,7 +2,7 @@
 \label{cha:method}
 
 In this chapter, we present our proposed methodology for answering the research questions.
-The visual search problem is modelled as a sequential decision making process.
+The visual search problem is modelled as a sequential decision-making process.
 A set of environments for the visual search problem is presented together with an approach for solving them with deep RL.
 Finally, we describe a set of experiments to evaluate our approach.
 
@@ -29,8 +29,8 @@ Finally, we describe a set of experiments to evaluate our approach.
 \section{Environments}
 \label{sec:environments}
 
-To implement and evaluate agents that search for the visual search problem, we use three different simulated environments.
-Each of the environments have different characteristics that test the applicability of the evaluated approach to different types of search problems.
+To implement and evaluate agents that learn search to visually search for targets, we use three different simulated environments.
+Each of the environments have different characteristics that test the applicability of the evaluated approach to different search scenarios.
 In all environments, the appearance of the scenes and the location of targets are correlated to some degree.
 This means that the agent should be able to learn common characteristics of each environment and use those to search more efficiently.
 
@@ -41,7 +41,7 @@ The particulars of each of the three environments are also described.
 
 \subsection{Problem Statement}
 
-The problem of searching for targets in unknown environments can be modelled as a sequential decision making process in which an agent alternates between receiving visual sensory input and guiding its attention.
+The problem of searching for targets in unknown environments can be modelled as a sequential decision-making process in which an agent alternates between receiving visual sensory input and guiding its attention.
 The goal of the agent is to locate all targets in a minimum amount of time by guiding its attention in the environment and actively detecting when targets are visible.
 For the purposes of this thesis, we adopt the formalism in \cite{kirk_survey_2022} and let the task be a contextual POMDP \(\mathcal{M}\) with states \(\mathcal{S}\), actions \(\mathcal{A}\), reward \(\mathcal{R}\) and observations \(\Omega\).
 
@@ -51,7 +51,7 @@ The underlying state of the environment at each time step \(t\) is defined as fo
 
 \begin{equation}
     s_t = \left\langle c, S, T_t, V_t \right\rangle \in \mathcal{S}.
-\end{equation}.
+\end{equation}
 
 Here, \(c \in \mathbb{M}\) is a \(seed\) that is used to generate samples of each environment.
 \(S \subset \mathbb{R}^d\) is the searched space, which we refer to as the \textit{scene}.
@@ -73,7 +73,7 @@ The agent selects between the following set of actions:
 
 \begin{equation}
     a_t \in \left\lbrace \mathtt{INDICATE}, \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT} \right\rbrace
-\end{equation}.
+\end{equation}
 
 The first action, \(\mathtt{INDICATE}\), is used by the agent to detect that a target is visible.
 Once a target has been detected, it is removed from the set of targets in the next time step, \(T_{t+1}\).
@@ -83,7 +83,7 @@ In our three environments, the agent may select between four moving actions, \(\
 \subsubsection{Reward Signal}
 
 The goal of the agent is to select actions that bring each target into view and detect them once they are visible, while minimizing the number of total time steps.
-The reward signal should be designed so that the agent learns this behaviour by maximizing the expected reward.
+The reward signal should be designed so that the agent learns this behavior by maximizing the expected reward.
 We use the following reward signal:
 
 \begin{equation}
@@ -125,11 +125,10 @@ Finally, the seed determines the appearance of the searched scene and therefore 
 
 The first environment is the simplest environment, where the correlation between scene appearance and target probability is clear.
 During each episode reset, a \(1024 \times 1024\) RGB image is generated conditioned on the seed.
-The image contains three blue spots, whose intensity is highest towards their center and wears off radially outwards.
-The intensity wears off as an (approximate) Gaussian function.
-The sum of the intensity in the blue channel in the image is used as a probability density function to select the location of three targets.
+The seed determines the center of three (approximate) two-dimensional Gaussian distributions in the image.
+The normalized sum of the distributions is used to determine the intensity of the blue channel of the image.
+It is also used as a probability density function from which the three target locations are sampled, meaning that the higher the intensity in the blue channel, the more likely it is that a target will be there.
 Targets are characterized by red \(8 \times 8\) squares.
-The higher the intensity in the blue channel, the more likely it is that a target is there.
 
 The image is divided into a grid of \(10 \times 10\) steps, one per position \(p_t\).
 The image \(x_t\) is the \(64 \times 64\) sub-image at the current position in the grid.
@@ -159,7 +158,7 @@ Green trees are also scattered around each scene, whose positions are sampled fr
 While this environment is similar to the first environment, it is less clear how to search efficiently in it.
 There is higher variance between scene samples.
 It is also less clear how the scene appearance is correlated to the probability of targets.
-Although targets are never located in oceans or on mounains, these may still have to be traversed during searches.
+Although targets are never located in oceans or on mountains, these may still have to be traversed during searches.
 For instance, if two targets are on separate islands the agent must travel over ocean to find both.
 One can draw parallels between this environment and search-and-rescue scenarios with UAVs.
 
@@ -202,8 +201,8 @@ In some scenarios it can be important that objects are not only localized, but l
 
 To design a reinforcement learning agent that effectively solves the task, we draw inspiration from several previous works and adapt them to better suit this particular task.
 The final agent should be able to recognize targets, regardless of where they appear in view.
+As environments are procedurally generated, a partial image observation of the scene is not sufficient for the agent to localize itself in it.
 It is likely important for the agent to have access to its location, especially for large search spaces.
-As environments are procedurally generated, a partial image observation of the scene is not sufficient to ground the agent in it.
 It should also be able to integrate features over time in order to remember which locations have been visited.
 Remembering visual features of these locations may also be of importance, as it can provide clues for what is in their proximity.
 
@@ -259,7 +258,7 @@ Finally, \(z_t\) contains the hidden state \(h_t\) and cell state \(c_t\) of the
 \subsubsection{Spatial Memory}
 
 The spatial memory is composed of a readable and writable feature map.
-This is a simplified version of the architecture proposed in \cite{parisotto_neural_2017}, similar in spirit to the architectures in \cite{henriques_mapnet_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_object_2020}.
+This is a simplified version of the architecture suggested by \cite{parisotto_neural_2017}, similar in spirit to the architectures in \cite{henriques_mapnet_2018}, \cite{gupta_cognitive_2019} and \cite{chaplot_object_2020}.
 It is defined by the following set of operations:
 
 \begin{align}
@@ -284,7 +283,7 @@ Another MLP takes a one-hot encoding of the position as input and outputs a 64-d
 The read vector \(\rho_t\), the write vector \(\omega_{t}\), and the position vector \(q_t\) are concatenated and used as input \(h_t\) to the value and policy networks.
 Finally, the feature map is updated so that \(z_{t+1}\) contains the write vector \(\omega_{t}\) at position \(p_t\).
 
-By storing a representation of the observed image at its corresponding position in the feature map, the agent builds up a internal representation of the explored scene while searching\footnote{An illustration of the contents of the feature map \(z_t\) of a trained agent after a finished search can be found in Appendix~\ref{app:memory}.}.
+By storing a representation of the observed image at its corresponding position in the feature map, the agent builds up an internal representation of the explored scene while searching\footnote{An illustration of the contents of the feature map \(z_t\) of a trained agent after a finished search can be found in Appendix~\ref{app:memory}.}.
 Passing this structured representation through a set of convolutional layers yields an encoding of the entire explored scene which retains structured visual information.
 This means that they can make use of visual features of previously explored locations, spatial relationships between these features, and the current position of the agent when approximating the policy and value function.
 Since writes to the feature map are dependent on the previously stored feature vector at each position, the agent is also able to store new information every time it visits a position.
@@ -321,7 +320,7 @@ We find that this helps the agent with finding a better local optimum.
 \label{sec:experiments}
 
 We conduct three different experiments to evaluate our architectures and answer the research questions in \ref{sec:questions}. 
-Following the recommendations of \cite{henderson_deep_2018}, \cite{colas_hitchhikers_2019} and \cite{agarwal_deep_2022}, we report mean and standard deviation across a handful of seeds.
+Following the recommendations of \cite{henderson_deep_2018,colas_hitchhikers_2019,agarwal_deep_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Search Performance and Behavior}
 
@@ -340,28 +339,28 @@ Having the baselines randomly indicate that targets are visible would lead to ex
 By giving this advantage to the baselines, the emphasis of the comparison is put on the search path planning.
 
 \begin{algorithm}
-    \caption{Random baseline policy}
+    \caption{Random baseline policy.}
     \label{alg:random}
     \input{algorithms/random}
 \end{algorithm}
 
 \begin{algorithm}
-    \caption{Greedy baseline policy}
+    \caption{Greedy baseline policy.}
     \label{alg:greedy}
     \input{algorithms/greedy}
 \end{algorithm}
 
 \begin{algorithm}
-    \caption{Exhaustive baseline policy}
+    \caption{Exhaustive baseline policy.}
     \label{alg:exhaustive}
     \input{algorithms/exhaustive}
 \end{algorithm}
 
-To get a better sense of how our agents compare to handcrafted search algorithms, use an additional baseline agent in the gaussian environment.
+To get a better sense of how our agents compare to handcrafted search algorithms, use an additional baseline agent in the Gaussian environment.
 This handcrafted baseline (Algorithm~\ref{alg:handcrafted}) selects actions that move the agent towards bluer regions.
 
 \begin{algorithm}
-    \caption{Handcrafted baseline policy (gaussian environment)}
+    \caption{Handcrafted baseline policy (Gaussian environment).}
     \label{alg:handcrafted}
     \input{algorithms/handcrafted}
 \end{algorithm}
@@ -382,7 +381,7 @@ The number of steps required to locate all targets in a scene is dependent on th
 In small search spaces, the difference in performance between an intelligent searcher and a less intelligent one may be difficult to quantify.
 Furthermore, a large scene is more difficult to search intelligently - more capacity is needed to remember visited locations and plan future steps.
 
-To investigate how well each architecture scales to different search space sizes, we train them on three variants of the gaussian environment.
+To investigate how well each architecture scales to different search space sizes, we train them on three variants of the Gaussian environment.
 The scene image is scaled up so that there are \(10 \times 10\), \(15 \times 15\) and \(20 \times 20\) possible camera positions in each environment.
 We train and test both agents on the full distribution of samples from all three search space sizes respectively.
 By varying the search space size in each environment, we can get a feel for how the size affects training times and the quality of the learned policies.
@@ -392,7 +391,7 @@ For each agent and search space size, we report how the average length and succe
 
 In realistic scenarios, training agents on an unlimited number of samples is not possible.
 It is more likely that there is a limited set of samples for an agent to learn from.
-For this reason, it is interesting to quantify how the number of training samples affects generalization to the full distribution.
+For this reason, it is interesting to quantify how the number of training samples influences generalization to the full distribution.
 
 We do this by training our two agents on 500, 1000, 5000 and 10000 samples of the terrain environment.
 Both agents are tested on held out samples from the full distribution of samples, as suggested by \cite{cobbe_leveraging_2020}.

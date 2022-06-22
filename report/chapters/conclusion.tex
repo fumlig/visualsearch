@@ -6,13 +6,13 @@ Automated visual search systems therefore naturally have many potential applicat
 Building an autonomous visual search system can be done using domain knowledge, but implementing efficient searchers in arbitrary environments is not trivial.
 
 In this work, we have asked ourselves whether a system can learn to search efficiently from a set of sample scenes with known target locations.
-Such a system should pick up patterns in the samples seen during training, and generalize to similar but unseen test scenes.
+Such a system should pick up patterns in the samples seen during training and generalize to similar but unseen test scenes.
 We have presented a method for this task for jointly learning control of visual attention, recognition and localization using deep reinforcement learning.
 Our approach can be used to train agents to look around in environments to search for multiple targets.
 
 The agents try to locate all targets in a minimal number of time steps, by indicating when they are visible.
-They are designed to be capable of integrating visual information over time, and reason over explored parts of their environment.
-This allows them to avoid searching locations multiple times, and prioritize regions where targets are likely to be found.
+They are designed to be capable of integrating visual information over time and reason over explored parts of their environment.
+This allows them to avoid searching locations multiple times while prioritizing regions where targets are likely to be found.
 
 Using three environments with different characteristics, we have shown that agents trained with our method are capable of utilizing visual cues to guide search and localize targets.
 We have compared two neural network architectures for this purpose - one using a temporal memory and one using a spatial memory.
@@ -54,9 +54,9 @@ We suggest that future work in the area of visual search with deep reinforcement
     \item How can the behavior of learning agents be explained and formally verified?
     
     In this work, we have used performance on a held out test set to judge the performance of our agents.
-    Beyond this and some qualitative evaluations, we have treated trained agents more or less as black boxes. 
+    Beyond this and some qualitative evaluations, we have treated trained agents as black boxes. 
     Before deploying learning agents in safety-critical scenarios, more guarantees are needed.
-    How can we prove that an agent trained with reinforcement learning acts in a safe way?
+    How can we prove that an agent trained with reinforcement learning acts safely?
 \end{itemize}
 
 %Bajcsy, Aloimonos and Tsotsos~\cite{bajcsy_revisiting_2018} connect past work in active vision with recent advances in robotics, artificial intelligence and computer vision.

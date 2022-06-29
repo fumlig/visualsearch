@@ -72,7 +72,7 @@ If \(T_t \cap V_t \neq \varnothing\) there are \(\left\lvert T_t \cap V_t \right
 The agent selects between the following set of actions:
 
 \begin{equation}
-    a_t \in \left\lbrace \mathtt{INDICATE}, \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT} \right\rbrace
+    a_t \in \mathcal{A} = \left\lbrace \mathtt{INDICATE}, \mathtt{UP}, \mathtt{DOWN}, \mathtt{LEFT}, \mathtt{RIGHT} \right\rbrace
 \end{equation}
 
 The first action, \(\mathtt{INDICATE}\), is used by the agent to detect that a target is visible.
@@ -117,7 +117,7 @@ The observations that the agent receives at each time step are:
 The first part of each observation, \(x_t\), is a \(64 \times 64\) RGB image of the current view \(V_t\) as it is perceived by the agent.
 The second part of each observation, \(p_t\), is the current position of the agent that uniquely identifies the view \(V_t\).
 For each possible view \(V\) there is a position \(p\) that represents the position of the camera.
-In our environments, the camera can take any position in a two-dimensional grid. 
+In our environments, the camera can take any position in a two-dimensional grid.
 As the seed determines the initial view \(V_0\), it also determines the initial position \(p_0\).
 Finally, the seed determines the appearance of the searched scene and therefore the image observations that the agent perceives.
 
@@ -298,7 +298,7 @@ We train our neural networks with PPO~\cite{schulman_proximal_2017}, as describe
 Early experiments show that PPO gives good results, stable learning curves and good sample efficiency, which is in line with results reported by \cite{andrychowicz_what_2020}.
 Furthermore, we use similar hyperparameters to \cite{cobbe_leveraging_2020}.
 These are presented in Table~\ref{tab:hyperparameters}.
-Many parallel environments seem to both speed up and stabilize training. 
+Many parallel environments seem to both speed up and stabilize training.
 As suggested by \cite{andrychowicz_what_2020}, we initialize the policy output weights so that their mean is 0 and their standard deviation is low (\(10^{-2}\)).
 
 We normalize the reward using a moving average.
@@ -319,12 +319,12 @@ We find that this helps the agent with finding a better local optimum.
 \section{Experiments}
 \label{sec:experiments}
 
-We conduct three different experiments to evaluate our architectures and answer the research questions in \ref{sec:questions}. 
+We conduct three different experiments to evaluate our architectures and answer the research questions in \ref{sec:questions}.
 Following the recommendations of \cite{henderson_deep_2018,colas_hitchhikers_2019,agarwal_deep_2022}, we report mean and standard deviation across a handful of seeds.
 
 \subsection{Search Performance and Behavior}
 
-To evaluate the quality of the learned policy, we compare the policies learned by our two architectures to a set of baseline policies: 
+To evaluate the quality of the learned policy, we compare the policies learned by our two architectures to a set of baseline policies:
 one random, one greedy, and one exhaustive.
 The random policy (Algorithm~\ref{alg:random}), selects random moving actions.
 The greedy policy (Algorithm~\ref{alg:greedy}) keeps track of visited positions, and greedily selects actions that explore new positions.

@@ -74,7 +74,7 @@ well.
 
 You need a modern LaTeX distribution to be able to use `liuthesis`. Depending on
 your operating system, we recommend you install the following distribution:
-* For Linux systems: `TeXLive` (we recommend at least version 2016).
+* For Linux systems: `TeXLive` (at least version 2021).
 * For Windows systems: `MiKTeX` (we recommend at least version 2.9).
 * For Mac/OSX systems: `MacTeX`.
 

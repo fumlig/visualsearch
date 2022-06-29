@@ -1,13 +1,13 @@
 Visual search is the perceptual task of locating a target in a visual environment.
-Due to applications in areas like search and rescue, surveillance and home assistance, it is of great interest to automate visual search.
-An autonomous system can potentially search more efficiently than a manually controlled one and has the advantages of reduced risk and cost of labour.
+Due to applications in areas like search and rescue, surveillance, and home assistance, it is of great interest to automate visual search.
+An autonomous system can potentially search more efficiently than a manually controlled one and has the advantages of reduced risk and cost of labor.
 In many environments, there is structure that can be utilized to find targets quicker.
 However, manually designing search algorithms that properly utilize structure to search efficiently is not trivial.
 Different environments may exhibit vastly different characteristics, and visual cues may be difficult to pick up.
 A learning system has the advantage of being applicable to any environment where there is a sufficient number of samples to learn from.
 
 In this thesis, we investigate how an agent that learns to search can be implemented with deep reinforcement learning.
-Our approach jointly learns control of visual attention, recognition and localization from a set of sample search scenarios.
+Our approach jointly learns control of visual attention, recognition, and localization from a set of sample search scenarios.
 A recurrent convolutional neural network takes an image of the visible region and the agent's position as input.
 Its outputs indicate whether a target is visible and control where the agent looks next.
 The recurrent step serves as a memory that lets the agent utilize features of the explored environment when searching.

@@ -95,7 +95,7 @@ Usually, a loss function \(\mathcal{L}\) is minimized by updating the weights \(
 
 The only requirement on the function computed by each node is that it is differentiable.
 As long as this holds, layers can be stacked arbitrarily and the gradients can be computed with the chain rule.
-This way, errors in the output can be passed back through the network (\textit{back-propagation}) and used to update the weights.~\cite{russell_artificial_2021,goodfellow_deep_2016}
+This way, errors in the output can be passed back through the network (\textit{back-propagation}) and used to update the weights~\cite{russell_artificial_2021,goodfellow_deep_2016}.
 
 The architecture of a neural network imposes some bias onto the learning that is expected to be useful for generalizing to unseen samples.
 We now describe three neural network architectures that will be used in this work.
@@ -113,7 +113,7 @@ The output \(y\) of each node is usually computed by taking the weighted sum of 
 where \(y_j\) is the output of node \(j\), \(g_j\) is a non-linear \textit{activation function}, \(\mathbf{w}_j\) is the vector of weights leading into node \(j\), and \(\mathbf{x}\) is the vector of inputs to the node.
 By convention, each layer also has some \textit{bias} that allows the total weighted input to \(g_j\) to be non-zero even when the outputs from the previous layer are zero.
 The bias is included as an extra input \(x_0\) fixed to 1, and an extra tunable weight \(w_{0,j}\).
-The non-linearity ensures that a network with at least two layers can approximate any continuous function.~\cite{russell_artificial_2021}
+The non-linearity ensures that a network with at least two layers can approximate any continuous function~\cite{russell_artificial_2021}.
 
 \subsubsection{Convolutional Neural Network}
 
@@ -137,7 +137,7 @@ as well as improved statistical and computational efficiency.
 
 Furthermore, the same parameters are also used for more than one function in the CNN. \textit{Parameter sharing} across input locations mean that layers in a CNN have \textit{equivariance} to translation. 
 The output of one kernel is the same regardless of the input location.
-This property of CNNs is useful for images where similar features may be useful regardless of their location in the input.~\cite{goodfellow_deep_2016}
+This property of CNNs is useful for images where similar features may be useful regardless of their location in the input~\cite{goodfellow_deep_2016}.
 
 \subsubsection{Recurrent Neural Network}
 \label{sec:rnn}
@@ -158,7 +158,7 @@ This model can be turned into a feed-forward network over a sequence of input ve
 The weights are shared across all time steps.
 This means that RNNs can operate on inputs of arbitrary lengths.
 The hidden state is used as a summary of all previous items in the sequence.
-Thus, RNNs make a Markov assumption.~\cite{russell_artificial_2021}
+Thus, RNNs make a Markov assumption~\cite{russell_artificial_2021}.
 
 In practice, conventional RNNs struggle with learning long-term dependencies.
 During back-propagation, gradients can tend to zero for long sequences, something known as the vanishing gradient problem~\cite{goodfellow_deep_2016}.
@@ -196,7 +196,7 @@ A learning \textit{agent} interacts continually with its \textit{environment}.
 The agent takes the \textit{state} of the environment as input, and select an \textit{action} to take.
 This action updates the state of the environment and gives the agent a scalar \textit{reward}.
 It is assumed that the next state and reward depend only on the previous state and the action taken.
-This is referred to as the \textit{Markov} property.~\cite{kaelbling_planning_1998}
+This is referred to as the \textit{Markov} property~\cite{kaelbling_planning_1998}.
 
 In an MDP, the agent can perceive the state of the environment with full certainty.
 For many problems, including the one we consider here, this is not the case.
@@ -216,7 +216,7 @@ A POMDP is formally defined as a 7-tuple \(\left\langle \mathcal{S}, \mathcal{A}
 
 Assume that the environment is in state \(s_t \in \mathcal{S}\), and the agent selects action \(a_t \in \mathcal{A}\).
 Then, \(T(s_t, a_t, s_{t+1})\) is the probability of ending in state \(s_{t+1}\) and \(r_t = R(s_t, a_t)\) is the expected reward gained by the agent.
-The agent also receives an observation \(o_t \in \Omega\) with probability \(\mathcal{O}(s_{t+1}, a_t, o_t)\).~\cite{kaelbling_planning_1998}
+The agent also receives an observation \(o_t \in \Omega\) with probability \(\mathcal{O}(s_{t+1}, a_t, o_t)\)~\cite{kaelbling_planning_1998}.
 Figure \ref{fig:pomdp} illustrates the interaction between agent and environment.
 
 \begin{figure}
@@ -245,7 +245,7 @@ From here on we will use the belief state and the environment state \(s\) interc
 
 The behavior of the agent is described by its \textit{policy}.
 A policy \(\pi\) is a mapping from perceived environment states to actions.
-Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\).~\cite{sutton_reinforcement_2018}
+Policies are often stochastic and specify probabilities for each action, with \(\pi(a|s)\) denoting the probability of taking action \(a\) in state \(s\)~\cite{sutton_reinforcement_2018}.
 
 Most RL solutions methods also approximate a \textit{value function}.
 A value function \(V_\pi\) estimates how good it is to be in a state.
@@ -253,19 +253,19 @@ The value function \(V_\pi(s)\) is the expected (discounted) return when startin
 There are two common alternative value functions:
 The \textit{Q-function} \(Q_\pi(s,a)\) gives the value of state \(s\) under policy \(\pi\) where \(a\) is the first action taken.
 Given a Q-function, \textit{action-value} methods choose the action greedily at every state as \(\argmax_a Q_\pi(s, a)\).
-The \textit{advantage function} \(A_\pi(s, a)\) instead represents the relative advantage of actions, \(A_\pi = Q_\pi - V_\pi\).~\cite{sutton_reinforcement_2018}
+The \textit{advantage function} \(A_\pi(s, a)\) instead represents the relative advantage of actions, \(A_\pi = Q_\pi - V_\pi\)~\cite{sutton_reinforcement_2018}.
 
 For problems with large state and action spaces, it is common to represent value functions with \textit{function approximation}.
 In such cases, it is common to encounter states that have never been encountered before.
 This makes it important that the estimated value function can generalize from seen to unseen states.
 With examples from the true value function, an approximation can be made with supervised learning methods.
-We write \(\hat{V}(s,\mathbf{w}) \approx V_\pi(s)\) for the approximate value of state \(s\) with some weight vector \(\mathbf{w} \in \mathbb{R}^d\).~\cite{sutton_reinforcement_2018}
+We write \(\hat{V}(s,\mathbf{w}) \approx V_\pi(s)\) for the approximate value of state \(s\) with some weight vector \(\mathbf{w} \in \mathbb{R}^d\)~\cite{sutton_reinforcement_2018}.
 
 An alternative to action-value methods is to approximate the policy itself.
 \textit{Policy gradient} methods learn a parametrized policy that select actions without a value function.
 We denote a parametrized policy as \(\pi(a|s,\boldsymbol{\theta})\) with \(\boldsymbol{\theta} \in \mathbb{R}^{d^\prime}\) as the parameters to the policy.
 The policy parameters are usually learned based on the gradient of some performance measure \(L(\boldsymbol{\theta})\).
-As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated to optimize for the objective.~\cite{sutton_policy_1999}
+As long as \(\pi(a|s,\boldsymbol{\theta})\) is differentiable with respect to its parameters, the parameters can be updated to optimize for the objective~\cite{sutton_policy_1999}.
 
 Advantages of policy parametrization over action-value methods include stronger convergence guarantees~\cite{sutton_policy_1999} and more flexibility in parametrization~\cite{sutton_reinforcement_2018}.
 However, less is known about if and how fast policy gradient methods converge to globally optimal policies~\cite{agarwal_optimality_2020}.
@@ -275,7 +275,7 @@ In these cases, there might also be some overlap between the weights \(\mathbf{w
 
 One important aspect of RL with function approximation is that it is applicable to partially observable problems.
 If there is a state variable that is not observable, as for partially observable environments,
-the parametrization can be chosen such that the approximate value does not depend on that state variable.~\cite{sutton_reinforcement_2018}
+the parametrization can be chosen such that the approximate value does not depend on that state variable~\cite{sutton_reinforcement_2018}.
 
 % {arulkumaran_survey_2017} also gives a good introduction to algorithms
 % https://www.davidsilver.uk/wp-content/uploads/2020/03/intro_RL.pdf
@@ -289,7 +289,7 @@ the parametrization can be chosen such that the approximate value does not depen
 One of the challenges that arises in reinforcement learning is the exploration-exploitation trade-off.
 An RL agent should \textit{exploit} knowledge gained from previous experiences and prefer actions that has yielded reward in the past.
 It should also \textit{explore} in order to learn better actions to take in the future.
-Agents that fail to both exploit and explore will lead to failure at the task, and striking a good balance between the two is non-trivial.~\cite{sutton_reinforcement_2018}
+Agents that fail to both exploit and explore will lead to failure at the task, and striking a good balance between the two is non-trivial~\cite{sutton_reinforcement_2018}.
 
 Another challenge is the design of reward signals.
 For some tasks, like certain video games, the objective is simply to maximize the score obtained.

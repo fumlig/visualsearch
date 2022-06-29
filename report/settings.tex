@@ -1,19 +1,16 @@
-\usepackage{hyperref}
-\usepackage{calc,color}
-\usepackage{amsmath}
-\usepackage{tikz}
-\usepackage{tikz-network}
+\usepackage[backend=biber,hyperref,backref=true]{biblatex}
 
+\usepackage{tikz-network}
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{multirow}
-\usepackage[detect-all]{siunitx}
-\usepackage[backend=biber,hyperref,backref=true]{biblatex}
 
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
+\ifxetex
+%\setmainfont[Scale=1]{Carlito}
+\setmainfont{Latin Modern Roman}
+\fi
 
+\usepackage{calc,color}
 \newif\ifNoChapNumber
 \newcommand\Vlines{%
 \def\VL{\rule[-2cm]{1pt}{5cm}\hspace{1mm}\relax}
@@ -24,6 +21,9 @@
 \renewcommand\chapternamenum{}
 \renewcommand\printchaptername{}
 \renewcommand\printchapternum{}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
 
 \renewcommand\chapnumfont{\Huge\bfseries\centering}
 \renewcommand\chaptitlefont{\Huge\bfseries\raggedright}
@@ -45,8 +45,8 @@
 \ExecuteBibliographyOptions{maxnames=99}
 
 \DefineBibliographyStrings{english}{
-  backrefpage = {Cited on page},
-  backrefpages = {Cited on pages},
+  backrefpage = {cited on page},
+  backrefpages = {cited on pages},
 }
 
 \AtEveryBibitem{
@@ -55,4 +55,4 @@
 
 \addbibresource{references.bib}
 
-\DeclareMathOperator*{\argmax}{arg\,max} % thin space, limits underneath in displays
+\DeclareMathOperator*{\argmax}{arg\,max}

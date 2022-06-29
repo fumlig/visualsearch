@@ -6,15 +6,24 @@
 %% Maintainer:
 %% Created: Fri Mar 20 08:25:23 2009 (CET)
 %% Version:
-%% Last-Updated: Tue Jan 25 09:56:00 2022 (+0100)
+%% Last-Updated: Tue Mar 15 14:36:19 2022 (+0100)
 %%           By: Ola
-%%     Update #: 1629
+%%     Update #: 1631
 %% URL:
 %% Keywords:
 %% Compatibility:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%
+%%% Commentary:
+%%
+%% Read the README instead...
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%% Change log:
+%%
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% This program is free software; you can redistribute it and/or
@@ -32,6 +41,10 @@
 %% the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 %% Floor, Boston, MA 02110-1301, USA.
 
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%% Code:
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{liuthesis} [2022/01/25 Thesis class for LiU]
 \typeout{Undergraduate and graduate thesis class for LiU}
@@ -351,8 +364,8 @@
     pdftrapped=False,
     pdfapart=2,
     pdfaconformance=B,
-    %pdfuapart=1,
-    %pdfxstandard={PDF/X-4},
+    pdfuapart=1,
+    pdfxstandard={PDF/X-4},
 }
 %%%%%%%%%% end PDF/A and PDF/X support
 \RequirePackage{amssymb}
@@ -641,7 +654,8 @@
     som för framläggande av \@degreetype{} i \@thesissubject{}
     vid Linköpings universitet kommer att offentligt försvaras i sal
     \@presentationroom, hus \@presentationbuilding, campus
-    \@presentationcampus, \@presentationdate{} kl. \@presentationtime}\\[2\baselineskip]
+    \@presentationcampus, \\
+    \@presentationdate{} kl. \@presentationtime}\\[2\baselineskip]
     \textbf{Fakultetsopponent}\\
     \@opponenttitle{} \@opponentname\\
     \@opponentuniversity\\
@@ -683,7 +697,8 @@
     som för framläggande av \@degreetype{} i \@thesissubject{}
     vid Filosofiska fakulteten kommer att offentligt försvaras i sal
     \@presentationroom, hus \@presentationbuilding, campus
-    \@presentationcampus, \@presentationdate{} kl. \@presentationtime\\[2\baselineskip]
+    \@presentationcampus, \\
+    \@presentationdate{} kl. \@presentationtime\\[2\baselineskip]
     {\bfseries Sammanfattning}\\
     \begin{justify}
       \@exhibittextswedish
